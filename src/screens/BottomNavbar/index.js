@@ -42,10 +42,10 @@ const BottomNavbar = ({ navigation, route }) => {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('FolderScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('TaskUpdateScreen')}>
         <View
           style={
-            route.name === 'FolderScreen'
+            route.name === 'TaskUpdateScreen'
               ? styles.tabIconActive
               : styles.tabIconNormal
           }

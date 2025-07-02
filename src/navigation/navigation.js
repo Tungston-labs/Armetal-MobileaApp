@@ -18,6 +18,7 @@ import RequestApprovedScreen from '../screens/LeaveApprove-screen';
 import LeaveHeader from '../screens/LeaveHeader-screen';
 import RequestPending from '../screens/RequestPending-screen';
 import RequestRejected from '../screens/RequestRejected-screen';
+import TaskUpdateScreen from '../screens/TaskUpdate-screen';
 
 
 const Stack = createNativeStackNavigator();
@@ -45,6 +46,7 @@ export default function Navigation() {
         <Stack.Screen name="LeaveHeader" component={LeaveHeader} />
         <Stack.Screen name="RequestPending" component={RequestPending} />
         <Stack.Screen name="RequestRejected" component={RequestRejected} />
+        <Stack.Screen name="TaskUpdateScreen" component={TaskUpdateScreen} />
 
         
       </Stack.Navigator>
