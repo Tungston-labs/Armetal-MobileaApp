@@ -18,6 +18,7 @@ const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const calendarData = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
 const dates = ["12", "13", "14", "15", "16", "17"];
+const months = ["Mar", "Mar", "Mar", "Mar", "Mar", "Mar"];
 
 const PunchinScreen = () => {
   const navigation = useNavigation();
@@ -40,7 +41,9 @@ const PunchinScreen = () => {
                   Hey Ajay kumar{"\n"}welcome back!
                 </Text>
               </View>
-              <Image source={{ uri: avatar }} style={styles.profilePic} />
+              <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+                <Image source={{ uri: avatar }} style={styles.profilePic} />
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -69,12 +72,14 @@ const PunchinScreen = () => {
                   {day}
                 </Text>
                 <Text
-                  style={[
-                    styles.dateText,
-                    index === 1 && styles.activeDateText,
-                  ]}
+                  style={[styles.dateText, index === 1 && styles.activeDateText]}
                 >
-                  {dates[index]} Mar
+                  {dates[index]}
+                </Text>
+                <Text
+                  style={[styles.monthText, index === 1 && styles.activeDayText]}
+                >
+                  {months[index]}
                 </Text>
                 {index === 0 && (
                   <Ionicons
@@ -118,7 +123,7 @@ const PunchinScreen = () => {
         </ScrollView>
       </View>
 
-      {/* ✅ Imported BottomNav */}
+      {/* Imported BottomNav */}
       <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );

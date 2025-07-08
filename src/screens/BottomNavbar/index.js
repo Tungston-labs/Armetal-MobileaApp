@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 
+
 const BottomNavbar = ({ navigation, route }) => {
   return (
     <View style={styles.bottomTab}>

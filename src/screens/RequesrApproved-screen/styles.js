@@ -1,51 +1,62 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions } from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a122a',
+    backgroundColor: "#0a122a",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#0d1a3d',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    justifyContent: 'space-between',
+  height: 110,
+  paddingTop: 40,
+  paddingHorizontal: 20,
+  backgroundColor: '#262D40',
+  justifyContent: 'center',
+},
+
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
+
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    color: "#FFFF",
+    fontWeight: "bold",
+    marginLeft: 12,
   },
+
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    marginLeft: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
+
   separator: {
     height: 1,
-    backgroundColor: '#222',
+    backgroundColor: "#FFFF",
   },
   content: {
     padding: 16,
   },
   card: {
-    backgroundColor: '#121c3d',
+    backgroundColor: "#172554",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a3555',
+    borderColor: "#FFFF",
   },
   statusBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'transparent',
-    borderColor: '#33cc99',
+    alignSelf: "flex-start",
+    backgroundColor: "transparent",
+    borderColor: "#26B887",
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 4,
@@ -53,27 +64,27 @@ export default StyleSheet.create({
     marginBottom: 12,
   },
   statusText: {
-    color: '#33cc99',
+    color: "#26B887",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   column: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     marginHorizontal: 4,
   },
   label: {
-    color: '#889',
+    color: "#575F7D",
     fontSize: 14,
     marginBottom: 4,
   },
   value: {
-    color: '#fff',
+    color: "#FFFFFF",
     fontSize: 16,
   },
   section: {

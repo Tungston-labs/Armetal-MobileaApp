@@ -13,10 +13,12 @@ export default function RequestPending({ navigation, route }) {
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Request detail</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
         <Image
           source={{ uri: 'https://i.pravatar.cc/150' }}
           style={styles.avatar}
         />
+        </TouchableOpacity>
       </View>
 
       {/* Scrollable Content */}

@@ -11,7 +11,7 @@ export default function LeaveHeader({ navigation, selectedTab, avatarUri = 'http
   ];
 
   return (
-    <View>
+    <View> 
       {/* Header */}
       <View style={styles.header}>
         <View>
@@ -21,7 +21,9 @@ export default function LeaveHeader({ navigation, selectedTab, avatarUri = 'http
             <Text style={styles.counterText}>Leave taken 10</Text>
           </View>
         </View>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
         <Image source={{ uri: avatarUri }} style={styles.avatar} />
+        </TouchableOpacity>
       </View>
 
       {/* Tabs */}

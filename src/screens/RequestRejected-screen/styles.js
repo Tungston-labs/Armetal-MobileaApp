@@ -7,88 +7,114 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#141d40',
   },
+
+  // Updated header with taller height and spacing
   topHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#1c2551',
+    paddingTop: 50,
+    paddingBottom: 20,
+    backgroundColor: '#262D40',
     justifyContent: 'space-between',
   },
+
   backButton: {
     padding: 4,
   },
+
   headerTitle: {
-    color: '#fff',
+    color: '#FFFF',
     fontSize: 20,
     fontWeight: 'bold',
+    marginLeft: 10,
   },
+
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
+
   content: {
     padding: 16,
-    paddingBottom: 80,  // leaves room for BottomNavbar
+    paddingBottom: 80, // space for bottom navbar
   },
+
+  // Updated card layout with rounded corners and clean border
   card: {
-    backgroundColor: '#172253',
+    backgroundColor: '#172554',
     borderRadius: 10,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a375f',
+    borderColor: '#FFFF',
   },
+
+  // Badge for rejected/pending/approved status
   statusBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#f44336',
+    borderColor: '#FF2304',
     marginBottom: 16,
   },
+
   statusText: {
-    color: '#f44336',
+    color: '#FF2304',
     fontSize: 14,
     fontWeight: 'bold',
   },
+
+  // Row layout for From / To / Time
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
   },
+
+  // Each column for From / To / Time
   column: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingHorizontal: 4,
   },
+
   label: {
-    color: '#888ca8',
+    color: '#575F7D',
     fontSize: 13,
     marginBottom: 4,
   },
+
   value: {
-    color: '#fff',
+    color: '#FFFF',
     fontSize: 14,
     fontWeight: '500',
   },
+
+  // For Leave Type and Reason sections
   section: {
     marginTop: 12,
   },
+
   sectionLabel: {
-    color: '#888ca8',
+    color: '#575F7D',
     fontSize: 14,
     marginBottom: 4,
   },
+
   sectionValue: {
-    color: '#fff',
+    color: '#FFFF',
     fontSize: 15,
     fontWeight: '500',
   },
+
   reasonText: {
-    color: '#c0c3d6',
+    color: '#FFFF',
     fontSize: 14,
     marginTop: 4,
     lineHeight: 20,
   },
 });
+
