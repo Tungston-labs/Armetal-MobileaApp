@@ -44,7 +44,12 @@ export default function LeaveRejectedScreen() {
   }, []);
 
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        navigation.navigate("RequestRejected", { leaveId: item.id })
+      }
+    >
       <View style={styles.statusBadgeRejected}>
         <Text style={styles.statusTextRejected}>{item.status}</Text>
       </View>
@@ -66,7 +71,7 @@ export default function LeaveRejectedScreen() {
           <Text style={styles.value}>{item.reason}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

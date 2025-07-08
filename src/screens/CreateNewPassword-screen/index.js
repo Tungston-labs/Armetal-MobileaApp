@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CreateNewPasswordScreen() {
   const navigation = useNavigation();
@@ -23,13 +26,45 @@ export default function CreateNewPasswordScreen() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleSetPassword = () => {
-    // Handle save logic
-    console.log({
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    });
+  const handleSetPassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert('Error', 'All fields are required.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'New password and confirmation do not match.');
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      const response = await axios.post(
+        'http://192.168.29.146:8000/api/change-password/',
+        {
+          old_password: currentPassword,
+          new_password: newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      Alert.alert('Success', 'Password changed successfully.', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    } catch (error) {
+      if (error.response) {
+        console.error(error.response.data);
+        Alert.alert('Error', error.response.data.detail || 'Password change failed.');
+      } else {
+        console.error(error.message);
+        Alert.alert('Error', 'Something went wrong.');
+      }
+    }
   };
 
   return (
@@ -51,6 +86,7 @@ export default function CreateNewPasswordScreen() {
           Update your password to keep your{'\n'}account secure.
         </Text>
 
+        {/* Current password */}
         <Text style={styles.label}>Current password</Text>
         <View style={styles.inputWrapper}>
           <TextInput
@@ -70,6 +106,7 @@ export default function CreateNewPasswordScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* New password */}
         <Text style={styles.label}>Enter new password</Text>
         <View style={styles.inputWrapper}>
           <TextInput
@@ -89,6 +126,7 @@ export default function CreateNewPasswordScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Confirm password */}
         <Text style={styles.label}>Confirm Password</Text>
         <View style={styles.inputWrapper}>
           <TextInput

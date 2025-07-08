@@ -8,20 +8,45 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
 import styles from './styles';
-import { useNavigation } from '@react-navigation/native';
 
 export default function SetNewPasswordScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const email = route.params?.email;
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleResetPassword = () => {
-    // Add your reset password logic here
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
+  const handleResetPassword = async () => {
+    if (!password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill out all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://192.168.29.146:8000/api/forgot-password/reset/', {
+        email,
+        new_password: password,
+        confirm_password: confirmPassword,
+      });
+
+      Alert.alert('Success', 'Password reset successful.');
+      navigation.navigate('LoginScreen');
+    } catch (error) {
+      console.error('Reset Error:', error.response?.data || error.message);
+      Alert.alert('Error', error.response?.data?.detail || 'Failed to reset password.');
+    }
   };
 
   return (
@@ -36,7 +61,7 @@ export default function SetNewPasswordScreen() {
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Set new password</Text>
-        <Text style={styles.subtitle}>Enter new password</Text>
+        <Text style={styles.subtitle}>Enter your new password</Text>
 
         <Text style={styles.label}>Password</Text>
         <TextInput

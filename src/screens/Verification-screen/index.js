@@ -1,51 +1,46 @@
-// index.js
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 import styles from './styles';
 
 export default function VerificationScreen() {
   const navigation = useNavigation();
-  const [otp, setOtp] = useState(['', '', '', '', '']);
+  const route = useRoute();
+  const email = route.params?.email; // Passed from ForgotPasswordScreen
+
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputs = useRef([]);
 
   const handleOtpChange = (text, index) => {
     if (text.length > 1) {
-      // Handle paste
-      const chars = text.slice(0, 5).split('');
+      const chars = text.slice(0, 6).split('');
       const newOtp = otp.map((_, i) => chars[i] || '');
       setOtp(newOtp);
-      // Focus last filled
-      const lastIndex = Math.min(chars.length - 1, 4);
-      inputs.current[lastIndex]?.focus();
+      inputs.current[Math.min(chars.length - 1, 5)]?.focus();
       return;
     }
 
-    // Only accept digits
     if (!/^\d*$/.test(text)) return;
 
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
 
-    if (text && index < 4) {
+    if (text && index < 5) {
       inputs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyPress = ({ nativeEvent }, index) => {
     if (nativeEvent.key === 'Backspace') {
-      if (otp[index] === '') {
-        // Go back
-        if (index > 0) {
-          inputs.current[index - 1]?.focus();
-          const newOtp = [...otp];
-          newOtp[index - 1] = '';
-          setOtp(newOtp);
-        }
+      if (otp[index] === '' && index > 0) {
+        inputs.current[index - 1]?.focus();
+        const newOtp = [...otp];
+        newOtp[index - 1] = '';
+        setOtp(newOtp);
       } else {
-        // Just clear current
         const newOtp = [...otp];
         newOtp[index] = '';
         setOtp(newOtp);
@@ -53,13 +48,36 @@ export default function VerificationScreen() {
     }
   };
 
-  const handleContinue = () => {
-    console.log('Entered OTP:', otp.join(''));
-    navigation.navigate('SetNewPasswordScreen');
+  const handleContinue = async () => {
+    const enteredOtp = otp.join('');
+    if (enteredOtp.length < 6) {
+      Alert.alert('Error', 'Please enter a 6-digit OTP.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://192.168.29.146:8000/api/forgot-password/verify-otp/', {
+        email,
+        otp: enteredOtp,
+      });
+
+      // ✅ On success, move to password reset
+      Alert.alert('Verified', 'OTP verified successfully.');
+      navigation.navigate('SetNewPasswordScreen', { email });
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+      Alert.alert('Verification Failed', 'Invalid or expired OTP.');
+    }
   };
 
-  const handleResend = () => {
-    console.log('Resend OTP');
+  const handleResend = async () => {
+    try {
+      await axios.post('http://192.168.29.146:8000/api/forgot-password/send-otp/', { email });
+      Alert.alert('OTP Sent', 'A new OTP has been sent to your email.');
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+      Alert.alert('Error', 'Failed to resend OTP.');
+    }
   };
 
   return (
@@ -72,13 +90,13 @@ export default function VerificationScreen() {
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Verification</Text>
-        <Text style={styles.subtitle}>We sent a code to Dummy@gmail.com</Text>
+        <Text style={styles.subtitle}>We sent a code to {email || 'your email'}</Text>
 
         <View style={styles.otpContainer}>
           {otp.map((digit, index) => (
             <TextInput
               key={index}
-              style={styles.otpInput}
+              style={[styles.otpInput, { width: 45 }]} // Shrink width for 6 boxes
               keyboardType="number-pad"
               maxLength={1}
               value={digit}
@@ -97,10 +115,9 @@ export default function VerificationScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleResend}>
-          <Text style={styles.resendText}>Resent OTP</Text>
+          <Text style={styles.resendText}>Resend OTP</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 }
-

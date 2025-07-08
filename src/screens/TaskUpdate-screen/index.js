@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,47 +12,90 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const sampleTasks = [
-  {
-    id: '1',
-    project: 'Tijara',
-    task: 'Design Social Media Graphics for Product Launch',
-    time: '3:55 Hrs',
-    submittedAt: '9:30 AM',
-  },
-  {
-    id: '2',
-    project: 'Tijara',
-    task: 'Design Social Media Graphics for Product Launch',
-    time: '3:55 Hrs',
-    submittedAt: '9:30 AM',
-  },
-  {
-    id: '3',
-    project: 'Tijara',
-    task: 'Design Social Media Graphics for Product Launch',
-    time: '3:55 Hrs',
-    submittedAt: '9:30 AM',
-  },
-];
+// ✅ Utility function to get Monday of current week
+const getStartOfWeek = (date) => {
+  const d = new Date(date);
+  const day = d.getDay(); // Sunday = 0
+  const diff = d.getDate() - (day === 0 ? 6 : day - 1); // If Sunday, go back 6 days
+  return new Date(d.setDate(diff));
+};
 
 export default function TaskUpdateScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [project, setProject] = useState('');
   const [task, setTask] = useState('');
   const [timeTaken, setTimeTaken] = useState('');
+  const [tasks, setTasks] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [weekStartDate, setWeekStartDate] = useState(getStartOfWeek(new Date()));
+
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      const response = await axios.get('http://192.168.29.146:8000/api/employee/tasks/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTasks(response.data.results || []);
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error);
+    }
+  };
+
+  const isSameDate = (date1, date2) =>
+    new Date(date1).toDateString() === new Date(date2).toDateString();
+
+  const filteredTasks = tasks.filter((item) =>
+    isSameDate(item.updated_at, selectedDate)
+  );
 
   const handleSubmit = () => {
-    // You can handle task submission logic here
     setModalVisible(false);
     setProject('');
     setTask('');
     setTimeTaken('');
   };
-const navigation = useNavigation(); 
-  const route = useRoute();  
 
+  const changeWeek = (direction) => {
+    const newStart = new Date(weekStartDate);
+    newStart.setDate(newStart.getDate() + direction * 7);
+    setWeekStartDate(newStart);
+
+    const sameDayOfWeek = new Date(newStart);
+    sameDayOfWeek.setDate(newStart.getDate() + selectedDate.getDay() - 1);
+    setSelectedDate(sameDayOfWeek);
+  };
+
+  const renderWeekDays = () => {
+    return Array.from({ length: 6 }).map((_, i) => {
+      const date = new Date(weekStartDate);
+      date.setDate(weekStartDate.getDate() + i);
+      const isSelected = selectedDate.toDateString() === date.toDateString();
+
+      return (
+        <TouchableOpacity
+          key={i}
+          style={[styles.dayItem, isSelected && styles.selectedDay]}
+          onPress={() => setSelectedDate(date)}
+        >
+          <Text style={styles.dayText}>{date.toLocaleDateString('en-US', { weekday: 'short' })}</Text>
+          <Text style={styles.dateText}>{date.getDate()}</Text>
+          <Text style={styles.monthText}>{date.toLocaleDateString('en-US', { month: 'short' })}</Text>
+        </TouchableOpacity>
+      );
+    });
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.taskCard}>
@@ -63,52 +106,58 @@ const navigation = useNavigation();
         <Text style={styles.taskText}>{item.task}</Text>
       </View>
       <View style={styles.timeRight}>
-        <Text style={styles.timeText}>{item.time}</Text>
+        <Text style={styles.timeText}>{item.time_taken} Hrs</Text>
       </View>
-      <Text style={styles.timestamp}>{item.submittedAt}</Text>
+      <Text style={styles.timestamp}>
+        {new Date(item.updated_at).toLocaleTimeString()}
+      </Text>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Header */}
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTime}>11:07</Text>
         <Ionicons name="wifi" size={18} color="white" />
         <Ionicons name="battery-full" size={20} color="white" style={{ marginLeft: 8 }} />
       </View>
 
-      {/* Title and Profile */}
+      {/* Title */}
       <View style={styles.titleRow}>
         <Text style={styles.title}>Daily task update</Text>
         <View style={styles.avatarCircle} />
       </View>
 
-      {/* Week Days Row */}
-      <View style={styles.daysRow}>
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-          <View
-            key={i}
-            style={[styles.dayItem, day === 'Tue' && styles.selectedDay]}
-          >
-            <Text style={styles.dayText}>{day}</Text>
-            <Text style={styles.dateText}>{13 + i}</Text>
-            <Text style={styles.monthText}>Mar</Text>
-          </View>
-        ))}
+      {/* Arrows and Week Navigation */}
+      <View style={styles.calendarNavRow}>
+        <TouchableOpacity onPress={() => changeWeek(-1)}>
+          <Ionicons name="chevron-back-circle" size={26} color="#000" />
+        </TouchableOpacity>
+        <View style={styles.daysRow}>
+          {renderWeekDays()}
+        </View>
+        <TouchableOpacity onPress={() => changeWeek(1)}>
+          <Ionicons name="chevron-forward-circle" size={26} color="#000" />
+        </TouchableOpacity>
       </View>
 
       {/* Task List */}
-      <Text style={styles.taskSectionTitle}>Task</Text>
+      <Text style={styles.taskSectionTitle}>Tasks on {selectedDate.toDateString()}</Text>
       <FlatList
-        data={sampleTasks}
+        data={filteredTasks}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.taskList}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <Text style={{ color: '#888', textAlign: 'center', marginTop: 20 }}>
+            No tasks found for this date.
+          </Text>
+        }
       />
 
-      {/* Add Task Button */}
+      {/* Add Task */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setModalVisible(true)}
@@ -117,14 +166,14 @@ const navigation = useNavigation();
         <Text style={styles.addText}>Add Task</Text>
       </TouchableOpacity>
 
-      {/* Modal for Task Update */}
+      {/* Modal */}
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalBackground}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Task Update</Text>
             <Text style={styles.inputLabel}>Project</Text>
             <TextInput
-              placeholder="Task Details"
+              placeholder="Project"
               value={project}
               onChangeText={setProject}
               style={styles.input}
@@ -165,7 +214,6 @@ const navigation = useNavigation();
               </TouchableOpacity>
             </View>
           </View>
-
         </View>
       </Modal>
 

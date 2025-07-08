@@ -1,10 +1,58 @@
-import React from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
-import BottomNavbar from '../BottomNavbar';  // Adjust path to your BottomNavbar component
+import BottomNavbar from '../BottomNavbar';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RequestRejected({ navigation, route }) {
+  const { leaveId } = route.params; // 👈 Receive leaveId from navigation
+  const [leave, setLeave] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeaveDetail = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        const response = await axios.get(
+          `http://192.168.29.146:8000/api/leave/emp/${leaveId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLeave(response.data);
+      } catch (error) {
+        console.error('Failed to fetch rejected leave details:', error);
+        Alert.alert('Error', 'Could not load rejected leave details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaveDetail();
+  }, [leaveId]);
+
+  if (loading || !leave) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: 'center', marginTop: 30 }}>
+          Loading leave details...
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -14,47 +62,39 @@ export default function RequestRejected({ navigation, route }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Request detail</Text>
         <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
-        <Image
-          source={{ uri: 'https://i.pravatar.cc/150' }}
-          style={styles.avatar}
-        />
+          <Image source={{ uri: 'https://i.pravatar.cc/150' }} style={styles.avatar} />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.card}>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Rejected</Text>
+            <Text style={styles.statusText}>{leave.status}</Text>
           </View>
 
           <View style={styles.row}>
             <View style={styles.column}>
               <Text style={styles.label}>From</Text>
-              <Text style={styles.value}>12/12/2025</Text>
+              <Text style={styles.value}>{leave.from_date}</Text>
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>To</Text>
-              <Text style={styles.value}>19/12/2025</Text>
+              <Text style={styles.value}>{leave.to_date}</Text>
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
-              <Text style={styles.value}>11:30 AM</Text>
+              <Text style={styles.value}>11:30 AM</Text> {/* Optional: if backend has time */}
             </View>
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>Leave Type</Text>
-            <Text style={styles.sectionValue}>Paid Leave</Text>
+            <Text style={styles.sectionValue}>{leave.leave_type}</Text>
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>Reason</Text>
-            <Text style={styles.reasonText}>
-              Lorem ipsum dolor sit amet consectetur. Vitae scelerisque dui aliquet quis mattis
-              vivamus scelerisque ligula. Risus lacus facilisis lectus egestas feugiat tellus nisi.
-              Laoreet ipsum et non nunc semper. Imperdiet facilisis quis fringilla in arcu duis
-              volutpat tincidunt.
-            </Text>
+            <Text style={styles.reasonText}>{leave.reason}</Text>
           </View>
         </View>
       </ScrollView>

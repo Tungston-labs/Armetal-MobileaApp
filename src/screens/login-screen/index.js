@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import { Checkbox } from 'react-native-paper';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+  // Native checkbox
+} from 'react-native';
+// ✅ Correct import:
+import CheckBox from '@react-native-community/checkbox';
+
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -25,30 +35,23 @@ const LoginScreen = () => {
       });
 
       const { access, refresh } = response.data;
-
-      // ✅ Save tokens
       await AsyncStorage.setItem('accessToken', access);
       await AsyncStorage.setItem('refreshToken', refresh);
-
-      console.log('Login successful. Access token:', access);
-
-      // ✅ Confirm it's saved (debug)
-      const stored = await AsyncStorage.getItem('accessToken');
-      console.log('Stored token:', stored); // Should not be null
 
       navigation.navigate('PunchinScreen');
     } catch (error) {
       if (error.response) {
-        console.error('Login failed:', error.response.data);
         Alert.alert('Login Failed', 'Invalid username or password.');
       } else if (error.request) {
-        console.error('No response from server:', error.request);
         Alert.alert('Network Error', 'No response from server. Check your network.');
       } else {
-        console.error('Error:', error.message);
         Alert.alert('Error', error.message);
       }
     }
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPasswordScreen');
   };
 
   const logo = require('../../assets/logo.png');
@@ -70,7 +73,6 @@ const LoginScreen = () => {
           placeholderTextColor="#999"
           value={username}
           onChangeText={setUsername}
-          autoCapitalize="none"
         />
 
         <Text style={styles.label}>Password</Text>
@@ -83,10 +85,17 @@ const LoginScreen = () => {
           onChangeText={setPassword}
         />
 
+        <TouchableOpacity
+          style={styles.forgotPasswordContainer}
+          onPress={handleForgotPassword}
+        >
+          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+        </TouchableOpacity>
+
         <View style={styles.rememberMeContainer}>
-          <Checkbox
-            status={rememberMe ? 'checked' : 'unchecked'}
-            onPress={() => setRememberMe(!rememberMe)}
+          <CheckBox
+            value={rememberMe}
+            onValueChange={setRememberMe}
           />
           <Text style={styles.rememberMeText}>Remember me</Text>
         </View>

@@ -77,10 +77,15 @@ export default function LeaveRequestFormScreen() {
         }),
       });
 
-      if (response.ok) {
-        Alert.alert('Success', 'Leave request submitted successfully!');
-        navigation.goBack();
-      } else {
+     if (response.ok) {
+  Alert.alert("Success", "Leave request submitted successfully!", [
+    {
+      text: "OK",
+      onPress: () => navigation.navigate("LeavePendingScreen"), // Ensures return + refresh
+    },
+  ]);
+}
+ else {
         const err = await response.json();
         console.log(err);
         Alert.alert('Error', 'Something went wrong while submitting.');

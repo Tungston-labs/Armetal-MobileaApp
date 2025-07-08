@@ -14,7 +14,7 @@ import LeaveApproveScreen from '../screens/LeaveApprove-screen';
 import LeaveRejectedScreen from '../screens/LeaveRejected-screen';
 import LeavePendingScreen from '../screens/LeavePending-screen';
 import LeaveRequestFormScreen from '../screens/LeaveRequestForm-screen';
-import RequestApprovedScreen from '../screens/LeaveApprove-screen';
+// import RequestApprovedScreen from '../screens/LeaveApprove-screen';
 import RequestApprovedScreen from '../screens/RequesrApproved-screen';
 import LeaveHeader from '../screens/LeaveHeader-screen';
 import RequestPending from '../screens/RequestPending-screen';

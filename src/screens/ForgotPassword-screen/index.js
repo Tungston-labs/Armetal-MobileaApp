@@ -1,5 +1,4 @@
-// index.js
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,14 +6,35 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
+import axios from 'axios';
 
 const ForgotPasswordScreen = ({ navigation }) => {
-  
-  const handleResetPassword = () => {
-    navigation.navigate('VerificationScreen');
+  const [email, setEmail] = useState('');
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      Alert.alert('Validation Error', 'Please enter your email address.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://192.168.29.146:8000/api/forgot-password/send-otp/', {
+        email,
+      });
+
+      // Optional: show success message
+      Alert.alert('Success', 'OTP sent to your email.');
+
+      // Navigate to OTP screen and pass email if needed
+      navigation.navigate('VerificationScreen', { email });
+    } catch (error) {
+      console.error('Error sending OTP:', error.response?.data || error.message);
+      Alert.alert('Error', 'Failed to send OTP. Please try again.');
+    }
   };
 
   return (
@@ -38,6 +58,8 @@ const ForgotPasswordScreen = ({ navigation }) => {
           placeholder="Your Email Address"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleResetPassword}>

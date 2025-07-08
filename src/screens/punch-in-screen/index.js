@@ -147,7 +147,10 @@ const AttendanceScreen = () => {
                   Hey {employee?.name}{"\n"}welcome back!
                 </Text>
               </View>
-              <Image source={avatarSource} style={styles.profilePic} />
+              <TouchableOpacity
+            onPress={() => navigation.navigate("ProfileScreen")}
+          >
+              <Image source={avatarSource} style={styles.profilePic} /></TouchableOpacity>
             </View>
           </View>
 

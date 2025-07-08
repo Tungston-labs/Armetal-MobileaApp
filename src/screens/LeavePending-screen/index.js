@@ -13,6 +13,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from '@react-navigation/native';
+
 
 export default function LeavePendingScreen() {
   const navigation = useNavigation();
@@ -20,6 +22,8 @@ export default function LeavePendingScreen() {
 
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
+
 
   useEffect(() => {
     const fetchPendingLeaves = async () => {
@@ -41,34 +45,39 @@ export default function LeavePendingScreen() {
       }
     };
 
+  if (isFocused) {
     fetchPendingLeaves();
-  }, []);
+  }
+}, [isFocused]);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.statusBadgePending}>
-        <Text style={styles.statusTextPending}>{item.status}</Text>
+ const renderItem = ({ item }) => (
+  <TouchableOpacity
+    onPress={() => navigation.navigate("RequestPending", { leaveId: item.id })}
+    style={styles.card}
+  >
+    <View style={styles.statusBadgePending}>
+      <Text style={styles.statusTextPending}>{item.status}</Text>
+    </View>
+    <View style={styles.cardContent}>
+      <View style={styles.row}>
+        <Text style={styles.label}>From</Text>
+        <Text style={styles.value}>{item.from_date}</Text>
       </View>
-      <View style={styles.cardContent}>
-        <View style={styles.row}>
-          <Text style={styles.label}>From</Text>
-          <Text style={styles.value}>{item.from_date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>To</Text>
-          <Text style={styles.value}>{item.to_date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Leave Type</Text>
-          <Text style={styles.value}>{item.leave_type}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Reason</Text>
-          <Text style={styles.value}>{item.reason}</Text>
-        </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>To</Text>
+        <Text style={styles.value}>{item.to_date}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Leave Type</Text>
+        <Text style={styles.value}>{item.leave_type}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Reason</Text>
+        <Text style={styles.value}>{item.reason}</Text>
       </View>
     </View>
-  );
+  </TouchableOpacity>
+);
 
   return (
     <SafeAreaView style={styles.container}>
