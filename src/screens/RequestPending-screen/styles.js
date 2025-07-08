@@ -11,99 +11,126 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#1c2551',
+    paddingTop: 50,           // Increased top padding
+    paddingBottom: 20,        // Increased bottom padding for height
+    backgroundColor: '#262D40',
     justifyContent: 'space-between',
   },
+
   backButton: {
     padding: 4,
   },
+headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   headerTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    color: "#FFFF",
+    fontWeight: "bold",
+    marginLeft: 12,
   },
+
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
+
   content: {
     padding: 16,
     paddingBottom: 100, // for bottom navbar space
   },
+
   card: {
-    backgroundColor: '#1c2551',
-    borderRadius: 10,
+    backgroundColor: "#172554",
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 20,
-    borderColor: '#2d3454',
     borderWidth: 1,
+    borderColor: "#FFFF",
   },
+
   statusBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ff9800',
+    borderColor: '#FF6A3D',
     marginBottom: 16,
   },
+
   statusText: {
-    color: '#ff9800',
+    color: '#FF6A3D',
     fontSize: 14,
     fontWeight: 'bold',
   },
+
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
   },
+
   column: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start', // left align text
+    paddingHorizontal: 4,
   },
+
   label: {
-    color: '#aaa',
+    color: '#575F7D',
     fontSize: 13,
     marginBottom: 4,
   },
+
   value: {
-    color: '#fff',
+    color: '#FFFF',
     fontSize: 14,
     fontWeight: '500',
   },
+
   section: {
     marginTop: 12,
   },
+
   sectionLabel: {
-    color: '#aaa',
+    color: '#575F7D',
     fontSize: 14,
     marginBottom: 4,
   },
+
   sectionValue: {
-    color: '#fff',
+    color: '#FFFF',
     fontSize: 15,
     fontWeight: '500',
   },
+
   reasonText: {
-    color: '#ccc',
+    color: '#FFFFFF',
     fontSize: 14,
     marginTop: 4,
     lineHeight: 20,
   },
+
   cancelButton: {
-    marginTop: 20,
+    marginTop: 30,
     alignSelf: 'center',
-    borderColor: '#f44336',
+    borderColor: '#FF2304',
     borderWidth: 1,
-    borderRadius: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 40,
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 60, // Increased width
+    backgroundColor: '#2F1E2E', // Optional: subtle background to match your image
   },
+
   cancelButtonText: {
-    color: '#f44336',
-    fontSize: 16,
+    color: '#FF2304',
+    fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+    width: '60%',
+    
   },
 });

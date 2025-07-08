@@ -88,30 +88,34 @@ export default StyleSheet.create({
   },
 
   avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     marginRight: 8,
   },
 
   leadName: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'Satoshi',
   },
 
   calendarRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
 
   dayBox: {
-    width: width / 7.5,
-    paddingVertical: 10,
-    borderRadius: 10,
+    width: width / 7.2,
+    height: 90,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 12,
     backgroundColor: '#1D2A5C',
     alignItems: 'center',
-    height: 98,
+    justifyContent: 'center',
   },
 
   activeDay: {
@@ -122,60 +126,78 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '500',
+    marginBottom: 2,
+    fontFamily: 'Satoshi',
   },
 
   dateText: {
     color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+    fontFamily: 'Satoshi',
+  },
+
+  monthText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    opacity: 0.7,
+    fontFamily: 'Satoshi',
   },
 
   activeDayText: {
     color: '#172554',
+    fontFamily: 'Satoshi',
   },
 
   activeDateText: {
     color: '#172554',
     fontWeight: 'bold',
+    fontFamily: 'Satoshi',
   },
 
   attendanceBox: {
     backgroundColor: '#172554',
-    borderRadius: 10,
-    padding: 16,
+    borderRadius: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
     marginBottom: 20,
     borderWidth: 0.5,
     borderColor: '#3a4ca0',
+    marginHorizontal: 16,
   },
 
   attendanceTitle: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 14,
     textTransform: 'capitalize',
+    fontFamily: 'Raleway',
   },
 
   timeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 4,
+    marginVertical: 6,
   },
 
   timeLabel: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'Satoshi',
   },
 
   timeValue: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'Satoshi',
   },
 
   line: {
     height: 1,
-    backgroundColor: '#FFFFFF',
-    marginVertical: 10,
+    backgroundColor: '#3a4ca0',
+    marginVertical: 12,
   },
 
   totalHoursRow: {
@@ -186,25 +208,28 @@ export default StyleSheet.create({
 
   totalHoursText: {
     color: '#FFFFFF',
-    fontSize: 19,
+    fontSize: 18,
     marginLeft: 6,
+    fontFamily: 'Satoshi',
   },
 
   hours: {
     marginLeft: 'auto',
     color: '#ccc',
     fontSize: 14,
+    fontFamily: 'Satoshi',
   },
 
   swipeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E1E8EC',
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 30,
+    borderRadius: 28,
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 8,
+    marginHorizontal: 16,
   },
 
   swipeText: {
@@ -212,7 +237,6 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+    fontFamily: 'Satoshi',
   },
-
-  
 });

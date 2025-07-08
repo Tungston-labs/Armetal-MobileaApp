@@ -4,60 +4,82 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F1A3C',
+    backgroundColor: '#151D34',
   },
+
+  innerWrapper: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    paddingBottom: 16,
+  },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#0F1A3C',
+    paddingTop: 40,
+    paddingBottom: 24,
+    paddingHorizontal: 16,
+    backgroundColor: '#262D40',
   },
+
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
-    marginLeft: -24, // shift center to compensate back icon
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    fontFamily: 'Raleway-Bold', 
   },
+
   profileImage: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
-  tableContainer: {
+
+  card: {
     margin: 16,
-    backgroundColor: '#111D4A',
-    borderRadius: 8,
+    backgroundColor: '#172554',
+    borderRadius: 12,
+    borderWidth: 0.5,
     overflow: 'hidden',
   },
+
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#132259',
-    paddingVertical: 12,
+    justifyContent: 'space-between',
+    backgroundColor: '#172554',
+    paddingVertical: 14,
     paddingHorizontal: 16,
+    borderBottomColor:'#FFFF'
   },
+
   headerCell: {
-    flex: 1,
     fontWeight: 'bold',
     color: '#fff',
+    fontSize: 16,
   },
+
   row: {
     flexDirection: 'row',
-    paddingVertical: 12,
+    justifyContent: 'space-between',
+    paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#1C2D5B',
   },
+
   cell: {
-    flex: 1,
     color: '#fff',
+    fontSize: 15,
+    fontFamily: 'Satoshi-Regular',
   },
+
   bottomTab: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
+    height: 64,
     backgroundColor: '#172554',
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -65,9 +87,4 @@ export default StyleSheet.create({
     borderTopWidth: 0.5,
     borderTopColor: '#3a4ca0',
   },
-  // tabIconActive: {
-  //   backgroundColor: '#1E3A8A',
-  //   padding: 8,
-  //   borderRadius: 20,
-  // },
 });

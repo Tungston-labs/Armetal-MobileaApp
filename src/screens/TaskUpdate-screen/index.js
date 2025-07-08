@@ -9,6 +9,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
 
@@ -49,6 +50,9 @@ export default function TaskUpdateScreen() {
     setTask('');
     setTimeTaken('');
   };
+const navigation = useNavigation(); 
+  const route = useRoute();  
+
 
   const renderItem = ({ item }) => (
     <View style={styles.taskCard}>
@@ -162,10 +166,10 @@ export default function TaskUpdateScreen() {
             </View>
           </View>
 
-          <BottomNavbar navigation={navigation} route={route} />
-
         </View>
       </Modal>
+
+      <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );
 }
