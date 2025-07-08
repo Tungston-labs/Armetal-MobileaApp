@@ -1,3 +1,4 @@
+
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -5,110 +6,128 @@ const { width } = Dimensions.get('window');
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0C1427',
+    backgroundColor: '#151D34',
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: 10,
-    gap: 10,
-  },
-  headerTime: {
-    color: '#fff',
-    fontSize: 14,
-    marginRight: 6,
-  },
-  titleRow: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: 16,
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
+    backgroundColor: '#262D40',
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
-  avatarCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ccc',
+  avatarImage: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#262D40',
   },
-  daysRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginHorizontal: 12,
-    marginBottom: 10,
+  calendar: {
+    marginHorizontal: 8,
+    marginBottom: 40,
+    paddingTop:40,
+    height:150,
   },
-  dayItem: {
+  dateBox: {
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    padding: 15,
+    borderRadius: 14,
+    backgroundColor: '#172554',
+    marginHorizontal: 4,
+    width: 55,
   },
-  selectedDay: {
-    backgroundColor: '#1C2F53',
-    borderRadius: 10,
+  activeDateBox: {
+    backgroundColor: '#E1E8EC',
   },
   dayText: {
-    color: '#888',
-    fontSize: 13,
+    color: '#FFFFFF',
+    fontSize: 12,
+  },
+  activeDayText: {
+    color: '#172554',
+    fontWeight: 'bold',
   },
   dateText: {
-    color: '#fff',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  activeDateText: {
+    color: '#172554',
     fontWeight: 'bold',
   },
   monthText: {
-    color: '#888',
-    fontSize: 11,
+    color: '#848484',
+    fontSize: 12,
   },
-  taskSectionTitle: {
-    color: '#888',
+  taskHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
     marginHorizontal: 16,
-    marginBottom: 6,
+    gap: 8,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#737785',
+  },
+  taskTitle: {
+    color: '#737785',
     fontWeight: 'bold',
+    fontSize: 14,
   },
   taskList: {
     paddingBottom: 100,
   },
   taskCard: {
-    backgroundColor: '#12214D',
-    borderRadius: 10,
-    padding: 16,
+    backgroundColor: '#172554',
+    borderRadius: 12,
+    padding: 14,
     marginHorizontal: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  taskRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   projectLabel: {
-    color: '#ccc',
+    color: '#747C98',
     fontSize: 12,
   },
   projectText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 14,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   taskLabel: {
-    color: '#ccc',
+    color: '#747C98',
     fontSize: 12,
   },
   taskText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 14,
-  },
-  timeRight: {
-    position: 'absolute',
-    right: 16,
-    top: 16,
+    flexWrap: 'wrap',
+    maxWidth: '95%',
   },
   timeText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: 'bold',
+    fontSize: 14,
   },
   timestamp: {
-    color: '#999',
-    fontSize: 12,
+    textAlign: 'right',
     marginTop: 6,
+    fontSize: 12,
+    color: '#FFFFFF',
   },
   addButton: {
     position: 'absolute',
@@ -123,89 +142,14 @@ export default StyleSheet.create({
     borderRadius: 10,
   },
   addText: {
-    color: '#fff',
-    marginLeft: 6,
+    color: '#FFFFFF',
     fontWeight: '600',
+    marginLeft: 6,
     fontSize: 16,
   },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: '#000000aa',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalCard: {
-    backgroundColor: '#172554',
-    borderRadius: 12,
-    padding: 20,
-    width: width * 0.85,
-  },
-  modalTitle: {
-    fontSize: 18,
-    color: '#fff',
-    marginBottom: 12,
-    fontWeight: 'bold',
-  },
-  inputLabel: {
-    color: '#fff',
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#1F3A74',
-    backgroundColor: '#0C1427',
-    color: '#fff',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  timeInputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    borderWidth: 1,
-    borderColor: '#1F3A74',
-    backgroundColor: '#0C1427',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 12,
-  },
-  timeInput: {
-    flex: 1,
-    color: '#fff',
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 14,
-  },
-  cancelBtn: {
-    backgroundColor: '#FF4444',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-  },
-  cancelText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  submitBtn: {
-    backgroundColor: '#3352BA',
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    borderRadius: 30,
-  },
-  submitText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  calendarNavRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  paddingHorizontal: 10,
-},
-
 });
+
+
+
+
+

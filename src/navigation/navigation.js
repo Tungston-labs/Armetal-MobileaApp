@@ -27,6 +27,7 @@ import ForgotPasswordScreen from '../screens/ForgotPassword-screen';
 import VerificationScreen from '../screens/Verification-screen';
 import SetNewPasswordScreen from '../screens/SetNewPassword-screen';
 import CreateNewPasswordScreen from '../screens/CreateNewPassword-screen';
+import TaskModal from '../screens/TaskModal';
 
 const Stack = createNativeStackNavigator();
 
@@ -62,6 +63,7 @@ export default function Navigation() {
         <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
         <Stack.Screen name="SetNewPasswordScreen" component={SetNewPasswordScreen} />
         <Stack.Screen name="CreateNewPasswordScreen" component={CreateNewPasswordScreen} />
+        <Stack.Screen name="TaskModal" component={TaskModal} />
 
       </Stack.Navigator>
     </NavigationContainer>
