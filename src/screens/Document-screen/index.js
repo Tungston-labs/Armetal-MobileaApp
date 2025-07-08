@@ -8,15 +8,18 @@ import {
   ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 
 export default function DocumentsScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="arrow-back" size={24} color="#ffffff" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-back" size={26} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Documents</Text>
       </View>
@@ -32,69 +35,30 @@ export default function DocumentsScreen() {
         </View>
 
         {/* Input Fields */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Work Permit</Text>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.input}
-              placeholder="Work Permit"
-              placeholderTextColor="#8a8dad"
-            />
-            <TouchableOpacity style={styles.iconButton}>
-              <Icon name="image-outline" size={20} color="#8a8dad" />
-            </TouchableOpacity>
+        {[
+          { label: "Work Permit", placeholder: "Work Permit", hasIcon: true },
+          { label: "Employment Contract", placeholder: "Employment Contract", hasIcon: true },
+          { label: "Passport number", placeholder: "Passport number" },
+          { label: "Medical Insurance number", placeholder: "Insurance number" },
+          { label: "Iqama Number", placeholder: "Iqama Number" },
+          { label: "Visa expiry date", placeholder: "Visa expiry date" },
+        ].map((field, index) => (
+          <View style={styles.fieldContainer} key={index}>
+            <Text style={styles.label}>{field.label}</Text>
+            <View style={styles.inputRow}>
+              <TextInput
+                style={styles.input}
+                placeholder={field.placeholder}
+                placeholderTextColor="#8a8dad"
+              />
+              {field.hasIcon && (
+                <TouchableOpacity style={styles.iconButton}>
+                  <Icon name="image-outline" size={20} color="#8a8dad" />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
-        </View>
- 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Employment Contract</Text>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.input}
-              placeholder="Employment Contract"
-              placeholderTextColor="#8a8dad"
-            />
-            <TouchableOpacity style={styles.iconButton}>
-              <Icon name="image-outline" size={20} color="#8a8dad" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Passport number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Passport number"
-            placeholderTextColor="#8a8dad"
-          />
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Medical Insurance number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Insurance number"
-            placeholderTextColor="#8a8dad"
-          />
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Iqama Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Iqama Number"
-            placeholderTextColor="#8a8dad"
-          />
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Visa expiry date</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Visa expiry date"
-            placeholderTextColor="#8a8dad"
-          />
-        </View>
+        ))}
       </ScrollView>
     </View>
   );

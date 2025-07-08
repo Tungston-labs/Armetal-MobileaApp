@@ -2,16 +2,26 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   FlatList,
-  Modal,
-  TextInput,
+  TouchableOpacity,
   SafeAreaView,
+  ScrollView,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
+import TaskModal from '../TaskModal';  // ✅ <-- Import your separate TaskModal component
+
+const dates = [
+  { day: 'Mon', date: '12', month: 'Mar' },
+  { day: 'Tue', date: '13', month: 'Mar', active: true },
+  { day: 'Wed', date: '14', month: 'Mar' },
+  { day: 'Thu', date: '15', month: 'Mar' },
+  { day: 'Fri', date: '16', month: 'Mar' },
+  { day: 'Sat', date: '17', month: 'Mar' },
+];
 
 const sampleTasks = [
   {
@@ -43,26 +53,26 @@ export default function TaskUpdateScreen() {
   const [task, setTask] = useState('');
   const [timeTaken, setTimeTaken] = useState('');
 
+  const navigation = useNavigation();
+  const route = useRoute();
+
   const handleSubmit = () => {
-    // You can handle task submission logic here
+    console.log('Submitted:', { project, task, timeTaken });
     setModalVisible(false);
     setProject('');
     setTask('');
     setTimeTaken('');
   };
-const navigation = useNavigation(); 
-  const route = useRoute();  
-
 
   const renderItem = ({ item }) => (
     <View style={styles.taskCard}>
-      <View>
-        <Text style={styles.projectLabel}>Project</Text>
-        <Text style={styles.projectText}>{item.project}</Text>
-        <Text style={styles.taskLabel}>Task</Text>
-        <Text style={styles.taskText}>{item.task}</Text>
-      </View>
-      <View style={styles.timeRight}>
+      <View style={styles.taskRow}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.projectLabel}>Project</Text>
+          <Text style={styles.projectText}>{item.project}</Text>
+          <Text style={styles.taskLabel}>Task</Text>
+          <Text style={styles.taskText}>{item.task}</Text>
+        </View>
         <Text style={styles.timeText}>{item.time}</Text>
       </View>
       <Text style={styles.timestamp}>{item.submittedAt}</Text>
@@ -71,35 +81,38 @@ const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Header */}
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTime}>11:07</Text>
-        <Ionicons name="wifi" size={18} color="white" />
-        <Ionicons name="battery-full" size={20} color="white" style={{ marginLeft: 8 }} />
-      </View>
-
-      {/* Title and Profile */}
-      <View style={styles.titleRow}>
         <Text style={styles.title}>Daily task update</Text>
-        <View style={styles.avatarCircle} />
+        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+        <Image
+          source={{
+            uri: 'https://i.imgur.com/4YQ1H5F.jpg',
+          }}
+          style={styles.avatarImage}
+        />
+        </TouchableOpacity>
       </View>
 
-      {/* Week Days Row */}
-      <View style={styles.daysRow}>
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-          <View
-            key={i}
-            style={[styles.dayItem, day === 'Tue' && styles.selectedDay]}
-          >
-            <Text style={styles.dayText}>{day}</Text>
-            <Text style={styles.dateText}>{13 + i}</Text>
-            <Text style={styles.monthText}>Mar</Text>
+      {/* Calendar */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.calendar}>
+        {dates.map((item, index) => (
+          <View key={index} style={[styles.dateBox, item.active && styles.activeDateBox]}>
+            <Text style={[styles.dayText, item.active && styles.activeDayText]}>{item.day}</Text>
+            <Text style={[styles.dateText, item.active && styles.activeDateText]}>{item.date}</Text>
+            <Text style={[styles.monthText, item.active && styles.activeDayText]}>{item.month}</Text>
           </View>
         ))}
+      </ScrollView>
+
+      {/* Divider with Task Title */}
+      <View style={styles.taskHeader}>
+        <View style={styles.line} />
+        <Text style={styles.taskTitle}>Task</Text>
+        <View style={styles.line} />
       </View>
 
-      {/* Task List */}
-      <Text style={styles.taskSectionTitle}>Task</Text>
+      {/* Tasks */}
       <FlatList
         data={sampleTasks}
         renderItem={renderItem}
@@ -111,64 +124,26 @@ const navigation = useNavigation();
       {/* Add Task Button */}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setModalVisible(true)}  // ✅ Open modal on press
       >
         <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addText}>Add Task</Text>
       </TouchableOpacity>
 
-      {/* Modal for Task Update */}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalBackground}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Task Update</Text>
-            <Text style={styles.inputLabel}>Project</Text>
-            <TextInput
-              placeholder="Task Details"
-              value={project}
-              onChangeText={setProject}
-              style={styles.input}
-              placeholderTextColor="#888"
-            />
-            <Text style={styles.inputLabel}>Task</Text>
-            <TextInput
-              placeholder="Task Details"
-              value={task}
-              onChangeText={setTask}
-              style={styles.input}
-              placeholderTextColor="#888"
-            />
-            <Text style={styles.inputLabel}>Time Taken</Text>
-            <View style={styles.timeInputRow}>
-              <Ionicons name="time" size={20} color="#fff" />
-              <TextInput
-                placeholder="Select time"
-                value={timeTaken}
-                onChangeText={setTimeTaken}
-                style={styles.timeInput}
-                placeholderTextColor="#888"
-              />
-            </View>
+      {/* Modal */}
+      <TaskModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        project={project}
+        setProject={setProject}
+        task={task}
+        setTask={setTask}
+        timeTaken={timeTaken}
+        setTimeTaken={setTimeTaken}
+        onSubmit={handleSubmit}
+      />
 
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.cancelBtn}
-              >
-                <Text style={styles.cancelText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSubmit}
-                style={styles.submitBtn}
-              >
-                <Text style={styles.submitText}>Submit</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-        </View>
-      </Modal>
-
+      {/* Bottom Nav */}
       <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );
