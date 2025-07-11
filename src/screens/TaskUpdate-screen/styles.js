@@ -1,7 +1,7 @@
-
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
+export const boxWidth = Math.floor((width - 80) / 7); // 80 = arrow + padding
 
 export default StyleSheet.create({
   container: {
@@ -26,21 +26,32 @@ export default StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#262D40',
+  },
+  calendarWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  arrowBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 100,
   },
   calendar: {
-    marginHorizontal: 8,
-    marginBottom: 40,
-    paddingTop:40,
-    height:150,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
   },
   dateBox: {
+    width: boxWidth,
     alignItems: 'center',
-    padding: 15,
-    borderRadius: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
     backgroundColor: '#172554',
-    marginHorizontal: 4,
-    width: 55,
+    marginHorizontal: 2,
   },
   activeDateBox: {
     backgroundColor: '#E1E8EC',
@@ -55,7 +66,7 @@ export default StyleSheet.create({
   },
   dateText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   activeDateText: {
@@ -115,8 +126,6 @@ export default StyleSheet.create({
   taskText: {
     color: '#FFFFFF',
     fontSize: 14,
-    flexWrap: 'wrap',
-    maxWidth: '95%',
   },
   timeText: {
     color: '#FFFFFF',
@@ -148,8 +157,3 @@ export default StyleSheet.create({
     fontSize: 16,
   },
 });
-
-
-
-
-

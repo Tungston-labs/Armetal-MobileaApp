@@ -5,9 +5,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import styles from './styles'; // You can move modal styles to a separate file if needed
+import styles from './styles';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TaskModal({
   visible,
@@ -20,6 +23,39 @@ export default function TaskModal({
   setTimeTaken,
   onSubmit,
 }) {
+  const handleSubmit = async () => {
+    if (!project || !task || !timeTaken) {
+      Alert.alert('Validation Error', 'All fields are required.');
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        Alert.alert('Error', 'Token not found');
+        return;
+      }
+
+      const payload = {
+        project,
+        task,
+        time_taken: parseFloat(timeTaken),
+      };
+
+      await axios.post('http://192.168.29.146:8000/api/employee/tasks/', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      onSubmit(); // refresh list and clear form
+    } catch (error) {
+      console.error('❌ Task submission failed:', error.response?.data || error.message);
+      Alert.alert('Error', 'Task submission failed.');
+    }
+  };
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalBackground}>
@@ -50,27 +86,21 @@ export default function TaskModal({
               <Ionicons name="time" size={20} color="#8a8dad" />
             </View>
             <TextInput
-              placeholder="e.g. 3:00 Hrs"
+              placeholder="e.g. 3.5"
               value={timeTaken}
               onChangeText={setTimeTaken}
               style={styles.timeInput}
               placeholderTextColor="#8a8dad"
+              keyboardType="numeric"
             />
           </View>
 
-          {/* Buttons */}
           <View style={styles.modalActions}>
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.cancelBtn}
-            >
+            <TouchableOpacity onPress={onClose} style={styles.cancelBtn}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={onSubmit}
-              style={styles.submitBtn}
-            >
+            <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
               <Text style={styles.submitText}>Submit</Text>
             </TouchableOpacity>
           </View>

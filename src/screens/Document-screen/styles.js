@@ -67,4 +67,17 @@ export default StyleSheet.create({
     borderLeftWidth: 1,
     borderLeftColor: '#0C122A',
   },
+  cardNumberText: {
+  position: 'absolute',
+  bottom: 12,
+  right: 16,
+  fontSize: 16,
+  color: '#FFFFFF',
+  fontWeight: '600',
+  backgroundColor: 'rgba(77, 75, 75, 0.3)',
+  paddingHorizontal: 10,
+  paddingVertical: 4,
+  borderRadius: 8,
+},
+
 });

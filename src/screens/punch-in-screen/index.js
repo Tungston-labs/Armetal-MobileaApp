@@ -44,7 +44,7 @@ const AttendanceScreen = () => {
       const m = Math.round((hours - h) * 60);
       setTotalHours(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`);
     } catch (err) {
-      console.error("Attendance fetch error:", err.message);
+      // console.error("Attendance fetch error:", err.message);
     }
   };
 

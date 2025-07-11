@@ -14,7 +14,6 @@ import LeaveApproveScreen from '../screens/LeaveApprove-screen';
 import LeaveRejectedScreen from '../screens/LeaveRejected-screen';
 import LeavePendingScreen from '../screens/LeavePending-screen';
 import LeaveRequestFormScreen from '../screens/LeaveRequestForm-screen';
-// import RequestApprovedScreen from '../screens/LeaveApprove-screen';
 import RequestApprovedScreen from '../screens/RequesrApproved-screen';
 import LeaveHeader from '../screens/LeaveHeader-screen';
 import RequestPending from '../screens/RequestPending-screen';
@@ -28,6 +27,7 @@ import VerificationScreen from '../screens/Verification-screen';
 import SetNewPasswordScreen from '../screens/SetNewPassword-screen';
 import CreateNewPasswordScreen from '../screens/CreateNewPassword-screen';
 import TaskModal from '../screens/TaskModal';
+import FullImageViewer from '../screens/Document-screen/FullImageViewer'; // ✅ Add import
 
 const Stack = createNativeStackNavigator();
 
@@ -36,14 +36,13 @@ export default function Navigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="LoginScreen" // 👈 Set SplashScreen as first
+        initialRouteName="LoginScreen"
       >
-        
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="PunchinScreen" component={PunchinScreen} />
-        <Stack.Screen name="PunchoutScreen" component={PunchoutScreen} />    
-        <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} /> 
-        <Stack.Screen name="PunchOutSuccessScreen" component={PunchOutSuccessScreen} />        
+        <Stack.Screen name="PunchoutScreen" component={PunchoutScreen} />
+        <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} />
+        <Stack.Screen name="PunchOutSuccessScreen" component={PunchOutSuccessScreen} />
         <Stack.Screen name="DepartmentScreen" component={DepartmentScreen} />
         <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
         <Stack.Screen name="LeaveAllScreen" component={LeaveAllScreen} />
@@ -64,7 +63,7 @@ export default function Navigation() {
         <Stack.Screen name="SetNewPasswordScreen" component={SetNewPasswordScreen} />
         <Stack.Screen name="CreateNewPasswordScreen" component={CreateNewPasswordScreen} />
         <Stack.Screen name="TaskModal" component={TaskModal} />
-
+        <Stack.Screen name="FullImageViewer" component={FullImageViewer} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

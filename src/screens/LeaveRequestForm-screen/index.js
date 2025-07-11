@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,9 +12,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import styles from './styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import styles from './styles';
 
 export default function LeaveRequestFormScreen() {
   const navigation = useNavigation();
@@ -29,6 +28,10 @@ export default function LeaveRequestFormScreen() {
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // State for dynamic counts
+  const [pendingLeaveCount, setPendingLeaveCount] = useState(0);
+  const [lossOfPayCount, setLossOfPayCount] = useState(0);
+
   const leaveTypes = [
     { id: 1, type: 'casual' },
     { id: 2, type: 'sick' },
@@ -37,8 +40,32 @@ export default function LeaveRequestFormScreen() {
     { id: 5, type: 'others' },
   ];
 
+  // Fetch stats from backend on mount
+  useEffect(() => {
+    const fetchLeaveStats = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        const response = await fetch('http://192.168.29.146:8000/api/leave/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
+        if (response.ok) {
+          const json = await response.json();
+          const stats = json.results || {};
+          setPendingLeaveCount(stats.pending_leave_count || 0);
+          setLossOfPayCount(stats.loss_of_pay_count || 0);
+        } else {
+          console.log('Failed to fetch leave stats');
+        }
+      } catch (err) {
+        console.error('Error fetching leave stats:', err);
+      }
+    };
 
+    fetchLeaveStats();
+  }, []);
 
   const onFromChange = (event, selectedDate) => {
     setShowFromPicker(false);
@@ -60,7 +87,6 @@ export default function LeaveRequestFormScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
 
-
       const response = await fetch('http://192.168.29.146:8000/api/leave/', {
         method: 'POST',
         headers: {
@@ -77,15 +103,14 @@ export default function LeaveRequestFormScreen() {
         }),
       });
 
-     if (response.ok) {
-  Alert.alert("Success", "Leave request submitted successfully!", [
-    {
-      text: "OK",
-      onPress: () => navigation.navigate("LeavePendingScreen"), // Ensures return + refresh
-    },
-  ]);
-}
- else {
+      if (response.ok) {
+        Alert.alert("Success", "Leave request submitted successfully!", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("LeavePendingScreen"),
+          },
+        ]);
+      } else {
         const err = await response.json();
         console.log(err);
         Alert.alert('Error', 'Something went wrong while submitting.');
@@ -114,23 +139,20 @@ export default function LeaveRequestFormScreen() {
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Pending Leaves</Text>
-            <Text style={styles.statValue}>20</Text>
+            <Text style={styles.statValue}>{pendingLeaveCount}</Text>
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Loss of Pay Taken</Text>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{lossOfPayCount}</Text>
           </View>
         </View>
 
-        {/* Dates */}
+        {/* Date Pickers */}
         <View style={styles.section}>
           <View style={styles.dateRow}>
             <View style={styles.dateInput}>
               <Text style={styles.inputLabel}>From</Text>
-              <TouchableOpacity
-                style={styles.dateField}
-                onPress={() => setShowFromPicker(true)}
-              >
+              <TouchableOpacity style={styles.dateField} onPress={() => setShowFromPicker(true)}>
                 <Text style={styles.dateText}>{fromDate.toLocaleDateString()}</Text>
                 <Ionicons name="calendar" size={20} color="#ccc" />
               </TouchableOpacity>
@@ -138,10 +160,7 @@ export default function LeaveRequestFormScreen() {
 
             <View style={styles.dateInput}>
               <Text style={styles.inputLabel}>To</Text>
-              <TouchableOpacity
-                style={styles.dateField}
-                onPress={() => setShowToPicker(true)}
-              >
+              <TouchableOpacity style={styles.dateField} onPress={() => setShowToPicker(true)}>
                 <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
                 <Ionicons name="calendar" size={20} color="#ccc" />
               </TouchableOpacity>
@@ -150,23 +169,13 @@ export default function LeaveRequestFormScreen() {
         </View>
 
         {showFromPicker && (
-          <DateTimePicker
-            value={fromDate}
-            mode="date"
-            display="default"
-            onChange={onFromChange}
-          />
+          <DateTimePicker value={fromDate} mode="date" display="default" onChange={onFromChange} />
         )}
         {showToPicker && (
-          <DateTimePicker
-            value={toDate}
-            mode="date"
-            display="default"
-            onChange={onToChange}
-          />
+          <DateTimePicker value={toDate} mode="date" display="default" onChange={onToChange} />
         )}
 
-        {/* Leave Type Dropdown */}
+        {/* Leave Type */}
         <View style={styles.section}>
           <Text style={styles.inputLabel}>Leave Type</Text>
           <View style={styles.pickerWrapper}>

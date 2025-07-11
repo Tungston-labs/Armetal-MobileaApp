@@ -71,15 +71,18 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 20,
   },
-  card: {
-    backgroundColor: '#172554',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+ card: {
+  backgroundColor: '#172554',
+  borderRadius: 10,
+  padding: 16,
+  marginBottom: 12,
+  marginHorizontal: 16,  // wider margin
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+},
+
+
   monthText: {
     color: '#FFFF',
     fontSize: 16,

@@ -1,115 +1,91 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView,
   Image,
+  Dimensions,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import styles from './styles';
+import styles, { boxWidth } from './styles';
 import BottomNavbar from '../BottomNavbar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import TaskModal from '../TaskModal';
 import axios from 'axios';
-import TaskModal from '../TaskModal';  // ✅ <-- Import your separate TaskModal component
-
-const dates = [
-  { day: 'Mon', date: '12', month: 'Mar' },
-  { day: 'Tue', date: '13', month: 'Mar', active: true },
-  { day: 'Wed', date: '14', month: 'Mar' },
-  { day: 'Thu', date: '15', month: 'Mar' },
-  { day: 'Fri', date: '16', month: 'Mar' },
-  { day: 'Sat', date: '17', month: 'Mar' },
-];
-
-// ✅ Utility function to get Monday of current week
-const getStartOfWeek = (date) => {
-  const d = new Date(date);
-  const day = d.getDay(); // Sunday = 0
-  const diff = d.getDate() - (day === 0 ? 6 : day - 1); // If Sunday, go back 6 days
-  return new Date(d.setDate(diff));
-};
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TaskUpdateScreen() {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
+  const [dates, setDates] = useState([]);
+  const [tasks, setTasks] = useState([]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [project, setProject] = useState('');
   const [task, setTask] = useState('');
   const [timeTaken, setTimeTaken] = useState('');
-  const [tasks, setTasks] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [weekStartDate, setWeekStartDate] = useState(getStartOfWeek(new Date()));
 
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      const response = await axios.get('http://192.168.29.146:8000/api/employee/tasks/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setTasks(response.data.results || []);
-    } catch (error) {
-      console.error('Failed to fetch tasks:', error);
-    }
-  };
-
-  const isSameDate = (date1, date2) =>
-    new Date(date1).toDateString() === new Date(date2).toDateString();
-
-  const filteredTasks = tasks.filter((item) =>
-    isSameDate(item.updated_at, selectedDate)
-  );
-
- 
-
-  const handleSubmit = () => {
-    console.log('Submitted:', { project, task, timeTaken });
-    setModalVisible(false);
-    setProject('');
-    setTask('');
-    setTimeTaken('');
-  };
-
-  const changeWeek = (direction) => {
-    const newStart = new Date(weekStartDate);
-    newStart.setDate(newStart.getDate() + direction * 7);
-    setWeekStartDate(newStart);
-
-    const sameDayOfWeek = new Date(newStart);
-    sameDayOfWeek.setDate(newStart.getDate() + selectedDate.getDay() - 1);
-    setSelectedDate(sameDayOfWeek);
-  };
-
-  const renderWeekDays = () => {
-    return Array.from({ length: 6 }).map((_, i) => {
-      const date = new Date(weekStartDate);
-      date.setDate(weekStartDate.getDate() + i);
-      const isSelected = selectedDate.toDateString() === date.toDateString();
-
-      return (
-        <TouchableOpacity
-          key={i}
-          style={[styles.dayItem, isSelected && styles.selectedDay]}
-          onPress={() => setSelectedDate(date)}
-        >
-          <Text style={styles.dayText}>{date.toLocaleDateString('en-US', { weekday: 'short' })}</Text>
-          <Text style={styles.dateText}>{date.getDate()}</Text>
-          <Text style={styles.monthText}>{date.toLocaleDateString('en-US', { month: 'short' })}</Text>
-        </TouchableOpacity>
-      );
+  const getDateRange = (startDate, selected) => {
+    return Array.from({ length: 7 }).map((_, index) => {
+      const date = startDate.clone().add(index, 'days');
+      return {
+        day: date.format('ddd'),
+        date: date.format('D'),
+        month: date.format('MMM'),
+        fullDate: date.format('YYYY-MM-DD'),
+        active: date.format('YYYY-MM-DD') === selected,
+      };
     });
   };
 
+  const fetchTasks = async (date) => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        console.warn('⚠️ No token found in AsyncStorage');
+        return;
+      }
+
+      const response = await axios.get(
+        `http://192.168.29.146:8000/api/employee/tasks/?date=${date}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const taskList = response.data.results.map(item => ({
+        id: item.id,
+        project: item.project,
+        task: item.task,
+        time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
+        submittedAt: moment(item.updated_at).format('hh:mm A'),
+      }));
+      setTasks(taskList);
+    } catch (error) {
+      console.error('❌ Error fetching tasks:', error.response?.data || error.message);
+    }
+  };
+
+  useEffect(() => {
+    const start = moment(selectedDate);
+    setDates(getDateRange(start, selectedDate));
+    fetchTasks(selectedDate);
+  }, [selectedDate]);
+
+  const handleSubmit = () => {
+  setModalVisible(false);
+  setProject('');
+  setTask('');
+  setTimeTaken('');
+  fetchTasks(selectedDate); // Refresh task list after new task is added
+};
 
 
   const renderItem = ({ item }) => (
@@ -123,140 +99,85 @@ export default function TaskUpdateScreen() {
         </View>
         <Text style={styles.timeText}>{item.time}</Text>
       </View>
-      <Text style={styles.timestamp}>
-        {new Date(item.updated_at).toLocaleTimeString()}
-      </Text>
+      <Text style={styles.timestamp}>{item.submittedAt}</Text>
     </View>
   );
+
+  const scrollCalendar = (direction) => {
+    const newStart = moment(dates[0].fullDate).add(direction * 7, 'days');
+    const newSelected = newStart.format('YYYY-MM-DD');
+    setSelectedDate(newSelected);
+  };
+
+  const onDateSelect = (dateObj) => {
+    setSelectedDate(dateObj.fullDate);
+    setDates(dates.map(d => ({
+      ...d,
+      active: d.fullDate === dateObj.fullDate,
+    })));
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTime}>11:07</Text>
-        <Ionicons name="wifi" size={18} color="white" />
-        <Ionicons name="battery-full" size={20} color="white" style={{ marginLeft: 8 }} />
-      </View>
-
-      {/* Title */}
-      <View style={styles.titleRow}>
         <Text style={styles.title}>Daily task update</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-        <Image
-          source={{
-            uri: 'https://i.imgur.com/4YQ1H5F.jpg',
-          }}
-          style={styles.avatarImage}
-        />
+          <Image
+            source={{ uri: 'https://i.imgur.com/4YQ1H5F.jpg' }}
+            style={styles.avatarImage}
+          />
         </TouchableOpacity>
       </View>
 
-      {/* Arrows and Week Navigation */}
-      <View style={styles.calendarNavRow}>
-        <TouchableOpacity onPress={() => changeWeek(-1)}>
-          <Ionicons name="chevron-back-circle" size={26} color="#000" />
-        </TouchableOpacity>
-        <View style={styles.daysRow}>
-          {renderWeekDays()}
-        </View>
-        <TouchableOpacity onPress={() => changeWeek(1)}>
-          <Ionicons name="chevron-forward-circle" size={26} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Task List */}
-      <Text style={styles.taskSectionTitle}>Tasks on {selectedDate.toDateString()}</Text>
       {/* Calendar */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.calendar}>
-        {dates.map((item, index) => (
-          <View key={index} style={[styles.dateBox, item.active && styles.activeDateBox]}>
-            <Text style={[styles.dayText, item.active && styles.activeDayText]}>{item.day}</Text>
-            <Text style={[styles.dateText, item.active && styles.activeDateText]}>{item.date}</Text>
-            <Text style={[styles.monthText, item.active && styles.activeDayText]}>{item.month}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      <View style={styles.calendarWrapper}>
+        <TouchableOpacity onPress={() => scrollCalendar(-1)} style={styles.arrowBox}>
+          <AntDesign name="left" size={18} color="gray" />
+        </TouchableOpacity>
 
-      {/* Divider with Task Title */}
+        <View style={styles.calendar}>
+          {dates.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.dateBox, item.active && styles.activeDateBox]}
+              onPress={() => onDateSelect(item)}
+            >
+              <Text style={[styles.dayText, item.active && styles.activeDayText]}>{item.day}</Text>
+              <Text style={[styles.dateText, item.active && styles.activeDateText]}>{item.date}</Text>
+              <Text style={[styles.monthText, item.active && styles.activeDayText]}>{item.month}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <TouchableOpacity onPress={() => scrollCalendar(1)} style={styles.arrowBox}>
+          <AntDesign name="right" size={18} color="gray" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Divider */}
       <View style={styles.taskHeader}>
         <View style={styles.line} />
         <Text style={styles.taskTitle}>Task</Text>
         <View style={styles.line} />
       </View>
 
-      {/* Tasks */}
+      {/* Task List */}
       <FlatList
-        data={filteredTasks}
+        data={tasks}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id?.toString()}
         contentContainerStyle={styles.taskList}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <Text style={{ color: '#888', textAlign: 'center', marginTop: 20 }}>
-            No tasks found for this date.
-          </Text>
-        }
       />
 
       {/* Add Task */}
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setModalVisible(true)}  // ✅ Open modal on press
-      >
+      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
         <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addText}>Add Task</Text>
       </TouchableOpacity>
 
       {/* Modal */}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalBackground}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Task Update</Text>
-            <Text style={styles.inputLabel}>Project</Text>
-            <TextInput
-              placeholder="Project"
-              value={project}
-              onChangeText={setProject}
-              style={styles.input}
-              placeholderTextColor="#888"
-            />
-            <Text style={styles.inputLabel}>Task</Text>
-            <TextInput
-              placeholder="Task Details"
-              value={task}
-              onChangeText={setTask}
-              style={styles.input}
-              placeholderTextColor="#888"
-            />
-            <Text style={styles.inputLabel}>Time Taken</Text>
-            <View style={styles.timeInputRow}>
-              <Ionicons name="time" size={20} color="#fff" />
-              <TextInput
-                placeholder="Select time"
-                value={timeTaken}
-                onChangeText={setTimeTaken}
-                style={styles.timeInput}
-                placeholderTextColor="#888"
-              />
-            </View>
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.cancelBtn}
-              >
-                <Text style={styles.cancelText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSubmit}
-                style={styles.submitBtn}
-              >
-                <Text style={styles.submitText}>Submit</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
       <TaskModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
