@@ -45,7 +45,7 @@ export default function LeaveRequestFormScreen() {
     const fetchLeaveStats = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        const response = await fetch('http://192.168.29.146:8000/api/leave/', {
+        const response = await fetch('http://178.248.112.16:8000/api/leave/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,7 +87,7 @@ export default function LeaveRequestFormScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
 
-      const response = await fetch('http://192.168.29.146:8000/api/leave/', {
+      const response = await fetch('http://178.248.112.16:8000/api/leave/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

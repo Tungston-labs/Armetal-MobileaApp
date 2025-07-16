@@ -23,9 +23,9 @@ export default function LeaveHeader({ navigation, selectedTab }) {
       try {
         const token = await AsyncStorage.getItem('accessToken');
 
-        const response = await axios.get('http://192.168.29.146:8000/api/leave/summary/', {
+        const response = await axios.get('http://178.248.112.16:8000/api/leave/summary/', {
           headers: {
-                  Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`
 
           },
         });
@@ -59,12 +59,16 @@ export default function LeaveHeader({ navigation, selectedTab }) {
             <Text style={styles.counterText}>Leave taken {summary?.approved_count || 0}</Text>
           </View>
         </View>
-        <Image
-          source={{
-            uri: summary?.profile_pic || 'https://i.pravatar.cc/150',
-          }}
-          style={styles.avatar}
-        />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ProfileScreen")}
+        >
+          <Image
+            source={{
+              uri: summary?.profile_pic || 'https://i.pravatar.cc/150',
+            }}
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
       </View>
 
       {/* Tabs */}

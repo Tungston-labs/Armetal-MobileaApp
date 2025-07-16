@@ -29,7 +29,7 @@ const LoginScreen = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.29.146:8000/api/token/', {
+      const response = await axios.post('http://178.248.112.16:8000/api/token/', {
         username,
         password,
       });
@@ -40,6 +40,10 @@ const LoginScreen = () => {
 
       navigation.navigate('PunchinScreen');
     } catch (error) {
+      console.log("API Error Message:", error.message);
+      console.log("API Error Message:", error);
+      Alert.alert(error.message);
+      Alert.alert(error.message);
       if (error.response) {
         Alert.alert('Login Failed', 'Invalid username or password.');
       } else if (error.request) {

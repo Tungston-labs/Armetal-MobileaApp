@@ -30,7 +30,7 @@ export default function LeavePendingScreen() {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         const response = await axios.get(
-          "http://192.168.29.146:8000/api/leave/by-status/?status=pending",
+          "http://178.248.112.16:8000/api/leave/by-status/?status=pending",
           {
             headers: {
               Authorization: `Bearer ${token}`,

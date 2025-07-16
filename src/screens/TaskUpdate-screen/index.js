@@ -52,7 +52,7 @@ export default function TaskUpdateScreen() {
       }
 
       const response = await axios.get(
-        `http://192.168.29.146:8000/api/employee/tasks/?date=${date}`,
+        `http://178.248.112.16:8000/api/employee/tasks/?date=${date}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

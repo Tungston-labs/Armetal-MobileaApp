@@ -40,7 +40,7 @@ export default function CreateNewPasswordScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       const response = await axios.post(
-        'http://192.168.29.146:8000/api/change-password/',
+        'http://178.248.112.16:8000/api/change-password/',
         {
           old_password: currentPassword,
           new_password: newPassword,

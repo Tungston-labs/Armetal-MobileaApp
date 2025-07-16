@@ -7,7 +7,7 @@
 //     <SafeAreaView style={styles.container}>
 //       <View style={styles.logoContainer}>
 //         <Image
-//           source={require('src/assets/logo.png')} // ✅ Correct path to logo
+//           source={require('../../assets/logo.png')} // ✅ Correct path to logo
 //           style={styles.logo}
 //           resizeMode="contain"
 //         />

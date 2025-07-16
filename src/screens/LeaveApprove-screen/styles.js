@@ -125,13 +125,13 @@ export default StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: 80,
+    bottom: 90,
     backgroundColor: '#3352BA',
     width: 50,
     height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
+    borderRadius: 28,
     alignItems: 'center',
+    justifyContent: 'center',
     elevation: 5,
   },
 

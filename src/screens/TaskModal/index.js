@@ -42,7 +42,7 @@ export default function TaskModal({
         time_taken: parseFloat(timeTaken),
       };
 
-      await axios.post('http://192.168.29.146:8000/api/employee/tasks/', payload, {
+      await axios.post('http://178.248.112.16:8000/api/employee/tasks/', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

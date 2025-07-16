@@ -28,7 +28,7 @@ export default function RequestApprovedScreen() {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         const response = await axios.get(
-          `http://192.168.29.146:8000/api/leave/emp/${leaveId}/`,
+          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

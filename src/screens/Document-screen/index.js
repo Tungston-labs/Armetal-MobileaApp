@@ -38,7 +38,7 @@ export default function DocumentsScreen() {
         }
 
         const summaryResponse = await axios.get(
-          "http://192.168.29.146:8000/api/employee/document-summary/",
+          "http://178.248.112.16:8000/api/employee/document-summary/",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export default function DocumentsScreen() {
         setEmployeeId(summary.employee_id);
 
         const detailResponse = await axios.get(
-          `http://192.168.29.146:8000/api/employees/${summary.employee_id}/documents/`,
+          `http://178.248.112.16:8000/api/employees/${summary.employee_id}/documents/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

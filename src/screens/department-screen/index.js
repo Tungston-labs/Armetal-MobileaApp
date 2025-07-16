@@ -23,7 +23,7 @@ const DepartmentScreen = () => {
   const [departmentName, setDepartmentName] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const API_URL = 'http://192.168.29.146:8000/api/employees/my-department/';
+  const API_URL = 'http://178.248.112.16:8000/api/employees/my-department/';
 
   const fetchDepartmentMembers = async () => {
     try {

@@ -14,6 +14,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
+import SwipeButton from "../../components/swipe/index"
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -27,8 +28,15 @@ const AttendanceScreen = () => {
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
   const [token, setToken] = useState(null);
+  const [isPunchedIn, setIsPunchedIn] = useState(false);
 
-  const API_BASE_URL = "http://192.168.29.146:8000";
+  const handleSwipe = () => {
+    const nextState = !isPunchedIn;
+    setIsPunchedIn(nextState);
+    //Alert.alert('Success', nextState ? 'Punched In' : 'Punched Out');
+  };
+
+  const API_BASE_URL = "http://178.248.112.16:8000";
 
   const fetchTodayAttendance = async (authToken) => {
     try {
@@ -58,6 +66,29 @@ const AttendanceScreen = () => {
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
+  // const handlePunch = async () => {
+  //   setPunching(true);
+  //   try {
+  //     const response = await axios.post(
+  //       `${API_BASE_URL}/api/attendance/swipe/`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     Alert.alert("Success", response.data.message || "Swiped.");
+  //     await fetchTodayAttendance(token);
+  //   } catch (error) {
+  //     console.error("Swipe error:", error.response?.data || error.message);
+  //     Alert.alert("Error", "Failed to swipe.");
+  //   } finally {
+  //     setPunching(false);
+  //   }
+  // };
+
   const handlePunch = async () => {
     setPunching(true);
     try {
@@ -70,9 +101,14 @@ const AttendanceScreen = () => {
           },
         }
       );
-
+  
       Alert.alert("Success", response.data.message || "Swiped.");
       await fetchTodayAttendance(token);
+  
+      // Recalculate current punch status after API call
+      const latest = getLatestSession();
+      const currentlyIn = latest?.time_in && !latest?.time_out;
+      setIsPunchedIn(currentlyIn);
     } catch (error) {
       console.error("Swipe error:", error.response?.data || error.message);
       Alert.alert("Error", "Failed to swipe.");
@@ -80,7 +116,7 @@ const AttendanceScreen = () => {
       setPunching(false);
     }
   };
-
+  
   useEffect(() => {
     (async () => {
       try {
@@ -226,7 +262,7 @@ const AttendanceScreen = () => {
           </TouchableOpacity>
 
           {/* Swipe Button */}
-          <TouchableOpacity style={styles.swipeButton} onPress={handlePunch} disabled={punching}>
+          {/* <TouchableOpacity style={styles.swipeButton} onPress={handlePunch} disabled={punching}>
             <Ionicons name="arrow-forward-circle" size={28} color="#0E53CC" />
             <Text style={styles.swipeText}>
               {punching
@@ -235,7 +271,28 @@ const AttendanceScreen = () => {
                 ? "Swipe to punch out"
                 : "Swipe to punch in"}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
+{/* 
+<SwipeButton
+        title={isPunchedIn ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
+        successTitle={isPunchedIn ? 'Punched Out!' : 'Punched In!'}
+        onSwipeSuccess={handleSwipe}
+        backgroundColor="#ddd"
+        thumbColor={isPunchedIn ? '#e53935' : '#43a047'}
+      /> */}
+      <SwipeButton
+  title={isCurrentlyPunchedIn() ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
+  successTitle={isCurrentlyPunchedIn() ? 'Punched Out!' : 'Punched In!'}
+  onSwipeSuccess={() => {
+    if (!punching) {
+      handlePunch(); // hit backend
+    }
+  }}
+  backgroundColor="#ddd"
+  thumbColor={isCurrentlyPunchedIn() ? '#e53935' : '#43a047'}
+  resetAfterSuccess={true}
+/>
         </ScrollView>
       </View>
       <BottomNavbar navigation={navigation} route={route} />

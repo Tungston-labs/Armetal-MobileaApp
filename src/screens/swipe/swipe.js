@@ -1,99 +1,155 @@
-// // @file SwipeLogin.tsx
+// import React, { useState } from 'react';
+// import { Alert, StyleSheet, View } from 'react-native';
+// import SwipeButton from '../../components/SwipeButton';
 
-// import * as React from 'react';
-// import { View, Text, TouchableOpacity } from 'react-native';
+// export default function App() {
+//   const [isPunchedIn, setIsPunchedIn] = useState(false);
 
-// const SwipeLogin = () => {
-//   const [activeSwipe, setActiveSwipe] = React.useState('left');
-//   const [isLoading, setIsLoading] = React.useState(false);
-//   const [username, setUsername] = React.useState('');
-//   const [password, setPassword] = React.useState('');
-
-//   const handleSwipeLeft = () => {
-//     if (shuffle([1,2])) {
-//       setActiveSwipe('right')
-//       const timer = setTimeout(() => {
-//         alert(`Welcome ${username}!`);}
-//         , 2000);
-//     } else {
-//       setActiveSwipe('left')
-//     }
+//   const handleSwipe = () => {
+//     const nextState = !isPunchedIn;
+//     setIsPunchedIn(nextState);
+//     Alert.alert('Success', nextState ? 'Punched In' : 'Punched Out');
 //   };
 
-//   const handleSwipeRight = () => {
-//     if(Math.random()<.5){
-//       setActiveSwipe('right')
-//       const timer = setTimeout(() => {
-//         alert(`Welcome ${username}!`)
-//         clearTimeout(timer)},100)
-//  };
-//  shuffle=[1,2];
-//   }
 //   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <Text>Swipe Login</Text>
-//       {activeSwipe == "left"&&<TouchableOpacity onPress={handleSwipeLeft}> 
-//         <View style={{
-//           width:100,
-//           height:100,
-//           backgroundColor:'red',
-//           borderRadius:10,
-//           justifyContent:"space-evenly",
-//           alignItems:"center"
-//         }} >
-//           <Text style={{ color: 'white','marginBottom':20 }}>Get Started</Text>
-//           <Text >OR</Text>
-//         </View> 
-//       </TouchableOpacity>}
-//      {activeSwipe == "right"&&<TouchableOpacity onPress={handleSwipeRight}> 
-//        <View style={{
-//          width:100,
-//          height:150,
-//          backgroundColor:'green'
-//         , borderRadius:10,
-//         justifyContent:"space-evenly",
-//           alignItems:"center"
-//     }} >
-//        <Text style={{ color: 'white' }} >Start Login</Text>
-//        <Text ></Text>
-//    </View> 
-//    </TouchableOpacity>}
-//       {isLoading &&
-//       <View style={{
-//         width:40,
-//         height:8,
-//         backgroundColor:'#3490db',
-//         margin: 20
-//       }}
-//     />}
-//     {!isLoading && (
-//       <View style={{alignItems:"center"}}>
-
-//          {/* <TextInput placeholder="Username" value={username} onChangeText={(text) => setUsername(text)} style={{width:200, height:40}} />
-         
-//          <TextInput placeholder="Password" secureTextEntry={true} value={password} onChangeText={(text) => setPassword(text)} style={{ width: 250, height: 40 }} /> */}
-
-//           <TouchableOpacity onPress={() => alert(`Login successful as ${username}`)}>
-//             <View style={{
-//               backgroundColor: '#e67e73',
-//               paddingVertical:50,
-//               paddingHorizontal:10,
-//             }}>
-//                 {activeSwipe == "left" ? (
-//                   <Text>Log in</Text>
-//                  ) :  ((activeSwipe=="right")&& ( (password.length>=0)))?(
-//                     <Text> login success </Text>
-//                    ) : 
-//                      (<Text>Login</Text>)
-//                   }
-//               </View>
-//           </TouchableOpacity>
-  
-//        </View>)}
+//     <View style={styles.container}>
+//       <SwipeButton
+//         title={isPunchedIn ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
+//         successTitle={isPunchedIn ? 'Punched Out!' : 'Punched In!'}
+//         onSwipeSuccess={handleSwipe}
+//         backgroundColor="#ddd"
+//         thumbColor={isPunchedIn ? '#e53935' : '#43a047'}
+//       />
 //     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: 'flex-end',
+//     paddingBottom: 50,
+//     alignItems: 'center',
+//   },
+// });
+
+
+
+// swipeButton.js
+
+// // components/SwipeButton.js
+
+// import React from 'react';
+// import { I18nManager, StyleSheet, Text, View } from 'react-native';
+// import {
+//     GestureHandlerRootView,
+//     PanGestureHandler,
+// } from 'react-native-gesture-handler';
+// import Animated, {
+//     runOnJS,
+//     useAnimatedGestureHandler,
+//     useAnimatedStyle,
+//     useSharedValue,
+//     withSpring,
+// } from 'react-native-reanimated';
+
+// const SwipeButton = ({
+//   width = 300,
+//   height = 60,
+//   title = 'Swipe to Punch In',
+//   successTitle = 'Punched In!',
+//   onSwipeSuccess,
+//   backgroundColor = '#eee',
+//   thumbColor = '#4CAF50',
+//   borderRadius = 30,
+//   textColor = '#000',
+//   fontSize = 16,
+//   icon,
+//   resetAfterSuccess = true,
+// }) => {
+//   const swipeThreshold = width - height;
+//   const translateX = useSharedValue(0);
+//   const isSwiped = useSharedValue(false);
+
+//   const gestureHandler = useAnimatedGestureHandler({
+//     onActive: (event) => {
+//       const translation = I18nManager.isRTL ? -event.translationX : event.translationX;
+//       translateX.value = Math.min(Math.max(0, translation), swipeThreshold);
+//     },
+//     onEnd: () => {
+//       if (translateX.value > swipeThreshold * 0.7) {
+//         translateX.value = withSpring(swipeThreshold);
+//         isSwiped.value = true;
+//         runOnJS(onSwipeSuccess)();
+//         if (resetAfterSuccess) {
+//           setTimeout(() => {
+//             translateX.value = withSpring(0);
+//             isSwiped.value = false;
+//           }, 1500);
+//         }
+//       } else {
+//         translateX.value = withSpring(0);
+//       }
+//     },
+//   });
+
+//   const animatedThumbStyle = useAnimatedStyle(() => ({
+//     transform: [{ translateX: translateX.value }],
+//   }));
+
+//   return (
+//     <GestureHandlerRootView>
+//       <View
+//         style={[
+//           styles.container,
+//           { width, height, backgroundColor, borderRadius },
+//         ]}
+//       >
+//         <Text style={[styles.label, { color: textColor, fontSize }]}>
+//           {isSwiped.value ? successTitle : title}
+//         </Text>
+//         <PanGestureHandler onGestureEvent={gestureHandler}>
+//           <Animated.View
+//             style={[
+//               styles.thumb,
+//               {
+//                 width: height,
+//                 height,
+//                 borderRadius,
+//                 backgroundColor: thumbColor,
+//               },
+//               animatedThumbStyle,
+//             ]}
+//           >
+//             {icon ? icon : <Text style={styles.iconText}>👉</Text>}
+//           </Animated.View>
+//         </PanGestureHandler>
+//       </View>
+//     </GestureHandlerRootView>
 //   );
 // };
 
-// export default SwipeLogin;
+// const styles = StyleSheet.create({
+//   container: {
+//     justifyContent: 'center',
+//     backgroundColor: '#ccc',
+//     overflow: 'hidden',
+//   },
+//   label: {
+//     position: 'absolute',
+//     alignSelf: 'center',
+//     fontWeight: '600',
+//   },
+//   thumb: {
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     position: 'absolute',
+//     zIndex: 10,
+//   },
+//   iconText: {
+//     color: 'white',
+//     fontSize: 20,
+//   },
+// });
 
-
+// export default SwipeButton;

@@ -86,5 +86,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 0.5,
     borderTopColor: '#3a4ca0',
+    marginTop:50,
   },
 });

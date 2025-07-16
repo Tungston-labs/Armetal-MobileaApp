@@ -37,7 +37,7 @@ const SalarySlipScreen = () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       const response = await fetch(
-        `http://192.168.29.146:8000/api/employee/payslips/?year=${selectedYear}`,
+        `http://178.248.112.16:8000/api/employee/payslips/?year=${selectedYear}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@ const handleDownload = async (monthNumber) => {
     const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
 
 
-    const downloadUrl = `http://192.168.29.146:8000/api/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
+    const downloadUrl = `http://178.248.112.16:8000/api/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
     const filePath = `${RNFS.DownloadDirectoryPath}/Payslip_${paddedMonth}_${selectedYear}.pdf`;
 
     const hasPermission = await requestStoragePermission();

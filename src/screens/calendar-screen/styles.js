@@ -10,8 +10,8 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#0F1A3C',
+    padding: 30,
+    backgroundColor: '#262D40',
   },
   headerTitle: {
     fontSize: 18,
@@ -19,11 +19,12 @@ export default StyleSheet.create({
     color: '#fff',
   },
   sectionTitle: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: '600',
     marginLeft: 16,
     marginBottom: 12,
+    marginTop:20,
   },
   card: {
     flexDirection: 'row',

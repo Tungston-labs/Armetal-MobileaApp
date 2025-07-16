@@ -35,7 +35,7 @@ export default function SetNewPasswordScreen() {
     }
 
     try {
-      const response = await axios.post('http://192.168.29.146:8000/api/forgot-password/reset/', {
+      const response = await axios.post('http://178.248.112.16:8000/api/forgot-password/reset/', {
         email,
         new_password: password,
         confirm_password: confirmPassword,

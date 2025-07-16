@@ -14,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.ARMETALMBL"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.ARMETALMBL"
+      "package": "com.anonymous.ARMETALMBL",
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +32,12 @@
     },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "49f54ba6-de00-44d7-a877-49ef5b834a94"
+      }
+    },
+    "owner": "ansal_m_azeez"
   }
 }
-

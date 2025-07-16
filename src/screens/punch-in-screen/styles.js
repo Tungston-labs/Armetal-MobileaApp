@@ -12,8 +12,8 @@ export default StyleSheet.create({
   },
 
   scrollView: {
-    padding: 16,
-    paddingBottom: 30,
+    padding: 5,
+    paddingBottom: 50,
   }, 
 
   homeBox: {
@@ -21,7 +21,10 @@ export default StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 20,
     paddingHorizontal: 16,
-    marginBottom: 20,
+  
+    marginTop: 40,
+    paddingBottom:30,
+    
   },
 
   homeContent: {
@@ -51,10 +54,11 @@ export default StyleSheet.create({
   },
 
   sectionTitle: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 8,
-    fontWeight: '500',
+    color: '#FFFFFF',
+    fontSize: 18,
+    marginBottom: 5,
+    marginTop:10,
+    fontWeight: '400',
   },
 
   departmentCard: {
@@ -103,8 +107,8 @@ export default StyleSheet.create({
   calendarRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    marginBottom: 20,
+    paddingHorizontal: 10,
   },
 
   dayBox: {
@@ -132,7 +136,7 @@ export default StyleSheet.create({
 
   dateText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
     marginBottom: 2,
     fontFamily: 'Satoshi',
@@ -140,7 +144,7 @@ export default StyleSheet.create({
 
   monthText: {
     color: '#FFFFFF',
-    fontSize: 11,
+    fontSize: 20,
     opacity: 0.7,
     fontFamily: 'Satoshi',
   },
@@ -159,12 +163,13 @@ export default StyleSheet.create({
   attendanceBox: {
     backgroundColor: '#172554',
     borderRadius: 12,
-    paddingVertical: 18,
+    paddingVertical: 30,
     paddingHorizontal: 16,
-    marginBottom: 20,
+    marginBottom: 40,
     borderWidth: 0.5,
     borderColor: '#3a4ca0',
-    marginHorizontal: 16,
+    marginHorizontal: 10,
+    
   },
 
   attendanceTitle: {
