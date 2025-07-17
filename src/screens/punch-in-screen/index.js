@@ -13,7 +13,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
+// import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index"
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -118,42 +118,76 @@ const AttendanceScreen = () => {
   //   }
   // };
 
-  const handlePunch = async () => {
+//   const handlePunch = async () => {
+//   setPunching(true);
+//   try {
+//     const response = await axios.post(
+//       `${API_BASE_URL}/api/attendance/swipe/`,
+//       {},
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     Alert.alert("Success", response.data.message || "Swiped.");
+
+//     await fetchTodayAttendance(token);
+
+//     // Ensure sessions have been updated before checking punch state
+//     setTimeout(() => {
+//       const latest = getLatestSession();
+//       if (latest) {
+//         const currentlyIn = latest?.time_in && !latest?.time_out;
+//         setIsPunchedIn(currentlyIn);
+//       } else {
+//         setIsPunchedIn(false);
+//       }
+//     }, 200); // Delay to ensure sessions update
+
+//   } catch (error) {
+//    // console.error("Swipe error:", error.response?.data || error.message);
+//     Alert.alert("Error", "Failed to swipe.");
+//   } finally {
+//     setPunching(false);
+//   }
+// };
+
+
+const handlePunch = async () => {
   setPunching(true);
+
+  // Get local time in ISO format
+  const now = new Date();
+  const localISO = now.toISOString(); // e.g. "2025-07-17T08:57:18.000Z"
+
   try {
     const response = await axios.post(
       `${API_BASE_URL}/api/attendance/swipe/`,
-      {},
+      {
+        timestamp: localISO,  // <-- ✅ send timestamp
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
-    );
+    ); 
 
     Alert.alert("Success", response.data.message || "Swiped.");
-
     await fetchTodayAttendance(token);
 
-    // Ensure sessions have been updated before checking punch state
     setTimeout(() => {
       const latest = getLatestSession();
-      if (latest) {
-        const currentlyIn = latest?.time_in && !latest?.time_out;
-        setIsPunchedIn(currentlyIn);
-      } else {
-        setIsPunchedIn(false);
-      }
-    }, 200); // Delay to ensure sessions update
-
+      setIsPunchedIn(latest?.time_in && !latest?.time_out);
+    }, 200);
   } catch (error) {
-   // console.error("Swipe error:", error.response?.data || error.message);
     Alert.alert("Error", "Failed to swipe.");
   } finally {
     setPunching(false);
   }
 };
-
   
   useEffect(() => {
     (async () => {
@@ -346,7 +380,7 @@ const AttendanceScreen = () => {
 
         </ScrollView>
       </View>
-      <BottomNavbar navigation={navigation} route={route} />
+      {/* <BottomNavbar navigation={navigation} route={route} /> */}
     </SafeAreaView>
   );
 };
