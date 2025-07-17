@@ -56,10 +56,11 @@ const AttendanceScreen = () => {
     }
   };
 
-  const getLatestSession = () => {
-    if (sessions.length === 0) return null;
-    return sessions[sessions.length - 1];
-  };
+ const getLatestSession = () => {
+  if (!Array.isArray(sessions) || sessions.length === 0) return null;
+  return sessions[sessions.length - 1];
+};
+
 
   const isCurrentlyPunchedIn = () => {
     const lastSession = getLatestSession();
@@ -89,33 +90,70 @@ const AttendanceScreen = () => {
   //   }
   // };
 
+  // const handlePunch = async () => {
+  //   setPunching(true);
+  //   try {
+  //     const response = await axios.post(
+  //       `${API_BASE_URL}/api/attendance/swipe/`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  
+  //     Alert.alert("Success", response.data.message || "Swiped.");
+  //     await fetchTodayAttendance(token);
+  
+  //     // Recalculate current punch status after API call
+  //     const latest = getLatestSession();
+  //     const currentlyIn = latest?.time_in && !latest?.time_out;
+  //     setIsPunchedIn(currentlyIn);
+  //   } catch (error) {
+  //     console.error("Swipe error:", error.response?.data || error.message);
+  //     Alert.alert("Error", "Failed to swipe.");
+  //   } finally {
+  //     setPunching(false);
+  //   }
+  // };
+
   const handlePunch = async () => {
-    setPunching(true);
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/api/attendance/swipe/`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-  
-      Alert.alert("Success", response.data.message || "Swiped.");
-      await fetchTodayAttendance(token);
-  
-      // Recalculate current punch status after API call
+  setPunching(true);
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/api/attendance/swipe/`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    Alert.alert("Success", response.data.message || "Swiped.");
+
+    await fetchTodayAttendance(token);
+
+    // Ensure sessions have been updated before checking punch state
+    setTimeout(() => {
       const latest = getLatestSession();
-      const currentlyIn = latest?.time_in && !latest?.time_out;
-      setIsPunchedIn(currentlyIn);
-    } catch (error) {
-      console.error("Swipe error:", error.response?.data || error.message);
-      Alert.alert("Error", "Failed to swipe.");
-    } finally {
-      setPunching(false);
-    }
-  };
+      if (latest) {
+        const currentlyIn = latest?.time_in && !latest?.time_out;
+        setIsPunchedIn(currentlyIn);
+      } else {
+        setIsPunchedIn(false);
+      }
+    }, 200); // Delay to ensure sessions update
+
+  } catch (error) {
+   // console.error("Swipe error:", error.response?.data || error.message);
+    Alert.alert("Error", "Failed to swipe.");
+  } finally {
+    setPunching(false);
+  }
+};
+
   
   useEffect(() => {
     (async () => {
@@ -281,7 +319,7 @@ const AttendanceScreen = () => {
         backgroundColor="#ddd"
         thumbColor={isPunchedIn ? '#e53935' : '#43a047'}
       /> */}
-      <SwipeButton
+     {/* <SwipeButton
   title={isCurrentlyPunchedIn() ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
   successTitle={isCurrentlyPunchedIn() ? 'Punched Out!' : 'Punched In!'}
   onSwipeSuccess={() => {
@@ -292,7 +330,20 @@ const AttendanceScreen = () => {
   backgroundColor="#ddd"
   thumbColor={isCurrentlyPunchedIn() ? '#e53935' : '#43a047'}
   resetAfterSuccess={true}
+/>*/}
+<SwipeButton
+  title={isCurrentlyPunchedIn() ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
+  successTitle={isCurrentlyPunchedIn() ? 'Punched Out!' : 'Punched In!'}
+  onSwipeSuccess={() => {
+    
+      handlePunch();
+    
+  }}
+  backgroundColor="#ddd"
+  thumbColor={isCurrentlyPunchedIn() ? '#e53935' : '#43a047'}
+  resetAfterSuccess={true}
 />
+
         </ScrollView>
       </View>
       <BottomNavbar navigation={navigation} route={route} />
