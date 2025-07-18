@@ -11,7 +11,8 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
-import authAxios from "../../utils/auth"; // ✅ Replace axios with configured authAxios
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LeaveApproveScreen() {
   const navigation = useNavigation();
@@ -23,7 +24,15 @@ export default function LeaveApproveScreen() {
   useEffect(() => {
     const fetchApprovedLeaves = async () => {
       try {
-        const response = await authAxios.get("leave/by-status/?status=approved");
+        const token = await AsyncStorage.getItem("accessToken");
+        const response = await axios.get(
+          "http://178.248.112.16:8000/api/leave/by-status/?status=approved",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setLeaveData(response.data);
       } catch (error) {
         console.error("Error fetching approved leaves:", error);
@@ -35,36 +44,35 @@ export default function LeaveApproveScreen() {
     fetchApprovedLeaves();
   }, []);
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("RequestApprovedScreen", { leaveId: item.id })
-      }
-      style={styles.card}
-    >
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>{item.status}</Text>
+ const renderItem = ({ item }) => (
+  <TouchableOpacity
+    onPress={() => navigation.navigate("RequestApprovedScreen", { leaveId: item.id })}
+    style={styles.card}
+  >
+    <View style={styles.statusContainer}>
+      <Text style={styles.statusText}>{item.status}</Text>
+    </View>
+    <View style={styles.cardContent}>
+      <View style={styles.row}>
+        <Text style={styles.label}>From</Text>
+        <Text style={styles.value}>{item.from_date}</Text>
       </View>
-      <View style={styles.cardContent}>
-        <View style={styles.row}>
-          <Text style={styles.label}>From</Text>
-          <Text style={styles.value}>{item.from_date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>To</Text>
-          <Text style={styles.value}>{item.to_date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Leave Type</Text>
-          <Text style={styles.value}>{item.leave_type}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Reason</Text>
-          <Text style={styles.value}>{item.reason}</Text>
-        </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>To</Text>
+        <Text style={styles.value}>{item.to_date}</Text>
       </View>
-    </TouchableOpacity>
-  );
+      <View style={styles.row}>
+        <Text style={styles.label}>Leave Type</Text>
+        <Text style={styles.value}>{item.leave_type}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Reason</Text>
+        <Text style={styles.value}>{item.reason}</Text>
+      </View>
+    </View>
+  </TouchableOpacity>
+);
+
 
   return (
     <SafeAreaView style={styles.container}>

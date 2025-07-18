@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -11,7 +12,8 @@ import styles from "./styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import BottomNavbar from "../BottomNavbar";
-import authAxios from "../../utils/auth"; // ✅ Use central axios instance
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const CalendarScreen = () => {
   const navigation = useNavigation();
@@ -20,9 +22,21 @@ const CalendarScreen = () => {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = "http://178.248.112.16:8000/api/holidays/";
+
   const fetchHolidays = async () => {
     try {
-      const res = await authAxios.get("holidays/");
+      const token = await AsyncStorage.getItem("accessToken");
+      if (!token) {
+        console.warn("Access token not found");
+        return;
+      }
+
+      const res = await axios.get(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const formatted = res.data.results.map((holiday) => ({
         id: holiday.id.toString(),

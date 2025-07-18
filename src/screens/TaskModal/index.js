@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
-import authAxios from '../../utils/authAxios'; // Updated import path to your `authAxios`
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TaskModal({
   visible,
@@ -29,13 +30,24 @@ export default function TaskModal({
     }
 
     try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        Alert.alert('Error', 'Token not found');
+        return;
+      }
+
       const payload = {
         project,
         task,
         time_taken: parseFloat(timeTaken),
       };
 
-      await authAxios.post('employee/tasks/', payload); // Using authAxios directly
+      await axios.post('http://178.248.112.16:8000/api/employee/tasks/', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
       onSubmit(); // refresh list and clear form
     } catch (error) {

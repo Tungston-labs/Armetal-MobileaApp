@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  // Native checkbox
 } from 'react-native';
+// ✅ Correct import:
 import CheckBox from '@react-native-community/checkbox';
+
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles';
-import { saveTokensToStorage } from '../../utils/auth'; // ✅ import utility
 
 const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -32,14 +35,15 @@ const LoginScreen = () => {
       });
 
       const { access, refresh } = response.data;
-
-      // ✅ Use utility to save tokens
-      await saveTokensToStorage(access, refresh);
+      await AsyncStorage.setItem('accessToken', access);
+      await AsyncStorage.setItem('refreshToken', refresh);
 
       navigation.navigate('PunchinScreen');
     } catch (error) {
-      console.error("Login error:", error);
-
+      console.log("API Error Message:", error.message);
+      console.log("API Error Message:", error);
+      Alert.alert(error.message);
+      Alert.alert(error.message);
       if (error.response) {
         Alert.alert('Login Failed', 'Invalid username or password.');
       } else if (error.request) {

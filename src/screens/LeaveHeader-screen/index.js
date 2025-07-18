@@ -1,11 +1,15 @@
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './styles';
-import authAxios from '../../utils/auth'; // ✅ use preconfigured axios
+import axios from 'axios'; // Make sure Axios is installed
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function LeaveHeader({ navigation, selectedTab }) {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   const tabs = [
     { label: 'All', screen: 'LeaveAllScreen' },
@@ -17,7 +21,14 @@ export default function LeaveHeader({ navigation, selectedTab }) {
   useEffect(() => {
     const fetchLeaveSummary = async () => {
       try {
-        const response = await authAxios.get('leave/summary/');
+        const token = await AsyncStorage.getItem('accessToken');
+
+        const response = await axios.get('http://178.248.112.16:8000/api/leave/summary/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+
+          },
+        });
         setSummary(response.data);
       } catch (error) {
         console.error('Error fetching leave summary:', error.message);
@@ -44,15 +55,13 @@ export default function LeaveHeader({ navigation, selectedTab }) {
         <View>
           <Text style={styles.headerTitle}>Leave Request</Text>
           <View style={styles.counters}>
-            <Text style={styles.counterText}>
-              Pending leave {summary?.pending_count || 0}
-            </Text>
-            <Text style={styles.counterText}>
-              Leave taken {summary?.approved_count || 0}
-            </Text>
+            <Text style={styles.counterText}>Pending leave {summary?.pending_count || 0}</Text>
+            <Text style={styles.counterText}>Leave taken {summary?.approved_count || 0}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ProfileScreen")}
+        >
           <Image
             source={{
               uri: summary?.profile_pic || 'https://i.pravatar.cc/150',

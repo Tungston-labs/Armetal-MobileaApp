@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -12,7 +12,10 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
-import authAxios from '../../utils/auth'; // ✅ use authAxios
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import authAxios from '../../utils/auth'; // Adjust path as needed
+
 
 export default function CreateNewPasswordScreen() {
   const navigation = useNavigation();
@@ -37,11 +40,18 @@ export default function CreateNewPasswordScreen() {
     }
 
     try {
+      const token = await AsyncStorage.getItem('accessToken');
       const response = await authAxios.post(
-        'change-password/',
+        'http://178.248.112.16:8000/api/change-password/',
         {
           old_password: currentPassword,
           new_password: newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
       );
 
@@ -78,6 +88,7 @@ export default function CreateNewPasswordScreen() {
           Update your password to keep your{'\n'}account secure.
         </Text>
 
+        {/* Current password */}
         <Text style={styles.label}>Current password</Text>
         <View style={styles.inputWrapper}>
           <TextInput
@@ -97,6 +108,7 @@ export default function CreateNewPasswordScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* New password */}
         <Text style={styles.label}>Enter new password</Text>
         <View style={styles.inputWrapper}>
           <TextInput
@@ -116,6 +128,7 @@ export default function CreateNewPasswordScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Confirm password */}
         <Text style={styles.label}>Confirm Password</Text>
         <View style={styles.inputWrapper}>
           <TextInput

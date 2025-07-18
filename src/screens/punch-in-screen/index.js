@@ -1,128 +1,246 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  FlatList,
+  Image,
   SafeAreaView,
   TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
+  ScrollView,
+  Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import LeaveHeader from "../LeaveHeader-screen";
-import authAxios from "../../utils/auth"; // centralized axios instance
-import { useNavigation } from "@react-navigation/native";
 
-export default function AttendanceScreen() {
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [punching, setPunching] = useState(false);
-  const [punchedIn, setPunchedIn] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [profileData, setProfileData] = useState(null);
+const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+const AttendanceScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
 
-  const fetchTodayAttendance = async () => {
+  const [employee, setEmployee] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [sessions, setSessions] = useState([]);
+  const [totalHours, setTotalHours] = useState("00:00 Hrs");
+  const [punching, setPunching] = useState(false);
+  const [token, setToken] = useState(null);
+
+  const API_BASE_URL = "http://192.168.29.146:8000";
+
+  const fetchTodayAttendance = async (authToken) => {
     try {
-      const res = await authAxios.get("/attendance/today/");
-      setAttendanceData(res.data || []);
-      const punchedInStatus = res.data.some((item) => item.time_out === null);
-      setPunchedIn(punchedInStatus);
-    } catch (error) {
-      console.error("Error fetching today's attendance:", error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      const res = await axios.get(`${API_BASE_URL}/api/attendance/today/`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const data = res.data;
+      setSessions(data.sessions || []);
+
+      const hours = parseFloat(data.total_hours || 0);
+      const h = Math.floor(hours);
+      const m = Math.round((hours - h) * 60);
+      setTotalHours(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`);
+    } catch (err) {
+      // console.error("Attendance fetch error:", err.message);
     }
   };
 
+  const getLatestSession = () => {
+    if (sessions.length === 0) return null;
+    return sessions[sessions.length - 1];
+  };
+
+  const isCurrentlyPunchedIn = () => {
+    const lastSession = getLatestSession();
+    return lastSession?.time_in && !lastSession?.time_out;
+  };
+
   const handlePunch = async () => {
+    setPunching(true);
     try {
-      setPunching(true);
-      await authAxios.post("/attendance/swipe/");
-      await fetchTodayAttendance();
+      const response = await axios.post(
+        `${API_BASE_URL}/api/attendance/swipe/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      Alert.alert("Success", response.data.message || "Swiped.");
+      await fetchTodayAttendance(token);
     } catch (error) {
-      console.error("Error punching attendance:", error);
+      console.error("Swipe error:", error.response?.data || error.message);
+      Alert.alert("Error", "Failed to swipe.");
     } finally {
       setPunching(false);
     }
   };
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchTodayAttendance();
-  };
-
   useEffect(() => {
-    const fetchProfile = async () => {
+    (async () => {
       try {
-        const profileRes = await authAxios.get("/profile/");
-        setProfileData(profileRes.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
+        const storedToken = await AsyncStorage.getItem("accessToken");
+        if (!storedToken) {
+          Alert.alert("Error", "Token not found.");
+          return;
+        }
+        setToken(storedToken);
 
-    fetchProfile();
-    fetchTodayAttendance();
+        const profileRes = await axios.get(`${API_BASE_URL}/api/profile/`, {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        });
+
+        setEmployee(profileRes.data);
+        await fetchTodayAttendance(storedToken);
+      } catch (err) {
+        console.error("Init error:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Text style={styles.cardText}>Date: {item.date}</Text>
-      <Text style={styles.cardText}>Time In: {item.time_in}</Text>
-      <Text style={styles.cardText}>Time Out: {item.time_out || "N/A"}</Text>
-    </View>
-  );
+  const today = new Date();
+  const todayMonth = today.toLocaleString("en-US", { month: "short" });
+
+  const calendarData = Array.from({ length: 6 }, (_, i) => {
+    const date = new Date();
+    date.setDate(today.getDate() - 1 + i);
+    return {
+      day: date.toLocaleString("en-US", { weekday: "short" }),
+      date: date.getDate(),
+      isToday: date.toDateString() === today.toDateString(),
+    };
+  });
+
+  const timeIn = sessions[0]?.time_in?.substring(0, 5) || "------";
+  const lastOut = getLatestSession()?.time_out;
+  const timeOut = lastOut ? lastOut.substring(0, 5) : "------";
+
+  const avatarSource = employee?.profile_pic
+    ? { uri: `${API_BASE_URL}${employee.profile_pic}` }
+    : { uri: defaultAvatar };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: "center", marginTop: 50 }}>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <LeaveHeader />
-      <View style={styles.container}>
-        <Text style={styles.title}>Today’s Attendance</Text>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : attendanceData.length === 0 ? (
-          <Text style={styles.noData}>No attendance data for today.</Text>
-        ) : (
-          <FlatList
-            data={attendanceData}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          />
-        )}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.innerWrapper}>
+        <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Header */}
+          <View style={styles.homeBox}>
+            <View style={styles.homeContent}>
+              <View>
+                <Text style={styles.homeTitle}>Home</Text>
+                <Text style={styles.welcomeText}>
+                  Hey {employee?.name}{"\n"}welcome back!
+                </Text>
+              </View>
+              <TouchableOpacity
+            onPress={() => navigation.navigate("ProfileScreen")}
+          >
+              <Image source={avatarSource} style={styles.profilePic} /></TouchableOpacity>
+            </View>
+          </View>
 
-        <TouchableOpacity
-          style={[
-            styles.punchButton,
-            punchedIn ? styles.punchOut : styles.punchIn,
-          ]}
-          onPress={handlePunch}
-          disabled={punching}
-        >
-          {punching ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <Ionicons
-                name={punchedIn ? "exit-outline" : "enter-outline"}
-                size={24}
-                color="#fff"
-                style={{ marginRight: 10 }}
-              />
-              <Text style={styles.buttonText}>
-                {punchedIn ? "Punch Out" : "Punch In"}
+          {/* Department - Clickable */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate("DepartmentScreen", { department: employee?.department })}
+          >
+            <Text style={styles.sectionTitle}>Department</Text>
+            <View style={styles.departmentCard}>
+              <Text style={styles.departmentName}>{employee?.department?.name || "N/A"}</Text>
+              <Text style={styles.teamLeadLabel}>Team lead</Text>
+              <View style={styles.leadContainer}>
+                <Image source={avatarSource} style={styles.avatar} />
+                <Text style={styles.leadName}>{employee?.department?.head || "N/A"}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* Attendance calendar */}
+          <TouchableOpacity onPress={() => navigation.navigate("AttendanceScreen", {
+            sessions,
+            totalHours,
+            timeIn,
+            timeOut,
+            date: today.toDateString(),
+          })}>
+            <Text style={styles.sectionTitle}>Attendance</Text>
+            <View style={styles.calendarRow}>
+              {calendarData.map((item, index) => (
+                <View key={index} style={[styles.dayBox, item.isToday && styles.activeDay]}>
+                  <Text style={[styles.dayText, item.isToday && styles.activeDayText]}>
+                    {item.day}
+                  </Text>
+                  <Text style={[styles.dateText, item.isToday && styles.activeDateText]}>
+                    {item.date} {todayMonth}
+                  </Text>
+                  {item.isToday && (
+                    <Ionicons
+                      name="checkmark-circle"
+                      color="#0ED2F6"
+                      size={20}
+                      style={{ marginTop: 4 }}
+                    />
+                  )}
+                </View>
+              ))}
+            </View>
+
+            {/* Attendance Box */}
+            <View style={styles.attendanceBox}>
+              <Text style={styles.attendanceTitle}>
+                {today.toLocaleDateString("en-US", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
               </Text>
-            </>
-          )}
-        </TouchableOpacity>
+              <View style={styles.timeRow}>
+                <Text style={styles.timeLabel}>Time in :</Text>
+                <Text style={styles.timeValue}>{timeIn}</Text>
+              </View>
+              <View style={styles.timeRow}>
+                <Text style={styles.timeLabel}>Time Out :</Text>
+                <Text style={styles.timeValue}>{timeOut}</Text>
+              </View>
+              <View style={styles.line} />
+              <View style={styles.totalHoursRow}>
+                <Ionicons name="time-outline" size={20} color="#fff" />
+                <Text style={styles.totalHoursText}> Total hours</Text>
+                <Text style={styles.hours}>{totalHours}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* Swipe Button */}
+          <TouchableOpacity style={styles.swipeButton} onPress={handlePunch} disabled={punching}>
+            <Ionicons name="arrow-forward-circle" size={28} color="#0E53CC" />
+            <Text style={styles.swipeText}>
+              {punching
+                ? "Processing..."
+                : isCurrentlyPunchedIn()
+                ? "Swipe to punch out"
+                : "Swipe to punch in"}
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
-      <BottomNavbar navigation={navigation} />
+      <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );
-}
+};
+
+export default AttendanceScreen;

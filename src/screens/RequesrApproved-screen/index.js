@@ -12,7 +12,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import authAxios from "../../utils/authAxios"; // ✅ import updated instance
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 export default function RequestApprovedScreen() {
   const navigation = useNavigation();
@@ -25,7 +26,15 @@ export default function RequestApprovedScreen() {
   useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
-        const response = await authAxios.get(`/leave/emp/${leaveId}/`);
+        const token = await AsyncStorage.getItem("accessToken");
+        const response = await axios.get(
+          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setLeave(response.data);
       } catch (error) {
         console.error("Error fetching leave detail:", error);
