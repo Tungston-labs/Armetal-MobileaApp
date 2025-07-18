@@ -163,17 +163,12 @@ const handlePunch = async () => {
   const localISO = now.toISOString(); // e.g. "2025-07-17T08:57:18.000Z"
 
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/api/attendance/swipe/`,
-      {
-        // timestamp: localISO,  // <-- ✅ send timestamp
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    ); 
+    const response = await axios.post('/api/attendance/swipe/', null, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
+
 
     Alert.alert("Success", response.data.message || "Swiped.");
     await fetchTodayAttendance(token);
