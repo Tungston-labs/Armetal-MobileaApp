@@ -12,8 +12,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
+import authAxios from '../../utils/auth'; // ✅ import the centralized axios instance
 
 export default function LeaveRequestFormScreen() {
   const navigation = useNavigation();
@@ -28,7 +28,6 @@ export default function LeaveRequestFormScreen() {
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // State for dynamic counts
   const [pendingLeaveCount, setPendingLeaveCount] = useState(0);
   const [lossOfPayCount, setLossOfPayCount] = useState(0);
 
@@ -40,25 +39,13 @@ export default function LeaveRequestFormScreen() {
     { id: 5, type: 'others' },
   ];
 
-  // Fetch stats from backend on mount
   useEffect(() => {
     const fetchLeaveStats = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        const response = await fetch('http://178.248.112.16:8000/api/leave/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const json = await response.json();
-          const stats = json.results || {};
-          setPendingLeaveCount(stats.pending_leave_count || 0);
-          setLossOfPayCount(stats.loss_of_pay_count || 0);
-        } else {
-          console.log('Failed to fetch leave stats');
-        }
+        const response = await authAxios.get('/leave/');
+        const stats = response.data.results || {};
+        setPendingLeaveCount(stats.pending_leave_count || 0);
+        setLossOfPayCount(stats.loss_of_pay_count || 0);
       } catch (err) {
         console.error('Error fetching leave stats:', err);
       }
@@ -85,39 +72,30 @@ export default function LeaveRequestFormScreen() {
 
     setLoading(true);
     try {
-      const token = await AsyncStorage.getItem('accessToken');
+      const payload = {
+        leave_type: selectedLeaveType,
+        reason,
+        from_date: fromDate.toISOString().split('T')[0],
+        to_date: toDate.toISOString().split('T')[0],
+        to_email: toEmail,
+        cc_email: ccEmail,
+      };
 
-      const response = await fetch('http://178.248.112.16:8000/api/leave/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          leave_type: selectedLeaveType,
-          reason,
-          from_date: fromDate.toISOString().split('T')[0],
-          to_date: toDate.toISOString().split('T')[0],
-          to_email: toEmail,
-          cc_email: ccEmail,
-        }),
-      });
+      const response = await authAxios.post('/leave/', payload);
 
-      if (response.ok) {
-        Alert.alert("Success", "Leave request submitted successfully!", [
+      if (response.status === 201 || response.status === 200) {
+        Alert.alert('Success', 'Leave request submitted successfully!', [
           {
-            text: "OK",
-            onPress: () => navigation.navigate("LeavePendingScreen"),
+            text: 'OK',
+            onPress: () => navigation.navigate('LeavePendingScreen'),
           },
         ]);
       } else {
-        const err = await response.json();
-        console.log(err);
         Alert.alert('Error', 'Something went wrong while submitting.');
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Unable to connect to the server.');
+      console.error(error.response?.data || error.message);
+      Alert.alert('Error', 'Unable to submit leave request.');
     } finally {
       setLoading(false);
     }
@@ -152,7 +130,10 @@ export default function LeaveRequestFormScreen() {
           <View style={styles.dateRow}>
             <View style={styles.dateInput}>
               <Text style={styles.inputLabel}>From</Text>
-              <TouchableOpacity style={styles.dateField} onPress={() => setShowFromPicker(true)}>
+              <TouchableOpacity
+                style={styles.dateField}
+                onPress={() => setShowFromPicker(true)}
+              >
                 <Text style={styles.dateText}>{fromDate.toLocaleDateString()}</Text>
                 <Ionicons name="calendar" size={20} color="#ccc" />
               </TouchableOpacity>
@@ -160,7 +141,10 @@ export default function LeaveRequestFormScreen() {
 
             <View style={styles.dateInput}>
               <Text style={styles.inputLabel}>To</Text>
-              <TouchableOpacity style={styles.dateField} onPress={() => setShowToPicker(true)}>
+              <TouchableOpacity
+                style={styles.dateField}
+                onPress={() => setShowToPicker(true)}
+              >
                 <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
                 <Ionicons name="calendar" size={20} color="#ccc" />
               </TouchableOpacity>

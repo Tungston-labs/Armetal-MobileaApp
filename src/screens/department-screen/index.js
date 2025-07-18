@@ -2,115 +2,102 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
+  TextInput,
   FlatList,
-  Image,
   TouchableOpacity,
-  SafeAreaView,
-  ActivityIndicator,
+  StyleSheet,
+  Alert,
 } from 'react-native';
-import styles from './styles';
-import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import LinearGradient from 'react-native-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-
-const defaultAvatar = require('../../assets/avatar.png'); // fallback image
+import authAxios from '../utils/auth';
 
 const DepartmentScreen = () => {
-  const navigation = useNavigation();
-  const [members, setMembers] = useState([]);
-  const [departmentName, setDepartmentName] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState([]);
+  const [newDepartment, setNewDepartment] = useState('');
 
-  const API_URL = 'http://178.248.112.16:8000/api/employees/my-department/';
-
-  const fetchDepartmentMembers = async () => {
+  const fetchDepartments = async () => {
     try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        console.warn('Access token not found');
-        return;
-      }
-
-      const res = await axios.get(API_URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setMembers(res.data || []);
-      if (res.data.length > 0) {
-        setDepartmentName(res.data[0].department || 'Department');
-      }
+      const res = await authAxios.get('/departments/');
+      setDepartments(res.data);
     } catch (error) {
-      console.error('Error fetching department members:', error.message);
-    } finally {
-      setLoading(false);
+      console.error('Error fetching departments:', error);
     }
   };
 
+  const addDepartment = async () => {
+    if (!newDepartment.trim()) {
+      Alert.alert('Validation', 'Department name cannot be empty');
+      return;
+    }
+
+    try {
+      await authAxios.post('/departments/', { name: newDepartment });
+      setNewDepartment('');
+      fetchDepartments();
+    } catch (error) {
+      console.error('Error adding department:', error);
+    }
+  };
+
+  const deleteDepartment = async (id) => {
+    Alert.alert('Confirm Delete', 'Are you sure you want to delete?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: async () => {
+          try {
+            await authAxios.delete(`/departments/${id}/`);
+            fetchDepartments();
+          } catch (error) {
+            console.error('Error deleting department:', error);
+          }
+        },
+        style: 'destructive',
+      },
+    ]);
+  };
+
   useEffect(() => {
-    fetchDepartmentMembers();
+    fetchDepartments();
   }, []);
 
-  const renderMember = ({ item }) => (
-    <View style={styles.memberItem}>
-      <Image
-        source={item.profile_pic ? { uri: item.profile_pic } : defaultAvatar}
-        style={styles.avatar}
-      />
-      <Text style={styles.memberName}>{item.name}</Text>
-    </View>
-  );
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#3352BA" style={{ marginTop: 50 }} />
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="white" />
+    <View style={styles.container}>
+      <Text style={styles.title}>Department Management</Text>
+
+      <View style={styles.inputRow}>
+        <TextInput
+          value={newDepartment}
+          onChangeText={setNewDepartment}
+          placeholder="Enter department name"
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.addButton} onPress={addDepartment}>
+          <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Department</Text>
       </View>
 
-      {/* Team Card */}
-      <LinearGradient
-        colors={['#172554', '#3352BA']}
-        start={{ x: 0.8, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.teamCard}
-      >
-        <Text style={styles.teamTitle}>{departmentName}</Text>
-        <Text style={styles.teamLeadLabel}>Team lead</Text>
-        <View style={styles.teamLeadInfo}>
-          <Image source={defaultAvatar} style={styles.leadAvatar} />
-          <Text style={styles.teamLeadName}>N/A</Text>
-        </View>
-        <View style={styles.memberRow}>
-          <Text style={styles.memberCount}>Members Count</Text>
-          <Text style={styles.count}>{members.length}</Text>
-        </View>
-      </LinearGradient>
-
-      {/* Members List */}
-      <Text style={styles.membersHeader}>Team Members</Text>
       <FlatList
-        data={members}
+        data={departments}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={renderMember}
-        contentContainerStyle={styles.memberList}
-        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.departmentRow}>
+            <Text style={styles.departmentText}>{item.name}</Text>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => deleteDepartment(item.id)}
+            >
+              <Text style={styles.deleteButtonText}>X</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No departments found.</Text>
+        }
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

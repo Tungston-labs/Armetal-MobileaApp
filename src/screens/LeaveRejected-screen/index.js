@@ -5,14 +5,14 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "../../utils/auth"; // ✅ import preconfigured axios instance
 
 export default function LeaveRejectedScreen() {
   const navigation = useNavigation();
@@ -23,14 +23,8 @@ export default function LeaveRejectedScreen() {
   useEffect(() => {
     const fetchRejectedLeaves = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const response = await axios.get(
-          "http://178.248.112.16:8000/api/leave/by-status/?status=rejected",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const response = await authAxios.get(
+          "/leave/by-status/?status=rejected"
         );
         setLeaveData(response.data);
       } catch (error) {
@@ -96,20 +90,22 @@ export default function LeaveRejectedScreen() {
       <Text style={styles.dateHeader}>Rejected Leaves</Text>
 
       {/* Leave List */}
-      <FlatList
-        data={leaveData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          !loading && (
+      {loading ? (
+        <ActivityIndicator size="large" color="#1E90FF" style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={leaveData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
             <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
               No rejected leaves found.
             </Text>
-          )
-        }
-      />
+          }
+        />
+      )}
 
       {/* FAB */}
       <TouchableOpacity

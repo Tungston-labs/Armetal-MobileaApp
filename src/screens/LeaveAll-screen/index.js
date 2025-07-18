@@ -11,29 +11,16 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "../../utils/auth"; // ✅ Use your path
 
 export default function LeaveAllScreen({ navigation, route }) {
-  const [selectedTab, setSelectedTab] = useState("All");
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchLeaves = async () => {
     try {
-      const token = await AsyncStorage.getItem("accessToken");
-      const response = await fetch("http://178.248.112.16:8000/api/leave/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch leave data");
-      }
-
-      const data = await response.json();
-      setLeaveData(data.results || []); // assuming paginated response
+      const response = await authAxios.get("leave/");
+      setLeaveData(response.data.results || []); // assuming paginated response
     } catch (error) {
       console.error("Error fetching leaves:", error);
     } finally {
@@ -58,7 +45,12 @@ export default function LeaveAllScreen({ navigation, route }) {
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <TouchableOpacity
-        style={[styles.statusBadge, styles[`status${item.status.charAt(0).toUpperCase() + item.status.slice(1)}`]]}
+        style={[
+          styles.statusBadge,
+          styles[
+            `status${item.status.charAt(0).toUpperCase() + item.status.slice(1)}`
+          ],
+        ]}
         onPress={() => handleStatusNavigation(item.status)}
       >
         <Text style={styles.statusText}>{item.status}</Text>
@@ -87,6 +79,7 @@ export default function LeaveAllScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Top Time/Icons */}
       <View style={styles.topHeader}>
         <Text style={styles.time}>11:07</Text>
         <Ionicons name="wifi" size={20} color="#fff" />
@@ -98,10 +91,13 @@ export default function LeaveAllScreen({ navigation, route }) {
         />
       </View>
 
+      {/* Header */}
       <LeaveHeader navigation={navigation} route={route} />
 
+      {/* Date */}
       <Text style={styles.dateHeader}>12 March 2025</Text>
 
+      {/* Leave List */}
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={{ marginTop: 20 }} />
       ) : (
@@ -119,6 +115,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         />
       )}
 
+      {/* FAB for New Leave */}
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -126,6 +123,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         <Ionicons name="add" size={20} color="white" />
       </TouchableOpacity>
 
+      {/* Bottom Navigation */}
       <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );

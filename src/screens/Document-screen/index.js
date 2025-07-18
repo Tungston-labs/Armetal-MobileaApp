@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from '../utils/auth';
 
 export default function DocumentsScreen() {
   const navigation = useNavigation();
@@ -31,47 +32,29 @@ export default function DocumentsScreen() {
   useEffect(() => {
     const fetchDocumentData = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        if (!token) {
-          Alert.alert("Error", "No access token found");
-          return;
-        }
-
-        const summaryResponse = await axios.get(
-          "http://178.248.112.16:8000/api/employee/document-summary/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const summaryResponse = await authAxios.get(
+          "/employee/document-summary/"
         );
 
         const summary = summaryResponse.data;
         setEmployeeId(summary.employee_id);
 
-        const detailResponse = await axios.get(
-          `http://178.248.112.16:8000/api/employees/${summary.employee_id}/documents/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const detailResponse = await authAxios.get(
+          `/employees/${summary.employee_id}/documents/`
         );
 
         const detail = detailResponse.data;
 
         const replaceLocalhost = (url) =>
-          typeof url === "string"
-            ? url.replace("localhost", "192.168.29.146")
-            : null;
+          typeof url === "string" ? url.replace("localhost", "192.168.29.146") : null;
 
         const replaceLocalhostInArray = (arr) =>
           Array.isArray(arr)
             ? arr.map((url) =>
-                typeof url === "string"
-                  ? url.replace("localhost", "192.168.29.146")
-                  : url
-              )
+              typeof url === "string"
+                ? url.replace("localhost", "192.168.29.146")
+                : url
+            )
             : [];
 
         setData({
@@ -88,6 +71,7 @@ export default function DocumentsScreen() {
         Alert.alert("Error", "Could not load document data");
       }
     };
+
 
     fetchDocumentData();
   }, []);

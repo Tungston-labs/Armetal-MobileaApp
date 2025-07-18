@@ -11,8 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "../../utils/authAxios"; // ✅ use shared axios instance
 
 export default function RequestPending({ navigation, route }) {
   const { leaveId } = route.params;
@@ -23,15 +22,7 @@ export default function RequestPending({ navigation, route }) {
   useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const res = await axios.get(
-          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await authAxios.get(`/leave/emp/${leaveId}/`);
         setLeave(res.data);
       } catch (error) {
         console.error("Failed to fetch leave details", error);
@@ -44,46 +35,39 @@ export default function RequestPending({ navigation, route }) {
     fetchLeaveDetail();
   }, [leaveId]);
 
- const cancelLeave = async () => {
-  Alert.alert("Confirm", "Are you sure you want to cancel this leave?", [
-    { text: "No" },
-    {
-      text: "Yes",
-      onPress: async () => {
-        try {
-          setCanceling(true);
-          const token = await AsyncStorage.getItem("accessToken");
+  const cancelLeave = async () => {
+    Alert.alert("Confirm", "Are you sure you want to cancel this leave?", [
+      { text: "No" },
+      {
+        text: "Yes",
+        onPress: async () => {
+          try {
+            setCanceling(true);
+            const response = await authAxios.delete(`/leave/${leaveId}/cancel/`);
 
-          const response = await axios.delete(
-            `http://192.168.29.146:8000/api/leave/${leaveId}/cancel/`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+            if (response.status === 204) {
+              Alert.alert("Cancelled", "Leave request cancelled successfully.");
+              navigation.goBack();
+            } else {
+              Alert.alert("Error", "Could not cancel the leave request.");
             }
-          );
-
-          if (response.status === 204) {
-            Alert.alert("Cancelled", "Leave request cancelled successfully.");
-            navigation.goBack();
-          } else {
-            Alert.alert("Error", "Could not cancel the leave request.");
+          } catch (error) {
+            console.error("Cancel failed:", error);
+            Alert.alert("Error", "An error occurred while cancelling the request.");
+          } finally {
+            setCanceling(false);
           }
-        } catch (error) {
-          console.error("Cancel failed:", error);
-          Alert.alert("Error", "An error occurred while cancelling the request.");
-        } finally {
-          setCanceling(false);
-        }
+        },
       },
-    },
-  ]);
-};
+    ]);
+  };
 
   if (loading || !leave) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={{ textAlign: "center", marginTop: 30 }}>Loading leave details...</Text>
+        <Text style={{ textAlign: "center", marginTop: 30 }}>
+          Loading leave details...
+        </Text>
       </SafeAreaView>
     );
   }

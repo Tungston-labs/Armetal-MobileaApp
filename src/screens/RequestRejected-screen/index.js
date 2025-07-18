@@ -11,26 +11,17 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import authAxios from '../../utils/authAxios'; // updated import
 
 export default function RequestRejected({ navigation, route }) {
-  const { leaveId } = route.params; // 👈 Receive leaveId from navigation
+  const { leaveId } = route.params;
   const [leave, setLeave] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        const response = await axios.get(
-          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await authAxios.get(`leave/emp/${leaveId}/`);
         setLeave(response.data);
       } catch (error) {
         console.error('Failed to fetch rejected leave details:', error);
@@ -83,7 +74,7 @@ export default function RequestRejected({ navigation, route }) {
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
-              <Text style={styles.value}>11:30 AM</Text> {/* Optional: if backend has time */}
+              <Text style={styles.value}>11:30 AM</Text> {/* Optional */}
             </View>
           </View>
 
