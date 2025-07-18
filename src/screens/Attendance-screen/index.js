@@ -10,7 +10,7 @@ import {
 import styles from './styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import BottomNavbar from '../BottomNavbar';
+// import BottomNavbar from '../BottomNavbar';
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -63,7 +63,7 @@ const punchOut = item.time_out || '-- --';
         />
       </View>
 
-      <BottomNavbar navigation={navigation} route={route} />
+      {/* <BottomNavbar navigation={navigation} route={route} /> */}
     </SafeAreaView>
   );
 };

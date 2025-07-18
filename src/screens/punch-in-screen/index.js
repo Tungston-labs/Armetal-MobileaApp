@@ -13,7 +13,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles";
-// import BottomNavbar from "../BottomNavbar";
+import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index"
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -166,7 +166,7 @@ const handlePunch = async () => {
     const response = await axios.post(
       `${API_BASE_URL}/api/attendance/swipe/`,
       {
-        timestamp: localISO,  // <-- ✅ send timestamp
+        // timestamp: localISO,  // <-- ✅ send timestamp
       },
       {
         headers: {
@@ -380,7 +380,7 @@ const handlePunch = async () => {
 
         </ScrollView>
       </View>
-      {/* <BottomNavbar navigation={navigation} route={route} /> */}
+      <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );
 };
