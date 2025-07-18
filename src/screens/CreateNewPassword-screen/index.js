@@ -14,8 +14,6 @@ import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import authAxios from '../../utils/auth'; // Adjust path as needed
-
 
 export default function CreateNewPasswordScreen() {
   const navigation = useNavigation();
@@ -41,7 +39,7 @@ export default function CreateNewPasswordScreen() {
 
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      const response = await authAxios.post(
+      const response = await axios.post(
         'http://178.248.112.16:8000/api/change-password/',
         {
           old_password: currentPassword,
