@@ -1,15 +1,15 @@
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './styles';
-import axios from 'axios'; // Make sure Axios is installed
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const API_BASE_URL = 'http://178.248.112.16:8000';
 
 export default function LeaveHeader({ navigation, selectedTab }) {
   const [summary, setSummary] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   const tabs = [
     { label: 'All', screen: 'LeaveAllScreen' },
@@ -19,25 +19,34 @@ export default function LeaveHeader({ navigation, selectedTab }) {
   ];
 
   useEffect(() => {
-    const fetchLeaveSummary = async () => {
+    const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
+        if (!token) return;
 
-        const response = await axios.get('http://178.248.112.16:8000/api/leave/summary/', {
-          headers: {
-            Authorization: `Bearer ${token}`
-
-          },
+        // Fetch leave summary
+        const summaryRes = await axios.get(`${API_BASE_URL}/api/leave/summary/`, {
+          headers: { Authorization: `Bearer ${token}` }
         });
-        setSummary(response.data);
+        setSummary(summaryRes.data);
+
+        // Fetch profile picture
+        const profileRes = await axios.get(`${API_BASE_URL}/api/profile/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const picUrl = profileRes.data?.profile_pic
+          ? `${API_BASE_URL}${profileRes.data.profile_pic}`
+          : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+        setProfilePic(picUrl);
       } catch (error) {
-        console.error('Error fetching leave summary:', error.message);
+        console.error('Error fetching data:', error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLeaveSummary();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -59,13 +68,9 @@ export default function LeaveHeader({ navigation, selectedTab }) {
             <Text style={styles.counterText}>Leave taken {summary?.approved_count || 0}</Text>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ProfileScreen")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
           <Image
-            source={{
-              uri: summary?.profile_pic || 'https://i.pravatar.cc/150',
-            }}
+            source={{ uri: profilePic }}
             style={styles.avatar}
           />
         </TouchableOpacity>

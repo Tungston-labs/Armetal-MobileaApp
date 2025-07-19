@@ -175,7 +175,7 @@ const handlePunch = async () => {
       }
     ); 
 
-    Alert.alert("Success", response.data.message || "Swiped.");
+    // Alert.alert("Success", response.data.message || "Swiped.");
     await fetchTodayAttendance(token);
 
     setTimeout(() => {
@@ -374,7 +374,7 @@ const handlePunch = async () => {
     
   }}
   backgroundColor="#ddd"
-  thumbColor={isCurrentlyPunchedIn() ? '#e53935' : '#43a047'}
+  thumbColor={isCurrentlyPunchedIn() ? '#172554' : '#4375a0ff'}
   resetAfterSuccess={true}
 />
 

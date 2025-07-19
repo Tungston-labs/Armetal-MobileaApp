@@ -26,8 +26,8 @@ export default StyleSheet.create({
     borderRadius: 14,
     width: 340,
     minHeight: 512,
-    paddingTop: 27,
-    paddingBottom: 30,
+    paddingTop: 50,
+    paddingBottom: 60,
     paddingHorizontal: 20,
   },
 
@@ -70,7 +70,7 @@ export default StyleSheet.create({
   },
 
   loginButton: {
-    backgroundColor: '#3456e2',
+    backgroundColor: 'red',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
