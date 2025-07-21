@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import styles from './styles';
+import Toast from 'react-native-toast-message';
 
 export default function VerificationScreen() {
   const navigation = useNavigation();
@@ -51,7 +52,11 @@ export default function VerificationScreen() {
   const handleContinue = async () => {
     const enteredOtp = otp.join('');
     if (enteredOtp.length < 6) {
-      Alert.alert('Error', 'Please enter a 6-digit OTP.');
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid OTP',
+        text2: 'Please enter a 6-digit OTP.',
+      });
       return;
     }
 
@@ -60,23 +65,38 @@ export default function VerificationScreen() {
         email,
         otp: enteredOtp,
       });
+ Toast.show({
+        type: 'success',
+        text1: 'OTP Verified',
+        text2: 'You can now reset your password.',
+      });
 
-      // ✅ On success, move to password reset
-      Alert.alert('Verified', 'OTP verified successfully.');
       navigation.navigate('SetNewPasswordScreen', { email });
     } catch (error) {
       console.error(error.response?.data || error.message);
-      Alert.alert('Verification Failed', 'Invalid or expired OTP.');
+       Toast.show({
+        type: 'error',
+        text1: 'Verification Failed',
+        text2: 'Invalid or expired OTP.',
+      });
     }
   };
 
   const handleResend = async () => {
     try {
       await axios.post('http://178.248.112.16:8000/api/forgot-password/send-otp/', { email });
-      Alert.alert('OTP Sent', 'A new OTP has been sent to your email.');
+     Toast.show({
+        type: 'success',
+        text1: 'OTP Sent',
+        text2: 'A new OTP has been sent to your email.',
+      });
     } catch (error) {
       console.error(error.response?.data || error.message);
-      Alert.alert('Error', 'Failed to resend OTP.');
+      Toast.show({
+        type: 'error',
+        text1: 'Resend Failed',
+        text2: 'Could not send a new OTP.',
+      });
     }
   };
 

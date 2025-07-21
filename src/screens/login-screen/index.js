@@ -130,7 +130,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles';
-
+import Toast from 'react-native-toast-message'; 
 const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [username, setUsername] = useState('');
@@ -139,7 +139,11 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      Alert.alert('Error', 'Please enter both username and password.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please enter both username and password.',
+      });
       return;
     }
 
@@ -152,17 +156,35 @@ const LoginScreen = () => {
       const { access, refresh } = response.data;
       await AsyncStorage.setItem('accessToken', access);
       await AsyncStorage.setItem('refreshToken', refresh);
-
+    Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
+        text2: `Welcome, ${username}!`,
+      });
       navigation.navigate('PunchinScreen');
     } catch (error) {
       console.log("API Error Message:", error.message);
       console.log("API Error Message:", error);
+
+     
       if (error.response) {
-        Alert.alert('Login Failed', 'Invalid username or password.');
+        Toast.show({
+          type: 'error',
+          text1: 'Login Failed',
+          text2: 'Invalid username or password.',
+        });
       } else if (error.request) {
-        Alert.alert('Network Error', 'No response from server. Check your network.');
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'No response from server. Check your network.',
+        });
       } else {
-        Alert.alert('Error', error.message);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: error.message,
+        });
       }
     }
   };

@@ -55,7 +55,12 @@ export default function LeaveAllScreen({ navigation, route }) {
       navigation.navigate("RequestPending");
     }
   };
-
+const today = new Date();
+const formattedDate = today.toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <TouchableOpacity
@@ -92,7 +97,7 @@ export default function LeaveAllScreen({ navigation, route }) {
   return (
     <SafeAreaView style={styles.container}>
       {/* Top Custom Status Bar */}
-      <View style={styles.topHeader}>
+      {/* <View style={styles.topHeader}>
         <Text style={styles.time}>11:07</Text>
         <Ionicons name="wifi" size={20} color="#fff" />
         <Ionicons
@@ -101,11 +106,12 @@ export default function LeaveAllScreen({ navigation, route }) {
           color="#fff"
           style={styles.batteryIcon}
         />
-      </View>
+      </View> */}
 
       <LeaveHeader navigation={navigation} route={route} />
 
-      <Text style={styles.dateHeader}>12 March 2025</Text>
+ <Text style={styles.dateHeader}>{formattedDate}</Text>
+
 
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={{ marginTop: 20 }} />

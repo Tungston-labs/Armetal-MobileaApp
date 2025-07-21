@@ -14,7 +14,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
-
+import Toast from 'react-native-toast-message';
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
 
@@ -84,10 +84,14 @@ else {
   };
 
   const submitLeaveRequest = async () => {
-    if (!reason || !toEmail) {
-      Alert.alert('Validation Error', 'Please fill all required fields.');
-      return;
-    }
+  if (!reason || !toEmail) {
+    Toast.show({
+      type: 'error',
+      text1: 'Validation Error',
+      text2: 'Please fill all required fields.',
+    });
+    return;
+  }
 
     setLoading(true);
     try {
@@ -109,25 +113,32 @@ else {
         }),
       });
 
-      if (response.ok) {
-        Alert.alert("Success", "Leave request submitted successfully!", [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("LeavePendingScreen"),
-          },
-        ]);
-      } else {
-        const err = await response.json();
-        console.log(err);
-        Alert.alert('Error', err?.detail || 'Something went wrong.');
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Unable to connect to the server.');
-    } finally {
-      setLoading(false);
+     if (response.ok) {
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Leave request submitted successfully!',
+      });
+      navigation.navigate('LeavePendingScreen');
+    } else {
+      const err = await response.json();
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: err?.detail || 'Something went wrong.',
+      });
     }
-  };
+  } catch (error) {
+    console.error(error);
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: 'Unable to connect to the server.',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>

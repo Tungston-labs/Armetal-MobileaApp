@@ -13,6 +13,7 @@ import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 export default function RequestRejected({ navigation, route }) {
   const { leaveId } = route.params; // 👈 Receive leaveId from navigation
@@ -34,7 +35,11 @@ export default function RequestRejected({ navigation, route }) {
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
-        Alert.alert("Error", "Could not fetch profile.");
+       Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Could not fetch profile.',
+      });
       }
     };
 
@@ -58,7 +63,11 @@ export default function RequestRejected({ navigation, route }) {
         setLeave(response.data);
       } catch (error) {
         console.error('Failed to fetch rejected leave details:', error);
-        Alert.alert('Error', 'Could not load rejected leave details.');
+        Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Could not load rejected leave details.',
+      });
       } finally {
         setLoading(false);
       }

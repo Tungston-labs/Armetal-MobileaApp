@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 export default function TaskModal({
   visible,
@@ -25,14 +26,22 @@ export default function TaskModal({
 }) {
   const handleSubmit = async () => {
     if (!project || !task || !timeTaken) {
-      Alert.alert('Validation Error', 'All fields are required.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'All fields are required.',
+      });
       return;
     }
 
-    try {
+     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        Alert.alert('Error', 'Token not found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Token not found',
+        });
         return;
       }
 
@@ -49,13 +58,22 @@ export default function TaskModal({
         },
       });
 
+       Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Task submitted successfully!',
+      });
+
       onSubmit(); // refresh list and clear form
     } catch (error) {
       console.error('❌ Task submission failed:', error.response?.data || error.message);
-      Alert.alert('Error', 'Task submission failed.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Task submission failed.',
+      });
     }
   };
-
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalBackground}>

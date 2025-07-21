@@ -33,7 +33,11 @@ export default function RequestPending({ navigation, route }) {
       setProfile(response.data);
     } catch (error) {
       console.error("Error fetching profile:", error);
-      Alert.alert("Error", "Could not fetch profile.");
+      Toast.show({
+          type: 'error',
+          text1: 'Profile Error',
+          text2: 'Could not fetch profile.',
+        });
     }
   };
 
@@ -57,7 +61,11 @@ export default function RequestPending({ navigation, route }) {
         setLeave(res.data);
       } catch (error) {
         console.error("Failed to fetch leave details", error);
-        Alert.alert("Error", "Could not load leave details.");
+       Toast.show({
+          type: 'error',
+          text1: 'Leave Error',
+          text2: 'Could not load leave details.',
+        });
       } finally {
         setLoading(false);
       }
@@ -86,14 +94,26 @@ export default function RequestPending({ navigation, route }) {
           );
 
           if (response.status === 204) {
-            Alert.alert("Cancelled", "Leave request cancelled successfully.");
+             Toast.show({
+                type: 'success',
+                text1: 'Leave Cancelled',
+                text2: 'Leave request cancelled successfully.',
+              });
             navigation.goBack();
           } else {
-            Alert.alert("Error", "Could not cancel the leave request.");
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Could not cancel the leave request.',
+              });
           }
         } catch (error) {
           console.error("Cancel failed:", error);
-          Alert.alert("Error", "An error occurred while cancelling the request.");
+          Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'An error occurred while cancelling the request.',
+            });
         } finally {
           setCanceling(false);
         }

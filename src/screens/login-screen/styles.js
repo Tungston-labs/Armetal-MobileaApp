@@ -70,7 +70,7 @@ export default StyleSheet.create({
   },
 
   loginButton: {
-    backgroundColor: 'red',
+    backgroundColor: '#3352BA',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',

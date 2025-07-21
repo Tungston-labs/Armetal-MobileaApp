@@ -81,10 +81,10 @@ const AttendanceScreen = () => {
       </View>
 
       {/* Info Header */}
-      <View style={styles.infoBox}>
+      {/* <View style={styles.infoBox}>
         <Text style={styles.dateText}>Date: {date}</Text>
         <Text style={styles.totalHoursText}>Total Hours: {totalHours}</Text>
-      </View>
+      </View> */}
 
       {/* Table */}
       <View style={styles.tableContainer}>

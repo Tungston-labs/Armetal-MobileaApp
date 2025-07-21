@@ -5,6 +5,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
+    padding:4
   },
 
   innerWrapper: {
@@ -20,7 +21,7 @@ export default StyleSheet.create({
     backgroundColor: '#262D40',
     borderRadius: 14,
     paddingVertical: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
   
     marginTop: 40,
     paddingBottom:30,
@@ -56,24 +57,27 @@ export default StyleSheet.create({
   sectionTitle: {
     color: '#FFFFFF',
     fontSize: 18,
-    marginBottom: 5,
+    marginBottom: 10,
     marginTop:10,
     fontWeight: '400',
+    marginLeft:6
   },
 
   departmentCard: {
     backgroundColor: '#172554',
-    borderRadius: 10,
-    padding: 16,
+    borderRadius: 7,
+    padding:"4%",
     marginBottom: 16,
     borderWidth: 0.2,
     borderColor: '#FFFFFF',
+    margin:5,
   },
 
   departmentName: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
+    
   },
 
   teamLeadLabel: {
@@ -86,7 +90,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: '#FFFFFF',
     paddingTop: 8,
   },
@@ -108,12 +112,12 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
 
   dayBox: {
     width: width / 7.2,
-    height: 90,
+    height: 100,
     paddingVertical: 8,
     paddingHorizontal: 4,
     borderRadius: 12,
@@ -163,12 +167,12 @@ export default StyleSheet.create({
   attendanceBox: {
     backgroundColor: '#172554',
     borderRadius: 12,
-    paddingVertical: 30,
-    paddingHorizontal: 16,
-    marginBottom: 40,
-    borderWidth: 0.5,
+    paddingVertical: 25,
+    paddingHorizontal: 20,
+    // marginBottom: 40,
+    borderWidth: 0.2,
     borderColor: '#3a4ca0',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     
   },
 

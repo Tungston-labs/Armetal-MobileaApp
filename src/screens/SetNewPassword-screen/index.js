@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import styles from './styles';
+import Toast from 'react-native-toast-message';
 
 export default function SetNewPasswordScreen() {
   const navigation = useNavigation();
@@ -25,12 +26,19 @@ export default function SetNewPasswordScreen() {
 
   const handleResetPassword = async () => {
     if (!password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill out all fields.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please fill out all fields.',
+      });
       return;
     }
-
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Passwords do not match.',
+      });
       return;
     }
 
@@ -41,11 +49,19 @@ export default function SetNewPasswordScreen() {
         confirm_password: confirmPassword,
       });
 
-      Alert.alert('Success', 'Password reset successful.');
+       Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Password reset successful.',
+      });
       navigation.navigate('LoginScreen');
     } catch (error) {
       console.error('Reset Error:', error.response?.data || error.message);
-      Alert.alert('Error', error.response?.data?.detail || 'Failed to reset password.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.response?.data?.detail || 'Failed to reset password.',
+      });
     }
   };
 
