@@ -15,6 +15,9 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 
+const API_BASE_URL = 'http://178.248.112.16:8000';
+
+
 export default function LeaveRequestFormScreen() {
   const navigation = useNavigation();
 
@@ -28,9 +31,11 @@ export default function LeaveRequestFormScreen() {
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // State for dynamic counts
+  // Stats
   const [pendingLeaveCount, setPendingLeaveCount] = useState(0);
-  const [lossOfPayCount, setLossOfPayCount] = useState(0);
+  const [lopDays, setLopDays] = useState(0);
+  const [lopAmount, setLopAmount] = useState(0);
+
 
   const leaveTypes = [
     { id: 1, type: 'casual' },
@@ -40,31 +45,32 @@ export default function LeaveRequestFormScreen() {
     { id: 5, type: 'others' },
   ];
 
-  // Fetch stats from backend on mount
+  // Fetch summary data from /summary endpoint
   useEffect(() => {
-    const fetchLeaveStats = async () => {
+    const fetchLeaveSummary = async () => {
       try {
         const token = await AsyncStorage.getItem('accessToken');
-        const response = await fetch('http://178.248.112.16:8000/api/leave/', {
+        const response = await fetch(`${API_BASE_URL}/api/leave/summary/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.ok) {
-          const json = await response.json();
-          const stats = json.results || {};
-          setPendingLeaveCount(stats.pending_leave_count || 0);
-          setLossOfPayCount(stats.loss_of_pay_count || 0);
-        } else {
-          console.log('Failed to fetch leave stats');
+  const summary = await response.json();
+  setPendingLeaveCount(summary.pending_count || 0);
+  setLopDays(summary.lop_days || 0);
+  setLopAmount(summary.lop_amount || 0);
+}
+else {
+          console.warn('Failed to fetch leave summary');
         }
       } catch (err) {
-        console.error('Error fetching leave stats:', err);
+        console.error('Error fetching summary:', err);
       }
     };
 
-    fetchLeaveStats();
+    fetchLeaveSummary();
   }, []);
 
   const onFromChange = (event, selectedDate) => {
@@ -87,7 +93,7 @@ export default function LeaveRequestFormScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
 
-      const response = await fetch('http://178.248.112.16:8000/api/leave/', {
+      const response = await fetch(`${API_BASE_URL}/api/leave/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -113,7 +119,7 @@ export default function LeaveRequestFormScreen() {
       } else {
         const err = await response.json();
         console.log(err);
-        Alert.alert('Error', 'Something went wrong while submitting.');
+        Alert.alert('Error', err?.detail || 'Something went wrong.');
       }
     } catch (error) {
       console.error(error);
@@ -132,10 +138,11 @@ export default function LeaveRequestFormScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Leave Request</Text>
       </View>
+
       <View style={styles.separator} />
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Stat Boxes */}
+        {/* Leave Stats */}
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Pending Leaves</Text>
@@ -143,7 +150,7 @@ export default function LeaveRequestFormScreen() {
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Loss of Pay Taken</Text>
-            <Text style={styles.statValue}>{lossOfPayCount}</Text>
+            <Text style={styles.statValue}>₹ {lopAmount}-{lopDays}</Text>
           </View>
         </View>
 
@@ -175,7 +182,7 @@ export default function LeaveRequestFormScreen() {
           <DateTimePicker value={toDate} mode="date" display="default" onChange={onToChange} />
         )}
 
-        {/* Leave Type */}
+        {/* Leave Type Picker */}
         <View style={styles.section}>
           <Text style={styles.inputLabel}>Leave Type</Text>
           <View style={styles.pickerWrapper}>

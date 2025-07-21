@@ -17,6 +17,8 @@ import axios from 'axios';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const API_BASE_URL = 'http://178.248.112.16:8000';
+
 export default function TaskUpdateScreen() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -24,7 +26,7 @@ export default function TaskUpdateScreen() {
   const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
   const [dates, setDates] = useState([]);
   const [tasks, setTasks] = useState([]);
-
+  const [profilePic, setProfilePic] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [project, setProject] = useState('');
   const [task, setTask] = useState('');
@@ -46,18 +48,11 @@ export default function TaskUpdateScreen() {
   const fetchTasks = async (date) => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        console.warn('⚠️ No token found in AsyncStorage');
-        return;
-      }
+      if (!token) return;
 
       const response = await axios.get(
-        `http://178.248.112.16:8000/api/employee/tasks/?date=${date}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${API_BASE_URL}/api/employee/tasks/?date=${date}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const taskList = response.data.results.map(item => ({
@@ -73,20 +68,39 @@ export default function TaskUpdateScreen() {
     }
   };
 
+  const fetchProfilePicture = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) return;
+
+      const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const picUrl = response.data?.profile_pic
+        ? `${API_BASE_URL}${response.data.profile_pic}`
+        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+      setProfilePic(picUrl);
+    } catch (error) {
+      console.error('❌ Error fetching profile picture:', error.message);
+    }
+  };
+
   useEffect(() => {
     const start = moment(selectedDate);
     setDates(getDateRange(start, selectedDate));
     fetchTasks(selectedDate);
+    fetchProfilePicture();
   }, [selectedDate]);
 
   const handleSubmit = () => {
-  setModalVisible(false);
-  setProject('');
-  setTask('');
-  setTimeTaken('');
-  fetchTasks(selectedDate); // Refresh task list after new task is added
-};
-
+    setModalVisible(false);
+    setProject('');
+    setTask('');
+    setTimeTaken('');
+    fetchTasks(selectedDate);
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.taskCard}>
@@ -124,7 +138,7 @@ export default function TaskUpdateScreen() {
         <Text style={styles.title}>Daily task update</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
           <Image
-            source={{ uri: 'https://i.imgur.com/4YQ1H5F.jpg' }}
+            source={{ uri: profilePic }}
             style={styles.avatarImage}
           />
         </TouchableOpacity>

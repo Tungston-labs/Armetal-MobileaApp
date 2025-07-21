@@ -19,6 +19,28 @@ export default function RequestPending({ navigation, route }) {
   const [leave, setLeave] = useState(null);
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  const API_BASE_URL = 'http://178.248.112.16:8000';
+
+  useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem("accessToken");
+      const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile(response.data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      Alert.alert("Error", "Could not fetch profile.");
+    }
+  };
+
+  fetchProfile();
+}, []);
+
+
 
   useEffect(() => {
     const fetchLeaveDetail = async () => {
@@ -55,7 +77,7 @@ export default function RequestPending({ navigation, route }) {
           const token = await AsyncStorage.getItem("accessToken");
 
           const response = await axios.delete(
-            `http://192.168.29.146:8000/api/leave/${leaveId}/cancel/`,
+            `http://178.248.112.16:8000/api/leave/${leaveId}/cancel/`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -97,7 +119,14 @@ export default function RequestPending({ navigation, route }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Request Detail</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <Image source={{ uri: "https://i.pravatar.cc/150" }} style={styles.avatar} />
+<Image
+  source={{
+    uri: profile?.profile_pic
+      ? `${API_BASE_URL}${profile.profile_pic}`
+      : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+  }}
+  style={styles.avatar}
+/>
         </TouchableOpacity>
       </View>
 

@@ -72,7 +72,7 @@ export default function VerificationScreen() {
 
   const handleResend = async () => {
     try {
-      await axios.post('http://192.168.29.146:8000/api/forgot-password/send-otp/', { email });
+      await axios.post('http://178.248.112.16:8000/api/forgot-password/send-otp/', { email });
       Alert.alert('OTP Sent', 'A new OTP has been sent to your email.');
     } catch (error) {
       console.error(error.response?.data || error.message);

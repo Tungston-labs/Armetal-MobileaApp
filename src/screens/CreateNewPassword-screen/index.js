@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 export default function CreateNewPasswordScreen() {
   const navigation = useNavigation();
@@ -26,14 +26,23 @@ export default function CreateNewPasswordScreen() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const showToast = (type, text1, text2) => {
+    Toast.show({
+      type,
+      text1,
+      text2,
+      position: 'bottom',
+    });
+  };
+
   const handleSetPassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      Alert.alert('Error', 'All fields are required.');
+      showToast('error', 'Validation Error', 'All fields are required.');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'New password and confirmation do not match.');
+      showToast('error', 'Validation Error', 'New password and confirmation do not match.');
       return;
     }
 
@@ -53,16 +62,17 @@ export default function CreateNewPasswordScreen() {
         }
       );
 
-      Alert.alert('Success', 'Password changed successfully.', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
+      showToast('success', 'Success', 'Password changed successfully.');
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1500);
     } catch (error) {
       if (error.response) {
         console.error(error.response.data);
-        Alert.alert('Error', error.response.data.detail || 'Password change failed.');
+        showToast('error', 'Error', error.response.data.detail || 'Password change failed.');
       } else {
         console.error(error.message);
-        Alert.alert('Error', 'Something went wrong.');
+        showToast('error', 'Error', 'Something went wrong.');
       }
     }
   };

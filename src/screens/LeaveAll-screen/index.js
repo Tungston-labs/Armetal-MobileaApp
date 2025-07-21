@@ -8,13 +8,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LeaveAllScreen({ navigation, route }) {
-  const [selectedTab, setSelectedTab] = useState("All");
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,8 @@ export default function LeaveAllScreen({ navigation, route }) {
       }
 
       const data = await response.json();
-      setLeaveData(data.results || []); // assuming paginated response
+      const leaves = data.results?.leaves || [];
+      setLeaveData(leaves);
     } catch (error) {
       console.error("Error fetching leaves:", error);
     } finally {
@@ -58,7 +59,10 @@ export default function LeaveAllScreen({ navigation, route }) {
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <TouchableOpacity
-        style={[styles.statusBadge, styles[`status${item.status.charAt(0).toUpperCase() + item.status.slice(1)}`]]}
+        style={[
+          styles.statusBadge,
+          styles[`status${item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}`],
+        ]}
         onPress={() => handleStatusNavigation(item.status)}
       >
         <Text style={styles.statusText}>{item.status}</Text>
@@ -87,6 +91,7 @@ export default function LeaveAllScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Top Custom Status Bar */}
       <View style={styles.topHeader}>
         <Text style={styles.time}>11:07</Text>
         <Ionicons name="wifi" size={20} color="#fff" />
@@ -108,7 +113,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         <FlatList
           data={leaveData}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
@@ -123,7 +128,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         style={styles.fab}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
       >
-        <Ionicons name="add" size={20} color="white" />
+        <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
       <BottomNavbar navigation={navigation} route={route} />

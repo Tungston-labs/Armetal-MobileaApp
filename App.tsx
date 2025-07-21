@@ -31,6 +31,7 @@ import { enableScreens } from 'react-native-screens';
 
 import Navigation from './src/navigation/navigation';
 import { store } from './src/redux/store';
+import Toast from 'react-native-toast-message';
 
 enableScreens();
 

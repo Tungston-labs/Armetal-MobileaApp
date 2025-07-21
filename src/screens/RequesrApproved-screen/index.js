@@ -21,8 +21,12 @@ export default function RequestApprovedScreen() {
   const { leaveId } = route.params;
 
   const [leave, setLeave] = useState(null);
+  const [profile, setProfile] = useState(null); // 👈 Profile data
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL = 'http://178.248.112.16:8000';
 
+
+  // Fetch leave details
   useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
@@ -30,9 +34,7 @@ export default function RequestApprovedScreen() {
         const response = await axios.get(
           `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         setLeave(response.data);
@@ -46,6 +48,27 @@ export default function RequestApprovedScreen() {
 
     fetchLeaveDetail();
   }, [leaveId]);
+
+  // Fetch employee profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = await AsyncStorage.getItem("accessToken");
+        const response = await axios.get(
+          `http://178.248.112.16:8000/api/profile/`, // 👈 Update URL if needed
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setProfile(response.data);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        Alert.alert("Error", "Could not fetch profile.");
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   if (loading || !leave) {
     return (
@@ -66,11 +89,17 @@ export default function RequestApprovedScreen() {
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Request detail</Text>
           </View>
+
           <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
             <Image
-              source={{ uri: "https://i.pravatar.cc/40" }}
-              style={styles.avatar}
-            />
+  source={{
+    uri: profile?.profile_pic
+      ? `${API_BASE_URL}${profile.profile_pic}`
+      : "https://i.pravatar.cc/40",
+  }}
+  style={styles.avatar}
+/>
+
           </TouchableOpacity>
         </View>
       </View>
@@ -96,7 +125,7 @@ export default function RequestApprovedScreen() {
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
-              <Text style={styles.value}>11:30 AM</Text> {/* optional static */}
+              <Text style={styles.value}>11:30 AM</Text>
             </View>
           </View>
 
