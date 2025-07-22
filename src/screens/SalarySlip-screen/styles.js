@@ -8,7 +8,7 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 90,
+    height: 100,
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 0.5,
@@ -24,13 +24,13 @@ export default StyleSheet.create({
     left: 16,
     top: '50%',
     transform: [{ translateY: -12 }],
-     marginTop:10,
+     marginTop:25,
   },
   headerTitle: {
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'bold',
-    marginTop:20,
+    marginTop:50,
     
   },
   searchRow: {
@@ -79,10 +79,10 @@ export default StyleSheet.create({
   },
  card: {
   backgroundColor: '#172554',
-  borderRadius: 10,
+  borderRadius: 12,
   padding: 16,
   marginBottom: 12,
-  marginHorizontal: 16,  // wider margin
+  // marginHorizontal: ,
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',

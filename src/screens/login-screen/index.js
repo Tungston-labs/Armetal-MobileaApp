@@ -165,7 +165,11 @@ const [showPassword, setShowPassword] = useState(false);
         text1: 'Login Successful',
         text2: `Welcome, ${username}!`,
       });
-      navigation.navigate('PunchinScreen');
+      navigation.reset({
+  index: 0,
+  routes: [{ name: 'PunchinScreen' }], // Replace 'HomeScreen' with your actual screen name
+});
+
     } catch (error) {
       console.log("API Error Message:", error.message);
       console.log("API Error Message:", error);

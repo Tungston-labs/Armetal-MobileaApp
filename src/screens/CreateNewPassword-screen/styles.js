@@ -13,11 +13,14 @@ export default StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     paddingTop: Platform.OS === 'android' ? 10 : 0,
+    marginTop:50,
+
   },
 
   content: {
     paddingTop: height * 0.15,
     paddingBottom: 30,
+    marginTop:-20,
   },
 
   title: {

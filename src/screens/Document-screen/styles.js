@@ -8,7 +8,7 @@ export default StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 90,
+    height: 100,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
     borderBottomWidth: 1,
@@ -17,14 +17,14 @@ export default StyleSheet.create({
   },
   backButton: {
     padding: 8,
-      marginTop:25,
+      marginTop:45,
   },
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '600',
     marginLeft: 14,
-      marginTop:25,
+    marginTop:40,
   },
   content: {
     padding: 16,
@@ -36,7 +36,7 @@ export default StyleSheet.create({
     overflow: 'hidden',
   },
   cardImage: {
-    width: '100%',
+    width: '120%',
     height: 200,
   },
   fieldContainer: {

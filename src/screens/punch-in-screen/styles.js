@@ -248,4 +248,5 @@ export default StyleSheet.create({
     marginLeft: 8,
     fontFamily: 'Satoshi',
   },
+  
 });

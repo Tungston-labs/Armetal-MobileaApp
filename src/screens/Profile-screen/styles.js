@@ -8,7 +8,7 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 80,
+    height: 100,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#262D40',
@@ -30,7 +30,7 @@ export default StyleSheet.create({
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'bold',
-      marginTop:35,
+      marginTop:40,
   },
   content: {
     paddingHorizontal: 16,

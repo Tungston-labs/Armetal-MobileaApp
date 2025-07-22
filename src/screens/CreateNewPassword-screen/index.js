@@ -79,11 +79,11 @@ export default function CreateNewPasswordScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0B1437" />
+      <StatusBar barStyle="light-content" backgroundColor="#151D34" />
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color="#fff"  />
         </TouchableOpacity>
       </View>
 

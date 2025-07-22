@@ -22,12 +22,13 @@ export default StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginTop:30,
+    marginTop:40,
   },
   avatarImage: {
     width: 44,
     height: 44,
     borderRadius: 22,
+    marginTop:40,
     
   },
   calendarWrapper: {
