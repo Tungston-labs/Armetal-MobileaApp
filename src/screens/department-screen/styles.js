@@ -8,24 +8,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
-    paddingHorizontal: wp('4%'),
-    paddingTop: hp('2%'),
+    // paddingHorizontal: wp('4%'),
+    // paddingTop: hp('2%'),
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: hp('1.5%'),
-  },
-  headerTitle: {
-    fontSize: wp('5.5%'),
-    color: 'white',
-    fontWeight: 'bold',
-    marginLeft: wp('2.5%'),
-    
-  },
+ header: {
+  flexDirection: 'row',
+  alignItems: 'flex-end',     // Push items to bottom
+  backgroundColor: '#262D40',
+  paddingHorizontal: 20,
+  paddingBottom: 18,          // Add bottom padding instead of marginTop
+  height: 100,                // Increased height to allow more vertical space
+  borderBottomWidth: 0.2,
+  marginBottom:20,
+},
+
+headerTitle: {
+  marginLeft: 20,
+  fontSize: 22,
+  color: '#FFFFFF',
+  fontWeight: 'bold',
+  // marginTop removed
+},
+
+
   teamCard: {
     borderRadius: 12,
     padding: wp('4%'),
+   margin:10,
     marginBottom: hp('2%'),
     height: hp('18%'),
     justifyContent: 'space-between',
@@ -42,6 +51,7 @@ const styles = StyleSheet.create({
     fontSize: wp('3.2%'),
     marginBottom: hp('0.5%'),
     fontFamily: 'Satoshi',
+   
   },
   teamLeadInfo: {
     flexDirection: 'row',
@@ -60,6 +70,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Satoshi',
   },
   memberRow: {
+    
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -82,19 +93,21 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: wp('4.5%'),
     fontWeight: '600',
-    marginBottom: hp('1.2%'),
+    // marginBottom: hp('1.2%'),
     fontFamily: 'Satoshi',
+    marginLeft:15,
   },
   memberList: {
     paddingBottom: hp('2%'),
   },
   memberItem: {
+    margin:10,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#172554',
     borderRadius: 10,
-    padding: wp('3.5%'),
-    marginBottom: hp('1%'),
+    padding: wp('1.5%'),
+    marginBottom: hp('.1%'),
   },
   avatar: {
     width: wp('10%'),

@@ -145,7 +145,7 @@ else {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color="#fff"/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Leave Request</Text>
       </View>

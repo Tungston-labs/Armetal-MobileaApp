@@ -4,18 +4,21 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F1A3C',
+    backgroundColor: '#151D34',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 30,
-    backgroundColor: '#262D40',
-  },
+header: {
+  flexDirection: 'row',
+  alignItems: 'flex-end',       
+  justifyContent: 'space-between',
+  paddingHorizontal: 20,        
+  paddingBottom: 15,          
+  height: 90,                  
+  backgroundColor: '#262D40',
+},
   headerTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
+  fontFamily:"raleway",
     color: '#fff',
   },
   sectionTitle: {
@@ -30,11 +33,12 @@ export default StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#132259',
     borderRadius: 10,
-    padding: 12,
+    padding: 8,
     marginBottom: 12,
+    // height:'80'
   },
   greenStrip: {
-    width: 4,
+    width: 7,
     backgroundColor: '#2ECC71',
     borderRadius: 4,
     marginRight: 10,

@@ -7,20 +7,8 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
-  topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    padding: 10,
-    alignItems: 'center',
-  },
-  time: {
-    color: '#FFFF',
-    marginRight: 10,
-    fontSize: 16,
-  },
-  batteryIcon: {
-    marginLeft: 10,
-  },
+ 
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -41,8 +29,9 @@ export default StyleSheet.create({
   dateHeader: {
     color: '#FFFF',
     fontSize: 15,
-    marginLeft: 16,
-    marginBottom: 6,
+    marginLeft: 20,
+    marginTop:25,
+    marginBottom: 10,
     fontWeight: 'bold',
   },
   listContent: {

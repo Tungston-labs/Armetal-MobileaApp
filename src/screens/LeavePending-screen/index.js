@@ -81,14 +81,6 @@ export default function LeavePendingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Status Bar */}
-      <View style={styles.topBar}>
-        <Text style={styles.statusTime}>11:07</Text>
-        <View style={styles.statusIcons}>
-          <Ionicons name="wifi" size={18} color="#fff" style={styles.statusIcon} />
-          <Ionicons name="battery-full" size={18} color="#fff" />
-        </View>
-      </View>
 
       {/* Leave Header */}
       <LeaveHeader navigation={navigation} route={route} />

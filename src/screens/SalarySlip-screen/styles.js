@@ -15,17 +15,23 @@ export default StyleSheet.create({
     borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
     position: 'relative',
+  
+
+   
   },
   backButton: {
     position: 'absolute',
     left: 16,
     top: '50%',
     transform: [{ translateY: -12 }],
+     marginTop:10,
   },
   headerTitle: {
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'bold',
+    marginTop:20,
+    
   },
   searchRow: {
     flexDirection: 'row',

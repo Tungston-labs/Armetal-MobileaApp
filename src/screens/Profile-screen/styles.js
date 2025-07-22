@@ -8,13 +8,14 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 60,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#262D40',
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     position: 'relative',
+   
   },
   
   backButton: {
@@ -23,11 +24,13 @@ export default StyleSheet.create({
     top: '50%',
     transform: [{ translateY: -12 }],
     zIndex: 1,
+      marginTop:20,
   },
   headerTitle: {
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'bold',
+      marginTop:35,
   },
   content: {
     paddingHorizontal: 16,

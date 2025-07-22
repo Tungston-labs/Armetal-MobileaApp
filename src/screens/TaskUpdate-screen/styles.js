@@ -16,11 +16,13 @@ export default StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
     backgroundColor: '#262D40',
+  
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: '#FFFFFF',
+    marginTop:30,
   },
   avatarImage: {
     width: 44,
@@ -34,11 +36,12 @@ export default StyleSheet.create({
     marginTop: 10,
     marginBottom: 16,
     paddingHorizontal: 8,
+    marginLeft:-12,
   },
   arrowBox: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 30,
+    width: 25,
     height: 100,
   },
   calendar: {

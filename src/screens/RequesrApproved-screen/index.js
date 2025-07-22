@@ -90,17 +90,20 @@ export default function RequestApprovedScreen() {
             <Text style={styles.headerTitle}>Request detail</Text>
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-            <Image
-  source={{
-    uri: profile?.profile_pic
-      ? `${API_BASE_URL}${profile.profile_pic}`
-      : "https://i.pravatar.cc/40",
-  }}
-  style={styles.avatar}
-/>
+        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+  {profile?.profile_pic ? (
+    <Image
+      source={{ uri: `${API_BASE_URL}${profile.profile_pic}` }}
+      style={styles.avatar}
+    />
+  ) : (
+    <Image
+      source={{ uri: "https://i.pravatar.cc/40" }}
+      style={styles.avatar}
+    />
+  )}
+</TouchableOpacity>
 
-          </TouchableOpacity>
         </View>
       </View>
 

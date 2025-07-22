@@ -13,15 +13,18 @@ export default StyleSheet.create({
     backgroundColor: '#262D40',
     borderBottomWidth: 1,
     borderBottomColor: '#FFFFFF',
+  
   },
   backButton: {
     padding: 8,
+      marginTop:25,
   },
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '600',
     marginLeft: 14,
+      marginTop:25,
   },
   content: {
     padding: 16,

@@ -9,11 +9,13 @@ export default StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
     backgroundColor: '#262D40',
+  
   },
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: 'bold',
+    marginTop:40,
   },
   counters: {
     flexDirection: 'row',

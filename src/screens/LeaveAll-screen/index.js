@@ -68,7 +68,7 @@ const formattedDate = today.toLocaleDateString('en-GB', {
           styles.statusBadge,
           styles[`status${item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}`],
         ]}
-        onPress={() => handleStatusNavigation(item.status)}
+        // onPress={() => handleStatusNavigation(item.status)}
       >
         <Text style={styles.statusText}>{item.status}</Text>
       </TouchableOpacity>

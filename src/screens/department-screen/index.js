@@ -15,12 +15,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const defaultAvatar = require('../../assets/avatar.png'); // fallback image
+const defaultAvatar = require('../../assets/avatar.png');
 
 const DepartmentScreen = () => {
   const navigation = useNavigation();
   const [members, setMembers] = useState([]);
   const [departmentName, setDepartmentName] = useState('');
+  const [departmentHead, setDepartmentHead] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const API_URL = 'http://178.248.112.16:8000/api/employees/my-department/';
@@ -39,10 +40,9 @@ const DepartmentScreen = () => {
         },
       });
 
-      setMembers(res.data || []);
-      if (res.data.length > 0) {
-        setDepartmentName(res.data[0].department || 'Department');
-      }
+      setMembers(res.data.members || []);
+      setDepartmentName(res.data.department || 'Department');
+      setDepartmentHead(res.data.head || null);
     } catch (error) {
       console.error('Error fetching department members:', error.message);
     } finally {
@@ -54,15 +54,21 @@ const DepartmentScreen = () => {
     fetchDepartmentMembers();
   }, []);
 
-  const renderMember = ({ item }) => (
+  const renderMember = ({ item }) => {
+  const imageUrl = item.profile_pic?.startsWith('http')
+    ? item.profile_pic
+    : `http://178.248.112.16:8000${item.profile_pic}`;
+
+  return (
     <View style={styles.memberItem}>
       <Image
-        source={item.profile_pic ? { uri: item.profile_pic } : defaultAvatar}
+        source={item.profile_pic ? { uri: imageUrl } : defaultAvatar}
         style={styles.avatar}
       />
       <Text style={styles.memberName}>{item.name}</Text>
     </View>
   );
+};
 
   if (loading) {
     return (
@@ -90,10 +96,19 @@ const DepartmentScreen = () => {
         style={styles.teamCard}
       >
         <Text style={styles.teamTitle}>{departmentName}</Text>
-        <Text style={styles.teamLeadLabel}>Team lead</Text>
+        <Text style={styles.teamLeadLabel}>Team Lead</Text>
         <View style={styles.teamLeadInfo}>
-          <Image source={defaultAvatar} style={styles.leadAvatar} />
-          <Text style={styles.teamLeadName}>N/A</Text>
+          <Image
+            source={
+              departmentHead?.profile_pic
+                ? { uri: departmentHead.profile_pic }
+                : defaultAvatar
+            }
+            style={styles.leadAvatar}
+          />
+          <Text style={styles.teamLeadName}>
+            {departmentHead?.name || 'Not Assigned'}
+          </Text>
         </View>
         <View style={styles.memberRow}>
           <Text style={styles.memberCount}>Members Count</Text>

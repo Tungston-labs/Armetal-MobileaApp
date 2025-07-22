@@ -7,25 +7,27 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#262D40',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    height:80,
-    borderBottomWidth:1.5,
-    borderBottomColor:"#FFFFFF",
-  },
-  headerTitle: {
-    marginLeft: 20,
-    fontSize: 22,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
+header: {
+  flexDirection: 'row',
+  alignItems: 'flex-end',     // Push items to bottom
+  backgroundColor: '#262D40',
+  paddingHorizontal: 20,
+  paddingBottom: 18,          // Add bottom padding instead of marginTop
+  height: 100,                // Increased height to allow more vertical space
+  borderBottomWidth: 0.2,
+},
+
+headerTitle: {
+  marginLeft: 20,
+  fontSize: 22,
+  color: '#FFFFFF',
+  fontWeight: 'bold',
+  // marginTop removed
+},
+
   separator: {
     height: 1,
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
   },
   content: {
     paddingHorizontal: 16,
@@ -57,6 +59,7 @@ export default StyleSheet.create({
   },
   section: {
     marginBottom: 20,
+  
   },
   dateRow: {
     flexDirection: 'row',
@@ -79,7 +82,7 @@ export default StyleSheet.create({
     paddingVertical: 13,
     paddingHorizontal: 12,
     justifyContent: 'space-between',
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: '#FFFFFF',
   },
   dateText: {
@@ -92,7 +95,7 @@ export default StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 10,
     color: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: '#1d294a',
     marginBottom:20,
   },
@@ -103,7 +106,7 @@ export default StyleSheet.create({
     color: '#FFFF',
     height: 120,
     textAlignVertical: 'top',
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: '#FFFFFF',
     marginBottom:20,
   },

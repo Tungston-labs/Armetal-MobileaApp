@@ -131,11 +131,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles';
 import Toast from 'react-native-toast-message'; 
+import { SafeAreaView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
 const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -196,6 +200,7 @@ const LoginScreen = () => {
   const logo = require('../../assets/logo.png');
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#151D34' }}>
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
@@ -224,20 +229,33 @@ const LoginScreen = () => {
               />
 
               <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                placeholderTextColor="#999"
-                value={password}
-                onChangeText={setPassword}
-              />
+             <View style={styles.inputContainer}>
+  <TextInput
+    style={styles.input}
+    placeholder="Password"
+    secureTextEntry={!showPassword}
+    placeholderTextColor="#999"
+    value={password}
+    onChangeText={setPassword}
+  />
+  <TouchableOpacity
+    onPress={() => setShowPassword(!showPassword)}
+    style={styles.eyeIcon}
+  >
+    <Ionicons 
+      name={showPassword ? "eye-off" : "eye"}
+      size={20}
+      color="#999"
+    />
+  </TouchableOpacity>
+</View>
+
 
               <TouchableOpacity
                 style={styles.forgotPasswordContainer}
                 onPress={handleForgotPassword}
               >
-                <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+                <Text style={styles.forgotPasswordText}>Forgot password ? </Text>
               </TouchableOpacity>
 
               <View style={styles.rememberMeContainer}>
@@ -256,6 +274,7 @@ const LoginScreen = () => {
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

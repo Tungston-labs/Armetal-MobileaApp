@@ -213,18 +213,24 @@ const handlePunch = async () => {
     })();
   }, []);
 
-  const today = new Date();
-  const todayMonth = today.toLocaleString("en-US", { month: "short" });
+const today = new Date();
+const todayMonth = today.toLocaleString("en-US", { month: "short" });
 
-  const calendarData = Array.from({ length: 6 }, (_, i) => {
-    const date = new Date();
-    date.setDate(today.getDate() - 1 + i);
-    return {
-      day: date.toLocaleString("en-US", { weekday: "short" }),
-      date: date.getDate(),
-      isToday: date.toDateString() === today.toDateString(),
-    };
-  });
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+
+const calendarData = Array.from({ length: 6 }, (_, i) => {
+  const date = new Date();
+  date.setDate(today.getDate() - 1 + i);
+  return {
+    day: date.toLocaleString("en-US", { weekday: "short" }),
+    date: date.getDate(),
+    isToday: date.toDateString() === today.toDateString(),
+    isYesterday: date.toDateString() === yesterday.toDateString(),
+  };
+});
+
+
 
   const timeIn = sessions[0]?.time_in?.substring(0, 5) || "------";
   const lastOut = getLatestSession()?.time_out;
@@ -286,26 +292,47 @@ const handlePunch = async () => {
             date: today.toDateString(),
           })}>
             <Text style={styles.sectionTitle}>Attendance</Text>
-            <View style={styles.calendarRow}>
-              {calendarData.map((item, index) => (
-                <View key={index} style={[styles.dayBox, item.isToday && styles.activeDay]}>
-                  <Text style={[styles.dayText, item.isToday && styles.activeDayText]}>
-                    {item.day}
-                  </Text>
-                  <Text style={[styles.dateText, item.isToday && styles.activeDateText]}>
-                    {item.date} {todayMonth}
-                  </Text>
-                  {item.isToday && (
-                    <Ionicons
-                      name="checkmark-circle"
-                      color="#0ED2F6"
-                      size={20}
-                      style={{ marginTop: 4 }}
-                    />
-                  )}
-                </View>
-              ))}
-            </View>
+          <View style={styles.calendarRow}>
+  {calendarData.map((item, index) => (
+    <View
+      key={index}
+      style={[
+        styles.dayBox,
+        item.isYesterday && { backgroundColor: '#3352BA' },
+        item.isToday && { backgroundColor: '#FFFFFF' },
+      ]}
+    >
+      <Text
+        style={[
+          styles.dayText,
+          item.isYesterday && { color: '#FFFFFF' },
+          item.isToday && { color: '#000000' },
+        ]}
+      >
+        {item.day}
+      </Text>
+      <Text
+        style={[
+          styles.dateText,
+          item.isYesterday && { color: '#FFFFFF' },
+          item.isToday && { color: '#000000' },
+        ]}
+      >
+        {item.date} {todayMonth}
+      </Text>
+      {item.isYesterday && (
+        <Ionicons
+          name="checkmark-circle"
+          color="#FFFFFF"
+          size={20}
+          style={{ marginTop: 4 }}
+        />
+      )}
+    </View>
+  ))}
+</View>
+
+
 
             {/* Attendance Box */}
             <View style={styles.attendanceBox}>

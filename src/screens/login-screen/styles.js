@@ -5,7 +5,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
     alignItems: 'center',
-    paddingTop: 100, // creates space for logo
+    paddingTop: 100,
     paddingHorizontal: 20,
   },
 
@@ -16,8 +16,8 @@ export default StyleSheet.create({
   },
 
   logo: {
-    width: 243,
-    height: 112,
+    width:250,
+    height: 152,
     resizeMode: 'contain',
   },
 
@@ -92,5 +92,27 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+
+// inputContainer: {
+//   position: "relative",
+//   width: "100%",
+//   marginBottom: 16,
+// },
+
+// input: {
+//   height: 48,
+//   borderWidth: 1,
+//   borderColor: "#ccc",
+//   borderRadius: 8,
+//   paddingHorizontal: 16,
+//   paddingRight: 40, // space for the eye icon
+//   fontSize: 16,
+// },
+
+eyeIcon: {
+  position: "absolute",
+  right: 12,
+  top: 14,
+},
 
 });
