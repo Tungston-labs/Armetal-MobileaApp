@@ -29,7 +29,7 @@ import CreateNewPasswordScreen from '../screens/CreateNewPassword-screen';
 import TaskModal from '../screens/TaskModal';
 import FullImageViewer from '../screens/Document-screen/FullImageViewer'; // ✅ Add import
 // import SplashScreen from '../screens/splash-screen';
-
+import AuthLoadingScreen from '../screens/AuthLoadingScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -38,8 +38,10 @@ export default function Navigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="LoginScreen"
+        initialRouteName="AuthLoading"
       >
+            <Stack.Screen name="AuthLoading" component={AuthLoadingScreen}  />
+
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="PunchinScreen" component={PunchinScreen} />
         <Stack.Screen name="PunchoutScreen" component={PunchoutScreen} />

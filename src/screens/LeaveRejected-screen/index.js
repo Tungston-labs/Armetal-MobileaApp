@@ -51,7 +51,10 @@ export default function LeaveRejectedScreen() {
       }
     >
       <View style={styles.statusBadgeRejected}>
-        <Text style={styles.statusTextRejected}>{item.status}</Text>
+        <Text style={styles.statusTextRejected}>
+  {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+</Text>
+
       </View>
       <View style={styles.cardContent}>
         <View style={styles.row}>
@@ -76,7 +79,7 @@ export default function LeaveRejectedScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-   \
+   
 
       <LeaveHeader navigation={navigation} route={route} />
 

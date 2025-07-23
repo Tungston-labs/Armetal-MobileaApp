@@ -13,6 +13,7 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 export default function RequestPending({ navigation, route }) {
   const { leaveId } = route.params;
@@ -22,6 +23,16 @@ export default function RequestPending({ navigation, route }) {
   const [profile, setProfile] = useState(null);
 
   const API_BASE_URL = 'http://178.248.112.16:8000';
+
+const formatTime = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true, // set to false if you prefer 24-hour format
+  });
+};
+
 
   useEffect(() => {
   const fetchProfile = async () => {
@@ -177,7 +188,9 @@ export default function RequestPending({ navigation, route }) {
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
-              <Text style={styles.value}>11:30 AM</Text>
+            <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
+
+
             </View>
           </View>
 

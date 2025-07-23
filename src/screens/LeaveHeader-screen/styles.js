@@ -15,7 +15,7 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: 'bold',
-    marginTop:40,
+    marginTop:20,
   },
   counters: {
     flexDirection: 'row',

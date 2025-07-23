@@ -30,7 +30,7 @@ export default StyleSheet.create({
     color: '#FFFF',
     fontSize: 15,
     marginLeft: 20,
-    marginTop:25,
+    marginTop:20,
     marginBottom: 10,
     fontWeight: 'bold',
   },
@@ -54,17 +54,17 @@ export default StyleSheet.create({
   statusApproved: {
     borderColor: '#00d47f',
     borderWidth: 1,
-    backgroundColor: 'transparent',
+     backgroundColor: 'rgba(0, 212, 127, 0.1)',
   },
   statusRejected: {
     borderColor: '#f44336',
     borderWidth: 1,
-    backgroundColor: 'transparent',
+     backgroundColor: 'rgba(244, 67, 54, 0.1)',
   },
   statusPending: {
     borderColor: '#ff9800',
     borderWidth: 1,
-    backgroundColor: 'transparent',
+       backgroundColor: 'rgba(255, 152, 0, 0.1)',
   },
   statusText: {
     color: '#FFFF',

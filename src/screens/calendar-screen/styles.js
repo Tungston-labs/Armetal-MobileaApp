@@ -12,7 +12,7 @@ header: {
   justifyContent: 'space-between',
   paddingHorizontal: 20,        
   paddingBottom: 15,          
-  height: 90,                  
+  height: 80,                  
   backgroundColor: '#262D40',
 },
   headerTitle: {
@@ -34,7 +34,7 @@ header: {
     backgroundColor: '#132259',
     borderRadius: 10,
     padding: 8,
-    marginBottom: 12,
+    marginBottom: 10,
     // height:'80'
   },
   greenStrip: {

@@ -47,7 +47,7 @@ headerLeft: {
     backgroundColor: "#172554",
     borderRadius: 12,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: "#FFFF",
   },
 

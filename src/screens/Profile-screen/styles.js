@@ -12,7 +12,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#262D40',
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0.2,
     borderBottomColor: '#FFFF',
     position: 'relative',
    

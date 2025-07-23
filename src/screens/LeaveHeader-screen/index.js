@@ -78,19 +78,19 @@ export default function LeaveHeader({ navigation, selectedTab }) {
 
       {/* Tabs */}
       <View style={styles.tabs}>
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab.label}
-            onPress={() => navigation.navigate(tab.screen)}
-            style={styles.tabButton}
-          >
-            <Text
-              style={selectedTab === tab.label ? styles.tabSelected : styles.tab}
-            >
-              {tab.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+       {tabs.map((tab) => (
+  <TouchableOpacity
+    key={tab.label}
+    onPress={() => navigation.navigate(tab.screen)}
+    style={styles.tabButton}
+  >
+    <Text
+      style={selectedTab === tab.label ? styles.tabSelected : styles.tab}
+    >
+      {tab.label}
+    </Text>
+  </TouchableOpacity>
+))}
       </View>
     </View>
   );

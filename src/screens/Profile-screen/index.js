@@ -99,7 +99,10 @@ const ProfileScreen = () => {
 
         <TouchableOpacity
           style={styles.optionCard}
-          onPress={() => navigation.navigate('LoginScreen')}
+          onPress={async () => {
+            await AsyncStorage.removeItem("accessToken");
+            navigation.navigate('LoginScreen')
+          }}
         >
           <Ionicons name="log-out-outline" size={22} color="#ccc" />
           <Text style={styles.optionText}>Log out</Text>

@@ -50,7 +50,11 @@ export default function LeaveApproveScreen() {
     style={styles.card}
   >
     <View style={styles.statusContainer}>
-      <Text style={styles.statusText}>{item.status}</Text>
+ <Text style={styles.statusText}>
+  {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+</Text>
+
+
     </View>
     <View style={styles.cardContent}>
       <View style={styles.row}>

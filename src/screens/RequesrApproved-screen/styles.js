@@ -40,8 +40,9 @@ export default StyleSheet.create({
   },
 
   separator: {
-    height: 1,
+    height: 0.2,
     backgroundColor: "#FFFF",
+    
   },
   content: {
     padding: 16,
@@ -50,7 +51,7 @@ export default StyleSheet.create({
     backgroundColor: "#172554",
     borderRadius: 12,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: "#FFFF",
   },
   statusBadge: {

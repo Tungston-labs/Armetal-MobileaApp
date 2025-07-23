@@ -85,8 +85,9 @@ export default StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#333',
+    borderWidth: 0.2,
+    // borderColor: '#333',
+     borderColor: '#FFFFFF',
   },
   statusBadgePending: {
     borderWidth: 1,

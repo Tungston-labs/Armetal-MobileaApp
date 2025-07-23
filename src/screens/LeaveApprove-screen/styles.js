@@ -88,7 +88,7 @@ export default StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 12,
     padding: 16,
-    borderWidth: 0.5,
+    borderWidth: 0.2,
     borderColor: '#FFFFFF',
   },
   statusContainer: {

@@ -56,7 +56,10 @@ export default function LeavePendingScreen() {
     style={styles.card}
   >
     <View style={styles.statusBadgePending}>
-      <Text style={styles.statusTextPending}>{item.status}</Text>
+   <Text style={styles.statusTextPending}>
+  {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+</Text>
+
     </View>
     <View style={styles.cardContent}>
       <View style={styles.row}>

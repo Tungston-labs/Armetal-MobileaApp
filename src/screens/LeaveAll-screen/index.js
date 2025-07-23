@@ -70,7 +70,19 @@ const formattedDate = today.toLocaleDateString('en-GB', {
         ]}
         // onPress={() => handleStatusNavigation(item.status)}
       >
-        <Text style={styles.statusText}>{item.status}</Text>
+<Text
+  style={[
+    styles.statusText,
+    item.status === 'approved'
+      ? { color: '#00d47f' }
+      : item.status === 'rejected'
+      ? { color: '#f44336' }
+      : { color: '#ff9800' },
+  ]}
+>
+  {item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}
+</Text>
+
       </TouchableOpacity>
 
       <View style={styles.cardContent}>

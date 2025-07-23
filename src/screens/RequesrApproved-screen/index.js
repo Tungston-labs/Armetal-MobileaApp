@@ -25,6 +25,14 @@ export default function RequestApprovedScreen() {
   const [loading, setLoading] = useState(true);
   const API_BASE_URL = 'http://178.248.112.16:8000';
 
+const formatTime = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true, // set to false if you prefer 24-hour format
+  });
+};
 
   // Fetch leave details
   useEffect(() => {
@@ -128,7 +136,8 @@ export default function RequestApprovedScreen() {
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
-              <Text style={styles.value}>11:30 AM</Text>
+        <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
+
             </View>
           </View>
 

@@ -8,23 +8,23 @@ export default StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 100,
+    height: 90,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.2,
     borderBottomColor: '#FFFFFF',
   
   },
   backButton: {
     padding: 8,
-      marginTop:45,
+      marginTop:35,
   },
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '600',
     marginLeft: 14,
-    marginTop:40,
+    marginTop:30,
   },
   content: {
     padding: 16,

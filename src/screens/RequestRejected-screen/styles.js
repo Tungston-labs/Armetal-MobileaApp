@@ -46,7 +46,7 @@ export default StyleSheet.create({
     backgroundColor: '#172554',
     borderRadius: 10,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: '#FFFF',
   },
 
