@@ -5,7 +5,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
-    padding:4
+    padding: 4,
   },
 
   innerWrapper: {
@@ -15,17 +15,15 @@ export default StyleSheet.create({
   scrollView: {
     padding: 5,
     paddingBottom: 50,
-  }, 
+  },
 
   homeBox: {
     backgroundColor: '#262D40',
     borderRadius: 14,
     paddingVertical: 20,
     paddingHorizontal: 20,
-  
     marginTop: 40,
-    paddingBottom:30,
-    
+    paddingBottom: 30,
   },
 
   homeContent: {
@@ -58,26 +56,25 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     marginBottom: 10,
-    marginTop:10,
+    marginTop: 10,
     fontWeight: '400',
-    marginLeft:6
+    marginLeft: 6,
   },
 
   departmentCard: {
     backgroundColor: '#172554',
     borderRadius: 7,
-    padding:"4%",
+    padding: "4%",
     marginBottom: 16,
     borderWidth: 0.2,
     borderColor: '#FFFFFF',
-    margin:5,
+    margin: 5,
   },
 
   departmentName: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
-    
   },
 
   teamLeadLabel: {
@@ -166,14 +163,11 @@ export default StyleSheet.create({
 
   attendanceBox: {
     backgroundColor: '#172554',
+    marginHorizontal: 12,
+    padding: 16,
     borderRadius: 12,
-    paddingVertical: 25,
-    paddingHorizontal: 20,
-    // marginBottom: 40,
     borderWidth: 0.2,
     borderColor: '#3a4ca0',
-    marginHorizontal: 5,
-    
   },
 
   attendanceTitle: {
@@ -181,7 +175,6 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 14,
-    textTransform: 'capitalize',
     fontFamily: 'Raleway',
   },
 
@@ -248,5 +241,62 @@ export default StyleSheet.create({
     marginLeft: 8,
     fontFamily: 'Satoshi',
   },
-  
+
+  circularCalendarWrapper: {
+    alignItems: "center",
+    marginVertical: 18,
+  },
+
+  dayOfWeekText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "600",
+  },
+
+  dateTextLarge: {
+    fontSize: 22,
+    marginVertical: 4,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  gridMenu: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 20,
+    marginHorizontal: 10,
+    flexWrap: "wrap",
+  },
+
+  gridItem: {
+    width: "23%",
+    aspectRatio: 1,
+    backgroundColor: "#1D2A5C",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  gridTitle: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#fff",
+    textAlign: "center",
+  },
+
+  specialItem: {
+    backgroundColor: "#3352BA",
+  },
+
+  swipeWrapper: {
+    padding: 12,
+  },
+
+  loading: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 50,
+  },
 });

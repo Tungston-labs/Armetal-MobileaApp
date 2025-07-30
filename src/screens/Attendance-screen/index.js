@@ -15,7 +15,7 @@ import axios from 'axios';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import authAxios from '../../utils/authAxios';
 
-const API_BASE_URL = 'http://178.248.112.16:8000';
+const API_BASE_URL = 'http://178.248.112.16:8001';
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();

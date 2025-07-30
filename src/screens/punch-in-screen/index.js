@@ -37,7 +37,7 @@ const AttendanceScreen = () => {
     //Alert.alert('Success', nextState ? 'Punched In' : 'Punched Out');
   };
 
-  const API_BASE_URL = "http://178.248.112.16:8000";
+  const API_BASE_URL = "http://178.248.112.16:8001";
 
   const fetchTodayAttendance = async (authToken) => {
     try {
@@ -160,20 +160,7 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
             </View>
           </View>
 
-          {/* Department - Clickable */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate("DepartmentScreen", { department: employee?.department })}
-          >
-            <Text style={styles.sectionTitle}>Department</Text>
-            <View style={styles.departmentCard}>
-              <Text style={styles.departmentName}>{employee?.department?.name || "N/A"}</Text>
-              <Text style={styles.teamLeadLabel}>Team lead</Text>
-              <View style={styles.leadContainer}>
-                <Image source={avatarSource} style={styles.avatar} />
-                <Text style={styles.leadName}>{employee?.department?.head || "N/A"}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+        
 
           {/* Attendance calendar */}
           <TouchableOpacity onPress={() => navigation.navigate("AttendanceScreen", {
@@ -224,6 +211,41 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
   ))}
 </View>
 
+ {/* Grid: exactly 4 in one row */}
+          <View style={styles.gridMenu}>
+            {[
+              { title: "Salary Slip", icon: "document" },
+              { title: "Attendance", icon: "calendar" },
+              { title: "Task", icon: "clipboard" },
+              { title: "Apply Leave", icon: "add-circle", special: true },
+            ].map((it, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={[styles.gridItem, it.special && styles.specialItem]}
+                onPress={() => navigation.navigate(it.title.replace(/\s/g, "") + "Screen")}
+              >
+                <Ionicons name={it.icon} size={26} color="#fff" />
+                <Text style={styles.gridTitle}>{it.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View style={styles.gridMenu}>
+            {[
+              { title: "Salary Slip", icon: "document" },
+              { title: "Attendance", icon: "calendar" },
+              { title: "Task", icon: "clipboard" },
+              { title: "Apply Leave", icon: "add-circle", special: true },
+            ].map((it, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={[styles.gridItem, it.special && styles.specialItem]}
+                onPress={() => navigation.navigate(it.title.replace(/\s/g, "") + "Screen")}
+              >
+                <Ionicons name={it.icon} size={26} color="#fff" />
+                <Text style={styles.gridTitle}>{it.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
 
             {/* Attendance Box */}
@@ -257,38 +279,7 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
             </View>
           </TouchableOpacity>
 
-          {/* Swipe Button */}
-          {/* <TouchableOpacity style={styles.swipeButton} onPress={handlePunch} disabled={punching}>
-            <Ionicons name="arrow-forward-circle" size={28} color="#0E53CC" />
-            <Text style={styles.swipeText}>
-              {punching
-                ? "Processing..."
-                : isCurrentlyPunchedIn()
-                ? "Swipe to punch out"
-                : "Swipe to punch in"}
-            </Text>
-          </TouchableOpacity> */}
-
-{/* 
-<SwipeButton
-        title={isPunchedIn ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
-        successTitle={isPunchedIn ? 'Punched Out!' : 'Punched In!'}
-        onSwipeSuccess={handleSwipe}
-        backgroundColor="#ddd"
-        thumbColor={isPunchedIn ? '#e53935' : '#43a047'}
-      /> */}
-     {/* <SwipeButton
-  title={isCurrentlyPunchedIn() ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
-  successTitle={isCurrentlyPunchedIn() ? 'Punched Out!' : 'Punched In!'}
-  onSwipeSuccess={() => {
-    if (!punching) {
-      handlePunch(); // hit backend
-    }
-  }}
-  backgroundColor="#ddd"
-  thumbColor={isCurrentlyPunchedIn() ? '#e53935' : '#43a047'}
-  resetAfterSuccess={true}
-/>*/}
+   
 <SwipeButton
   title={isCurrentlyPunchedIn() ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
   successTitle={isCurrentlyPunchedIn() ? 'Punched Out!' : 'Punched In!'}

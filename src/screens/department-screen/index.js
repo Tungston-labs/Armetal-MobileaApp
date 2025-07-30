@@ -48,7 +48,7 @@ const DepartmentScreen = () => {
   const renderMember = ({ item }) => {
   const imageUrl = item.profile_pic?.startsWith('http')
     ? item.profile_pic
-    : `http://178.248.112.16:8000${item.profile_pic}`;
+    : `http://178.248.112.16:8001${item.profile_pic}`;
 
   return (
     <View style={styles.memberItem}>

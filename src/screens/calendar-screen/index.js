@@ -89,7 +89,7 @@ const CalendarScreen = () => {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // const API_URL = "http://178.248.112.16:8000/api/holidays/";
+  // const API_URL = "http://178.248.112.16:8001/api/holidays/";
 
    const fetchHolidays = async () => {
     try {
