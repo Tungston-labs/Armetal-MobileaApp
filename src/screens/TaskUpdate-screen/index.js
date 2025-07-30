@@ -13,9 +13,10 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import styles, { boxWidth } from './styles';
 import BottomNavbar from '../BottomNavbar';
 import TaskModal from '../TaskModal';
-import axios from 'axios';
+// import axios from 'axios';
 import moment from 'moment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import authAxios from '../../utils/authAxios';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
@@ -45,47 +46,38 @@ export default function TaskUpdateScreen() {
     });
   };
 
-  const fetchTasks = async (date) => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) return;
+const fetchTasks = async (date) => {
+  try {
+    const response = await authAxios.get(`/employee/tasks/?date=${date}`);
+    const taskList = response.data.results.map(item => ({
+      id: item.id,
+      project: item.project,
+      task: item.task,
+      time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
+      submittedAt: moment(item.updated_at).format('hh:mm A'),
+    }));
+    setTasks(taskList);
+  } catch (error) {
+    console.error('❌ Error fetching tasks:', error.response?.data || error.message);
+  }
+};
 
-      const response = await axios.get(
-        `${API_BASE_URL}/api/employee/tasks/?date=${date}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+ const fetchProfilePicture = async () => {
+  try {
+    const response = await authAxios.get('/profile/');
+    const profilePicPath = response?.data?.profile_pic;
 
-      const taskList = response.data.results.map(item => ({
-        id: item.id,
-        project: item.project,
-        task: item.task,
-        time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
-        submittedAt: moment(item.updated_at).format('hh:mm A'),
-      }));
-      setTasks(taskList);
-    } catch (error) {
-      console.error('❌ Error fetching tasks:', error.response?.data || error.message);
-    }
-  };
+    const picUrl = profilePicPath
+      ? `${API_BASE_URL}${profilePicPath}`
+      : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
-  const fetchProfilePicture = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) return;
+    setProfilePic(picUrl);
+  } catch (error) {
+    console.error('❌ Error fetching profile picture:', error?.message || error);
+  }
+};
 
-      const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
 
-      const picUrl = response.data?.profile_pic
-        ? `${API_BASE_URL}${response.data.profile_pic}`
-        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
-      setProfilePic(picUrl);
-    } catch (error) {
-      console.error('❌ Error fetching profile picture:', error.message);
-    }
-  };
 
   useEffect(() => {
     const start = moment(selectedDate);

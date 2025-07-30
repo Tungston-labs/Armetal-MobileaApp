@@ -11,9 +11,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import axios from "axios";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import authAxios from "../../utils/authAxios";
 
 export default function RequestPending({ navigation, route }) {
   const { leaveId } = route.params;
@@ -34,21 +35,18 @@ const formatTime = (isoString) => {
 };
 
 
-  useEffect(() => {
+useEffect(() => {
   const fetchProfile = async () => {
     try {
-      const token = await AsyncStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await authAxios.get(`/profile/`);
       setProfile(response.data);
     } catch (error) {
       console.error("Error fetching profile:", error);
       Toast.show({
-          type: 'error',
-          text1: 'Profile Error',
-          text2: 'Could not fetch profile.',
-        });
+        type: 'error',
+        text1: 'Profile Error',
+        text2: 'Could not fetch profile.',
+      });
     }
   };
 
@@ -56,36 +54,28 @@ const formatTime = (isoString) => {
 }, []);
 
 
+useEffect(() => {
+  const fetchLeaveDetail = async () => {
+    try {
+      const res = await authAxios.get(`/leave/emp/${leaveId}/`);
+      setLeave(res.data);
+    } catch (error) {
+      console.error("Failed to fetch leave details", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Leave Error',
+        text2: 'Could not load leave details.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(() => {
-    const fetchLeaveDetail = async () => {
-      try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const res = await axios.get(
-          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setLeave(res.data);
-      } catch (error) {
-        console.error("Failed to fetch leave details", error);
-       Toast.show({
-          type: 'error',
-          text1: 'Leave Error',
-          text2: 'Could not load leave details.',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  fetchLeaveDetail();
+}, [leaveId]);
 
-    fetchLeaveDetail();
-  }, [leaveId]);
 
- const cancelLeave = async () => {
+const cancelLeave = async () => {
   Alert.alert("Confirm", "Are you sure you want to cancel this leave?", [
     { text: "No" },
     {
@@ -93,38 +83,30 @@ const formatTime = (isoString) => {
       onPress: async () => {
         try {
           setCanceling(true);
-          const token = await AsyncStorage.getItem("accessToken");
 
-          const response = await axios.delete(
-            `http://178.248.112.16:8000/api/leave/${leaveId}/cancel/`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const response = await authAxios.delete(`/leave/${leaveId}/cancel/`);
 
           if (response.status === 204) {
-             Toast.show({
-                type: 'success',
-                text1: 'Leave Cancelled',
-                text2: 'Leave request cancelled successfully.',
-              });
+            Toast.show({
+              type: 'success',
+              text1: 'Leave Cancelled',
+              text2: 'Leave request cancelled successfully.',
+            });
             navigation.goBack();
           } else {
             Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Could not cancel the leave request.',
-              });
+              type: 'error',
+              text1: 'Error',
+              text2: 'Could not cancel the leave request.',
+            });
           }
         } catch (error) {
           console.error("Cancel failed:", error);
           Toast.show({
-              type: 'error',
-              text1: 'Error',
-              text2: 'An error occurred while cancelling the request.',
-            });
+            type: 'error',
+            text1: 'Error',
+            text2: 'An error occurred while cancelling the request.',
+          });
         } finally {
           setCanceling(false);
         }
@@ -132,7 +114,6 @@ const formatTime = (isoString) => {
     },
   ]);
 };
-
   if (loading || !leave) {
     return (
       <SafeAreaView style={styles.container}>

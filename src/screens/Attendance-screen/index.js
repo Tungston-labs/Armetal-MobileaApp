@@ -12,7 +12,8 @@ import styles from './styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import authAxios from '../../utils/authAxios';
 
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
@@ -28,14 +29,7 @@ const AttendanceScreen = () => {
   useEffect(() => {
     const fetchProfilePic = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) return;
-
-        const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await authAxios.get('/profile/'); // ✅ Use authAxios here
 
         const imageUrl = response.data?.profile_pic
           ? `${API_BASE_URL}${response.data.profile_pic}`

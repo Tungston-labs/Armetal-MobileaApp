@@ -11,8 +11,9 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import axios from "axios";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "../../utils/authAxios";
 import { useIsFocused } from '@react-navigation/native';
 
 
@@ -25,18 +26,10 @@ export default function LeavePendingScreen() {
   const isFocused = useIsFocused();
 
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchPendingLeaves = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const response = await axios.get(
-          "http://178.248.112.16:8000/api/leave/by-status/?status=pending",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await authAxios.get("leave/by-status/?status=pending");
         setLeaveData(response.data);
       } catch (error) {
         console.error("Error fetching pending leaves:", error);
@@ -45,10 +38,10 @@ export default function LeavePendingScreen() {
       }
     };
 
-  if (isFocused) {
-    fetchPendingLeaves();
-  }
-}, [isFocused]);
+    if (isFocused) {
+      fetchPendingLeaves();
+    }
+  }, [isFocused]);
 
  const renderItem = ({ item }) => (
   <TouchableOpacity

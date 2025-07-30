@@ -11,8 +11,9 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "../../utils/authAxios";
+// import axios from "axios";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LeaveRejectedScreen() {
   const navigation = useNavigation();
@@ -23,15 +24,7 @@ export default function LeaveRejectedScreen() {
   useEffect(() => {
     const fetchRejectedLeaves = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const response = await axios.get(
-          "http://178.248.112.16:8000/api/leave/by-status/?status=rejected",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await authAxios.get("leave/by-status/?status=rejected"); // ✅ relative to baseURL
         setLeaveData(response.data);
       } catch (error) {
         console.error("Error fetching rejected leaves:", error);
@@ -42,6 +35,7 @@ export default function LeaveRejectedScreen() {
 
     fetchRejectedLeaves();
   }, []);
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

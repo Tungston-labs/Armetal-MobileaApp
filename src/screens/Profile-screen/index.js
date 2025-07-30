@@ -10,7 +10,8 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
-import axios from 'axios';
+import authAxios from '../../utils/authAxios';
+// import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
@@ -23,18 +24,7 @@ const ProfileScreen = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) {
-          Alert.alert('Error', 'Access token not found');
-          return;
-        }
-
-        const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const response = await authAxios.get('/profile/'); // ✅ token added automatically
         setEmployee(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error.message);
@@ -101,6 +91,7 @@ const ProfileScreen = () => {
           style={styles.optionCard}
           onPress={async () => {
             await AsyncStorage.removeItem("accessToken");
+            await AsyncStorage.removeItem("refreshToken");
             navigation.navigate('LoginScreen')
           }}
         >

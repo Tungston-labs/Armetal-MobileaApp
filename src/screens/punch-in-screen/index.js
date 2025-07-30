@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index"
+import authAxios from "@/src/utils/authAxios";
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -40,9 +41,7 @@ const AttendanceScreen = () => {
 
   const fetchTodayAttendance = async (authToken) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/attendance/today/`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const res = await authAxios.get(`/attendance/today/` );
 
       const data = res.data;
       setSessions(data.sessions || []);
@@ -57,7 +56,7 @@ const AttendanceScreen = () => {
   };
 
  const getLatestSession = () => {
-  if (!Array.isArray(sessions) || sessions.length === 0) return null;
+  if (!Array.isArray(sessions) || sessions.length === 0) return "----";
   return sessions[sessions.length - 1];
 };
 
@@ -67,116 +66,15 @@ const AttendanceScreen = () => {
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
-  // const handlePunch = async () => {
-  //   setPunching(true);
-  //   try {
-  //     const response = await axios.post(
-  //       `${API_BASE_URL}/api/attendance/swipe/`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
 
-  //     Alert.alert("Success", response.data.message || "Swiped.");
-  //     await fetchTodayAttendance(token);
-  //   } catch (error) {
-  //     console.error("Swipe error:", error.response?.data || error.message);
-  //     Alert.alert("Error", "Failed to swipe.");
-  //   } finally {
-  //     setPunching(false);
-  //   }
-  // };
 
-  // const handlePunch = async () => {
-  //   setPunching(true);
-  //   try {
-  //     const response = await axios.post(
-  //       `${API_BASE_URL}/api/attendance/swipe/`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  
-  //     Alert.alert("Success", response.data.message || "Swiped.");
-  //     await fetchTodayAttendance(token);
-  
-  //     // Recalculate current punch status after API call
-  //     const latest = getLatestSession();
-  //     const currentlyIn = latest?.time_in && !latest?.time_out;
-  //     setIsPunchedIn(currentlyIn);
-  //   } catch (error) {
-  //     console.error("Swipe error:", error.response?.data || error.message);
-  //     Alert.alert("Error", "Failed to swipe.");
-  //   } finally {
-  //     setPunching(false);
-  //   }
-  // };
-
-//   const handlePunch = async () => {
-//   setPunching(true);
-//   try {
-//     const response = await axios.post(
-//       `${API_BASE_URL}/api/attendance/swipe/`,
-//       {},
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     Alert.alert("Success", response.data.message || "Swiped.");
-
-//     await fetchTodayAttendance(token);
-
-//     // Ensure sessions have been updated before checking punch state
-//     setTimeout(() => {
-//       const latest = getLatestSession();
-//       if (latest) {
-//         const currentlyIn = latest?.time_in && !latest?.time_out;
-//         setIsPunchedIn(currentlyIn);
-//       } else {
-//         setIsPunchedIn(false);
-//       }
-//     }, 200); // Delay to ensure sessions update
-
-//   } catch (error) {
-//    // console.error("Swipe error:", error.response?.data || error.message);
-//     Alert.alert("Error", "Failed to swipe.");
-//   } finally {
-//     setPunching(false);
-//   }
-// };
 
 
 const handlePunch = async () => {
   setPunching(true);
-
-  // Get local time in ISO format
-  const now = new Date();
-  const localISO = now.toISOString(); // e.g. "2025-07-17T08:57:18.000Z"
-
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/api/attendance/swipe/`,
-      {
-        // timestamp: localISO,  // <-- ✅ send timestamp
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    ); 
-
-    // Alert.alert("Success", response.data.message || "Swiped.");
-    await fetchTodayAttendance(token);
+    const response = await authAxios.post(`/attendance/swipe/`, {});
+    await fetchTodayAttendance();
 
     setTimeout(() => {
       const latest = getLatestSession();
@@ -190,28 +88,18 @@ const handlePunch = async () => {
 };
   
   useEffect(() => {
-    (async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem("accessToken");
-        if (!storedToken) {
-          Alert.alert("Error", "Token not found.");
-          return;
-        }
-        setToken(storedToken);
-
-        const profileRes = await axios.get(`${API_BASE_URL}/api/profile/`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        });
-
-        setEmployee(profileRes.data);
-        await fetchTodayAttendance(storedToken);
-      } catch (err) {
-        console.error("Init error:", err.message);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  (async () => {
+    try {
+      const profileRes = await authAxios.get(`/profile/`);
+      setEmployee(profileRes.data);
+      await fetchTodayAttendance();
+    } catch (err) {
+      console.error("Init error:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
 
 const today = new Date();
 const todayMonth = today.toLocaleString("en-US", { month: "short" });
@@ -231,11 +119,15 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
 });
 
 
-
-  const timeIn = sessions[0]?.time_in?.substring(0, 5) || "------";
+  const timeIn = sessions[0]?.time_in || "------";
   const lastOut = getLatestSession()?.time_out;
-  const timeOut = lastOut ? lastOut.substring(0, 5) : "------";
-
+  const timeOut = lastOut  ? lastOut : "------";
+  //lastOut.substring(0, 5) 
+  console.log("lastOut",lastOut)
+  // : 
+  // //console.log("uuu",lastOut)
+  // "------";
+//console.log("lastOut",lastOut)
   const avatarSource = employee?.profile_pic
     ? { uri: `${API_BASE_URL}${employee.profile_pic}` }
     : { uri: defaultAvatar };
@@ -344,13 +236,18 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
                 })}
               </Text>
               <View style={styles.timeRow}>
-                <Text style={styles.timeLabel}>Time in :</Text>
-                <Text style={styles.timeValue}>{timeIn}</Text>
-              </View>
-              <View style={styles.timeRow}>
-                <Text style={styles.timeLabel}>Time Out :</Text>
-                <Text style={styles.timeValue}>{timeOut}</Text>
-              </View>
+  <Text style={styles.timeLabel}>Time in :</Text>
+  <Text style={styles.timeValue}>
+    {timeIn ? new Date(timeIn).toLocaleTimeString() : '-- --'}
+  </Text>
+</View>
+
+<View style={styles.timeRow}>
+  <Text style={styles.timeLabel}>Time Out :</Text>
+  <Text style={styles.timeValue}>
+    {timeOut ? new Date(timeOut).toLocaleTimeString() : '-- --'}
+  </Text>
+</View>
               <View style={styles.line} />
               <View style={styles.totalHoursRow}>
                 <Ionicons name="time-outline" size={20} color="#fff" />

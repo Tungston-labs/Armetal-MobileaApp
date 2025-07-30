@@ -31,16 +31,12 @@ const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!username || !password) {
-      Toast.show({
-        type: 'error',
-        text1: 'Validation Error',
-        text2: 'Please enter both username and password.',
-      });
+      Alert.alert('Validation Error', 'Please enter both username and password.');
       return;
     }
 
     try {
-      const response = await axios.post('http://178.248.112.16:8000/api/token/', {
+      const response = await axios.post('http://178.248.112.16:8001/api/token/', {
         username,
         password,
       });
@@ -48,39 +44,29 @@ const [showPassword, setShowPassword] = useState(false);
       const { access, refresh } = response.data;
       await AsyncStorage.setItem('accessToken', access);
       await AsyncStorage.setItem('refreshToken', refresh);
-    Toast.show({
-        type: 'success',
-        text1: 'Login Successful',
-        text2: `Welcome, ${username}!`,
-      });
-      navigation.reset({
-  index: 0,
-  routes: [{ name: 'PunchinScreen' }],
-});
+
+      Alert.alert('Login Successful', `Welcome, ${username}!`, [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'PunchinScreen' }],
+            });
+          },
+        },
+      ]);
 
     } catch (error) {
-      console.log("API Error Message:", error.message);
-      console.log("API Error Message:", error);
+      console.log('API Error:', error.message);
+      console.log('API Error Details:', error);
 
-     
       if (error.response) {
-        Toast.show({
-          type: 'error',
-          text1: 'Login Failed',
-          text2: 'Invalid username or password.',
-        });
+        Alert.alert('Login Failed', 'Invalid username or password.');
       } else if (error.request) {
-        Toast.show({
-          type: 'error',
-          text1: 'Network Error',
-          text2: 'No response from server. Check your network.',
-        });
+        Alert.alert('Network Error', 'No response from server. Check your network.');
       } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: error.message,
-        });
+        Alert.alert('Error', error.message);
       }
     }
   };
@@ -148,13 +134,13 @@ const [showPassword, setShowPassword] = useState(false);
                 <Text style={styles.forgotPasswordText}>Forgot password ? </Text>
               </TouchableOpacity>
 
-              <View style={styles.rememberMeContainer}>
+              {/* <View style={styles.rememberMeContainer}>
                 <CheckBox
                   value={rememberMe}
                   onValueChange={setRememberMe}
                 />
                 <Text style={styles.rememberMeText}>Remember me</Text>
-              </View>
+              </View> */}
 
               <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Log in</Text>

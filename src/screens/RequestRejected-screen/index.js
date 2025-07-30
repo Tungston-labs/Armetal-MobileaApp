@@ -11,10 +11,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import axios from 'axios';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-
+import authAxios from '../../utils/authAxios';
 
 export default function RequestRejected({ navigation, route }) {
   const { leaveId } = route.params; // 👈 Receive leaveId from navigation
@@ -34,21 +34,18 @@ const formatTime = (isoString) => {
   });
 };
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const response = await axios.get(`${API_BASE_URL}/api/profile/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await authAxios.get(`${API_BASE_URL}/api/profile/`);
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
-       Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Could not fetch profile.',
-      });
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Could not fetch profile.',
+        });
       }
     };
 
@@ -57,26 +54,18 @@ const formatTime = (isoString) => {
 
 
 
-  useEffect(() => {
+useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        const response = await axios.get(
-          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await authAxios.get(`${API_BASE_URL}/api/leave/emp/${leaveId}/`);
         setLeave(response.data);
       } catch (error) {
         console.error('Failed to fetch rejected leave details:', error);
         Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Could not load rejected leave details.',
-      });
+          type: 'error',
+          text1: 'Error',
+          text2: 'Could not load rejected leave details.',
+        });
       } finally {
         setLoading(false);
       }

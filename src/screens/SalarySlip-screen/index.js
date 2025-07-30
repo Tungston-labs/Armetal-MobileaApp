@@ -15,10 +15,10 @@ import {
    Platform
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
-
+import authAxios from '../../utils/authAxios';
 const allMonths = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -33,22 +33,12 @@ const SalarySlipScreen = () => {
   const [salaryData, setSalaryData] = useState([]);
   const [yearDropdownVisible, setYearDropdownVisible] = useState(false);
 
-  const fetchSalaryRecords = async () => {
+   const fetchSalaryRecords = async () => {
     try {
-      const token = await AsyncStorage.getItem('accessToken');
-      const response = await fetch(
-        `http://178.248.112.16:8000/api/employee/payslips/?year=${selectedYear}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await authAxios.get(
+        `/employee/payslips/?year=${selectedYear}`
       );
-      if (!response.ok) throw new Error('Failed to fetch salary records');
-      const data = await response.json();
-
-      // Backend sends an array directly (not paginated)
-      setSalaryData(data || []);
+      setSalaryData(response.data || []);
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Could not load salary data');
@@ -101,7 +91,7 @@ const handleDownload = async (monthNumber) => {
     const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
 
 
-    const downloadUrl = `http://178.248.112.16:8000/api/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
+    const downloadUrl = `/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
     const filePath = `${RNFS.DownloadDirectoryPath}/Payslip_${paddedMonth}_${selectedYear}.pdf`;
 
     const hasPermission = await requestStoragePermission();

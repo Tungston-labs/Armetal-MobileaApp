@@ -12,8 +12,9 @@ import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import authAxios from '../../utils/authAxios';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import axios from 'axios';
 
 const defaultAvatar = require('../../assets/avatar.png');
 
@@ -24,22 +25,11 @@ const DepartmentScreen = () => {
   const [departmentHead, setDepartmentHead] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = 'http://178.248.112.16:8000/api/employees/my-department/';
+  // const API_URL = 'http://178.248.112.16:8000/api/employees/my-department/';
 
-  const fetchDepartmentMembers = async () => {
+ const fetchDepartmentMembers = async () => {
     try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        console.warn('Access token not found');
-        return;
-      }
-
-      const res = await axios.get(API_URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const res = await authAxios.get('/employees/my-department/'); // ✅ shortened URL
       setMembers(res.data.members || []);
       setDepartmentName(res.data.department || 'Department');
       setDepartmentHead(res.data.head || null);
@@ -49,6 +39,7 @@ const DepartmentScreen = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchDepartmentMembers();

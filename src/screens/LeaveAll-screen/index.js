@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
@@ -18,30 +18,17 @@ export default function LeaveAllScreen({ navigation, route }) {
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchLeaves = async () => {
-    try {
-      const token = await AsyncStorage.getItem("accessToken");
-      const response = await fetch("http://178.248.112.16:8000/api/leave/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch leave data");
-      }
-
-      const data = await response.json();
-      const leaves = data.results?.leaves || [];
-      setLeaveData(leaves);
-    } catch (error) {
-      console.error("Error fetching leaves:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ const fetchLeaves = async () => {
+  try {
+    const response = await authAxios.get('/leave/');
+    const leaves = response.data.results?.leaves || [];
+    setLeaveData(leaves);
+  } catch (error) {
+    console.error("Error fetching leaves:", error);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => {
     fetchLeaves();
   }, []);

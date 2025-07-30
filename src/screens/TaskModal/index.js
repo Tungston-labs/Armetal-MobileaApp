@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
-import axios from 'axios';
+import authAxios from '../../utils/authAxios';
+// import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 
@@ -51,12 +52,7 @@ export default function TaskModal({
         time_taken: parseFloat(timeTaken),
       };
 
-      await axios.post('http://178.248.112.16:8000/api/employee/tasks/', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+        await authAxios.post('/employee/tasks/', payload);
 
        Toast.show({
         type: 'success',

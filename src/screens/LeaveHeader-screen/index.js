@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './styles';
-import axios from 'axios';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+// import axios from 'axios';
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from '../../utils/authAxios';
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
 export default function LeaveHeader({ navigation, selectedTab }) {
@@ -19,21 +19,13 @@ export default function LeaveHeader({ navigation, selectedTab }) {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
+     const fetchData = async () => {
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) return;
-
-        // Fetch leave summary
-        const summaryRes = await axios.get(`${API_BASE_URL}/api/leave/summary/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const summaryRes = await authAxios.get("/leave/summary/");
         setSummary(summaryRes.data);
 
         // Fetch profile picture
-        const profileRes = await axios.get(`${API_BASE_URL}/api/profile/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+      const profileRes = await authAxios.get("profile/");
         const picUrl = profileRes.data?.profile_pic
           ? `${API_BASE_URL}${profileRes.data.profile_pic}`
           : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
@@ -45,7 +37,6 @@ export default function LeaveHeader({ navigation, selectedTab }) {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 

@@ -12,8 +12,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+// import axios from "axios";
+import authAxios from "../../utils/authAxios";
 
 export default function RequestApprovedScreen() {
   const navigation = useNavigation();
@@ -35,16 +36,11 @@ const formatTime = (isoString) => {
 };
 
   // Fetch leave details
-  useEffect(() => {
+  
+useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const response = await axios.get(
-          `http://178.248.112.16:8000/api/leave/emp/${leaveId}/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await authAxios.get(`/leave/emp/${leaveId}/`);
         setLeave(response.data);
       } catch (error) {
         console.error("Error fetching leave detail:", error);
@@ -57,17 +53,12 @@ const formatTime = (isoString) => {
     fetchLeaveDetail();
   }, [leaveId]);
 
+
   // Fetch employee profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const response = await axios.get(
-          `http://178.248.112.16:8000/api/profile/`, // 👈 Update URL if needed
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await authAxios.get('/profile/');
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -158,4 +149,4 @@ const formatTime = (isoString) => {
       <BottomNavbar navigation={navigation} route={route} />
     </View>
   );
-}
+  }
