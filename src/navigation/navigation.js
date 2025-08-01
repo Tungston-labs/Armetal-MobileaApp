@@ -29,7 +29,8 @@ import CreateNewPasswordScreen from '../screens/CreateNewPassword-screen';
 import TaskModal from '../screens/TaskModal';
 import FullImageViewer from '../screens/Document-screen/FullImageViewer'; // ✅ Add import
 // import SplashScreen from '../screens/splash-screen';
-import AuthLoadingScreen from '../screens/AuthLoadingScreen'
+import AuthLoadingScreen from '../screens/AuthLoadingScreen' 
+import WorkingDaySummary from '../screens/WorkingDaySummary-screen' 
 
 const Stack = createNativeStackNavigator();
 
@@ -67,7 +68,8 @@ export default function Navigation() {
         <Stack.Screen name="SetNewPasswordScreen" component={SetNewPasswordScreen} />
         <Stack.Screen name="CreateNewPasswordScreen" component={CreateNewPasswordScreen} />
         <Stack.Screen name="TaskModal" component={TaskModal} />
-        <Stack.Screen name="FullImageViewer" component={FullImageViewer} />
+        <Stack.Screen name="FullImageViewer" component={FullImageViewer} /> 
+        <Stack.Screen name="WorkingDaySummary" component={WorkingDaySummary} /> 
         {/* <Stack.Screen name="SplashScreen" component={SplashScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>

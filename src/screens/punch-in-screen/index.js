@@ -154,7 +154,7 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
                 </Text>
               </View>
               <TouchableOpacity
-            onPress={() => navigation.navigate("ProfileScreen")}
+            onPress={() => navigation.navigate("WorkingDaySummary")}
           >
               <Image source={avatarSource} style={styles.profilePic} /></TouchableOpacity>
             </View>
