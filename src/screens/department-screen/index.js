@@ -76,7 +76,7 @@ const DepartmentScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Department</Text>
+        <Text style={styles.headerTitle}>Team</Text>
       </View>
 
       {/* Team Card */}

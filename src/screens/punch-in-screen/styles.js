@@ -1,302 +1,194 @@
-import { StyleSheet, Dimensions } from 'react-native';
-const { width } = Dimensions.get('window');
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#151D34',
-    padding: 4,
+    backgroundColor: "#151D34",
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 80,
+  },
+  scrollView: { paddingBottom: 40 },
+
+  // Header
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  logo: {
+    width: 80,   // Specific width
+    height: 40,  // Specific height
+    resizeMode: "contain", // Keeps aspect ratio
+    paddingBottom: 10,
   },
 
-  innerWrapper: {
-    flex: 1,
+  logoRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-
-  scrollView: {
-    padding: 5,
-    paddingBottom: 50,
+  logoRow: {
+    flexDirection: "column",  // Stack vertically
+    alignItems: "flex-start", // Align left
   },
-
-  homeBox: {
-    backgroundColor: '#262D40',
-    borderRadius: 14,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    marginTop: 40,
-    paddingBottom: 30,
-  },
-
-  homeContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  homeTitle: {
-    color: '#ffffff',
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-
-  welcomeText: {
-    color: '#ffffff',
+  helloText: {
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '600',
-    lineHeight: 26,
+    fontWeight: "600",
+    textAlign: "left",
+    marginTop: -3,
   },
 
   profilePic: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+
   },
 
-  sectionTitle: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    marginBottom: 10,
-    marginTop: 10,
-    fontWeight: '400',
-    marginLeft: 6,
-  },
-
-  departmentCard: {
-    backgroundColor: '#172554',
-    borderRadius: 7,
-    padding: "4%",
-    marginBottom: 16,
-    borderWidth: 0.2,
-    borderColor: '#FFFFFF',
-    margin: 5,
-  },
-
-  departmentName: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-
-  teamLeadLabel: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    marginTop: 4,
-  },
-
-  leadContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    borderTopWidth: 0.5,
-    borderTopColor: '#FFFFFF',
-    paddingTop: 8,
-  },
-
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 8,
-  },
-
-  leadName: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Satoshi',
-  },
-
-  calendarRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    paddingHorizontal: 8,
-  },
-
-  dayBox: {
-    width: width / 7.2,
-    height: 100,
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    borderRadius: 12,
-    backgroundColor: '#1D2A5C',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  activeDay: {
-    backgroundColor: '#E1E8EC',
-  },
-
-  dayText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: 2,
-    fontFamily: 'Satoshi',
-  },
-
-  dateText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 2,
-    fontFamily: 'Satoshi',
-  },
-
-  monthText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    opacity: 0.7,
-    fontFamily: 'Satoshi',
-  },
-
-  activeDayText: {
-    color: '#172554',
-    fontFamily: 'Satoshi',
-  },
-
-  activeDateText: {
-    color: '#172554',
-    fontWeight: 'bold',
-    fontFamily: 'Satoshi',
-  },
-
-  attendanceBox: {
-    backgroundColor: '#172554',
-    marginHorizontal: 12,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 0.2,
-    borderColor: '#3a4ca0',
-  },
-
-  attendanceTitle: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 14,
-    fontFamily: 'Raleway',
-  },
-
-  timeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 6,
-  },
-
-  timeLabel: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Satoshi',
-  },
-
-  timeValue: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Satoshi',
-  },
-
-  line: {
-    height: 1,
-    backgroundColor: '#3a4ca0',
-    marginVertical: 12,
-  },
-
-  totalHoursRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-
-  totalHoursText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    marginLeft: 6,
-    fontFamily: 'Satoshi',
-  },
-
-  hours: {
-    marginLeft: 'auto',
-    color: '#ccc',
-    fontSize: 14,
-    fontFamily: 'Satoshi',
-  },
-
-  swipeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E1E8EC',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 28,
-    justifyContent: 'center',
-    marginBottom: 8,
-    marginHorizontal: 16,
-  },
-
-  swipeText: {
-    color: '#030303',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-    fontFamily: 'Satoshi',
-  },
-
-  circularCalendarWrapper: {
+  // Circle
+  circleWrapper: {
     alignItems: "center",
-    marginVertical: 18,
+    justifyContent: "center",
+    marginBottom: 1,
+    position: "relative",
+    width: 20,
+    height: 200,
+    alignSelf: "center",
   },
-
-  dayOfWeekText: {
-    fontSize: 18,
+  circle: {
+    width: 190,
+    height: 190,
+    borderRadius: 100,
+    backgroundColor: "#1D2C60",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  segment: {
+    position: "absolute",
+    width: 14,
+    height: 10,
+    borderRadius: 1,
+  },
+  dayText: { color: "#FFFFFF", fontSize: 16 },
+  monthText: {
     color: "#fff",
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 5,
+  },
+  dateText: {
+    color: "#fff",
+    fontSize: 28,
+    marginTop: 5,
     fontWeight: "600",
   },
 
-  dateTextLarge: {
-    fontSize: 22,
-    marginVertical: 4,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
-  gridMenu: {
+  // Oval Indicators Horizontal with Vertical Oval
+  legendRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 20,
-    marginHorizontal: 10,
-    flexWrap: "wrap",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+
+    paddingVertical: 15,
   },
 
-  gridItem: {
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  legendDot: {
+    width: 8,
+    height: 12,
+    borderRadius: 8, // Makes it a perfect circle
+    marginRight: 4,
+  },
+
+  legendText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+
+  },
+
+  // Menu Grid
+  menuGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 30,
+    height:30,
+  },
+  menuBox: {
     width: "23%",
     aspectRatio: 1,
-    backgroundColor: "#1D2A5C",
-    borderRadius: 8,
+    backgroundColor: "#172555",
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 16,
+    height: 10,
+    width: 80,
+  },
+  applyLeaveBox: {
+    backgroundColor: "#3352BA",
+    width: 80,
+  },
+  menuText: {
+    color: "#fff",
+    fontSize: 12,
+    textAlign: "center",
+    marginTop: 10,
   },
 
-  gridTitle: {
-    marginTop: 6,
-    fontSize: 12,
+  // Attendance Box
+  attendanceBox: {
+    backgroundColor: "#172555",
+    padding: 16,
+    marginTop: 180,
+    borderRadius: 12,
+  },
+  attendanceTitle: {
     color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 11,
     textAlign: "center",
   },
-
-  specialItem: {
-    backgroundColor: "#3352BA",
+  timeRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
-
-  swipeWrapper: {
-    padding: 12,
+  timeLabel: { color: "#fff", fontSize: 16 },
+  timeValue: { color: "#fff", fontSize: 16 },
+  line: {
+    height: 1,
+    backgroundColor: "#fff",
+    opacity: 0.3,
+    marginVertical: 8,
   },
-
-  loading: {
+  totalHoursRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  totalHoursText: { color: "#fff", fontSize: 16, marginLeft: 4 },
+  hours: {
     color: "#fff",
     fontSize: 16,
-    textAlign: "center",
-    marginTop: 50,
+    fontWeight: "700",
+    marginLeft: 6,
+  },
+
+  // Bottom Navbar
+  bottomNavbarContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
