@@ -22,7 +22,6 @@ function getDaysInMonth(dateStr) {
 const baseDate = "2016-02-12"; // YYYY-MM-DD format
 const daysInMonth = getDaysInMonth(baseDate);
 
-
 // Dynamically create the dayStatus array (demo)
 const dayStatus = [
   'present', 'present', 'present', 'present', 'present',
@@ -58,7 +57,7 @@ const getSegment = (status, index) => {
   let color = '#FFFFFF'; // default: remaining
   if (status === 'present') color = '#00FF00';
   else if (status === 'absent') color = '#FF0000';
-  else if (status === 'holiday') color = '#FFD700';
+  else if (status === 'holiday') color = '#4C4C4C';
 
   return (
     <View
@@ -120,33 +119,29 @@ export default function WorkingDaySummary() {
       {/* Status Summary */}
       <View style={styles.statusCard}>
         {[
-          { label: 'Present Days', value: '10', color: '#15B03E' },
-          { label: 'Holiday', value: '2', color: '#EFAF00' },
-          { label: 'Absent Days', value: '3', color: '#FF2304' },
-          {
-            label: 'Absent Half day',
-            value: '2',
-            colorHalf: ['#15B03E', '#FF2304'],
-          },
+          { label: 'Present Days', value: '10', borderColor: '#15B03E' },
+          { label: 'Holiday', value: '2', borderColor: '#4C4C4C' },
+          { label: 'Absent Days', value: '3', borderColor: '#FF2304' },
+          { label: 'Absent Half day', value: '2', borderColor: 'half' },
           {
             label: 'Remaining Working Days',
             value: `${daysInMonth - 17}`,
-            color: '#FFFFFF',
+            borderColor: '#FFFFFF',
           },
         ].map((item, idx) => (
-          <View style={styles.statusRow} key={idx}>
-            {item.color ? (
-              <View
-                style={[styles.colorBar, { backgroundColor: item.color }]}
-              />
-            ) : (
-              <View style={styles.halfBarWrapper}>
-                <View
-                  style={[styles.halfBar, { backgroundColor: item.colorHalf[0] }]}
-                />
-                <View
-                  style={[styles.halfBar, { backgroundColor: item.colorHalf[1] }]}
-                />
+          <View
+            style={[
+              styles.statusRow,
+              item.borderColor === 'half'
+                ? { borderLeftWidth: 3, borderLeftColor: 'transparent' }
+                : { borderLeftWidth: 3, borderLeftColor: item.borderColor }
+            ]}
+            key={idx}
+          >
+            {item.borderColor === 'half' && (
+              <View style={styles.halfBorderWrapper}>
+                <View style={[styles.halfBorder, { backgroundColor: '#15B03E' }]} />
+                <View style={[styles.halfBorder, { backgroundColor: '#FF2304' }]} />
               </View>
             )}
             <Text style={styles.statusLabel}>{item.label}</Text>
@@ -155,12 +150,9 @@ export default function WorkingDaySummary() {
         ))}
       </View>
 
-
       <View style={styles.bottomNavbarContainer}>
         <BottomNavbar navigation={navigation} route={route} />
       </View>
-
     </ScrollView>
-
   );
 }

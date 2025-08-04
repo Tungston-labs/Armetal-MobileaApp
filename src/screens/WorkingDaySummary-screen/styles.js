@@ -8,7 +8,7 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
     paddingHorizontal: 16,
     paddingTop: 40,
-    paddingBottom: 80, // Leave space for bottom navbar
+    paddingBottom: 80,
   },
   header: {
     flexDirection: 'row',
@@ -24,7 +24,7 @@ export default StyleSheet.create({
     fontSize: 20,
     color: '#FFFFFF',
     fontWeight: '600',
-    marginRight: 24, // ensures center alignment despite back icon
+    marginRight: 24,
   },
   circleWrapper: {
     alignItems: 'center',
@@ -104,36 +104,18 @@ export default StyleSheet.create({
     marginLeft: 6,
   },
 
-  // 🟦 Each status card separate
+  // 🟦 Status card
   statusCard: {
-    marginBottom: 20,
-    
+    marginBottom: 10,
   },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#172555',
-    padding: 12,
-    
+    padding: 16,
     marginBottom: 10,
-    // borderRightColor:"red",
-    // borderLeftColor:"red",
-    // borderLeftWidth:2,
-  },
-  
-  colorBar: {
-    width: 6,
-    height: 30,
-    borderRadius: 3,
-  },
-  halfBarWrapper: {
-    flexDirection: 'row',
-    width: 6,
-    height: 30,
-  },
-  halfBar: {
-    width: 3,
-    height: 30,
+    borderLeftWidth: 3, // Left border for color
+    position: 'relative',
   },
   statusLabel: {
     flex: 1,
@@ -146,10 +128,24 @@ export default StyleSheet.create({
     fontSize: 16,
   },
 
+  // Half color left border for "Absent Half day"
+  halfBorderWrapper: {
+    position: 'absolute',
+    left: -3,
+    top: 0,
+    bottom: 0,
+    width: 3,
+    flexDirection: 'column',
+  },
+  halfBorder: {
+    flex: 1,
+    width: 3,
+  },
+
   // Bottom nav bar fixed at bottom
   bottomNavbarContainer: {
     position: 'absolute',
-    bottom: -70,
+    bottom: -76,
     left: -15,
     right: -15,
   },

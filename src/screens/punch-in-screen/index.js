@@ -2,20 +2,26 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Image,
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Alert,
+  Image,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import authAxios from "@/src/utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import SwipeButton from "../../components/swipe/index"
-import authAxios from "@/src/utils/authAxios";
+import SwipeButton from "../../components/swipe/index";
+
+// ✅ SVG Imports (6 main icons)
+import SalarySlipIcon from "../../../assets/salarySlip.svg";
+import AttendanceIcon from "../../../assets/attendance.svg";
+import TaskIcon from "../../../assets/task.svg";
+import DocumentsIcon from "../../../assets/documents.svg";
+import TeamIcon from "../../../assets/team.svg";
+import ReminderIcon from "../../../assets/reminder.svg";
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -28,21 +34,20 @@ const AttendanceScreen = () => {
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
-  const [token, setToken] = useState(null);
-  const [isPunchedIn, setIsPunchedIn] = useState(false);
+  const [pendingLeaves, setPendingLeaves] = useState(20); // Example dynamic number
 
-  const handleSwipe = () => {
-    const nextState = !isPunchedIn;
-    setIsPunchedIn(nextState);
-    //Alert.alert('Success', nextState ? 'Punched In' : 'Punched Out');
-  };
+  const dayStatus = [
+    "present","present","present","present","present","present",
+    "holiday","present","present","absent",
+    "present","present","holiday","present","present",
+    "present","present","absent","present","holiday",
+    "present","present","present","absent","present",
+    "holiday","present","present","present","absent"
+  ];
 
-  const API_BASE_URL = "http://178.248.112.16:8001";
-
-  const fetchTodayAttendance = async (authToken) => {
+  const fetchTodayAttendance = async () => {
     try {
-      const res = await authAxios.get(`/attendance/today/` );
-
+      const res = await authAxios.get(`/attendance/today/`);
       const data = res.data;
       setSessions(data.sessions || []);
 
@@ -51,86 +56,102 @@ const AttendanceScreen = () => {
       const m = Math.round((hours - h) * 60);
       setTotalHours(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`);
     } catch (err) {
-      // console.error("Attendance fetch error:", err.message);
+      console.error("Attendance fetch error:", err.message);
     }
   };
 
- const getLatestSession = () => {
-  if (!Array.isArray(sessions) || sessions.length === 0) return "----";
-  return sessions[sessions.length - 1];
-};
-
+  const getLatestSession = () => {
+    if (!Array.isArray(sessions) || sessions.length === 0) return "----";
+    return sessions[sessions.length - 1];
+  };
 
   const isCurrentlyPunchedIn = () => {
     const lastSession = getLatestSession();
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
-
-
-
-
-const handlePunch = async () => {
-  setPunching(true);
-  try {
-    const response = await authAxios.post(`/attendance/swipe/`, {});
-    await fetchTodayAttendance();
-
-    setTimeout(() => {
-      const latest = getLatestSession();
-      setIsPunchedIn(latest?.time_in && !latest?.time_out);
-    }, 200);
-  } catch (error) {
-    Alert.alert("Error", "Failed to swipe.");
-  } finally {
-    setPunching(false);
-  }
-};
-  
-  useEffect(() => {
-  (async () => {
+  const handlePunch = async () => {
+    setPunching(true);
     try {
-      const profileRes = await authAxios.get(`/profile/`);
-      setEmployee(profileRes.data);
+      await authAxios.post(`/attendance/swipe/`, {});
       await fetchTodayAttendance();
-    } catch (err) {
-      console.error("Init error:", err.message);
+    } catch (error) {
+      Alert.alert("Error", "Failed to swipe.");
     } finally {
-      setLoading(false);
+      setPunching(false);
     }
-  })();
-}, []);
-
-const today = new Date();
-const todayMonth = today.toLocaleString("en-US", { month: "short" });
-
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
-
-const calendarData = Array.from({ length: 6 }, (_, i) => {
-  const date = new Date();
-  date.setDate(today.getDate() - 1 + i);
-  return {
-    day: date.toLocaleString("en-US", { weekday: "short" }),
-    date: date.getDate(),
-    isToday: date.toDateString() === today.toDateString(),
-    isYesterday: date.toDateString() === yesterday.toDateString(),
   };
-});
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const profileRes = await authAxios.get(`/profile/`);
+        setEmployee(profileRes.data);
+        await fetchTodayAttendance();
+        // Example: Fetch pending leaves
+        // const leaveRes = await authAxios.get("/leaves/pending");
+        // setPendingLeaves(leaveRes.data.count);
+      } catch (err) {
+        console.error("Init error:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-  const timeIn = sessions[0]?.time_in || "------";
-  const lastOut = getLatestSession()?.time_out;
-  const timeOut = lastOut  ? lastOut : "------";
-  //lastOut.substring(0, 5) 
-  console.log("lastOut",lastOut)
-  // : 
-  // //console.log("uuu",lastOut)
-  // "------";
-//console.log("lastOut",lastOut)
-  const avatarSource = employee?.profile_pic
-    ? { uri: `${API_BASE_URL}${employee.profile_pic}` }
-    : { uri: defaultAvatar };
+  const today = new Date();
+  const todayMonth = today.toLocaleString("en-US", { month: "long" });
+  const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });
+
+  const getSegment = (status, index) => {
+    const total = dayStatus.length;
+    const angle = (360 / total) * index;
+
+    let color = "#FFFFFF";
+    if (status === "present") color = "#00FF00";
+    else if (status === "absent") color = "#FF0000";
+    else if (status === "holiday") color = "gray";
+
+    return (
+      <View
+        key={index}
+        style={[
+          styles.segment,
+          {
+            backgroundColor: color,
+            transform: [{ rotate: `${angle}deg` }, { translateY: -105 }],
+          },
+        ]}
+      />
+    );
+  };
+
+  const renderRadialCircle = () => (
+    <View style={{ alignItems: "center" }}>
+      <TouchableOpacity
+        style={styles.circleWrapper}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate("WorkingDaySummary")}
+      >
+        {dayStatus.map((status, index) => getSegment(status, index))}
+        <View style={styles.circle}>
+          <Text style={styles.dayText}>{todayWeekday}</Text>
+          <Text style={styles.monthText}>{todayMonth}</Text>
+          <Text style={styles.dateText}>{today.getDate()}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+
+  // ✅ Main 6 menu items
+  const menuItems = [
+    { label: "Salary Slip", icon: SalarySlipIcon, route: "SalarySlipScreen" },
+    { label: "Attendance", icon: AttendanceIcon, route: "AttendanceScreen" },
+    { label: "Task", icon: TaskIcon, route: "TaskUpdateScreen" },
+    { label: "Documents", icon: DocumentsIcon, route: "DocumentsScreen" },
+    { label: "Team", icon: TeamIcon, route: "DepartmentScreen" },
+    { label: "Set Reminder", icon: ReminderIcon, route: "ReminderScreen" },
+  ];
 
   if (loading) {
     return (
@@ -142,160 +163,128 @@ const calendarData = Array.from({ length: 6 }, (_, i) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.innerWrapper}>
-        <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
-          {/* Header */}
-          <View style={styles.homeBox}>
-            <View style={styles.homeContent}>
-              <View>
-                <Text style={styles.homeTitle}>Home</Text>
-                <Text style={styles.welcomeText}>
-                  Hey {employee?.name}{"\n"}welcome back!
-                </Text>
-              </View>
-              <TouchableOpacity
-            onPress={() => navigation.navigate("WorkingDaySummary")}
+      <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
+
+        {/* Top Header */}
+        <View style={styles.header}>
+          <View style={styles.logoRow}>
+            <Image
+              source={require("../../../assets/logo.png")}
+              style={styles.logo}
+            />
+            <Text style={styles.helloText}>Hello {employee?.name || "User"}</Text>
+          </View>
+          <Image
+            source={{ uri: employee?.profile_image || defaultAvatar }}
+            style={styles.profilePic}
+          />
+        </View>
+
+        {/* Radial Circle */}
+        {renderRadialCircle()}
+
+        {/* Legend */}
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: "#00B140" }]} />
+            <Text style={styles.legendText}>Present Days</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: "#FF3B30" }]} />
+            <Text style={styles.legendText}>Absent Days</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: "#FFFFFF" }]} />
+            <Text style={styles.legendText}>Working Days</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: "#4C4C4C" }]} />
+            <Text style={styles.legendText}>Holiday</Text>
+          </View>
+        </View>
+
+        {/* Menu Grid */}
+        <View style={styles.menuGrid}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.menuBox}
+              onPress={() => navigation.navigate(item.route)}
+            >
+              <item.icon width={28} height={28} />
+              <Text style={styles.menuText}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+
+          {/* ✅ Pending Leaves Box */}
+          <TouchableOpacity
+            style={styles.menuBox}
+            onPress={() => navigation.navigate("PendingLeavesScreen")}
           >
-              <Image source={avatarSource} style={styles.profilePic} /></TouchableOpacity>
-            </View>
-          </View>
-
-        
-
-          {/* Attendance calendar */}
-          <TouchableOpacity onPress={() => navigation.navigate("AttendanceScreen", {
-            sessions,
-            totalHours,
-            timeIn,
-            timeOut,
-            date: today.toDateString(),
-          })}>
-            <Text style={styles.sectionTitle}>Attendance</Text>
-          <View style={styles.calendarRow}>
-  {calendarData.map((item, index) => (
-    <View
-      key={index}
-      style={[
-        styles.dayBox,
-        item.isYesterday && { backgroundColor: '#3352BA' },
-        item.isToday && { backgroundColor: '#FFFFFF' },
-      ]}
-    >
-      <Text
-        style={[
-          styles.dayText,
-          item.isYesterday && { color: '#FFFFFF' },
-          item.isToday && { color: '#000000' },
-        ]}
-      >
-        {item.day}
-      </Text>
-      <Text
-        style={[
-          styles.dateText,
-          item.isYesterday && { color: '#FFFFFF' },
-          item.isToday && { color: '#000000' },
-        ]}
-      >
-        {item.date} {todayMonth}
-      </Text>
-      {item.isYesterday && (
-        <Ionicons
-          name="checkmark-circle"
-          color="#FFFFFF"
-          size={20}
-          style={{ marginTop: 4 }}
-        />
-      )}
-    </View>
-  ))}
-</View>
-
- {/* Grid: exactly 4 in one row */}
-          <View style={styles.gridMenu}>
-            {[
-              { title: "Salary Slip", icon: "document" },
-              { title: "Attendance", icon: "calendar" },
-              { title: "Task", icon: "clipboard" },
-              { title: "Apply Leave", icon: "add-circle", special: true },
-            ].map((it, idx) => (
-              <TouchableOpacity
-                key={idx}
-                style={[styles.gridItem, it.special && styles.specialItem]}
-                onPress={() => navigation.navigate(it.title.replace(/\s/g, "") + "Screen")}
-              >
-                <Ionicons name={it.icon} size={26} color="#fff" />
-                <Text style={styles.gridTitle}>{it.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.gridMenu}>
-            {[
-              { title: "Salary Slip", icon: "document" },
-              { title: "Attendance", icon: "calendar" },
-              { title: "Task", icon: "clipboard" },
-              { title: "Apply Leave", icon: "add-circle", special: true },
-            ].map((it, idx) => (
-              <TouchableOpacity
-                key={idx}
-                style={[styles.gridItem, it.special && styles.specialItem]}
-                onPress={() => navigation.navigate(it.title.replace(/\s/g, "") + "Screen")}
-              >
-                <Ionicons name={it.icon} size={26} color="#fff" />
-                <Text style={styles.gridTitle}>{it.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-
-            {/* Attendance Box */}
-            <View style={styles.attendanceBox}>
-              <Text style={styles.attendanceTitle}>
-                {today.toLocaleDateString("en-US", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                })}
-              </Text>
-              <View style={styles.timeRow}>
-  <Text style={styles.timeLabel}>Time in :</Text>
-  <Text style={styles.timeValue}>
-    {timeIn ? new Date(timeIn).toLocaleTimeString() : '-- --'}
-  </Text>
-</View>
-
-<View style={styles.timeRow}>
-  <Text style={styles.timeLabel}>Time Out :</Text>
-  <Text style={styles.timeValue}>
-    {timeOut ? new Date(timeOut).toLocaleTimeString() : '-- --'}
-  </Text>
-</View>
-              <View style={styles.line} />
-              <View style={styles.totalHoursRow}>
-                <Ionicons name="time-outline" size={20} color="#fff" />
-                <Text style={styles.totalHoursText}> Total hours</Text>
-                <Text style={styles.hours}>{totalHours}</Text>
-              </View>
-            </View>
+            <Text style={{ color: "#fff", fontSize: 20, fontWeight: "700" }}>
+              {pendingLeaves}
+            </Text>
+            <Text style={styles.menuText}>Pending Leaves</Text>
           </TouchableOpacity>
 
-   
-<SwipeButton
-  title={isCurrentlyPunchedIn() ? 'Swipe to Punch Out' : 'Swipe to Punch In'}
-  successTitle={isCurrentlyPunchedIn() ? 'Punched Out!' : 'Punched In!'}
-  onSwipeSuccess={() => {
-    
-      handlePunch();
-    
-  }}
-  backgroundColor="#ddd"
-  thumbColor={isCurrentlyPunchedIn() ? '#172554' : '#4375a0ff'}
-  resetAfterSuccess={true}
-/>
+          {/* ✅ Apply Leave Box */}
+          <TouchableOpacity
+            style={[styles.menuBox, styles.applyLeaveBox]}
+            onPress={() => navigation.navigate("LeaveRequestFormScreen")}
+          >
+            <Text style={styles.menuText}>Apply leave</Text>
+            <Text style={{ color: "#fff", fontSize: 22, marginTop: 4 }}>+</Text>
+          </TouchableOpacity>
+        </View>
 
-        </ScrollView>
+        {/* Attendance Box */}
+        <View style={styles.attendanceBox}>
+          <Text style={styles.attendanceTitle}>
+            {today.toLocaleDateString("en-US", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+            })}
+          </Text>
+          <View style={styles.timeRow}>
+            <Text style={styles.timeLabel}>Time in :</Text>
+            <Text style={styles.timeValue}>
+              {sessions[0]?.time_in
+                ? new Date(sessions[0]?.time_in).toLocaleTimeString()
+                : "-- --"}
+            </Text>
+          </View>
+
+          <View style={styles.timeRow}>
+            <Text style={styles.timeLabel}>Time Out :</Text>
+            <Text style={styles.timeValue}>
+              {getLatestSession()?.time_out
+                ? new Date(getLatestSession()?.time_out).toLocaleTimeString()
+                : "-- --"}
+            </Text>
+          </View>
+          <View style={styles.line} />
+          <View style={styles.totalHoursRow}>
+            <Ionicons name="time-outline" size={20} color="#fff" />
+            <Text style={styles.totalHoursText}> Total hours</Text>
+            <Text style={styles.hours}>{totalHours}</Text>
+          </View>
+        </View>
+
+        {/* Swipe Button */}
+        <SwipeButton
+          title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to Punch In"}
+          successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
+          onSwipeSuccess={handlePunch}
+          backgroundColor="#ddd"
+          thumbColor={isCurrentlyPunchedIn() ? "#172554" : "#4375a0ff"}
+          resetAfterSuccess={true}
+        />
+      </ScrollView>
+
+      <View style={styles.bottomNavbarContainer}>
+        <BottomNavbar navigation={navigation} route={route} />
       </View>
-      <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );
 };
