@@ -277,7 +277,7 @@ const AttendanceScreen = () => {
           successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
           onSwipeSuccess={handlePunch}
           backgroundColor="#ddd"
-          thumbColor={isCurrentlyPunchedIn() ? "#172554" : "#4375a0ff"}
+          thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
           resetAfterSuccess={true}
         />
       </ScrollView>

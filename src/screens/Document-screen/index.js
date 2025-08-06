@@ -10,10 +10,12 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+
+// ✅ Direct SVG import
+import DownloadIcon from "../../../assets/download.svg";
+
 import styles from "./styles";
 import authAxios from "../../utils/authAxios";
-// import axios from "axios";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function DocumentsScreen() {
   const navigation = useNavigation();
@@ -32,12 +34,13 @@ export default function DocumentsScreen() {
   useEffect(() => {
     const fetchDocumentData = async () => {
       try {
-        
-         const summaryResponse = await authAxios.get("/employee/document-summary/");
+        const summaryResponse = await authAxios.get("/employee/document-summary/");
         const summary = summaryResponse.data;
         setEmployeeId(summary.employee_id);
 
-        const detailResponse = await authAxios.get(`/employees/${summary.employee_id}/documents/`);
+        const detailResponse = await authAxios.get(
+          `/employees/${summary.employee_id}/documents/`
+        );
         const detail = detailResponse.data;
 
         const replaceLocalhost = (url) =>
@@ -48,10 +51,10 @@ export default function DocumentsScreen() {
         const replaceLocalhostInArray = (arr) =>
           Array.isArray(arr)
             ? arr.map((url) =>
-              typeof url === "string"
-                ? url.replace("localhost", "192.168.29.146")
-                : url
-            )
+                typeof url === "string"
+                  ? url.replace("localhost", "192.168.29.146")
+                  : url
+              )
             : [];
 
         setData({
@@ -93,15 +96,6 @@ export default function DocumentsScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Health Card */}
         <View style={styles.card}>
-          {/* <Image
-            source={
-              data.healthCardImage
-                ? { uri: data.healthCardImage }
-                : require("../../assets/health-card.jpg")
-            }
-            style={styles.cardImage}
-            resizeMode="cover"
-          /> */}
           <Image
             source={require("../../assets/health-card.jpg")}
             style={styles.cardImage}
@@ -118,18 +112,20 @@ export default function DocumentsScreen() {
           <Text style={styles.label}>Work Permit</Text>
           <View style={styles.inputRow}>
             <TextInput
-              style={styles.input}
+              style={styles.inputWithIcon}
               placeholder="Work Permit"
               value={data.workPermitUrls.length > 0 ? "Available" : ""}
               editable={false}
               placeholderTextColor="#8a8dad"
             />
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => handleImagePreview(data.workPermitUrls)}
-            >
-              <Icon name="image-outline" size={20} color="#8a8dad" />
-            </TouchableOpacity>
+            {data.workPermitUrls.length > 0 && (
+              <TouchableOpacity
+                style={styles.inputIcon}
+                onPress={() => handleImagePreview(data.workPermitUrls)}
+              >
+                <DownloadIcon width={20} height={20} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -138,18 +134,20 @@ export default function DocumentsScreen() {
           <Text style={styles.label}>Employment Contract</Text>
           <View style={styles.inputRow}>
             <TextInput
-              style={styles.input}
+              style={styles.inputWithIcon}
               placeholder="Contract"
               value={data.contractUrls.length > 0 ? "Available" : ""}
               editable={false}
               placeholderTextColor="#8a8dad"
             />
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => handleImagePreview(data.contractUrls)}
-            >
-              <Icon name="image-outline" size={20} color="#8a8dad" />
-            </TouchableOpacity>
+            {data.contractUrls.length > 0 && (
+              <TouchableOpacity
+                style={styles.inputIcon}
+                onPress={() => handleImagePreview(data.contractUrls)}
+              >
+                <DownloadIcon width={20} height={20} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
