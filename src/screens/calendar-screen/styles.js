@@ -1,69 +1,54 @@
-// styles.js
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#151D34',
+    backgroundColor: "#0F1A35",
   },
-header: {
-  flexDirection: 'row',
-  alignItems: 'flex-end',       
-  justifyContent: 'space-between',
-  paddingHorizontal: 20,        
-  paddingBottom: 15,          
-  height: 80,                  
-  backgroundColor: '#262D40',
-},
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    backgroundColor: "#1A2D5A",
+  },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  fontFamily:"raleway",
-    color: '#fff',
-  },
-  sectionTitle: {
-    color: '#FFFFFF',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 16,
-    marginBottom: 12,
-    marginTop:20,
+    fontWeight: "600",
   },
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#132259',
-    borderRadius: 10,
-    padding: 8,
+  tabsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
     marginBottom: 10,
-    // height:'80'
-  },
-  greenStrip: {
-    width: 7,
-    backgroundColor: '#2ECC71',
+    marginHorizontal: 16,
     borderRadius: 4,
-    marginRight: 10,
+    overflow: "hidden",
   },
-  cardContent: {
+  tabButton: {
     flex: 1,
+    paddingVertical: 10,
+    alignItems: "center",
+    backgroundColor: "transparent",
   },
-  dateText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+activeTab: {
+  backgroundColor: "#172554",
+  borderColor: "#fff",     
+  borderWidth: 0.2,
+  borderRadius:2,          
+},
+  tabText: {
+    color: "#fff",
+    fontWeight: "600",
   },
-  titleText: {
-    color: '#B0BEC5',
-    marginVertical: 2,
-  },
-  dateRange: {
-    color: '#B0BEC5',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  
-  tabIconActive: {
-    backgroundColor: '#1E3A8A',
-    padding: 8,
-    borderRadius: 20,
+    bottomNavbarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
+
+export default styles;

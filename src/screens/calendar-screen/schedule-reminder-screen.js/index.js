@@ -1,135 +1,57 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-  Modal,
-} from "react-native";
-import styles from "./styles";
+import React, { useState } from "react";
+import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import authAxios from "../../utils/authAxios";
-import BottomNavbar from "../BottomNavbar";
 import { Calendar } from "react-native-calendars";
+import styles from "./styles";
 
-const API_BASE_URL = "http://178.248.112.16:8001";
-
-const AttendanceScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  const [sessions, setSessions] = useState([]);
-  const [totalHours, setTotalHours] = useState("00:00 Hrs");
-
-  const [profilePic, setProfilePic] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const { date } = route.params || {};
-    return date ? new Date(date) : new Date();
-  });
+const ReminderTab = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
 
-const handleDateSelect = (day) => {
-  const selected = new Date(day.timestamp);
-  const today = new Date();
-  selected.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
+  const reminders = [
+    {
+      id: "1",
+      title: "Dummy Dummy",
+      time: "01:35 P.M",
+      description:
+        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
+    },
+    {
+      id: "2",
+      title: "Dummy Dummy",
+      time: "01:35 P.M",
+      description:
+        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
+    },
+    {
+      id: "3",
+      title: "Dummy Dummy",
+      time: "01:35 P.M",
+      description:
+        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
+    },
+  ];
 
-  if (selected > today) {
-    return; 
-  }
-
-  setSelectedDate(selected);
-  setShowCalendar(false);
-};
-
-  useEffect(() => {
-    fetchTodayAttendance();
-  }, [selectedDate]);
-
-const fetchTodayAttendance = async () => {
-  try {
-const formattedDate = selectedDate.toISOString().split("T")[0];
-    const res = await authAxios.get(`/attendance/today`, {
-      params: { date: formattedDate },
-    });
-
-    const data = res.data;
-    setSessions(data.sessions || []);
-console.log("Fetched Sessions:", data.sessions);
-
-    const hours = parseFloat(data.total_hours || 0);
-    const h = Math.floor(hours);
-    const m = Math.round((hours - h) * 60);
-    setTotalHours(
-      `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
-    );
-  } catch (err) {
-    console.error("Attendance fetch error:", err.message);
-    setSessions([]);
-    setTotalHours("00:00 Hrs");
-  }
-};
-
-
-  useEffect(() => {
-    const fetchProfilePic = async () => {
-      try {
-        const response = await authAxios.get("/profile/");
-        const imageUrl = response.data?.profile_pic
-          ? `${API_BASE_URL}${response.data.profile_pic}`
-          : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-        setProfilePic(imageUrl);
-      } catch (error) {
-        setProfilePic("https://cdn-icons-png.flaticon.com/512/149/149071.png");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfilePic();
-  }, []);
-
-  const renderItem = ({ item }) => {
-    const punchIn = item.time_in
-      ? new Date(item.time_in).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true, // <-- shows AM/PM
-        })
-      : "-- --";
-    console.log("Session item:", item);
-
-    const punchOut = item.time_out
-      ? new Date(item.time_out).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true, // <-- shows AM/PM
-        })
-      : "-- --";
-      
-
-    return (
-      <View style={styles.row}>
-        <Text style={[styles.cell, { color: "#00FF00" }]}>{punchIn}</Text>
-        <Text
-          style={[
-            styles.cell,
-            { color: punchOut !== "-- --" ? "#FF4B4B" : "#ccc" },
-          ]}
-        >
-          {punchOut}
-        </Text>
-      </View>
-    );
+  const onChangeDate = (event, date) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+    setShowPicker(false);
   };
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat("en-GB").format(date);
+  };
+  const handleDateSelect = (day) => {
+    const selected = new Date(day.timestamp);
+    const today = new Date();
+    selected.setHours(0, 0, 0, 0);
 
+    setSelectedDate(selected);
+    setShowCalendar(false);
+  };
   const monthNames = [
     "January",
     "February",
@@ -144,25 +66,9 @@ console.log("Fetched Sessions:", data.sessions);
     "November",
     "December",
   ];
-
-  const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-GB").format(date);
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Attendance details</Text>
-        {loading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Image source={{ uri: profilePic }} style={styles.profileImage} />
-        )}
-      </View>
+    <View style={styles.container}>
+      {/* Date Picker Card */}
 
       {/* Date Selector */}
       <TouchableOpacity
@@ -185,7 +91,15 @@ console.log("Fetched Sessions:", data.sessions);
           color="#fff"
         />
       </TouchableOpacity>
-
+      {/* Native Date Picker */}
+      {showPicker && (
+        <DateTimePicker
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          value={selectedDate}
+          onChange={onChangeDate}
+        />
+      )}
       {showCalendar && (
         <>
           <View style={styles.calendarWrapper}>
@@ -197,8 +111,6 @@ console.log("Fetched Sessions:", data.sessions);
                 ).padStart(2, "0")}-01`}
                 onDayPress={handleDateSelect}
                 monthFormat={"MMMM yyyy"}
-                hideExtraDays={true}
-                maxDate={new Date().toISOString().split("T")[0]}
                 hideArrows={true}
                 dayComponent={({ date, state }) => {
                   const isSunday = new Date(date.dateString).getDay() === 0;
@@ -336,26 +248,39 @@ console.log("Fetched Sessions:", data.sessions);
           </View>
         </>
       )}
+      {/* Reminders */}
+      <FlatList
+        data={reminders}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        renderItem={({ item }) => (
+          <View style={styles.reminderCard}>
+            <Text style={styles.reminderTitle}>{item.title}</Text>
+            <View style={styles.reminderTimeBox}>
+              <Ionicons
+                name="time-outline"
+                size={14}
+                color="#fff"
+                style={{ marginRight: 6 }}
+              />
+              <Text style={styles.reminderTimeText}>{item.time}</Text>
+            </View>
+            <Text style={styles.reminderDescription}>{item.description}</Text>
+          </View>
+        )}
+      />
 
-      {/* Attendance Table */}
-      <View style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
-          <Text style={styles.headerCell}>Punch In</Text>
-          <Text style={styles.headerCell}>Punch Out</Text>
-        </View>
-        <FlatList
-          data={sessions}
-          renderItem={renderItem}
-          keyExtractor={(_, index) => index.toString()}
+      {/* Add Event Button */}
+      <TouchableOpacity style={styles.addEventBtn} onPress={() => {}}>
+        <Ionicons
+          name="add"
+          size={20}
+          color="#fff"
         />
-      </View>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
-    </SafeAreaView>
+        <Text style={styles.addEventText}>Add Event</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
-export default AttendanceScreen;
+export default ReminderTab;
