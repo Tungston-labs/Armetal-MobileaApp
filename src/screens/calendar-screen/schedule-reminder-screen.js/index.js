@@ -1,39 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import styles from "./styles";
-
+import AddEventModal from "../../../screens/EventModal"
+import authAxios from "../../../utils/authAxios" ;
 const ReminderTab = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
+  const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  const reminders = [
-    {
-      id: "1",
-      title: "Dummy Dummy",
-      time: "01:35 P.M",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
-    },
-    {
-      id: "2",
-      title: "Dummy Dummy",
-      time: "01:35 P.M",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
-    },
-    {
-      id: "3",
-      title: "Dummy Dummy",
-      time: "01:35 P.M",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
-    },
-  ];
+  // const API_BASE_URL = "http://178.248.112.16:8001";
+
+useEffect(() => {
+  const fetchReminders = async () => {
+    try {
+      const response = await authAxios.get(`/auth/reminders/`);
+      setReminders(response.data);
+    } catch (error) {
+      console.error("Error fetching reminders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchReminders();
+}, []);
+
 
   const onChangeDate = (event, date) => {
     if (date) {
@@ -66,6 +64,24 @@ const ReminderTab = () => {
     "November",
     "December",
   ];
+
+ const addReminder = async () => {
+  try {
+    const response = await authAxios.post(`/auth/reminders/`, {
+      title: "New Reminder",
+      description: "This is a test event",
+      time: "10:00 AM",
+      date: selectedDate.toISOString(), // Confirm with backend format
+    });
+
+    const newReminder = response.data;
+    setReminders((prev) => [...prev, newReminder]);
+  } catch (error) {
+    console.error("Error adding reminder:", error?.response?.data || error.message);
+  }
+};
+
+
   return (
     <View style={styles.container}>
       {/* Date Picker Card */}
@@ -271,16 +287,24 @@ const ReminderTab = () => {
       />
 
       {/* Add Event Button */}
-      <TouchableOpacity style={styles.addEventBtn} onPress={() => {}}>
-        <Ionicons
-          name="add"
-          size={20}
-          color="#fff"
-        />
+      <TouchableOpacity
+        style={styles.addEventBtn}
+        onPress={() => setShowAddModal(true)}
+      >
+        <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addEventText}>Add Event</Text>
       </TouchableOpacity>
+      {showAddModal && (
+        <AddEventModal
+          visible={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          selectedDate={selectedDate}
+          onEventAdded={(newEvent) =>
+            setReminders((prev) => [...prev, newEvent])
+          }
+        />
+      )}
     </View>
   );
 };
-
 export default ReminderTab;
