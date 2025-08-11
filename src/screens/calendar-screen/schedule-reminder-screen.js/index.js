@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Platform,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import styles from "./styles";
-import AddEventModal from "../../../screens/EventModal"
-import authAxios from "../../../utils/authAxios" ;
+import AddEventModal from "../../../screens/EventModal";
+import authAxios from "../../../utils/authAxios";
+
 const ReminderTab = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -17,21 +26,47 @@ const ReminderTab = () => {
 
   // const API_BASE_URL = "http://178.248.112.16:8001";
 
-useEffect(() => {
-  const fetchReminders = async () => {
+  useEffect(() => {
+    fetchReminders(); // initial load
+  }, []);
+  const fetchReminders = async (date = null) => {
     try {
-      const response = await authAxios.get(`/auth/reminders/`);
-      setReminders(response.data);
+      setLoading(true);
+      setReminders([]); // clear old data so UI shows empty while loading
+
+      const endpoint = date ? `/reminders?date=${date}` : `/reminders/`;
+      const response = await authAxios.get(endpoint);
+
+      const data = response.data?.results ?? response.data ?? [];
+      setReminders(data);
     } catch (error) {
-      console.error("Error fetching reminders:", error);
+      console.error(
+        "Error fetching reminders:",
+        error?.response?.data || error.message || error
+      );
+      setReminders([]); // prevent showing stale data
     } finally {
       setLoading(false);
     }
   };
 
-  fetchReminders();
-}, []);
+  const handleDateSelect = (day) => {
+    // Create local date from the timestamp
+    const localDate = new Date(day.timestamp);
+    localDate.setHours(0, 0, 0, 0);
 
+    setSelectedDate(localDate);
+    setShowCalendar(false);
+
+    // Convert local midnight to UTC date string (YYYY-MM-DD)
+    const utcDate = new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split("T")[0];
+
+    fetchReminders(utcDate);
+  };
 
   const onChangeDate = (event, date) => {
     if (date) {
@@ -42,14 +77,7 @@ useEffect(() => {
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("en-GB").format(date);
   };
-  const handleDateSelect = (day) => {
-    const selected = new Date(day.timestamp);
-    const today = new Date();
-    selected.setHours(0, 0, 0, 0);
 
-    setSelectedDate(selected);
-    setShowCalendar(false);
-  };
   const monthNames = [
     "January",
     "February",
@@ -64,23 +92,6 @@ useEffect(() => {
     "November",
     "December",
   ];
-
- const addReminder = async () => {
-  try {
-    const response = await authAxios.post(`/auth/reminders/`, {
-      title: "New Reminder",
-      description: "This is a test event",
-      time: "10:00 AM",
-      date: selectedDate.toISOString(), // Confirm with backend format
-    });
-
-    const newReminder = response.data;
-    setReminders((prev) => [...prev, newReminder]);
-  } catch (error) {
-    console.error("Error adding reminder:", error?.response?.data || error.message);
-  }
-};
-
 
   return (
     <View style={styles.container}>
@@ -265,26 +276,48 @@ useEffect(() => {
         </>
       )}
       {/* Reminders */}
-      <FlatList
-        data={reminders}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        renderItem={({ item }) => (
-          <View style={styles.reminderCard}>
-            <Text style={styles.reminderTitle}>{item.title}</Text>
-            <View style={styles.reminderTimeBox}>
-              <Ionicons
-                name="time-outline"
-                size={14}
-                color="#fff"
-                style={{ marginRight: 6 }}
-              />
-              <Text style={styles.reminderTimeText}>{item.time}</Text>
-            </View>
-            <Text style={styles.reminderDescription}>{item.description}</Text>
-          </View>
-        )}
-      />
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#000"
+          style={{ marginTop: 30 }}
+        />
+      ) : (
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          ListEmptyComponent={
+            <Text
+              style={{ textAlign: "center", color: "white", marginTop: 20 }}
+            >
+              No reminders found
+            </Text>
+          }
+          renderItem={({ item }) => {
+            const dateObj = new Date(item.scheduled_datetime);
+            const timeString = dateObj.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            return (
+              <View style={styles.reminderCard}>
+                <Text style={styles.reminderTitle}>{item.title}</Text>
+                <View style={styles.reminderTimeBox}>
+                  <Ionicons
+                    name="time-outline"
+                    size={14}
+                    color="#fff"
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text style={styles.reminderTimeText}>{timeString}</Text>
+                </View>
+                <Text style={styles.reminderDescription}>{item.body}</Text>
+              </View>
+            );
+          }}
+        />
+      )}
 
       {/* Add Event Button */}
       <TouchableOpacity

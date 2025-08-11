@@ -176,6 +176,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 64,
     borderRadius: 20,
   },
+  doneText:{
+    color:'#fff',
+    fontWeight: '600',
+  }
 });
 
 export default styles;

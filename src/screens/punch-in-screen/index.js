@@ -37,24 +37,50 @@ const AttendanceScreen = () => {
   const [pendingLeaves, setPendingLeaves] = useState(20); // Example dynamic number
 
   const dayStatus = [
-    "present","present","present","present","present","present",
-    "holiday","present","present","absent",
-    "present","present","holiday","present","present",
-    "present","present","absent","present","holiday",
-    "present","present","present","absent","present",
-    "holiday","present","present","present","absent"
+    "present",
+    "present",
+    "present",
+    "present",
+    "present",
+    "present",
+    "holiday",
+    "present",
+    "present",
+    "absent",
+    "present",
+    "present",
+    "holiday",
+    "present",
+    "present",
+    "present",
+    "present",
+    "absent",
+    "present",
+    "holiday",
+    "present",
+    "present",
+    "present",
+    "absent",
+    "present",
+    "holiday",
+    "present",
+    "present",
+    "present",
+    "absent",
   ];
 
   const fetchTodayAttendance = async () => {
     try {
-      const res = await authAxios.get(`/attendance/today/`);
+      const res = await authAxios.get(`/attendance/today`);
       const data = res.data;
       setSessions(data.sessions || []);
 
       const hours = parseFloat(data.total_hours || 0);
       const h = Math.floor(hours);
       const m = Math.round((hours - h) * 60);
-      setTotalHours(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`);
+      setTotalHours(
+        `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
+      );
     } catch (err) {
       console.error("Attendance fetch error:", err.message);
     }
@@ -163,8 +189,10 @@ const AttendanceScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Top Header */}
         <View style={styles.header}>
           <View style={styles.logoRow}>
@@ -172,12 +200,19 @@ const AttendanceScreen = () => {
               source={require("../../../assets/logo.png")}
               style={styles.logo}
             />
-            <Text style={styles.helloText}>Hello {employee?.name || "User"}</Text>
+            <Text style={styles.helloText}>
+              Hello {employee?.name || "User"}
+            </Text>
           </View>
-          <Image
-            source={{ uri: employee?.profile_image || defaultAvatar }}
-            style={styles.profilePic}
-          />
+          <TouchableOpacity
+            activeOpacity={0.7} // controls fade amount (0–1)
+            onPress={() => navigation.navigate("ProfileScreen")}
+          >
+            <Image
+              source={{ uri: employee?.profile_image || defaultAvatar }}
+              style={styles.profilePic}
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Radial Circle */}
@@ -273,7 +308,9 @@ const AttendanceScreen = () => {
 
         {/* Swipe Button */}
         <SwipeButton
-          title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to Punch In"}
+          title={
+            isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to Punch In"
+          }
           successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
           onSwipeSuccess={handlePunch}
           backgroundColor="#ddd"

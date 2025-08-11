@@ -1,13 +1,7 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons"; 
-
+import { Modal, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import authAxios from "../../utils/authAxios" ;
 import styles from "./styles";
 
 const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
@@ -15,40 +9,62 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
   const [description, setDescription] = useState("");
   const [time, setTime] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      const datetime = new Date(selectedDate);
-      const [hours, minutes] = time.split(":");
-      datetime.setHours(hours);
-      datetime.setMinutes(minutes);
-
-      const isoDatetime = datetime.toISOString(); // <-- Correct format!
-
-      const res = await fetch("http://178.248.112.16:8001/api/reminders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          body: description,
-          scheduled_datetime: isoDatetime,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error("API Error:", data);
-        return;
-      }
-
-      onEventAdded(data);
-      onClose();
-    } catch (error) {
-      console.error("Failed to add reminder:", error.message);
+const handleSubmit = async () => {
+  try {
+    if (!title || !description || !time) {
+      alert("Please fill in all fields");
+      return;
     }
-  };
+
+    if (!time.includes(":")) {
+      alert("Please enter time in HH:MM format");
+      return;
+    }
+
+    const [hours, minutes] = time.split(":").map(Number);
+
+    if (
+      isNaN(hours) ||
+      isNaN(minutes) ||
+      hours < 0 ||
+      hours > 23 ||
+      minutes < 0 ||
+      minutes > 59
+    ) {
+      alert("Invalid time entered");
+      return;
+    }
+
+    const datetime = new Date(selectedDate);
+    datetime.setHours(hours, minutes, 0, 0);
+
+    const isoDatetime = datetime.toISOString();
+
+    const res = await authAxios.post("/reminders/", {
+      title,
+      body: description,
+      scheduled_datetime: isoDatetime,
+    });
+
+    alert("Reminder set successfully!");
+
+    onEventAdded(res.data);
+    onClose();
+  } catch (error) {
+    console.error(
+      "Failed to add reminder:",
+      error.response?.data || error.message
+    );
+
+    alert(
+      `Failed to add reminder: ${
+        typeof error.response?.data === "string"
+          ? error.response.data
+          : error.message
+      }`
+    );
+  }
+};
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
