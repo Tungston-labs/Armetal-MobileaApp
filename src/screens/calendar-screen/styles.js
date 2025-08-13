@@ -6,18 +6,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#0F1A35",
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    marginTop:32,
-    backgroundColor: "#262D40",
+    height: 100,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
+    backgroundColor: '#262D40',
+    position: 'relative',
+   
+   
   },
   headerTitle: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
-    marginTop:44,
+    marginTop:64,
+    marginLeft:24
 
   },
   tabsContainer: {

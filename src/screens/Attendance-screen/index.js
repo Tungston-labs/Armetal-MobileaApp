@@ -35,48 +35,47 @@ const AttendanceScreen = () => {
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
 
-const handleDateSelect = (day) => {
-  const selected = new Date(day.timestamp);
-  const today = new Date();
-  selected.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
+  const handleDateSelect = (day) => {
+    const selected = new Date(day.timestamp);
+    const today = new Date();
+    selected.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
-  if (selected > today) {
-    return; 
-  }
+    if (selected > today) {
+      return;
+    }
 
-  setSelectedDate(selected);
-  setShowCalendar(false);
-};
+    setSelectedDate(selected);
+    setShowCalendar(false);
+  };
 
   useEffect(() => {
     fetchTodayAttendance();
   }, [selectedDate]);
 
-const fetchTodayAttendance = async () => {
-  try {
-const formattedDate = selectedDate.toISOString().split("T")[0];
-    const res = await authAxios.get(`/attendance/today`, {
-      params: { date: formattedDate },
-    });
+  const fetchTodayAttendance = async () => {
+    try {
+      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const res = await authAxios.get(`/attendance/today`, {
+        params: { date: formattedDate },
+      });
 
-    const data = res.data;
-    setSessions(data.sessions || []);
-console.log("Fetched Sessions:", data.sessions);
+      const data = res.data;
+      setSessions(data.sessions || []);
+      console.log("Fetched Sessions:", data.sessions);
 
-    const hours = parseFloat(data.total_hours || 0);
-    const h = Math.floor(hours);
-    const m = Math.round((hours - h) * 60);
-    setTotalHours(
-      `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
-    );
-  } catch (err) {
-    console.error("Attendance fetch error:", err.message);
-    setSessions([]);
-    setTotalHours("00:00 Hrs");
-  }
-};
-
+      const hours = parseFloat(data.total_hours || 0);
+      const h = Math.floor(hours);
+      const m = Math.round((hours - h) * 60);
+      setTotalHours(
+        `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
+      );
+    } catch (err) {
+      console.error("Attendance fetch error:", err.message);
+      setSessions([]);
+      setTotalHours("00:00 Hrs");
+    }
+  };
 
   useEffect(() => {
     const fetchProfilePic = async () => {
@@ -113,7 +112,6 @@ console.log("Fetched Sessions:", data.sessions);
           hour12: true, // <-- shows AM/PM
         })
       : "-- --";
-      
 
     return (
       <View style={styles.row}>
@@ -154,7 +152,12 @@ console.log("Fetched Sessions:", data.sessions);
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="#fff"
+            style={{ marginTop: 6 }}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Attendance details</Text>
         {loading ? (

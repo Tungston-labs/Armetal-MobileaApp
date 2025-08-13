@@ -76,6 +76,7 @@ dateLabel: {
     color: '#FFF',
     flex: 1,
     marginLeft: 12,
+    marginTop:6,
     fontFamily: 'Raleway-Bold', 
   },
 

@@ -180,7 +180,6 @@ export default StyleSheet.create({
     marginRight:130,
   },
 
-  // ✅ Circle same as first code
   circleWrapper: {
     alignItems: "center",
     justifyContent: "center",

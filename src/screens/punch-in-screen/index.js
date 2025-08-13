@@ -15,7 +15,6 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index";
 
-// ✅ SVG Imports (6 main icons)
 import SalarySlipIcon from "../../../assets/salarySlip.svg";
 import AttendanceIcon from "../../../assets/attendance.svg";
 import TaskIcon from "../../../assets/task.svg";
@@ -36,38 +35,50 @@ const AttendanceScreen = () => {
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState(20); // Example dynamic number
 
-  const dayStatus = [
-    "present",
-    "present",
-    "present",
-    "present",
-    "present",
-    "present",
-    "holiday",
-    "present",
-    "present",
-    "absent",
-    "present",
-    "present",
-    "holiday",
-    "present",
-    "present",
-    "present",
-    "present",
-    "absent",
-    "present",
-    "holiday",
-    "present",
-    "present",
-    "present",
-    "absent",
-    "present",
-    "holiday",
-    "present",
-    "present",
-    "present",
-    "absent",
-  ];
+  const [dayStatus, setDayStatus] = useState([]);
+
+  const fetchDayStatus = async () => {
+    try {
+      const response = await authAxios.get("/employee-monthly-summary/");
+      const data = response.data;
+
+      const statusMap = {};
+
+      const firstDate = new Date(data.total_working_days_dates[0]);
+      const year = firstDate.getFullYear();
+      const month = firstDate.getMonth(); // 0-indexed
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const allDates = [];
+      for (let day = 1; day <= daysInMonth; day++) {
+        const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+          day
+        ).padStart(2, "0")}`;
+        allDates.push(iso);
+      }
+
+      allDates.forEach((date) => {
+        const day = new Date(date).getDay(); 
+        if (day === 0) statusMap[date] = "holiday";
+        else statusMap[date] = "working";
+      });
+
+      data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
+      data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
+      data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
+
+      const orderedStatuses = allDates.map((date) => statusMap[date]);
+
+      setDayStatus(orderedStatuses);
+    } catch (error) {
+      console.error("Failed to fetch day status:", error);
+      setDayStatus([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchDayStatus();
+  }, []);
 
   const fetchTodayAttendance = async () => {
     try {
@@ -114,9 +125,6 @@ const AttendanceScreen = () => {
         const profileRes = await authAxios.get(`/profile/`);
         setEmployee(profileRes.data);
         await fetchTodayAttendance();
-        // Example: Fetch pending leaves
-        // const leaveRes = await authAxios.get("/leaves/pending");
-        // setPendingLeaves(leaveRes.data.count);
       } catch (err) {
         console.error("Init error:", err.message);
       } finally {
@@ -133,10 +141,10 @@ const AttendanceScreen = () => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
 
-    let color = "#FFFFFF";
-    if (status === "present") color = "#00FF00";
-    else if (status === "absent") color = "#FF0000";
-    else if (status === "holiday") color = "gray";
+    let color = "#FFFFFF"; 
+    if (status === "present") color = "#00FF00"; 
+    else if (status === "absent") color = "#FF0000"; 
+    else if (status === "holiday") color = "gray"; 
 
     return (
       <View
@@ -169,14 +177,18 @@ const AttendanceScreen = () => {
     </View>
   );
 
-  // ✅ Main 6 menu items
   const menuItems = [
     { label: "Salary Slip", icon: SalarySlipIcon, route: "SalarySlipScreen" },
     { label: "Attendance", icon: AttendanceIcon, route: "AttendanceScreen" },
     { label: "Task", icon: TaskIcon, route: "TaskUpdateScreen" },
     { label: "Documents", icon: DocumentsIcon, route: "DocumentsScreen" },
     { label: "Team", icon: TeamIcon, route: "DepartmentScreen" },
-    { label: "Set Reminder", icon: ReminderIcon, route: "ReminderScreen" },
+    {
+      label: "Set Reminder",
+      icon: ReminderIcon,
+      route: "CalendarScreen",
+      params: { openTab: "reminder" },
+    },
   ];
 
   if (loading) {
@@ -193,7 +205,6 @@ const AttendanceScreen = () => {
         contentContainerStyle={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Header */}
         <View style={styles.header}>
           <View style={styles.logoRow}>
             <Image
@@ -205,7 +216,7 @@ const AttendanceScreen = () => {
             </Text>
           </View>
           <TouchableOpacity
-            activeOpacity={0.7} // controls fade amount (0–1)
+            activeOpacity={0.7} 
             onPress={() => navigation.navigate("ProfileScreen")}
           >
             <Image
@@ -215,10 +226,9 @@ const AttendanceScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Radial Circle */}
+
         {renderRadialCircle()}
 
-        {/* Legend */}
         <View style={styles.legendRow}>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: "#00B140" }]} />
@@ -238,23 +248,21 @@ const AttendanceScreen = () => {
           </View>
         </View>
 
-        {/* Menu Grid */}
         <View style={styles.menuGrid}>
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={index}
               style={styles.menuBox}
-              onPress={() => navigation.navigate(item.route)}
+              onPress={() => navigation.navigate(item.route, item.params || {})}
             >
               <item.icon width={28} height={28} />
               <Text style={styles.menuText}>{item.label}</Text>
             </TouchableOpacity>
           ))}
 
-          {/* ✅ Pending Leaves Box */}
           <TouchableOpacity
             style={styles.menuBox}
-            onPress={() => navigation.navigate("PendingLeavesScreen")}
+            onPress={() => navigation.navigate("LeavePendingScreen")}
           >
             <Text style={{ color: "#fff", fontSize: 20, fontWeight: "700" }}>
               {pendingLeaves}
