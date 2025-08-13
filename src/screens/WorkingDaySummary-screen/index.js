@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Get number of days in a given date's month
 function getDaysInMonth(dateStr) {
@@ -22,7 +23,7 @@ function getDaysInMonth(dateStr) {
 export default function WorkingDaySummary() {
   const navigation = useNavigation();
   const route = useRoute();
-
+  const insets = useSafeAreaInsets();
   const [dayStatus, setDayStatus] = useState([]);
   const [summary, setSummary] = useState(null);
 
@@ -112,6 +113,7 @@ export default function WorkingDaySummary() {
   };
 
   return (
+     <View style={{ flex: 1, backgroundColor: "#151D34" }}>
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
@@ -214,10 +216,14 @@ export default function WorkingDaySummary() {
           ))}
         </View>
       )}
-
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
     </ScrollView>
+      <View
+      style={[
+        styles.bottomNavbarContainer,
+      ]}
+    >
+      <BottomNavbar navigation={navigation} route={route} />
+    </View>
+    </View>
   );
 }
