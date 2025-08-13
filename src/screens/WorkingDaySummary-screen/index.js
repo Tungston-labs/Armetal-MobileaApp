@@ -118,7 +118,7 @@ export default function WorkingDaySummary() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 26, marginLeft:12 }} />
         </TouchableOpacity>
         <Text style={styles.headerText}>Working Day Summary</Text>
       </View>

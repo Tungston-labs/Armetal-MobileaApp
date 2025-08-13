@@ -12,11 +12,10 @@ export default StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical:30,
+    paddingVertical:25,
     borderBottomWidth: 1,
     backgroundColor: "#262D40",
     borderBottomColor: '#FFFFFF',
-    marginTop:20
   },
   headerText: {
     flex: 1,
@@ -24,6 +23,7 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     marginLeft:18,
+    marginTop:25,
   },
 
   circleWrapper: {
