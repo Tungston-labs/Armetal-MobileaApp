@@ -33,8 +33,8 @@ export default StyleSheet.create({
       marginTop:40,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 40,
+    paddingHorizontal: 18,
+    paddingTop: 30,
   },
   profileSection: {
     alignItems: 'center',
@@ -49,7 +49,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#172554',
-    padding: 15,
+    padding: 20,
     borderRadius: 12,
     marginBottom: 15,
   },

@@ -14,6 +14,7 @@ import authAxios from "@/src/utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index";
+import { Pressable } from "react-native";
 
 // ✅ SVG Imports (6 main icons)
 import SalarySlipIcon from "../../../assets/salarySlip.svg";
@@ -37,12 +38,12 @@ const AttendanceScreen = () => {
   const [pendingLeaves, setPendingLeaves] = useState(20); // Example dynamic number
 
   const dayStatus = [
-    "present","present","present","present","present","present",
-    "holiday","present","present","absent",
-    "present","present","holiday","present","present",
-    "present","present","absent","present","holiday",
-    "present","present","present","absent","present",
-    "holiday","present","present","present","absent"
+    "present", "present", "present", "present", "present", "present",
+    "holiday", "present", "present", "absent",
+    "present", "present", "holiday", "present", "present",
+    "present", "present", "absent", "present", "holiday",
+    "present", "present", "present", "absent", "present",
+    "holiday", "present", "present", "present", "absent"
   ];
 
   const fetchTodayAttendance = async () => {
@@ -119,7 +120,7 @@ const AttendanceScreen = () => {
           styles.segment,
           {
             backgroundColor: color,
-            transform: [{ rotate: `${angle}deg` }, { translateY: -105 }],
+            transform: [{ rotate: `${angle}deg` }, { translateY: -85 }],
           },
         ]}
       />
@@ -150,7 +151,7 @@ const AttendanceScreen = () => {
     { label: "Task", icon: TaskIcon, route: "TaskUpdateScreen" },
     { label: "Documents", icon: DocumentsIcon, route: "DocumentsScreen" },
     { label: "Team", icon: TeamIcon, route: "DepartmentScreen" },
-    { label: "Set Reminder", icon: ReminderIcon, route: "ReminderScreen" },
+    { label: "Set Reminder", icon: ReminderIcon, route: "ReminderTab" },
   ];
 
   if (loading) {
@@ -174,10 +175,15 @@ const AttendanceScreen = () => {
             />
             <Text style={styles.helloText}>Hello {employee?.name || "User"}</Text>
           </View>
-          <Image
-            source={{ uri: employee?.profile_image || defaultAvatar }}
-            style={styles.profilePic}
-          />
+          <TouchableOpacity
+            activeOpacity={0.7} // controls fade amount (0–1)
+            onPress={() => navigation.navigate("ProfileScreen")}
+          >
+            <Image
+              source={{ uri: employee?.profile_image || defaultAvatar }}
+              style={styles.profilePic}
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Radial Circle */}
@@ -238,7 +244,10 @@ const AttendanceScreen = () => {
         </View>
 
         {/* Attendance Box */}
-        <View style={styles.attendanceBox}>
+        <Pressable
+          style={styles.attendanceBox}
+          onPress={() => navigation.navigate("AttendanceScreen")}
+        >
           <Text style={styles.attendanceTitle}>
             {today.toLocaleDateString("en-US", {
               weekday: "long",
@@ -246,6 +255,7 @@ const AttendanceScreen = () => {
               month: "long",
             })}
           </Text>
+
           <View style={styles.timeRow}>
             <Text style={styles.timeLabel}>Time in :</Text>
             <Text style={styles.timeValue}>
@@ -263,13 +273,15 @@ const AttendanceScreen = () => {
                 : "-- --"}
             </Text>
           </View>
+
           <View style={styles.line} />
+
           <View style={styles.totalHoursRow}>
             <Ionicons name="time-outline" size={20} color="#fff" />
-            <Text style={styles.totalHoursText}> Total hours</Text>
+            <Text style={styles.totalHoursText}></Text>
             <Text style={styles.hours}>{totalHours}</Text>
           </View>
-        </View>
+        </Pressable>
 
         {/* Swipe Button */}
         <SwipeButton

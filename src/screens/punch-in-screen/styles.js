@@ -203,20 +203,20 @@ export default StyleSheet.create({
     backgroundColor: "#151D34",
     paddingHorizontal: 16,
     paddingTop: 40,
-    paddingBottom: 80,
+    paddingBottom: 40,
   },
-  scrollView: { paddingBottom: 40 },
+  scrollView: { paddingBottom: 0 },
 
   // Header
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 22,
+    marginBottom: -9,
   },
   logo: {
-    width: 80,
-    height: 40,
+    width: 90,
+    height: 50,
     resizeMode: "contain",
     paddingBottom: 10,
   },
@@ -229,7 +229,7 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     textAlign: "left",
-    marginTop: 5,
+    marginTop: 8,
   },
   profilePic: {
     width: 40,
@@ -241,15 +241,15 @@ export default StyleSheet.create({
   circleWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: -10,
     position: "relative",
     width: 200,
     height: 200,
     alignSelf: "center",
   },
   circle: {
-    width: 190,
-    height: 190,
+    width: 140,
+    height: 140,
     borderRadius: 100,
     backgroundColor: "#1D2C60",
     justifyContent: "center",
@@ -257,20 +257,20 @@ export default StyleSheet.create({
   },
   segment: {
     position: "absolute",
-    width: 14,
-    height: 10,
+    width: 10,
+    height: 7,
     borderRadius: 1,
   },
   dayText: { color: "#FFFFFF", fontSize: 16 },
   monthText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: "700",
     marginTop: 5,
   },
   dateText: {
     color: "#fff",
-    fontSize: 28,
+    fontSize: 20,
     marginTop: 5,
     fontWeight: "600",
   },
@@ -291,7 +291,7 @@ export default StyleSheet.create({
     width: 8,
     height: 12,
     borderRadius: 8,
-    marginRight: 4,
+    marginRight: 3,
   },
   legendText: {
     color: "#FFFFFF",
@@ -307,12 +307,12 @@ export default StyleSheet.create({
   },
   menuBox: {
     width: "22%", // 4 columns
-    aspectRatio: 0.6, // Keeps square
+    aspectRatio: 0.7, // Keeps square
     backgroundColor: "#172555",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
     paddingVertical: -2,
   },
   applyLeaveBox: {
@@ -320,32 +320,33 @@ export default StyleSheet.create({
   },
   menuText: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 10.5,
     textAlign: "center",
-    marginTop: 10,
+    marginTop: 8,
   },
 
   // Attendance Box
   attendanceBox: {
     backgroundColor: "#172555",
     padding: 10,
-    marginTop: -75,
+    marginTop: -40,
     borderRadius: 12,
   },
+
   attendanceTitle: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "500",
     marginBottom: 1,
     textAlign: "center",
   },
   timeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 3,
+    marginBottom: 1,
   },
-  timeLabel: { color: "#fff", fontSize: 16 },
-  timeValue: { color: "#fff", fontSize: 16 },
+  timeLabel: { color: "#fff", fontSize: 13 },
+  timeValue: { color: "#fff", fontSize: 13 },
   line: {
     
     backgroundColor: "#fff",
@@ -356,21 +357,22 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 3,
   },
   totalHoursText: { color: "#fff", fontSize: 16, marginLeft: 4 },
   hours: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
-    marginLeft: 6,
+    marginLeft: 1,
   },
 
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: -8,
+    left: 5,
+    right: 5,
   },
 });
+

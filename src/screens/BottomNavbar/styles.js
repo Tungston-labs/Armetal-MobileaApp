@@ -11,7 +11,7 @@ export default StyleSheet.create({
   },
   tabIconActive: {
     backgroundColor: '#3352BA',
-    padding: 10,
+    padding: 5,
     borderRadius: 40,
   },
   tabIconNormal: {

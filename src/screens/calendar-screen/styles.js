@@ -10,13 +10,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 24,
-    backgroundColor: "#1A2D5A",
+    paddingVertical: 35,
+    backgroundColor: "#262D40",
   },
   headerTitle: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
+     marginLeft:35,
+   
   },
   tabsContainer: {
     flexDirection: "row",
