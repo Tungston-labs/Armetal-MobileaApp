@@ -6,43 +6,30 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
+    
   },
   header: {
-  flexDirection: 'row',
-  alignItems: 'flex-end',     // Push items to bottom
-  backgroundColor: '#262D40',
-  paddingHorizontal: 16,
-  paddingVertical:6,
-  paddingBottom: 18,          // Add bottom padding instead of marginTop
-  height: 100,                // Increased height to allow more vertical space
-  borderBottomWidth: 0.2,
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical:25,
+    borderBottomWidth: 1,
+    backgroundColor: "#262D40",
+    borderBottomColor: '#FFFFFF',
+  },
+  headerText: {
+    flex: 1,
+    fontSize: 20,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    marginLeft:18,
+    marginTop:25,
+  },
 
-headerTitle: {
-  marginLeft:-60,
-  flex: 1,
-  textAlign: 'center',
-   fontSize: 20,
-   color: '#FFFFFF',
-   fontWeight: '600',
-  color: '#FFFFFF',
-  fontWeight: 'bold',
-  marginBottom:2,
-},
-backButton: {
-  position: 'absolute',
-  left: 15,
-  top: 53,
-},
-
-
-  // ✅ Circle same as first code
   circleWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
-    marginTop: 10,
-    position: "relative",
+     marginTop:30,
+     position: "relative",
     width: 200,
     height: 200,
     alignSelf: "center",
@@ -78,11 +65,8 @@ backButton: {
 
   summaryCard: {
     backgroundColor: '#172555',
-    padding: 10,
-    marginBottom: 10,
-    marginHorizontal: 16,
-    paddingHorizontal:13,
-    paddingVertical:13,
+    padding: 16,
+    marginTop: 38,
   },
 
   row: {
@@ -122,7 +106,7 @@ backButton: {
   },
 
   statusCard: {
-    marginBottom: 10,
+    marginTop: 30,
   },
   statusRow: {
     flexDirection: 'row',
@@ -158,10 +142,10 @@ backButton: {
     width: 3,
   },
 
-  bottomNavbarContainer: {
+    bottomNavbarContainer: {
     position: 'absolute',
-    bottom: -67,
-    left: -15,
-    right: -15,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });

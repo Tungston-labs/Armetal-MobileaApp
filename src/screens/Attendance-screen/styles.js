@@ -19,7 +19,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 40,
+    paddingTop: 50,
     paddingBottom: 24,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
@@ -76,6 +76,7 @@ dateLabel: {
     color: '#FFF',
     flex: 1,
     marginLeft: 12,
+    marginTop:6,
     fontFamily: 'Raleway-Bold', 
   },
 

@@ -49,6 +49,7 @@ export default function TaskUpdateScreen() {
 const fetchTasks = async (date) => {
   try {
     const response = await authAxios.get(`/employee/tasks/?date=${date}`);
+    console.log
     const taskList = response.data.results.map(item => ({
       id: item.id,
       project: item.project,

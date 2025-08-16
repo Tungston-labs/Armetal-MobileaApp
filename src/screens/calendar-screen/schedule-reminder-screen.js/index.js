@@ -1,8 +1,18 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Platform,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import styles from "./styles";
+import AddEventModal from "../../../screens/EventModal";
+import authAxios from "../../../utils/authAxios";
 
 const ReminderTab = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -10,30 +20,53 @@ const ReminderTab = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
+  const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  const reminders = [
-    {
-      id: "1",
-      title: "Dummy Dummy",
-      time: "01:35 P.M",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
-    },
-    {
-      id: "2",
-      title: "Dummy Dummy",
-      time: "01:35 P.M",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
-    },
-    {
-      id: "3",
-      title: "Dummy Dummy",
-      time: "01:35 P.M",
-      description:
-        "Lorem ipsum dolor sit amet consectetur. Turpis viverra lectus non viverra...",
-    },
-  ];
+  // const API_BASE_URL = "http://178.248.112.16:8001";
+
+  useEffect(() => {
+    fetchReminders(); // initial load
+  }, []);
+  const fetchReminders = async (date = null) => {
+    try {
+      setLoading(true);
+      setReminders([]); // clear old data so UI shows empty while loading
+
+      const endpoint = date ? `/reminders?date=${date}` : `/reminders/`;
+      const response = await authAxios.get(endpoint);
+
+      const data = response.data?.results ?? response.data ?? [];
+      setReminders(data);
+    } catch (error) {
+      console.error(
+        "Error fetching reminders:",
+        error?.response?.data || error.message || error
+      );
+      setReminders([]); // prevent showing stale data
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDateSelect = (day) => {
+    // Create local date from the timestamp
+    const localDate = new Date(day.timestamp);
+    localDate.setHours(0, 0, 0, 0);
+
+    setSelectedDate(localDate);
+    setShowCalendar(false);
+
+    // Convert local midnight to UTC date string (YYYY-MM-DD)
+    const utcDate = new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split("T")[0];
+
+    fetchReminders(utcDate);
+  };
 
   const onChangeDate = (event, date) => {
     if (date) {
@@ -44,14 +77,7 @@ const ReminderTab = () => {
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("en-GB").format(date);
   };
-  const handleDateSelect = (day) => {
-    const selected = new Date(day.timestamp);
-    const today = new Date();
-    selected.setHours(0, 0, 0, 0);
 
-    setSelectedDate(selected);
-    setShowCalendar(false);
-  };
   const monthNames = [
     "January",
     "February",
@@ -66,6 +92,7 @@ const ReminderTab = () => {
     "November",
     "December",
   ];
+
   return (
     <View style={styles.container}>
       {/* Date Picker Card */}
@@ -249,38 +276,68 @@ const ReminderTab = () => {
         </>
       )}
       {/* Reminders */}
-      <FlatList
-        data={reminders}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        renderItem={({ item }) => (
-          <View style={styles.reminderCard}>
-            <Text style={styles.reminderTitle}>{item.title}</Text>
-            <View style={styles.reminderTimeBox}>
-              <Ionicons
-                name="time-outline"
-                size={14}
-                color="#fff"
-                style={{ marginRight: 6 }}
-              />
-              <Text style={styles.reminderTimeText}>{item.time}</Text>
-            </View>
-            <Text style={styles.reminderDescription}>{item.description}</Text>
-          </View>
-        )}
-      />
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#000"
+          style={{ marginTop: 30 }}
+        />
+      ) : (
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          ListEmptyComponent={
+            <Text
+              style={{ textAlign: "center", color: "white", marginTop: 20 }}
+            >
+              No reminders found
+            </Text>
+          }
+          renderItem={({ item }) => {
+            const dateObj = new Date(item.scheduled_datetime);
+            const timeString = dateObj.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            return (
+              <View style={styles.reminderCard}>
+                <Text style={styles.reminderTitle}>{item.title}</Text>
+                <View style={styles.reminderTimeBox}>
+                  <Ionicons
+                    name="time-outline"
+                    size={14}
+                    color="#fff"
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text style={styles.reminderTimeText}>{timeString}</Text>
+                </View>
+                <Text style={styles.reminderDescription}>{item.body}</Text>
+              </View>
+            );
+          }}
+        />
+      )}
 
       {/* Add Event Button */}
-      <TouchableOpacity style={styles.addEventBtn} onPress={() => {}}>
-        <Ionicons
-          name="add"
-          size={20}
-          color="#fff"
-        />
+      <TouchableOpacity
+        style={styles.addEventBtn}
+        onPress={() => setShowAddModal(true)}
+      >
+        <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addEventText}>Add Event</Text>
       </TouchableOpacity>
+      {showAddModal && (
+        <AddEventModal
+          visible={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          selectedDate={selectedDate}
+          onEventAdded={(newEvent) =>
+            setReminders((prev) => [...prev, newEvent])
+          }
+        />
+      )}
     </View>
   );
 };
-
 export default ReminderTab;

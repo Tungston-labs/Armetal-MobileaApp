@@ -9,14 +9,20 @@ import BottomNavbar from "../BottomNavbar";
 
 const CalendarScreen = () => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState("holiday");
-  const route = useRoute();
+const route = useRoute();
+const [activeTab, setActiveTab] = useState(route.params?.openTab || "holiday");
+
+React.useEffect(() => {
+  if (route.params?.openTab) {
+    setActiveTab(route.params.openTab);
+  }
+}, [route.params?.openTab]);
   return (
     <>
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        
+       
         <Text style={styles.headerTitle}>Calendar</Text>
         <View style={{ width: 24 }} />
       </View>

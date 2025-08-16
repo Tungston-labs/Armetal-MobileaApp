@@ -9,13 +9,10 @@ export default StyleSheet.create({
   },
   header: {
     height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
     position: 'relative',
-  
 
    
   },
@@ -30,7 +27,8 @@ export default StyleSheet.create({
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'bold',
-    marginTop:50,
+    marginTop:60,
+    marginLeft:48
     
   },
   searchRow: {
