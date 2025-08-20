@@ -52,9 +52,9 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     paddingVertical: 12,
-    paddingHorizontal: 100,
-    borderRadius:20,
-    backgroundColor: "#4361EE", 
+    paddingHorizontal: 75,
+    borderRadius: 20,
+    backgroundColor: "#4361EE",
 
   },
   saveText: {

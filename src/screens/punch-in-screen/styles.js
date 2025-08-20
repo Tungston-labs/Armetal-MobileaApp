@@ -370,7 +370,7 @@ export default StyleSheet.create({
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
-    bottom: -8,
+    bottom: 8,
     left: 5,
     right: 5,
   },

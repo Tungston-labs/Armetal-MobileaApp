@@ -1,22 +1,20 @@
 import { StyleSheet, Dimensions } from 'react-native';
-
 const { width, height } = Dimensions.get('window');
 
 export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
-    
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical:25,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.3,
     backgroundColor: "#262D40",
     borderBottomColor: '#FFFFFF',
   },
-  headerText: {
+  headerTitle: {
     flex: 1,
     fontSize: 20,
     color: '#FFFFFF',
@@ -28,7 +26,7 @@ export default StyleSheet.create({
   circleWrapper: {
     alignItems: "center",
     justifyContent: "center",
-     marginTop:30,
+     marginTop:10,
      position: "relative",
     width: 200,
     height: 200,
@@ -65,20 +63,21 @@ export default StyleSheet.create({
 
   summaryCard: {
     backgroundColor: '#172555',
-    padding: 16,
-    marginTop: 38,
+    padding: 15,
+    marginTop: 10,
+     marginHorizontal: 15,
   },
 
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 1,
   },
   centerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 3,
   },
   label: {
     color: '#fff',
@@ -106,17 +105,17 @@ export default StyleSheet.create({
   },
 
   statusCard: {
-    marginTop: 30,
+    marginTop: 10,
   },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#172555',
-    padding: 14,
+    padding: 17,
     marginBottom: 10,
     borderLeftWidth: 3,
     position: 'relative',
-     marginHorizontal: 18,
+    marginHorizontal: 15,
   },
   statusLabel: {
     flex: 1,
@@ -144,8 +143,10 @@ export default StyleSheet.create({
 
     bottomNavbarContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 8,
     left: 0,
     right: 0,
   },
 });
+
+

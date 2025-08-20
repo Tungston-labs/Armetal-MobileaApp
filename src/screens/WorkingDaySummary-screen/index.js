@@ -105,7 +105,7 @@ export default function WorkingDaySummary() {
           styles.segment,
           {
             backgroundColor: color,
-            transform: [{ rotate: `${angle}deg` }, { translateY: -105 }],
+            transform: [{ rotate: `${angle}deg` }, { translateY: -85 }],
           },
         ]}
       />
