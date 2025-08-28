@@ -31,6 +31,9 @@ import FullImageViewer from '../screens/Document-screen/FullImageViewer'; // ✅
 // import SplashScreen from '../screens/splash-screen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen' 
 import WorkingDaySummary from '../screens/WorkingDaySummary-screen' 
+import ReimbursementScreen from '../screens/Reimbursement-screen' 
+import ReimbursementlistScreen from '../screens/reimbursements-list-screen' 
+import ReimbursementForm from '../screens/ReimbursementForm-screen' 
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +73,10 @@ export default function Navigation() {
         <Stack.Screen name="TaskModal" component={TaskModal} />
         <Stack.Screen name="FullImageViewer" component={FullImageViewer} /> 
         <Stack.Screen name="WorkingDaySummary" component={WorkingDaySummary} /> 
+        <Stack.Screen name="ReimbursementScreen" component={ReimbursementScreen} /> 
+        <Stack.Screen name="ReimbursementlistScreen" component={ReimbursementlistScreen} /> 
+        <Stack.Screen name="ReimbursementForm" component={ReimbursementForm} /> 
+
         {/* <Stack.Screen name="SplashScreen" component={SplashScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
