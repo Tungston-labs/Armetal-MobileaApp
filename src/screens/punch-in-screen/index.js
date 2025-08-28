@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  View,
+  View, 
   Text,
   SafeAreaView,
   TouchableOpacity,
@@ -18,6 +18,7 @@ import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index";
 import { Pressable } from "react-native";
 
+
 import SalarySlipIcon from "../../../assets/salarySlip.svg";
 import AttendanceIcon from "../../../assets/attendance.svg";
 import TaskIcon from "../../../assets/task.svg";
@@ -25,7 +26,9 @@ import DocumentsIcon from "../../../assets/documents.svg";
 import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 
+
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -38,7 +41,9 @@ const AttendanceScreen = () => {
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState(20); // Example dynamic number
 
+
   const [dayStatus, setDayStatus] = useState([]);
+
 
   const fetchDayStatus = async () => {
     try {
@@ -79,6 +84,7 @@ const AttendanceScreen = () => {
     }
   };
 
+
   useEffect(() => {
     fetchDayStatus();
   }, []);
@@ -99,6 +105,7 @@ const AttendanceScreen = () => {
       // console.error("Attendance fetch error:", err.message);
     }
   };
+
 
   const getLatestSession = () => {
     if (!Array.isArray(sessions) || sessions.length === 0) return "----";
@@ -272,7 +279,6 @@ const AttendanceScreen = () => {
             />
           </TouchableOpacity>
         </View>
-
 
         {renderRadialCircle()}
 
