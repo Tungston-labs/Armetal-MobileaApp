@@ -24,15 +24,29 @@ const ReminderTab = () => {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // const API_BASE_URL = "http://178.248.112.16:8001";
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   useEffect(() => {
     fetchReminders(); // initial load
   }, []);
+
   const fetchReminders = async (date = null) => {
     try {
       setLoading(true);
-      setReminders([]); // clear old data so UI shows empty while loading
+      setReminders([]); // clear old data
 
       const endpoint = date ? `/reminders?date=${date}` : `/reminders/`;
       const response = await authAxios.get(endpoint);
@@ -51,14 +65,12 @@ const ReminderTab = () => {
   };
 
   const handleDateSelect = (day) => {
-    // Create local date from the timestamp
     const localDate = new Date(day.timestamp);
     localDate.setHours(0, 0, 0, 0);
 
     setSelectedDate(localDate);
     setShowCalendar(false);
 
-    // Convert local midnight to UTC date string (YYYY-MM-DD)
     const utcDate = new Date(
       localDate.getTime() - localDate.getTimezoneOffset() * 60000
     )
@@ -69,34 +81,16 @@ const ReminderTab = () => {
   };
 
   const onChangeDate = (event, date) => {
-    if (date) {
-      setSelectedDate(date);
-    }
+    if (date) setSelectedDate(date);
     setShowPicker(false);
   };
-  const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-GB").format(date);
-  };
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const formatDate = (date) => {
+    return date ? new Intl.DateTimeFormat("en-GB").format(date) : "N/A";
+  };
 
   return (
     <View style={styles.container}>
-      {/* Date Picker Card */}
-
       {/* Date Selector */}
       <TouchableOpacity
         style={styles.dateCard}
@@ -118,15 +112,16 @@ const ReminderTab = () => {
           color="#fff"
         />
       </TouchableOpacity>
-      {/* Native Date Picker */}
+
       {showPicker && (
         <DateTimePicker
           mode="date"
           display={Platform.OS === "ios" ? "spinner" : "default"}
-          value={selectedDate}
+          value={selectedDate || new Date()}
           onChange={onChangeDate}
         />
       )}
+
       {showCalendar && (
         <>
           <View style={styles.calendarWrapper}>
@@ -140,7 +135,8 @@ const ReminderTab = () => {
                 monthFormat={"MMMM yyyy"}
                 hideArrows={true}
                 dayComponent={({ date, state }) => {
-                  const isSunday = new Date(date.dateString).getDay() === 0;
+                  const isSunday =
+                    new Date(date.dateString).getDay() === 0;
                   return (
                     <TouchableOpacity
                       onPress={() =>
@@ -207,7 +203,6 @@ const ReminderTab = () => {
                           />
                         </TouchableOpacity>
                       </View>
-                      Year only on right side
                       <TouchableOpacity
                         onPress={() => setYearPickerVisible(true)}
                       >
@@ -230,7 +225,6 @@ const ReminderTab = () => {
                 style={styles.calendar}
               />
 
-              {/* Year Picker Modal */}
               {yearPickerVisible && (
                 <Modal transparent animationType="fade">
                   <View style={styles.modalOverlay}>
@@ -243,7 +237,7 @@ const ReminderTab = () => {
                             onPress={() => {
                               const updated = new Date(calendarMonth);
                               updated.setFullYear(item);
-                              setCalendarMonth(updated); // This re-renders calendar
+                              setCalendarMonth(updated);
                               setYearPickerVisible(false);
                             }}
                           >
@@ -258,7 +252,6 @@ const ReminderTab = () => {
             </View>
           </View>
 
-          {/* Action Buttons */}
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.cancelButton}
@@ -275,6 +268,7 @@ const ReminderTab = () => {
           </View>
         </>
       )}
+
       {/* Reminders */}
       {loading ? (
         <ActivityIndicator
@@ -285,7 +279,9 @@ const ReminderTab = () => {
       ) : (
         <FlatList
           data={reminders}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) =>
+            item?.id != null ? item.id.toString() : index.toString()
+          }
           contentContainerStyle={{ paddingBottom: 100 }}
           ListEmptyComponent={
             <Text
@@ -295,14 +291,16 @@ const ReminderTab = () => {
             </Text>
           }
           renderItem={({ item }) => {
-            const dateObj = new Date(item.scheduled_datetime);
-            const timeString = dateObj.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
+            const dateObj = item?.scheduled_datetime
+              ? new Date(item.scheduled_datetime)
+              : null;
+            const timeString = dateObj
+              ? dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              : "--:--";
+
             return (
               <View style={styles.reminderCard}>
-                <Text style={styles.reminderTitle}>{item.title}</Text>
+                <Text style={styles.reminderTitle}>{item?.title || "No Title"}</Text>
                 <View style={styles.reminderTimeBox}>
                   <Ionicons
                     name="time-outline"
@@ -312,7 +310,7 @@ const ReminderTab = () => {
                   />
                   <Text style={styles.reminderTimeText}>{timeString}</Text>
                 </View>
-                <Text style={styles.reminderDescription}>{item.body}</Text>
+                <Text style={styles.reminderDescription}>{item?.body || ""}</Text>
               </View>
             );
           }}
@@ -327,17 +325,24 @@ const ReminderTab = () => {
         <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addEventText}>Add Event</Text>
       </TouchableOpacity>
+
       {showAddModal && (
         <AddEventModal
           visible={showAddModal}
           onClose={() => setShowAddModal(false)}
           selectedDate={selectedDate}
           onEventAdded={(newEvent) =>
-            setReminders((prev) => [...prev, newEvent])
+            setReminders((prev) =>
+              [...prev, newEvent].sort(
+                (a, b) => new Date(a.scheduled_datetime).getTime() - new Date(b.scheduled_datetime).getTime()
+              )
+            )
           }
+          
         />
       )}
     </View>
   );
 };
+
 export default ReminderTab;

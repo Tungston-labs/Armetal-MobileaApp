@@ -29,7 +29,10 @@ export default function DocumentsScreen() {
     insuranceNumber: "",
     iqamaNumber: "",
     visaExpiry: "",
+    idCardImage: null,
   });
+
+
 
   useEffect(() => {
     const fetchDocumentData = async () => {
@@ -51,14 +54,14 @@ export default function DocumentsScreen() {
         const replaceLocalhostInArray = (arr) =>
           Array.isArray(arr)
             ? arr.map((url) =>
-                typeof url === "string"
-                  ? url.replace("localhost", "192.168.29.146")
-                  : url
-              )
+              typeof url === "string"
+                ? url.replace("localhost", "192.168.29.146")
+                : url
+            )
             : [];
 
         setData({
-          healthCardImage: replaceLocalhost(detail.insurance_image_url),
+          idCardImage: replaceLocalhost(summary.id_card_image_url), // ✅ use id card image here
           workPermitUrls: replaceLocalhostInArray(detail.work_permit_urls),
           contractUrls: replaceLocalhostInArray(detail.contract_urls),
           passportNumber: summary.passport_number || "",
@@ -74,6 +77,7 @@ export default function DocumentsScreen() {
 
     fetchDocumentData();
   }, []);
+
 
   const handleImagePreview = (urls) => {
     if (urls && urls.length > 0) {
@@ -94,18 +98,32 @@ export default function DocumentsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Health Card */}
+
+        {/* ID Card */}
+        {/* ID Card or Fallback Image */}
         <View style={styles.card}>
-          <Image
-            source={require("../../assets/health-card.jpg")}
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
+          {data.idCardImage ? (
+            <TouchableOpacity onPress={() => handleImagePreview([data.idCardImage])}>
+              <Image
+                source={{ uri: data.idCardImage }}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          ) : (
+            <Image
+              source={require("../../assets/health-card.jpg")}
+              style={styles.cardImage}
+              resizeMode="cover"
+            />
+          )}
 
           {data.insuranceNumber ? (
             <Text style={styles.cardNumberText}>{data.insuranceNumber}</Text>
           ) : null}
         </View>
+
+
 
         {/* Work Permit */}
         <View style={styles.fieldContainer}>

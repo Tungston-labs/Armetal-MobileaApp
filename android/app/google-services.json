@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "221301373874",
+    "project_id": "armetalbackend",
+    "storage_bucket": "armetalbackend.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221301373874:android:095686831e0c2e753902ab",
+        "android_client_info": {
+          "package_name": "com.tungstonlabs.armetal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3F1Fjwbqm457t7WddBYevuTyi2dlJvKo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+

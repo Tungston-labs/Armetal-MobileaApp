@@ -80,12 +80,27 @@ const fetchTasks = async (date) => {
 
 
 
-  useEffect(() => {
-    const start = moment(selectedDate);
-    setDates(getDateRange(start, selectedDate));
-    fetchTasks(selectedDate);
-    fetchProfilePicture();
-  }, [selectedDate]);
+// 1️⃣ Initialize calendar once
+useEffect(() => {
+  const start = moment(); // start from current week
+  setDates(getDateRange(start, selectedDate));
+  fetchProfilePicture();
+}, []);
+
+// 2️⃣ Fetch tasks whenever selectedDate changes
+useEffect(() => {
+  fetchTasks(selectedDate);
+
+  // Update active flag in dates without changing their positions
+  setDates(prevDates =>
+    prevDates.map(d => ({
+      ...d,
+      active: d.fullDate === selectedDate,
+    }))
+  );
+}, [selectedDate]);
+
+  
 
   const handleSubmit = () => {
     setModalVisible(false);
@@ -118,11 +133,16 @@ const fetchTasks = async (date) => {
 
   const onDateSelect = (dateObj) => {
     setSelectedDate(dateObj.fullDate);
-    setDates(dates.map(d => ({
-      ...d,
-      active: d.fullDate === dateObj.fullDate,
-    })));
+  
+    // Only update active state in existing dates
+    setDates(prevDates =>
+      prevDates.map(d => ({
+        ...d,
+        active: d.fullDate === dateObj.fullDate,
+      }))
+    );
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>

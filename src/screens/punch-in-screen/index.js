@@ -8,6 +8,8 @@ import {
   Alert,
   Image,
 } from "react-native";
+import * as Location from "expo-location";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import authAxios from "@/src/utils/authAxios";
@@ -59,7 +61,7 @@ const AttendanceScreen = () => {
       }
 
       allDates.forEach((date) => {
-        const day = new Date(date).getDay(); 
+        const day = new Date(date).getDay();
         if (day === 0) statusMap[date] = "holiday";
         else statusMap[date] = "working";
       });
@@ -94,7 +96,7 @@ const AttendanceScreen = () => {
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
     } catch (err) {
-      console.error("Attendance fetch error:", err.message);
+      // console.error("Attendance fetch error:", err.message);
     }
   };
 
@@ -108,17 +110,61 @@ const AttendanceScreen = () => {
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
+  // const handlePunch = async () => {
+  //   setPunching(true);
+  //   try {
+  //     await authAxios.post(`/attendance/swipe/`, {});
+  //     await fetchTodayAttendance();
+  //   } catch (error) {
+  //     Alert.alert("Error", "Failed to swipe.");
+  //   } finally {
+  //     setPunching(false);
+  //   }
+  // };
+
+  const getCurrentLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to access location was denied');
+      return null;
+    }
+
+    const location = await Location.getCurrentPositionAsync({});
+    return {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+  };
+
   const handlePunch = async () => {
     setPunching(true);
     try {
-      await authAxios.post(`/attendance/swipe/`, {});
+      // Get current location with permission
+      const location = await getCurrentLocation();
+      if (!location) {
+        setPunching(false);
+        return;
+      }
+  
+      // Send location to backend
+      await authAxios.post('/attendance/swipe/', {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+  
       await fetchTodayAttendance();
     } catch (error) {
-      Alert.alert("Error", "Failed to swipe.");
+      console.error("Punch error:", error.response?.data || error.message);
+      Alert.alert("Error", error.response?.data?.error || "Failed to swipe.");
     } finally {
       setPunching(false);
     }
   };
+  
+
+
+
+
 
   useEffect(() => {
     (async () => {
@@ -142,10 +188,10 @@ const AttendanceScreen = () => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
 
-    let color = "#FFFFFF"; 
-    if (status === "present") color = "#00FF00"; 
-    else if (status === "absent") color = "#FF0000"; 
-    else if (status === "holiday") color = "gray"; 
+    let color = "#FFFFFF";
+    if (status === "present") color = "#00FF00";
+    else if (status === "absent") color = "#FF0000";
+    else if (status === "holiday") color = "gray";
 
     return (
       <View
@@ -217,7 +263,7 @@ const AttendanceScreen = () => {
             </Text>
           </View>
           <TouchableOpacity
-            activeOpacity={0.7} 
+            activeOpacity={0.7}
             onPress={() => navigation.navigate("ProfileScreen")}
           >
             <Image

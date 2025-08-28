@@ -15,10 +15,12 @@ import {
    Platform
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import authAxios from '../../utils/authAxios';
+
+
 const allMonths = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -90,8 +92,9 @@ const handleDownload = async (monthNumber) => {
     const token = await AsyncStorage.getItem('accessToken');
     const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
 
-
-    const downloadUrl = `/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
+    // Add base URL
+    const baseUrl = "https://your-backend-domain.com"; // <-- change this to your API base
+    const downloadUrl = `${authAxios.defaults.baseURL}/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
     const filePath = `${RNFS.DownloadDirectoryPath}/Payslip_${paddedMonth}_${selectedYear}.pdf`;
 
     const hasPermission = await requestStoragePermission();

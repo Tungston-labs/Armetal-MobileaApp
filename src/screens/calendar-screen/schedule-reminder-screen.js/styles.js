@@ -14,6 +14,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  deleteButton: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 70,
+    borderRadius: 8,
+    marginVertical: 4,
+  },
+  
   selectedDate: {
     fontSize: 16,
     color: "#fff",

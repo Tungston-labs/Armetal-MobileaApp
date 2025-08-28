@@ -55,15 +55,17 @@ const AttendanceScreen = () => {
 
   const fetchTodayAttendance = async () => {
     try {
-      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const formattedDate = selectedDate
+        .toLocaleDateString("en-CA"); // gives YYYY-MM-DD in local timezone
+  
       const res = await authAxios.get(`/attendance/today`, {
         params: { date: formattedDate },
       });
-
+  
       const data = res.data;
       setSessions(data.sessions || []);
       console.log("Fetched Sessions:", data.sessions);
-
+  
       const hours = parseFloat(data.total_hours || 0);
       const h = Math.floor(hours);
       const m = Math.round((hours - h) * 60);
@@ -76,6 +78,7 @@ const AttendanceScreen = () => {
       setTotalHours("00:00 Hrs");
     }
   };
+  
 
   useEffect(() => {
     const fetchProfilePic = async () => {
@@ -271,7 +274,7 @@ const AttendanceScreen = () => {
                           />
                         </TouchableOpacity>
                       </View>
-                      Year only on right side
+                      
                       <TouchableOpacity
                         onPress={() => setYearPickerVisible(true)}
                       >

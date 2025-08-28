@@ -103,6 +103,12 @@ android {
             keyPassword 'android'
         }
     }
+    configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core:1.13.1'
+    }
+}
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
