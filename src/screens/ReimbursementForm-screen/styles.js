@@ -102,4 +102,12 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: "#8A8F9E",
+    borderRadius: 8,
+    marginBottom: 12,
+    overflow: "hidden",
+  },
+  
 });

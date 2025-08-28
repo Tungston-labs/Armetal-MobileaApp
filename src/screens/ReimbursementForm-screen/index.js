@@ -6,12 +6,64 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { Picker } from "@react-native-picker/picker"; 
+import authAxios from "../../utils/authAxios"; 
 import styles from "./styles";
 
 const ReimbursementForm = ({ navigation }) => {
-  const [bills] = useState([1, 2, 3, 4, 5]); // mock bills
+  const [expenseCategory, setExpenseCategory] = useState("");
+  const [toMail, setToMail] = useState("");
+  const [note, setNote] = useState("");
+  const [date, setDate] = useState("");
+  const [amount, setAmount] = useState("");
+  const [bill, setBill] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const EXPENSE_CATEGORIES = ["TRAVEL", "MEALS", "ACCOMMODATION", "SUPPLIES","TRAINING","ENTERTAINMENT","BILLS","HEALTHCARE","MISC"];
+  
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+    if (!result.canceled) {
+      const file = result.assets[0];
+      setBill({ uri: file.uri, name: "bill.jpg", type: "image/jpeg" });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!expenseCategory || !toMail || !amount || !date || !bill) {
+      return Alert.alert("Error", "Please fill all required fields and upload a bill.");
+    }
+
+    const formData = new FormData();
+    formData.append("expense_category", expenseCategory);
+    formData.append("to_mail", toMail);
+    formData.append("note", note);
+    formData.append("date", date);
+    formData.append("amount", amount);
+    formData.append("uploaded_images", bill);
+
+    setLoading(true);
+    try {
+      await authAxios.post("/reimbursements/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      Alert.alert("Success", "Reimbursement submitted successfully!");
+      navigation.goBack();
+    } catch (err) {
+      console.error("Failed to submit reimbursement:", err);
+      Alert.alert("Error", "Failed to submit reimbursement.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -24,13 +76,20 @@ const ReimbursementForm = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Expense Category */}
+        {/* Expense Category Dropdown */}
         <Text style={styles.label}>Expense Category</Text>
-        <TextInput
-          placeholder="Enter Expense"
-          placeholderTextColor="#8A8F9E"
-          style={styles.input}
-        />
+        <View style={styles.pickerWrapper}>
+          <Picker
+            selectedValue={expenseCategory}
+            onValueChange={(value) => setExpenseCategory(value)}
+            style={{ color: "#fff" }}
+          >
+            <Picker.Item label="Select category" value="" />
+            {EXPENSE_CATEGORIES.map((cat) => (
+              <Picker.Item key={cat} label={cat} value={cat} />
+            ))}
+          </Picker>
+        </View>
 
         {/* To */}
         <Text style={styles.label}>To</Text>
@@ -38,71 +97,59 @@ const ReimbursementForm = ({ navigation }) => {
           placeholder="Enter Mail ID"
           placeholderTextColor="#8A8F9E"
           style={styles.input}
+          value={toMail}
+          onChangeText={setToMail}
         />
 
         {/* Upload Button */}
-        <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
           <Ionicons name="add" size={20} color="#fff" />
-          <Text style={styles.uploadButtonText}>Upload image</Text>
+          <Text style={styles.uploadButtonText}>Upload Bill</Text>
         </TouchableOpacity>
 
-        {/* Bills Preview */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 12 }}
-        >
-          {bills.map((item, index) => (
-            <Image
-              key={index}
-              source={{ uri: "https://via.placeholder.com/100x120" }}
-              style={styles.billImage}
-            />
-          ))}
-        </ScrollView>
+        {/* Display selected image */}
+        {bill && <Image source={{ uri: bill.uri }} style={[styles.billImage, { marginTop: 12 }]} />}
 
-        {/* Add Note */}
+        {/* Note */}
         <Text style={styles.label}>Add note</Text>
         <TextInput
           placeholder="Enter note"
           placeholderTextColor="#8A8F9E"
           style={styles.textArea}
           multiline
+          value={note}
+          onChangeText={setNote}
         />
 
         {/* Date & Amount Row */}
         <View style={styles.row}>
           <View style={styles.halfInputContainer}>
             <Text style={styles.label}>Date</Text>
-            <View style={styles.dateInputWrapper}>
-              <TextInput
-                placeholder="12/12/2025"
-                placeholderTextColor="#8A8F9E"
-                style={styles.dateInput}
-              />
-              <Ionicons
-                name="calendar-outline"
-                size={20}
-                color="#8A8F9E"
-                style={{ marginRight: 10 }}
-              />
-            </View>
+            <TextInput
+              placeholder="yyyy-mm-dd"
+              placeholderTextColor="#8A8F9E"
+              style={styles.input}
+              value={date}
+              onChangeText={setDate}
+            />
           </View>
 
           <View style={styles.halfInputContainer}>
             <Text style={styles.label}>Enter Amount</Text>
             <TextInput
-              placeholder="AED 250"
+              placeholder="250"
               placeholderTextColor="#8A8F9E"
               style={styles.input}
               keyboardType="numeric"
+              value={amount}
+              onChangeText={setAmount}
             />
           </View>
         </View>
 
         {/* Submit Button */}
-        <TouchableOpacity style={styles.submitButton} activeOpacity={0.8}>
-          <Text style={styles.submitButtonText}>Submit</Text>
+        <TouchableOpacity style={styles.submitButton} activeOpacity={0.8} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>{loading ? "Submitting..." : "Submit"}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
