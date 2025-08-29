@@ -20,6 +20,8 @@ import authAxios from "../../utils/authAxios";
 export default function DocumentsScreen() {
   const navigation = useNavigation();
   const [employeeId, setEmployeeId] = useState(null);
+  const BASE_URL = "http://178.248.112.16:8001"; // 👈 match backend port
+
 
   const [data, setData] = useState({
     healthCardImage: null,
@@ -32,6 +34,26 @@ export default function DocumentsScreen() {
     idCardImage: null,
   });
 
+  const normalizeUrl = (url) => {
+    if (!url) return null;
+  
+    // Full http/https URL
+    if (url.startsWith("http")) return url;
+  
+    // If backend sent `localhost`, replace it with device IP
+    if (url.includes("localhost")) {
+      return url.replace("localhost", "192.168.29.146");
+    }
+  
+    // If backend returned just `/media/...`
+    if (url.startsWith("/")) {
+      return `${BASE_URL}${url}`;
+    }
+  
+    // If backend returned only filename
+    return `${BASE_URL}/media/${url}`;
+  };
+  
 
 
   useEffect(() => {
@@ -60,15 +82,17 @@ export default function DocumentsScreen() {
             )
             : [];
 
+       
         setData({
-          idCardImage: replaceLocalhost(summary.id_card_image_url), // ✅ use id card image here
-          workPermitUrls: replaceLocalhostInArray(detail.work_permit_urls),
-          contractUrls: replaceLocalhostInArray(detail.contract_urls),
+          idCardImage: normalizeUrl(summary.id_card_image_url),
+          workPermitUrls: detail.work_permit_urls.map(normalizeUrl),
+          contractUrls: detail.contract_urls.map(normalizeUrl),
           passportNumber: summary.passport_number || "",
           insuranceNumber: summary.healthcard_number || "",
           iqamaNumber: summary.iqama_number || "",
           visaExpiry: summary.visa_expiry_date || "",
         });
+        
       } catch (error) {
         console.error("❌ Failed to fetch documents:", error);
         Alert.alert("Error", "Could not load document data");

@@ -15,7 +15,7 @@ import authAxios from '../../utils/authAxios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-const API_BASE_URL = 'http://178.248.112.16:8000';
+const API_BASE_URL = 'http://178.248.112.16:8001';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -24,20 +24,34 @@ const ProfileScreen = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await authAxios.get('/profile/'); // ✅ token added automatically
+        const response = await authAxios.get('/profile/');
+        console.log("Profile data:", response.data);  // 👀 check profile_pic here
         setEmployee(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error.message);
         Alert.alert('Error', 'Failed to load profile');
       }
     };
-
+  
     fetchProfile();
   }, []);
+  
 
-  const profileImage = employee?.profile_pic
-    ? { uri: `${API_BASE_URL}${employee.profile_pic}` }
-    : { uri: defaultAvatar };
+
+    const getProfileUri = (pic) => {
+      if (!pic) return defaultAvatar;
+    
+      if (pic.startsWith('http')) {
+        // Already a full URL
+        return pic;
+      }
+    
+      // Ensure slash between BASE and path
+      return `${API_BASE_URL}${pic.startsWith('/') ? '' : '/'}${pic}`;
+    };
+    
+    const profileImage = { uri: getProfileUri(employee?.profile_pic) };
+    
 
   return (
     <SafeAreaView style={styles.container}>

@@ -126,10 +126,17 @@ useEffect(() => {
   );
 
   const scrollCalendar = (direction) => {
-    const newStart = moment(dates[0].fullDate).add(direction * 7, 'days');
-    const newSelected = newStart.format('YYYY-MM-DD');
+    // calculate new start date
+    const newStart = moment(dates[0].fullDate).add(direction * 7, "days");
+    const newSelected = newStart.format("YYYY-MM-DD");
+  
+    // regenerate the week view
+    const newDates = getDateRange(newStart, newSelected);
+  
+    setDates(newDates);
     setSelectedDate(newSelected);
   };
+  
 
   const onDateSelect = (dateObj) => {
     setSelectedDate(dateObj.fullDate);

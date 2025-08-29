@@ -28,7 +28,7 @@ import SetNewPasswordScreen from '../screens/SetNewPassword-screen';
 import CreateNewPasswordScreen from '../screens/CreateNewPassword-screen';
 import TaskModal from '../screens/TaskModal';
 import FullImageViewer from '../screens/Document-screen/FullImageViewer'; // ✅ Add import
-// import SplashScreen from '../screens/splash-screen';
+import SplashScreen from '../screens/splash-screen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen' 
 import WorkingDaySummary from '../screens/WorkingDaySummary-screen' 
 import ReimbursementScreen from '../screens/Reimbursement-screen' 
@@ -42,7 +42,7 @@ export default function Navigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="AuthLoading"
+        initialRouteName="SplashScreen"
       >
             <Stack.Screen name="AuthLoading" component={AuthLoadingScreen}  />
 
@@ -77,7 +77,7 @@ export default function Navigation() {
         <Stack.Screen name="ReimbursementlistScreen" component={ReimbursementlistScreen} /> 
         <Stack.Screen name="ReimbursementForm" component={ReimbursementForm} /> 
 
-        {/* <Stack.Screen name="SplashScreen" component={SplashScreen} /> */}
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
