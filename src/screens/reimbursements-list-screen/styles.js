@@ -79,11 +79,11 @@ export default StyleSheet.create({
 
   fixedButton: {
     position: "absolute",
-    bottom: 70, // above navbar
+    bottom: 100, // above navbar
     left: 20,
     right: 20,
-    backgroundColor: "#2d6cdf",
-    paddingVertical: 14,
+    backgroundColor: "#3352BA",
+    paddingVertical: 13,
     borderRadius: 12,
     alignItems: "center",
   },
