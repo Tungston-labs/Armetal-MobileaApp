@@ -10,6 +10,8 @@ export default function LeaveHeader({ navigation, selectedTab }) {
   const [summary, setSummary] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL = "http://178.248.112.16:8000";
+  const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   const tabs = [
     { label: 'All', screen: 'LeaveAllScreen' },
@@ -18,21 +20,29 @@ export default function LeaveHeader({ navigation, selectedTab }) {
     { label: 'Pending', screen: 'LeavePendingScreen' },
   ];
 
+  const getProfileUri = (pic) => {
+    if (!pic) return defaultAvatar;
+
+    if (pic.startsWith("http")) {
+      return pic; // already full URL
+    }
+
+    // Ensure correct path (if backend returns just a filename)
+    const path = pic.startsWith("/") ? pic : `/media/${pic}`;
+    return `${API_BASE_URL}${path}`;
+  };
+
   useEffect(() => {
-     const fetchData = async () => {
+    const fetchData = async () => {
       try {
         const summaryRes = await authAxios.get("/leave/summary/");
         setSummary(summaryRes.data);
 
-        // Fetch profile picture
-      const profileRes = await authAxios.get("profile/");
-        const picUrl = profileRes.data?.profile_pic
-          ? `${API_BASE_URL}${profileRes.data.profile_pic}`
-          : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
-        setProfilePic(picUrl);
+        // ✅ Use helper
+        const profileRes = await authAxios.get("/profile/");
+        setProfilePic(getProfileUri(profileRes.data?.profile_pic));
       } catch (error) {
-        console.error('Error fetching data:', error.message);
+        console.error("Error fetching data:", error.message);
       } finally {
         setLoading(false);
       }
@@ -47,6 +57,10 @@ export default function LeaveHeader({ navigation, selectedTab }) {
       </View>
     );
   }
+
+
+  
+
 
   return (
     <View>
@@ -64,24 +78,25 @@ export default function LeaveHeader({ navigation, selectedTab }) {
             source={{ uri: profilePic }}
             style={styles.avatar}
           />
+
         </TouchableOpacity>
       </View>
 
       {/* Tabs */}
       <View style={styles.tabs}>
-       {tabs.map((tab) => (
-  <TouchableOpacity
-    key={tab.label}
-    onPress={() => navigation.navigate(tab.screen)}
-    style={styles.tabButton}
-  >
-    <Text
-      style={selectedTab === tab.label ? styles.tabSelected : styles.tab}
-    >
-      {tab.label}
-    </Text>
-  </TouchableOpacity>
-))}
+        {tabs.map((tab) => (
+          <TouchableOpacity
+            key={tab.label}
+            onPress={() => navigation.navigate(tab.screen)}
+            style={styles.tabButton}
+          >
+            <Text
+              style={selectedTab === tab.label ? styles.tabSelected : styles.tab}
+            >
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );

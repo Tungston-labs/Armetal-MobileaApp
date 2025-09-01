@@ -48,7 +48,7 @@ React.useEffect(() => {
           <Text style={styles.tabText}>Schedule Reminder</Text>
         </TouchableOpacity>
       </View>
-.
+
       {/* Tab Content */}
       {activeTab === "holiday" ? <HolidayTab /> : <ReminderTab />}
     </View>

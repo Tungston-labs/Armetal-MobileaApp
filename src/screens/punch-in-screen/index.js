@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  View, 
+  View,
   Text,
   SafeAreaView,
   TouchableOpacity,
@@ -29,6 +29,7 @@ import ReminderIcon from "../../../assets/reminder.svg";
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+const API_BASE_URL = "http://178.248.112.16:8001";
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -39,7 +40,7 @@ const AttendanceScreen = () => {
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
-  const [pendingLeaves, setPendingLeaves] = useState(20); // Example dynamic number
+  const [pendingLeaves, setPendingLeaves] = useState(20);
 
 
   const [dayStatus, setDayStatus] = useState([]);
@@ -83,6 +84,19 @@ const AttendanceScreen = () => {
       setDayStatus([]);
     }
   };
+
+  const getProfileUri = (pic) => {
+    if (!pic) return defaultAvatar;
+
+    if (pic.startsWith("http")) {
+      return pic; // already full URL
+    }
+
+    // Ensure path is correct (add /media/ if only filename is given)
+    const path = pic.startsWith("/") ? pic : `/media/${pic}`;
+    return `${API_BASE_URL}${path}`;
+  };
+
 
 
   useEffect(() => {
@@ -152,13 +166,13 @@ const AttendanceScreen = () => {
         setPunching(false);
         return;
       }
-  
+
       // Send location to backend
       await authAxios.post('/attendance/swipe/', {
         latitude: location.latitude,
         longitude: location.longitude,
       });
-  
+
       await fetchTodayAttendance();
     } catch (error) {
       console.error("Punch error:", error.response?.data || error.message);
@@ -167,7 +181,7 @@ const AttendanceScreen = () => {
       setPunching(false);
     }
   };
-  
+
 
 
 
@@ -274,9 +288,10 @@ const AttendanceScreen = () => {
             onPress={() => navigation.navigate("ProfileScreen")}
           >
             <Image
-              source={{ uri: employee?.profile_image || defaultAvatar }}
+              source={{ uri: getProfileUri(employee?.profile_pic) }}
               style={styles.profilePic}
             />
+
           </TouchableOpacity>
         </View>
 

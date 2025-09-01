@@ -41,7 +41,7 @@ const ReimbursementForm = ({ navigation }) => {
     if (!expenseCategory || !toMail || !amount || !date || !bill) {
       return Alert.alert("Error", "Please fill all required fields and upload a bill.");
     }
-
+  
     const formData = new FormData();
     formData.append("expense_category", expenseCategory);
     formData.append("to_mail", toMail);
@@ -49,14 +49,17 @@ const ReimbursementForm = ({ navigation }) => {
     formData.append("date", date);
     formData.append("amount", amount);
     formData.append("uploaded_images", bill);
-
+  
     setLoading(true);
     try {
       await authAxios.post("/reimbursements/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+  
       Alert.alert("Success", "Reimbursement submitted successfully!");
-      navigation.goBack();
+  
+      // ✅ Go back AND notify list to refresh
+      navigation.navigate("ReimbursementlistScreen", { refresh: true });
     } catch (err) {
       console.error("Failed to submit reimbursement:", err);
       Alert.alert("Error", "Failed to submit reimbursement.");
@@ -64,6 +67,7 @@ const ReimbursementForm = ({ navigation }) => {
       setLoading(false);
     }
   };
+  
 
   return (
     <View style={styles.container}>

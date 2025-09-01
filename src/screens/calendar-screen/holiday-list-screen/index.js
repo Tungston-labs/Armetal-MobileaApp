@@ -12,17 +12,24 @@ const HolidayTab = () => {
     const fetchHolidays = async () => {
       try {
         const res = await authAxios.get("/holidays/");
-        const formatted = res.data.results.map((holiday) => ({
-          id: holiday.id.toString(),
-          title: holiday.description || "Holiday",
-          date: new Date(holiday.date).toLocaleDateString("en-GB", {
+       
+        const formatted = res.data.results.map((holiday) => {
+          const dateString = new Date(holiday.date).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "long",
-          }),
-          from: holiday.date,
-          to: holiday.date,
-          type: holiday.holiday_type_display,
-        }));
+            year: "numeric",
+          });
+        
+          return {
+            id: holiday.id.toString(),
+            title: holiday.description || "Holiday",
+            date: dateString,  // formatted for display
+            from: dateString,  // ✅ already string
+            to: dateString,    // ✅ already string
+            type: holiday.holiday_type_display,
+          };
+        });
+        
         setHolidays(formatted);
         setError(null); // clear error if successful
       } catch (err) {
