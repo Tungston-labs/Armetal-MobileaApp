@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from "react-native";
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
-import * as Notifications from "expo-notifications";
 
 
 
