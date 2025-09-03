@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
@@ -14,16 +15,17 @@ import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 
 const STATUS_COLORS = {
-  "Approve": "#2ecc71",
+  Approve: "#2ecc71",
   "In Verification": "#facc15",
   "On Hold": "#f97316",
-  "Default": "#ccc",
+  Default: "#ccc",
 };
 
 const ReimbursementScreen = ({ navigation, route }) => {
   const { reimbursementId } = route.params;
   const [reimbursement, setReimbursement] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null); // 👈 For modal preview
 
   const fetchReimbursement = async () => {
     setLoading(true);
@@ -72,7 +74,9 @@ const ReimbursementScreen = ({ navigation, route }) => {
 
   if (loading || !reimbursement) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[styles.container, { justifyContent: "center", alignItems: "center" }]}
+      >
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -130,16 +134,14 @@ const ReimbursementScreen = ({ navigation, route }) => {
           </View>
 
           {/* Bills */}
-          {reimbursement.bills && reimbursement.bills.length > 0 && (
+          {reimbursement.images && reimbursement.images.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.label}>Bills</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {reimbursement.bills.map((bill, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: bill.url }}
-                    style={styles.billImage}
-                  />
+                {reimbursement.images.map((bill, index) => (
+                  <TouchableOpacity key={index} onPress={() => setPreviewImage(bill.image)}>
+                    <Image source={{ uri: bill.image }} style={styles.billImage} />
+                  </TouchableOpacity>
                 ))}
               </ScrollView>
             </View>
@@ -155,6 +157,29 @@ const ReimbursementScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Full-Screen Image Modal */}
+      <Modal visible={!!previewImage} transparent={true}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.9)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{ position: "absolute", top: 40, right: 20 }}
+            onPress={() => setPreviewImage(null)}
+          >
+            <Ionicons name="close" size={30} color="#fff" />
+          </TouchableOpacity>
+          <Image
+            source={{ uri: previewImage }}
+            style={{ width: "90%", height: "70%", resizeMode: "contain" }}
+          />
+        </View>
+      </Modal>
 
       {/* Bottom Navbar */}
       <View style={styles.bottomNavbarContainer}>

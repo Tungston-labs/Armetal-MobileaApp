@@ -7,16 +7,18 @@ import {
   ScrollView,
   Alert,
   Image,
+  Animated,
+  Easing,
+  Pressable,
 } from "react-native";
 import * as Location from "expo-location";
-
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import authAxios from "@/src/utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index";
-import { Pressable } from "react-native";
+
 import LeaveIcon from "../../../assets/salarySlip.svg";
 import SalarySlipIcon from "../../../assets/salarySlip.svg";
 import AttendanceIcon from "../../../assets/attendance.svg";
@@ -25,9 +27,7 @@ import DocumentsIcon from "../../../assets/documents.svg";
 import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 
-
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
 const API_BASE_URL = "http://178.248.112.16:8001";
 
 const AttendanceScreen = () => {
@@ -40,10 +40,30 @@ const AttendanceScreen = () => {
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
-
-
   const [dayStatus, setDayStatus] = useState([]);
 
+  // 🔄 Rotation setup
+  const spinValue = useState(new Animated.Value(0))[0];
+  useEffect(() => {
+    if (punching) {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinValue.stopAnimation();
+      spinValue.setValue(0);
+    }
+  }, [punching]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   const fetchDayStatus = async () => {
     try {
@@ -51,10 +71,9 @@ const AttendanceScreen = () => {
       const data = response.data;
 
       const statusMap = {};
-
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
-      const month = firstDate.getMonth(); // 0-indexed
+      const month = firstDate.getMonth();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const allDates = [];
@@ -76,7 +95,6 @@ const AttendanceScreen = () => {
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
 
       const orderedStatuses = allDates.map((date) => statusMap[date]);
-
       setDayStatus(orderedStatuses);
     } catch (error) {
       console.error("Failed to fetch day status:", error);
@@ -86,17 +104,10 @@ const AttendanceScreen = () => {
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
-
-    if (pic.startsWith("http")) {
-      return pic; // already full URL
-    }
-
-    // Ensure path is correct (add /media/ if only filename is given)
+    if (pic.startsWith("http")) return pic;
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
     return `${API_BASE_URL}${path}`;
   };
-
-
 
   useEffect(() => {
     fetchDayStatus();
@@ -119,7 +130,6 @@ const AttendanceScreen = () => {
     }
   };
 
-
   const getLatestSession = () => {
     if (!Array.isArray(sessions) || sessions.length === 0) return "----";
     return sessions[sessions.length - 1];
@@ -130,14 +140,12 @@ const AttendanceScreen = () => {
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
-
   const getCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access location was denied');
+    if (status !== "granted") {
+      alert("Permission to access location was denied");
       return null;
     }
-
     const location = await Location.getCurrentPositionAsync({});
     return {
       latitude: location.coords.latitude,
@@ -148,32 +156,23 @@ const AttendanceScreen = () => {
   const handlePunch = async () => {
     setPunching(true);
     try {
-      // Get current location with permission
       const location = await getCurrentLocation();
       if (!location) {
         setPunching(false);
         return;
       }
-
-      // Send location to backend
-      await authAxios.post('/attendance/swipe/', {
+      await authAxios.post("/attendance/swipe/", {
         latitude: location.latitude,
         longitude: location.longitude,
       });
-
       await fetchTodayAttendance();
     } catch (error) {
-      console.error("Punch error:", error.response?.data || error.message);
-      Alert.alert("Error", error.response?.data?.error || "Failed to swipe.");
+      // console.error("Punch error:", error.response?.data || error.message);
+      Alert.alert("Failed to Swipe", error.response?.data?.error || "Failed to swipe.");
     } finally {
       setPunching(false);
     }
   };
-
-
-
-
-
 
   useEffect(() => {
     (async () => {
@@ -196,7 +195,6 @@ const AttendanceScreen = () => {
   const getSegment = (status, index) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-
     let color = "#FFFFFF";
     if (status === "present") color = "#00FF00";
     else if (status === "absent") color = "#FF0000";
@@ -261,6 +259,7 @@ const AttendanceScreen = () => {
         contentContainerStyle={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
+        {/* HEADER */}
         <View style={styles.header}>
           <View style={styles.logoRow}>
             <Image
@@ -279,12 +278,12 @@ const AttendanceScreen = () => {
               source={{ uri: getProfileUri(employee?.profile_pic) }}
               style={styles.profilePic}
             />
-
           </TouchableOpacity>
         </View>
 
         {renderRadialCircle()}
 
+        {/* LEGEND */}
         <View style={styles.legendRow}>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: "#00B140" }]} />
@@ -304,6 +303,7 @@ const AttendanceScreen = () => {
           </View>
         </View>
 
+        {/* MENU GRID */}
         <View style={styles.menuGrid}>
           {menuItems.map((item, index) => (
             <TouchableOpacity
@@ -316,31 +316,27 @@ const AttendanceScreen = () => {
             </TouchableOpacity>
           ))}
 
-<TouchableOpacity
-  style={styles.menuBox}
-  onPress={() => navigation.navigate("LeavePendingScreen")}
->
-  {/* ✅ Icon slightly lower */}
-  <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />
+          {/* LEAVE STATUS BOX */}
+          <TouchableOpacity
+            style={styles.menuBox}
+            onPress={() => navigation.navigate("LeavePendingScreen")}
+          >
+            <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "700",
+                marginTop: 2,
+                marginBottom: -25,
+              }}
+            >
+              {pendingLeaves}
+            </Text>
+            <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
+          </TouchableOpacity>
 
-  {/* Pending leave count moved a little higher */}
-  <Text style={{ 
-    color: "#fff", 
-    fontSize: 20, 
-    fontWeight: "700", 
-    marginTop: 2, 
-    marginBottom: -25   // pushes text slightly up
-  }}>
-    {pendingLeaves}
-  </Text>
-
-  {/* Label (leave status) */}
-  <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
-</TouchableOpacity>
-
-
-
-          {/* ✅ Apply Leave Box */}
+          {/* APPLY LEAVE BOX */}
           <TouchableOpacity
             style={[styles.menuBox, styles.applyLeaveBox]}
             onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -350,7 +346,7 @@ const AttendanceScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Attendance Box */}
+        {/* ATTENDANCE BOX */}
         <Pressable
           style={styles.attendanceBox}
           onPress={() => navigation.navigate("AttendanceScreen")}
@@ -390,7 +386,7 @@ const AttendanceScreen = () => {
           </View>
         </Pressable>
 
-        {/* Swipe Button */}
+        {/* ✅ SWIPE BUTTON WITH ROTATING ICON */}
         <SwipeButton
           title={
             isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to Punch In"
@@ -400,9 +396,28 @@ const AttendanceScreen = () => {
           backgroundColor="#ddd"
           thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
           resetAfterSuccess={true}
+          thumbIconComponent={
+            punching ? (
+              <Animated.Image
+                source={require("../../../assets/images/loadericon.png")}
+                style={{
+                  width: 28,
+                  height: 28,
+                  transform: [{ rotate: spin }],
+                }}
+              />
+            ) : (
+              <Ionicons
+                name={isCurrentlyPunchedIn() ? "log-out-outline" : "log-in-outline"}
+                size={22}
+                color="#fff"
+              />
+            )
+          }
         />
       </ScrollView>
 
+      {/* BOTTOM NAVBAR */}
       <View style={styles.bottomNavbarContainer}>
         <BottomNavbar navigation={navigation} route={route} />
       </View>

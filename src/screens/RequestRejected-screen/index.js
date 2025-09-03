@@ -23,7 +23,7 @@ export default function RequestRejected({ navigation, route }) {
   const [profile, setProfile] = useState(null);
 
 
-  const API_BASE_URL = 'http://178.248.112.16:8000';
+  const API_BASE_URL = 'http://178.248.112.16:8001';
 
 const formatTime = (isoString) => {
   const date = new Date(isoString);

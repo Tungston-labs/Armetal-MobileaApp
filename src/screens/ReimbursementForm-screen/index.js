@@ -7,10 +7,13 @@ import {
   Image,
   ScrollView,
   Alert,
+  Platform,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker"; 
+import DateTimePicker from "@react-native-community/datetimepicker";  // 👈 import
 import authAxios from "../../utils/authAxios"; 
 import styles from "./styles";
 
@@ -18,13 +21,16 @@ const ReimbursementForm = ({ navigation }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
   const [toMail, setToMail] = useState("");
   const [note, setNote] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(""); // yyyy-mm-dd formatted string
+  const [showDatePicker, setShowDatePicker] = useState(false); // 👈 controls modal
   const [amount, setAmount] = useState("");
   const [bill, setBill] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const EXPENSE_CATEGORIES = ["TRAVEL", "MEALS", "ACCOMMODATION", "SUPPLIES","TRAINING","ENTERTAINMENT","BILLS","HEALTHCARE","MISC"];
-  
+  const EXPENSE_CATEGORIES = [
+    "TRAVEL", "MEALS", "ACCOMMODATION", "SUPPLIES",
+    "TRAINING", "ENTERTAINMENT", "BILLS", "HEALTHCARE", "MISC"
+  ];
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -37,11 +43,19 @@ const ReimbursementForm = ({ navigation }) => {
     }
   };
 
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false); // close picker
+    if (selectedDate) {
+      const formatted = selectedDate.toISOString().split("T")[0]; // yyyy-mm-dd
+      setDate(formatted);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!expenseCategory || !toMail || !amount || !date || !bill) {
       return Alert.alert("Error", "Please fill all required fields and upload a bill.");
     }
-  
+
     const formData = new FormData();
     formData.append("expense_category", expenseCategory);
     formData.append("to_mail", toMail);
@@ -49,16 +63,14 @@ const ReimbursementForm = ({ navigation }) => {
     formData.append("date", date);
     formData.append("amount", amount);
     formData.append("uploaded_images", bill);
-  
+
     setLoading(true);
     try {
       await authAxios.post("/reimbursements/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
       Alert.alert("Success", "Reimbursement submitted successfully!");
-  
-      // ✅ Go back AND notify list to refresh
       navigation.navigate("ReimbursementlistScreen", { refresh: true });
     } catch (err) {
       console.error("Failed to submit reimbursement:", err);
@@ -67,7 +79,6 @@ const ReimbursementForm = ({ navigation }) => {
       setLoading(false);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -80,7 +91,7 @@ const ReimbursementForm = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Expense Category Dropdown */}
+        {/* Expense Category */}
         <Text style={styles.label}>Expense Category</Text>
         <View style={styles.pickerWrapper}>
           <Picker
@@ -105,13 +116,11 @@ const ReimbursementForm = ({ navigation }) => {
           onChangeText={setToMail}
         />
 
-        {/* Upload Button */}
+        {/* Upload Bill */}
         <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
           <Ionicons name="add" size={20} color="#fff" />
           <Text style={styles.uploadButtonText}>Upload Bill</Text>
         </TouchableOpacity>
-
-        {/* Display selected image */}
         {bill && <Image source={{ uri: bill.uri }} style={[styles.billImage, { marginTop: 12 }]} />}
 
         {/* Note */}
@@ -125,21 +134,27 @@ const ReimbursementForm = ({ navigation }) => {
           onChangeText={setNote}
         />
 
-        {/* Date & Amount Row */}
+        {/* Date & Amount */}
         <View style={styles.row}>
           <View style={styles.halfInputContainer}>
             <Text style={styles.label}>Date</Text>
-            <TextInput
-              placeholder="yyyy-mm-dd"
-              placeholderTextColor="#8A8F9E"
-              style={styles.input}
-              value={date}
-              onChangeText={setDate}
-            />
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+              <Text style={{ color: date ? "#fff" : "#8A8F9E" }}>
+                {date || "Select Date"}
+              </Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={date ? new Date(date) : new Date()}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={handleDateChange}
+              />
+            )}
           </View>
 
           <View style={styles.halfInputContainer}>
-            <Text style={styles.label}>Enter Amount</Text>
+            <Text style={styles.label}>Enter Amount (AED)</Text>
             <TextInput
               placeholder="250"
               placeholderTextColor="#8A8F9E"
@@ -151,7 +166,7 @@ const ReimbursementForm = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <TouchableOpacity style={styles.submitButton} activeOpacity={0.8} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>{loading ? "Submitting..." : "Submit"}</Text>
         </TouchableOpacity>

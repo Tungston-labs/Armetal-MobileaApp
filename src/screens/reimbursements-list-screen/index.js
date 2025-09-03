@@ -18,6 +18,11 @@ const STATUS_COLORS = {
   "On Hold": "#f97316",          // orange
   "Default": "#ccc",             // fallback color
 };
+const STATUS_LABELS = {
+  "Approve": "Approved",
+  "In Verification": "In Verification",
+  "On Hold": "On Hold",
+};
 
 export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
@@ -68,8 +73,9 @@ export default function ReimbursementlistScreen({ navigation, route }) {
               >
                 <View style={[styles.statusBadge, { borderColor: statusColor }]}>
                   <Text style={[styles.statusText, { color: statusColor }]}>
-                    {item.status}
+                    {STATUS_LABELS[item.status] || item.status}
                   </Text>
+
                 </View>
 
                 <View style={styles.cardRow}>

@@ -34,8 +34,18 @@ export default function TaskModal({
       });
       return;
     }
-
-     try {
+  
+    // ✅ Validate numeric value
+    if (isNaN(timeTaken) || parseFloat(timeTaken) <= 0) {
+      Toast.show({
+        type: 'error',
+        text1: '',
+        text2: 'Time taken must be a valid number greater than 0.',
+      });
+      return;
+    }
+  
+    try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
         Toast.show({
@@ -45,21 +55,21 @@ export default function TaskModal({
         });
         return;
       }
-
+  
       const payload = {
         project,
         task,
         time_taken: parseFloat(timeTaken),
       };
-
-        await authAxios.post('/employee/tasks/', payload);
-
-       Toast.show({
+  
+      await authAxios.post('/employee/tasks/', payload);
+  
+      Toast.show({
         type: 'success',
         text1: 'Success',
         text2: 'Task submitted successfully!',
       });
-
+  
       onSubmit(); // refresh list and clear form
     } catch (error) {
       console.error('❌ Task submission failed:', error.response?.data || error.message);
@@ -70,6 +80,7 @@ export default function TaskModal({
       });
     }
   };
+  
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalBackground}>
@@ -94,13 +105,13 @@ export default function TaskModal({
             placeholderTextColor="#8a8dad"
           />
 
-          <Text style={styles.inputLabel}>Time Taken</Text>
+          <Text style={styles.inputLabel}>Time Taken(hours)</Text>
           <View style={styles.timeInputRow}>
             <View style={styles.iconBox}>
               <Ionicons name="time" size={20} color="#8a8dad" />
             </View>
             <TextInput
-              placeholder="e.g. 3.5"
+              placeholder=""
               value={timeTaken}
               onChangeText={setTimeTaken}
               style={styles.timeInput}
