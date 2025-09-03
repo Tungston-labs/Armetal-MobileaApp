@@ -24,6 +24,7 @@ import TaskIcon from "../../../assets/task.svg";
 import DocumentsIcon from "../../../assets/documents.svg";
 import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -170,10 +171,12 @@ const AttendanceScreen = () => {
     }
   };
 
+const { accessToken, user } = useSelector((state) => state.auth);
+const dispatch = useDispatch();
 
-
-
-
+const handleLogout = () => {
+  dispatch(logout());
+};
 
   useEffect(() => {
     (async () => {

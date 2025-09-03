@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { Provider } from 'react-redux';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { enableScreens } from 'react-native-screens';
-import * as Notifications from 'expo-notifications';
-import Navigation from './src/navigation/navigation';
-import { store } from './src/redux/store';
-import Toast from 'react-native-toast-message';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+// App.js
+import React, { useEffect } from "react";
+import { Provider, useDispatch } from "react-redux";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { enableScreens } from "react-native-screens";
+import { store } from "./src/redux/store";
+import Toast from "react-native-toast-message";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Navigation from "./src/navigation/navigation";
+import { restoreSession } from "./src/redux/features/authSlice";
+import * as Notifications from "expo-notifications";
 
-// Optimize navigation performance
 enableScreens();
 
-// Set notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => {
     return {
@@ -22,8 +22,18 @@ Notifications.setNotificationHandler({
   },
 });
 
+const InitAuth = ({ children }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
+
+  return children;
+};
+
 const App = () => {
-  // Request notification permissions on app start
+
   useEffect(() => {
     const requestPermissions = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -39,8 +49,10 @@ const App = () => {
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <Navigation />
-          <Toast />
+          <InitAuth>
+            <Navigation />
+            <Toast />
+          </InitAuth>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </Provider>
