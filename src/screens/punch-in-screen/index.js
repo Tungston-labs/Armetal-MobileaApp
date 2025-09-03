@@ -17,8 +17,7 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import SwipeButton from "../../components/swipe/index";
 import { Pressable } from "react-native";
-
-
+import LeaveIcon from "../../../assets/salarySlip.svg";
 import SalarySlipIcon from "../../../assets/salarySlip.svg";
 import AttendanceIcon from "../../../assets/attendance.svg";
 import TaskIcon from "../../../assets/task.svg";
@@ -40,7 +39,7 @@ const AttendanceScreen = () => {
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
-  const [pendingLeaves, setPendingLeaves] = useState(20);
+  const [pendingLeaves, setPendingLeaves] = useState();
 
 
   const [dayStatus, setDayStatus] = useState([]);
@@ -131,17 +130,6 @@ const AttendanceScreen = () => {
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
-  // const handlePunch = async () => {
-  //   setPunching(true);
-  //   try {
-  //     await authAxios.post(`/attendance/swipe/`, {});
-  //     await fetchTodayAttendance();
-  //   } catch (error) {
-  //     Alert.alert("Error", "Failed to swipe.");
-  //   } finally {
-  //     setPunching(false);
-  //   }
-  // };
 
   const getCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -328,15 +316,29 @@ const AttendanceScreen = () => {
             </TouchableOpacity>
           ))}
 
-          <TouchableOpacity
-            style={styles.menuBox}
-            onPress={() => navigation.navigate("LeavePendingScreen")}
-          >
-            <Text style={{ color: "#fff", fontSize: 20, fontWeight: "700" }}>
-              {pendingLeaves}
-            </Text>
-            <Text style={styles.menuText}>Pending Leaves</Text>
-          </TouchableOpacity>
+<TouchableOpacity
+  style={styles.menuBox}
+  onPress={() => navigation.navigate("LeavePendingScreen")}
+>
+  {/* ✅ Icon slightly lower */}
+  <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />
+
+  {/* Pending leave count moved a little higher */}
+  <Text style={{ 
+    color: "#fff", 
+    fontSize: 20, 
+    fontWeight: "700", 
+    marginTop: 2, 
+    marginBottom: -25   // pushes text slightly up
+  }}>
+    {pendingLeaves}
+  </Text>
+
+  {/* Label (leave status) */}
+  <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
+</TouchableOpacity>
+
+
 
           {/* ✅ Apply Leave Box */}
           <TouchableOpacity

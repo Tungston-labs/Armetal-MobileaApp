@@ -29,47 +29,42 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
-    if (!username || !password) {
-      Alert.alert('Validation Error', 'Please enter both username and password.');
-      return;
+const handleLogin = async () => {
+  if (!username || !password) {
+    Alert.alert('Validation Error', 'Please enter both username and password.');
+    return;
+  }
+
+  try {
+    const response = await axios.post('http://178.248.112.16:8001/api/token/', {
+      username,
+      password,
+    });
+
+    const { access, refresh } = response.data;
+    await AsyncStorage.setItem('accessToken', access);
+    await AsyncStorage.setItem('refreshToken', refresh);
+
+    // ✅ Direct navigation without alert
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'PunchinScreen' }],
+    });
+
+  } catch (error) {
+    console.log('API Error:', error.message);
+    console.log('API Error Details:', error);
+
+    if (error.response) {
+      Alert.alert('Login Failed', 'Invalid username or password.');
+    } else if (error.request) {
+      Alert.alert('Network Error', 'No response from server. Check your network.');
+    } else {
+      Alert.alert('Error', error.message);
     }
+  }
+};
 
-    try {
-      const response = await axios.post('http://178.248.112.16:8001/api/token/', {
-        username,
-        password,
-      });
-
-      const { access, refresh } = response.data;
-      await AsyncStorage.setItem('accessToken', access);
-      await AsyncStorage.setItem('refreshToken', refresh);
-
-      Alert.alert('Login Successful', `Welcome, ${username}!`, [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'PunchinScreen' }],
-            });
-          },
-        },
-      ]);
-
-    } catch (error) {
-      console.log('API Error:', error.message);
-      console.log('API Error Details:', error);
-
-      if (error.response) {
-        Alert.alert('Login Failed', 'Invalid username or password.');
-      } else if (error.request) {
-        Alert.alert('Network Error', 'No response from server. Check your network.');
-      } else {
-        Alert.alert('Error', error.message);
-      }
-    }
-  };
 
   const handleForgotPassword = () => {
     navigation.navigate('ForgotPasswordScreen');
