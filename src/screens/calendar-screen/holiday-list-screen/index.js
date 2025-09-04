@@ -1,46 +1,50 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, Platform } from "react-native";
 import authAxios from "../../../utils/authAxios";
 import styles from "./styles";
 
 const HolidayTab = () => {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // ✅ state for error
+  const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchHolidays = async () => {
+    try {
+      const res = await authAxios.get("/holidays/");
+      const formatted = res.data.results.map((holiday) => {
+        const dateString = new Date(holiday.date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        });
+        return {
+          id: holiday.id.toString(),
+          title: holiday.description || "Holiday",
+          date: dateString,
+          from: dateString,
+          to: dateString,
+          type: holiday.holiday_type_display,
+        };
+      });
+      setHolidays(formatted);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch holidays", err.message);
+      setError("Failed to fetch holidays. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchHolidays = async () => {
-      try {
-        const res = await authAxios.get("/holidays/");
-       
-        const formatted = res.data.results.map((holiday) => {
-          const dateString = new Date(holiday.date).toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          });
-        
-          return {
-            id: holiday.id.toString(),
-            title: holiday.description || "Holiday",
-            date: dateString,  // formatted for display
-            from: dateString,  // ✅ already string
-            to: dateString,    // ✅ already string
-            type: holiday.holiday_type_display,
-          };
-        });
-        
-        setHolidays(formatted);
-        setError(null); // clear error if successful
-      } catch (err) {
-        console.error("Failed to fetch holidays", err.message);
-        setError("Failed to fetch holidays. Please try again."); // ✅ set error text
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchHolidays();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchHolidays();
+    setRefreshing(false);
   }, []);
 
   const renderItem = ({ item }) => (
@@ -49,7 +53,8 @@ const HolidayTab = () => {
         <Text style={styles.dateText}>{item.date}</Text>
         <Text style={styles.titleText}>{item.title}</Text>
         <Text style={styles.dateRange}>
-          {item.type} | {item.from === item.to ? `On ${item.from}` : `From ${item.from} to ${item.to}`}
+          {item.type} |{" "}
+          {item.from === item.to ? `On ${item.from}` : `From ${item.from} to ${item.to}`}
         </Text>
       </View>
     </View>
@@ -71,6 +76,15 @@ const HolidayTab = () => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
+              progressBackgroundColor={Platform.OS === "android" ? "#2c2c2c" : "transparent"}
+            />
+          }
         />
       )}
     </View>

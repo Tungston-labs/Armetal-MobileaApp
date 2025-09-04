@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
-
+import SwipeLoader from "../../components/SwipeLoader"
 const STATUS_COLORS = {
   Approve: "#2ecc71",
   "In Verification": "#facc15",
@@ -77,7 +77,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
       <View
         style={[styles.container, { justifyContent: "center", alignItems: "center" }]}
       >
-        <ActivityIndicator size="large" color="#000" />
+        <SwipeLoader size="large" color="#000" />
       </View>
     );
   }

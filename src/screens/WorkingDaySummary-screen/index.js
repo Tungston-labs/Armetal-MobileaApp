@@ -114,7 +114,11 @@ export default function WorkingDaySummary() {
 
   return (
      <View style={{ flex: 1, backgroundColor: "#151D34" }}>
-    <ScrollView style={styles.container}>
+<ScrollView
+  contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} // extra padding for navbar
+  showsVerticalScrollIndicator={true}
+>
+
      
       {/* Header */}
       <View style={styles.header}>

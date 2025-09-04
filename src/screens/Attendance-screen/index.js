@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  RefreshControl,
+  Platform,
 } from "react-native";
 import styles from "./styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -24,9 +26,10 @@ const AttendanceScreen = () => {
 
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
-
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false); // ✅ state for pull-to-refresh
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const { date } = route.params || {};
     return date ? new Date(date) : new Date();
@@ -40,32 +43,20 @@ const AttendanceScreen = () => {
     const today = new Date();
     selected.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
-
-    if (selected > today) {
-      return;
-    }
-
+    if (selected > today) return;
     setSelectedDate(selected);
     setShowCalendar(false);
   };
 
-  useEffect(() => {
-    fetchTodayAttendance();
-  }, [selectedDate]);
-
   const fetchTodayAttendance = async () => {
     try {
-      const formattedDate = selectedDate
-        .toLocaleDateString("en-CA"); // gives YYYY-MM-DD in local timezone
-  
+      const formattedDate = selectedDate.toLocaleDateString("en-CA"); // YYYY-MM-DD
       const res = await authAxios.get(`/attendance/today`, {
         params: { date: formattedDate },
       });
-  
+
       const data = res.data;
       setSessions(data.sessions || []);
-      console.log("Fetched Sessions:", data.sessions);
-  
       const hours = parseFloat(data.total_hours || 0);
       const h = Math.floor(hours);
       const m = Math.round((hours - h) * 60);
@@ -78,7 +69,17 @@ const AttendanceScreen = () => {
       setTotalHours("00:00 Hrs");
     }
   };
-  
+
+  // 🔄 called when pulling down
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchTodayAttendance();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    fetchTodayAttendance();
+  }, [selectedDate]);
 
   useEffect(() => {
     const fetchProfilePic = async () => {
@@ -94,7 +95,6 @@ const AttendanceScreen = () => {
         setLoading(false);
       }
     };
-
     fetchProfilePic();
   }, []);
 
@@ -103,16 +103,15 @@ const AttendanceScreen = () => {
       ? new Date(item.time_in).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-          hour12: true, // <-- shows AM/PM
+          hour12: true,
         })
       : "-- --";
-    console.log("Session item:", item);
 
     const punchOut = item.time_out
       ? new Date(item.time_out).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-          hour12: true, // <-- shows AM/PM
+          hour12: true,
         })
       : "-- --";
 
@@ -131,36 +130,12 @@ const AttendanceScreen = () => {
     );
   };
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-GB").format(date);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="#fff"
-            style={{ marginTop: 6 }}
-          />
+          <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 6 }} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Attendance details</Text>
         {loading ? (
@@ -169,179 +144,6 @@ const AttendanceScreen = () => {
           <Image source={{ uri: profilePic }} style={styles.profileImage} />
         )}
       </View>
-
-      {/* Date Selector */}
-      <TouchableOpacity
-        style={styles.dateCard}
-        onPress={() => setShowCalendar(!showCalendar)}
-      >
-        <Ionicons
-          name="calendar"
-          size={22}
-          color="#fff"
-          style={{ marginRight: 10 }}
-        />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.dateLabel}>Select a day</Text>
-          <Text style={styles.selectedDate}>{formatDate(selectedDate)}</Text>
-        </View>
-        <Ionicons
-          name={showCalendar ? "chevron-up" : "chevron-down"}
-          size={20}
-          color="#fff"
-        />
-      </TouchableOpacity>
-
-      {showCalendar && (
-        <>
-          <View style={styles.calendarWrapper}>
-            <View style={styles.calendarContainer}>
-              <Calendar
-                key={calendarMonth.toISOString()}
-                current={`${calendarMonth.getFullYear()}-${String(
-                  calendarMonth.getMonth() + 1
-                ).padStart(2, "0")}-01`}
-                onDayPress={handleDateSelect}
-                monthFormat={"MMMM yyyy"}
-                hideExtraDays={true}
-                maxDate={new Date().toISOString().split("T")[0]}
-                hideArrows={true}
-                dayComponent={({ date, state }) => {
-                  const isSunday = new Date(date.dateString).getDay() === 0;
-                  return (
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleDateSelect({
-                          dateString: date.dateString,
-                          timestamp: new Date(date.dateString).getTime(),
-                        })
-                      }
-                    >
-                      <Text
-                        style={{
-                          textAlign: "center",
-                          padding: 8,
-                          borderRadius: 8,
-                          backgroundColor:
-                            formatDate(selectedDate) ===
-                            formatDate(new Date(date.dateString))
-                              ? "#2814e0ff"
-                              : "transparent",
-                          color: isSunday
-                            ? "#FF4B4B"
-                            : state === "disabled"
-                            ? "#3e4e6c"
-                            : "#fff",
-                        }}
-                      >
-                        {date.day}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                }}
-                renderHeader={(date) => {
-                  const month = monthNames[date.getMonth()];
-                  const year = date.getFullYear();
-
-                  return (
-                    <View style={styles.calendarHeader}>
-                      <View style={styles.monthWithArrow}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            const newDate = new Date(calendarMonth);
-                            newDate.setMonth(newDate.getMonth() - 1);
-                            setCalendarMonth(newDate);
-                          }}
-                        >
-                          <Ionicons
-                            name="chevron-back"
-                            size={22}
-                            color="#fff"
-                          />
-                        </TouchableOpacity>
-                        <Text style={styles.monthText}>{month}</Text>
-                        <TouchableOpacity
-                          onPress={() => {
-                            const newDate = new Date(calendarMonth);
-                            newDate.setMonth(newDate.getMonth() + 1);
-                            setCalendarMonth(newDate);
-                          }}
-                        >
-                          <Ionicons
-                            name="chevron-forward"
-                            size={22}
-                            color="#fff"
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      
-                      <TouchableOpacity
-                        onPress={() => setYearPickerVisible(true)}
-                      >
-                        <Text style={styles.yearText}>{year}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                }}
-                theme={{
-                  backgroundColor: "#172554",
-                  calendarBackground: "#172554",
-                  textSectionTitleColor: "#fff",
-                  selectedDayBackgroundColor: "#2814e0ff",
-                  selectedDayTextColor: "#fff",
-                  todayTextColor: "#fff",
-                  dayTextColor: "#fff",
-                  textDisabledColor: "#3e4e6c",
-                  arrowColor: "#fff",
-                }}
-                style={styles.calendar}
-              />
-
-              {/* Year Picker Modal */}
-              {yearPickerVisible && (
-                <Modal transparent animationType="fade">
-                  <View style={styles.modalOverlay}>
-                    <View style={styles.yearPickerContainer}>
-                      <FlatList
-                        data={Array.from({ length: 20 }, (_, i) => 2010 + i)}
-                        keyExtractor={(item) => item.toString()}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity
-                            onPress={() => {
-                              const updated = new Date(calendarMonth);
-                              updated.setFullYear(item);
-                              setCalendarMonth(updated); // This re-renders calendar
-                              setYearPickerVisible(false);
-                            }}
-                          >
-                            <Text style={styles.yearItem}>{item}</Text>
-                          </TouchableOpacity>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </Modal>
-              )}
-            </View>
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setShowCalendar(false)}
-            >
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.doneButton}
-              onPress={() => setShowCalendar(false)}
-            >
-              <Text style={styles.doneText}>Done</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
 
       {/* Attendance Table */}
       <View style={styles.tableContainer}>
@@ -353,8 +155,33 @@ const AttendanceScreen = () => {
           data={sessions}
           renderItem={renderItem}
           keyExtractor={(_, index) => index.toString()}
+          refreshControl={ // ✅ pull-to-refresh added
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#ffffff", "#d3d3d3"]} // Android colors
+              tintColor="#ffffff"             // iOS spinner color
+              progressBackgroundColor={Platform.OS === "android" ? "#2c2c2c" : "transparent"}
+            />
+          }
         />
       </View>
+
+      {/* Bottom Navigation with separator */}
+<View>
+  <View
+    style={{
+      height: 1,
+      backgroundColor: "#3e4e6c", // subtle gray line (fits your dark theme)
+      marginHorizontal: 10,
+      marginBottom: 5,
+    }}
+  />
+  <View style={styles.bottomNavbarContainer}>
+    <BottomNavbar navigation={navigation} route={route} />
+  </View>
+</View>
+
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNavbarContainer}>

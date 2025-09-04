@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,18 +6,18 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
-  Dimensions,
+  RefreshControl,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import styles, { boxWidth } from './styles';
+import styles from './styles';
 import BottomNavbar from '../BottomNavbar';
 import TaskModal from '../TaskModal';
-// import axios from 'axios';
 import moment from 'moment';
 import authAxios from '../../utils/authAxios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import SwipeLoader from "../../components/SwipeLoader"
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
 export default function TaskUpdateScreen() {
@@ -32,6 +32,8 @@ export default function TaskUpdateScreen() {
   const [project, setProject] = useState('');
   const [task, setTask] = useState('');
   const [timeTaken, setTimeTaken] = useState('');
+  const [loading, setLoading] = useState(true);   // ✅ new
+  const [refreshing, setRefreshing] = useState(false); // ✅ new
 
   const getDateRange = (startDate, selected) => {
     return Array.from({ length: 7 }).map((_, index) => {
@@ -46,61 +48,59 @@ export default function TaskUpdateScreen() {
     });
   };
 
-const fetchTasks = async (date) => {
-  try {
-    const response = await authAxios.get(`/employee/tasks/?date=${date}`);
-    console.log
-    const taskList = response.data.results.map(item => ({
-      id: item.id,
-      project: item.project,
-      task: item.task,
-      time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
-      submittedAt: moment(item.updated_at).format('hh:mm A'),
-    }));
-    setTasks(taskList);
-  } catch (error) {
-    console.error('❌ Error fetching tasks:', error.response?.data || error.message);
-  }
-};
+  const fetchTasks = async (date) => {
+    try {
+      if (!refreshing) setLoading(true);
+      const response = await authAxios.get(`/employee/tasks/?date=${date}`);
+      const taskList = response.data.results.map(item => ({
+        id: item.id,
+        project: item.project,
+        task: item.task,
+        time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
+        submittedAt: moment(item.updated_at).format('hh:mm A'),
+      }));
+      setTasks(taskList);
+    } catch (error) {
+      console.error('❌ Error fetching tasks:', error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- const fetchProfilePicture = async () => {
-  try {
-    const response = await authAxios.get('/profile/');
-    const profilePicPath = response?.data?.profile_pic;
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await authAxios.get('/profile/');
+      const profilePicPath = response?.data?.profile_pic;
+      const picUrl = profilePicPath
+        ? `${API_BASE_URL}${profilePicPath}`
+        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      setProfilePic(picUrl);
+    } catch (error) {
+      console.error('❌ Error fetching profile picture:', error?.message || error);
+    }
+  };
 
-    const picUrl = profilePicPath
-      ? `${API_BASE_URL}${profilePicPath}`
-      : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  useEffect(() => {
+    const start = moment(); 
+    setDates(getDateRange(start, selectedDate));
+    fetchProfilePicture();
+  }, []);
 
-    setProfilePic(picUrl);
-  } catch (error) {
-    console.error('❌ Error fetching profile picture:', error?.message || error);
-  }
-};
+  useEffect(() => {
+    fetchTasks(selectedDate);
+    setDates(prevDates =>
+      prevDates.map(d => ({
+        ...d,
+        active: d.fullDate === selectedDate,
+      }))
+    );
+  }, [selectedDate]);
 
-
-
-// 1️⃣ Initialize calendar once
-useEffect(() => {
-  const start = moment(); // start from current week
-  setDates(getDateRange(start, selectedDate));
-  fetchProfilePicture();
-}, []);
-
-// 2️⃣ Fetch tasks whenever selectedDate changes
-useEffect(() => {
-  fetchTasks(selectedDate);
-
-  // Update active flag in dates without changing their positions
-  setDates(prevDates =>
-    prevDates.map(d => ({
-      ...d,
-      active: d.fullDate === selectedDate,
-    }))
-  );
-}, [selectedDate]);
-
-  
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchTasks(selectedDate);
+    setRefreshing(false);
+  }, [selectedDate]);
 
   const handleSubmit = () => {
     setModalVisible(false);
@@ -126,22 +126,15 @@ useEffect(() => {
   );
 
   const scrollCalendar = (direction) => {
-    // calculate new start date
     const newStart = moment(dates[0].fullDate).add(direction * 7, "days");
     const newSelected = newStart.format("YYYY-MM-DD");
-  
-    // regenerate the week view
     const newDates = getDateRange(newStart, newSelected);
-  
     setDates(newDates);
     setSelectedDate(newSelected);
   };
-  
 
   const onDateSelect = (dateObj) => {
     setSelectedDate(dateObj.fullDate);
-  
-    // Only update active state in existing dates
     setDates(prevDates =>
       prevDates.map(d => ({
         ...d,
@@ -149,7 +142,6 @@ useEffect(() => {
       }))
     );
   };
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -157,10 +149,7 @@ useEffect(() => {
       <View style={styles.header}>
         <Text style={styles.title}>Daily task update</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <Image
-            source={{ uri: profilePic }}
-            style={styles.avatarImage}
-          />
+          <Image source={{ uri: profilePic }} style={styles.avatarImage} />
         </TouchableOpacity>
       </View>
 
@@ -197,13 +186,37 @@ useEffect(() => {
       </View>
 
       {/* Task List */}
-      <FlatList
-        data={tasks}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id?.toString()}
-        contentContainerStyle={styles.taskList}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
+      ) : (
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={tasks}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id?.toString()}
+          contentContainerStyle={styles.taskList}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
+              progressBackgroundColor={
+                Platform.OS === "android" ? "#2c2c2c" : "transparent"
+              }
+            />
+          }
+          ListEmptyComponent={
+            <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
+              No tasks found for this date.
+            </Text>
+          }
+        />
+        </View>
+      )}
+       
+    
 
       {/* Add Task */}
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
@@ -225,7 +238,9 @@ useEffect(() => {
       />
 
       {/* Bottom Nav */}
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
       <BottomNavbar navigation={navigation} route={route} />
+    </View>
     </SafeAreaView>
   );
 }

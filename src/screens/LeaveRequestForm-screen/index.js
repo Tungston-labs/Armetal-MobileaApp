@@ -30,7 +30,7 @@ export default function LeaveRequestFormScreen() {
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
   const [reason, setReason] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [ loading, setLoading] = useState(false);
 
   // Stats
   const [pendingLeaveCount, setPendingLeaveCount] = useState(0);

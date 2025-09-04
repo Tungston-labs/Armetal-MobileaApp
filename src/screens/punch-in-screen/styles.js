@@ -203,7 +203,7 @@ export default StyleSheet.create({
     backgroundColor: "#151D34",
     paddingHorizontal: 16,
     paddingTop: 40,
-    paddingBottom: 40,
+    // paddingBottom: 40,
   },
   scrollView: { paddingBottom: 0 },
 
@@ -374,5 +374,50 @@ export default StyleSheet.create({
     left: 5,
     right: 5,
   },
+  loaderOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(24, 29, 62, 0.9)", // semi-transparent background
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
+  loaderText: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+  },
+  logoWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  logoImage: {
+    width: 100,
+    height: 100,
+    position: "absolute", // keeps logo centered
+    zIndex: 2,
+  },
+  
+  rotatingCircle: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 2,
+    borderLeftColor: "#FFFFFF",     // white
+    borderRightColor: "transparent",
+    borderTopColor: "#D3D3D3",      // light gray
+    borderBottomColor: "transparent",
+    position: "absolute",
+  },
+  
+  
+  
+  
+  
 });
 

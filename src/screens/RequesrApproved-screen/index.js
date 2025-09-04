@@ -15,7 +15,7 @@ import BottomNavbar from "../BottomNavbar";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 // import axios from "axios";
 import authAxios from "../../utils/authAxios";
-
+import SwipeLoader from "../../components/SwipeLoader"
 export default function RequestApprovedScreen() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -72,7 +72,7 @@ useEffect(() => {
   if (loading || !leave) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#000" style={{ marginTop: 40 }} />
+        <SwipeLoader size="large" color="#000" style={{ marginTop: 40 }} />
       </View>
     );
   }

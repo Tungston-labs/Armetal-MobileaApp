@@ -5,6 +5,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
+   
   },
   header: {
     flexDirection: 'row',
@@ -13,6 +14,7 @@ export default StyleSheet.create({
     borderBottomWidth: 0.3,
     backgroundColor: "#262D40",
     borderBottomColor: '#FFFFFF',
+
   },
   headerTitle: {
     flex: 1,

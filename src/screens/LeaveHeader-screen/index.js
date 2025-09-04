@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
-// import axios from 'axios';
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import authAxios from '../../utils/authAxios';
-const API_BASE_URL = 'http://178.248.112.16:8000';
 
-export default function LeaveHeader({ navigation, selectedTab }) {
+const API_BASE_URL = 'http://178.248.112.16:8000';
+const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+export default function LeaveHeader() {
+  const navigation = useNavigation();
+  const route = useRoute();
   const [summary, setSummary] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_BASE_URL = "http://178.248.112.16:8000";
-  const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   const tabs = [
     { label: 'All', screen: 'LeaveAllScreen' },
@@ -20,14 +21,18 @@ export default function LeaveHeader({ navigation, selectedTab }) {
     { label: 'Pending', screen: 'LeavePendingScreen' },
   ];
 
+  // Determine active tab from route
+  const tabMap = {
+    LeaveAllScreen: 'All',
+    LeaveApproveScreen: 'Approved',
+    LeaveRejectedScreen: 'Rejected',
+    LeavePendingScreen: 'Pending',
+  };
+  const activeTab = tabMap[route.name] || 'All';
+
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
-
-    if (pic.startsWith("http")) {
-      return pic; // already full URL
-    }
-
-    // Ensure correct path (if backend returns just a filename)
+    if (pic.startsWith("http")) return pic;
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
     return `${API_BASE_URL}${path}`;
   };
@@ -38,7 +43,6 @@ export default function LeaveHeader({ navigation, selectedTab }) {
         const summaryRes = await authAxios.get("/leave/summary/");
         setSummary(summaryRes.data);
 
-        // ✅ Use helper
         const profileRes = await authAxios.get("/profile/");
         setProfilePic(getProfileUri(profileRes.data?.profile_pic));
       } catch (error) {
@@ -58,10 +62,6 @@ export default function LeaveHeader({ navigation, selectedTab }) {
     );
   }
 
-
-  
-
-
   return (
     <View>
       {/* Header */}
@@ -74,11 +74,7 @@ export default function LeaveHeader({ navigation, selectedTab }) {
           </View>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <Image
-            source={{ uri: profilePic }}
-            style={styles.avatar}
-          />
-
+          <Image source={{ uri: profilePic }} style={styles.avatar} />
         </TouchableOpacity>
       </View>
 
@@ -90,9 +86,7 @@ export default function LeaveHeader({ navigation, selectedTab }) {
             onPress={() => navigation.navigate(tab.screen)}
             style={styles.tabButton}
           >
-            <Text
-              style={selectedTab === tab.label ? styles.tabSelected : styles.tab}
-            >
+            <Text style={activeTab === tab.label ? styles.tabSelected : styles.tab}>
               {tab.label}
             </Text>
           </TouchableOpacity>

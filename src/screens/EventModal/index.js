@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from "react-native";
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
+import * as Notifications from "expo-notifications";
 
 
 
@@ -15,33 +16,7 @@ const AddEventModal = ({
   const [description, setDescription] = useState("");
   const [time, setTime] = useState("");
 
-  // const scheduleNotification = async (eventDate) => {
-  //   try {
-  //     const now = new Date();
-  //     const secondsUntilEvent = (eventDate.getTime() - now.getTime()) / 1000;
 
-  //     if (secondsUntilEvent <= 0) {
-  //       console.warn("Event time is in the past. Notification will not be scheduled.");
-  //       return;
-  //     }
-
-  //     console.log("Event date (local):", eventDate);
-  //     console.log("Seconds until event:", secondsUntilEvent);
-
-  //     await Notifications.scheduleNotificationAsync({
-  //       content: {
-  //         title: "Event Reminder 📌",
-  //         body: `Your event is coming up at ${eventDate.toLocaleTimeString()}`,
-  //         sound: true,
-  //       },
-  //       trigger: eventDate,
-  //     });
-
-  //     console.log(`Notification scheduled in ${Math.round(secondsUntilEvent)} seconds`);
-  //   } catch (error) {
-  //     console.error("Error scheduling notification:", error);
-  //   }
-  // };
 
   const scheduleNotification = async (eventDate, notifTitle, notifBody) => {
     try {

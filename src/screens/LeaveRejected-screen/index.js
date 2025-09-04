@@ -1,54 +1,62 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Platform,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
-// import axios from "axios";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import SwipeLoader from "../../components/SwipeLoader"
 export default function LeaveRejectedScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+  const isFocused = useIsFocused();
+
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchRejectedLeaves = async () => {
+    try {
+      const response = await authAxios.get("leave/by-status/?status=rejected");
+      setLeaveData(response.data);
+    } catch (error) {
+      console.error("Error fetching rejected leaves:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRejectedLeaves = async () => {
-      try {
-        const response = await authAxios.get("leave/by-status/?status=rejected"); // ✅ relative to baseURL
-        setLeaveData(response.data);
-      } catch (error) {
-        console.error("Error fetching rejected leaves:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (isFocused) {
+      fetchRejectedLeaves();
+    }
+  }, [isFocused]);
 
-    fetchRejectedLeaves();
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchRejectedLeaves();
+    setRefreshing(false);
   }, []);
-
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() =>
-        navigation.navigate("RequestRejected", { leaveId: item.id })
-      }
+      onPress={() => navigation.navigate("RequestRejected", { leaveId: item.id })}
     >
       <View style={styles.statusBadgeRejected}>
         <Text style={styles.statusTextRejected}>
-  {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
-</Text>
-
+          {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+        </Text>
       </View>
       <View style={styles.cardContent}>
         <View style={styles.row}>
@@ -73,30 +81,40 @@ export default function LeaveRejectedScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-   
-
       <LeaveHeader navigation={navigation} route={route} />
 
-      {/* Title */}
       <Text style={styles.dateHeader}>Rejected Leaves</Text>
 
-      {/* Leave List */}
-      <FlatList
-        data={leaveData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          !loading && (
-            <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
-              No rejected leaves found.
-            </Text>
-          )
-        }
-      />
+      {loading ? (
+        <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={leaveData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#ffffff", "#d3d3d3"]} // Android spinner
+              tintColor="#ffffff"             // iOS spinner
+              progressBackgroundColor={
+                Platform.OS === "android" ? "#2c2c2c" : "transparent"
+              }
+            />
+          }
+          ListEmptyComponent={
+            !loading && (
+              <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
+                No rejected leaves found.
+              </Text>
+            )
+          }
+        />
+      )}
 
-      {/* FAB */}
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -104,7 +122,6 @@ export default function LeaveRejectedScreen() {
         <Ionicons name="add" size={20} color="white" />
       </TouchableOpacity>
 
-      {/* Bottom Navbar */}
       <BottomNavbar navigation={navigation} route={route} />
     </SafeAreaView>
   );

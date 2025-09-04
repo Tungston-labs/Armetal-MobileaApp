@@ -36,11 +36,22 @@ export default function TaskModal({
     }
   
     // ✅ Validate numeric value
-    if (isNaN(timeTaken) || parseFloat(timeTaken) <= 0) {
+    const hours = parseFloat(timeTaken);
+    if (isNaN(hours) || hours <= 0) {
       Toast.show({
         type: 'error',
         text1: '',
         text2: 'Time taken must be a valid number greater than 0.',
+      });
+      return;
+    }
+  
+    // ✅ Validate hours <= 24
+    if (hours > 24) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Hours',
+        text2: 'Time taken cannot be more than 24 hours.',
       });
       return;
     }
@@ -59,7 +70,7 @@ export default function TaskModal({
       const payload = {
         project,
         task,
-        time_taken: parseFloat(timeTaken),
+        time_taken: hours,
       };
   
       await authAxios.post('/employee/tasks/', payload);

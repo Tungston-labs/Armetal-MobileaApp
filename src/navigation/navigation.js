@@ -8,7 +8,6 @@ import { ActivityIndicator, View } from "react-native";
 import LoginScreen from "../screens/login-screen";
 import DepartmentScreen from "../screens/department-screen";
 import PunchinScreen from "../screens/punch-in-screen";
-import PunchoutScreen from "../screens/punch-out-screen";
 import PunchOutSuccessScreen from "../screens/punchOut-success-screen";
 import AttendanceScreen from "../screens/Attendance-screen";
 import CalendarScreen from "../screens/calendar-screen";
@@ -62,7 +61,6 @@ export default function Navigation() {
           <Stack.Screen name="PunchinScreen" component={PunchinScreen} />
 
         {/* Other screens */}
-        <Stack.Screen name="PunchoutScreen" component={PunchoutScreen} />
         <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} />
         <Stack.Screen
           name="PunchOutSuccessScreen"
