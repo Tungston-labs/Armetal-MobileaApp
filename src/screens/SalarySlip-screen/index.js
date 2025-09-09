@@ -54,16 +54,17 @@ const SalarySlipScreen = () => {
     fetchSalaryRecords();
   }, [selectedYear]);
 
-  const combinedList = allMonths.map((monthName, index) => {
-    const monthIndex = index + 1;
-    const matchedRecord = salaryData.find((item) => Number(item.month) === monthIndex);
-    return {
-      month: monthName,
-      monthNumber: monthIndex,
-      year: selectedYear,
-      hasData: !!matchedRecord,
-    };
-  });
+  // Only show months returned from API
+const combinedList = salaryData.map((item) => {
+  const monthIndex = Number(item.month);
+  return {
+    month: allMonths[monthIndex - 1], // convert 1 → January
+    monthNumber: monthIndex,
+    year: selectedYear,
+    hasData: true,
+  };
+});
+
 
   const filtered = combinedList.filter((item) =>
     item.month.toLowerCase().includes(searchText.toLowerCase())
@@ -194,29 +195,26 @@ const SalarySlipScreen = () => {
         <>
           {/* Month List */}
           <FlatList
-            data={filtered}
-            keyExtractor={(item) => `${item.month}-${item.year}`}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View>
-                  <Text style={styles.monthText}>{item.month}</Text>
-                  <Text style={styles.yearText}>{item.year}</Text>
-                </View>
-                {item.hasData ? (
-                  <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-                    {downloading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Ionicons name="download-outline" size={22} color="#fff" />
-                    )}
-                  </TouchableOpacity>
-                ) : (
-                  <Ionicons name="close-circle-outline" size={22} color="#888" />
-                )}
-              </View>
-            )}
-          />
+  data={filtered}
+  keyExtractor={(item) => `${item.month}-${item.year}`}
+  contentContainerStyle={styles.listContainer}
+  renderItem={({ item }) => (
+    <View style={styles.card}>
+      <View>
+        <Text style={styles.monthText}>{item.month}</Text>
+        <Text style={styles.yearText}>{item.year}</Text>
+      </View>
+      <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
+        {downloading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Ionicons name="download-outline" size={22} color="#fff" />
+        )}
+      </TouchableOpacity>
+    </View>
+  )}
+/>
+
         </>
       )}
     </SafeAreaView>

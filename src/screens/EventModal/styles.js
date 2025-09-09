@@ -34,34 +34,41 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 12,
+    marginTop: 20,
   },
+  
   cancelButton: {
+    flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 40,
+    marginRight: 10, // spacing between buttons
     backgroundColor: "#fff",
     borderRadius: 20,
     borderWidth: 2,
     borderColor: "#FF6B6B",
-
+    alignItems: "center",
   },
+  
   cancelText: {
     color: "#FF6B6B",
     fontWeight: "600",
     fontSize: 16,
   },
+  
   saveButton: {
+    flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 75,
+    marginLeft: 10,
     borderRadius: 20,
     backgroundColor: "#4361EE",
-
+    alignItems: "center",
   },
+  
   saveText: {
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
   },
+  
   timePickerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -82,6 +89,7 @@ const styles = StyleSheet.create({
     color: "#e0e7ff",
     marginBottom: 6,
   },
+  
   
 });
 

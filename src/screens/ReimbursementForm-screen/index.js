@@ -6,15 +6,14 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
   Platform,
-  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker"; 
-import DateTimePicker from "@react-native-community/datetimepicker";  // 👈 import
-import authAxios from "../../utils/authAxios"; 
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Toast from "react-native-toast-message";   // ✅ Toast import
+import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 
 const ReimbursementForm = ({ navigation }) => {
@@ -22,7 +21,7 @@ const ReimbursementForm = ({ navigation }) => {
   const [toMail, setToMail] = useState("");
   const [note, setNote] = useState("");
   const [date, setDate] = useState(""); // yyyy-mm-dd formatted string
-  const [showDatePicker, setShowDatePicker] = useState(false); // 👈 controls modal
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [amount, setAmount] = useState("");
   const [bill, setBill] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -44,16 +43,37 @@ const ReimbursementForm = ({ navigation }) => {
   };
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false); // close picker
+    setShowDatePicker(false);
     if (selectedDate) {
-      const formatted = selectedDate.toISOString().split("T")[0]; // yyyy-mm-dd
+      const formatted = selectedDate.toISOString().split("T")[0];
       setDate(formatted);
     }
   };
 
+  const validateEmail = (email) => {
+    const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"];
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) return false;
+
+    const domain = email.split("@")[1];
+    return allowedDomains.includes(domain);
+  };
+
   const handleSubmit = async () => {
+    // ✅ Required fields
     if (!expenseCategory || !toMail || !amount || !date || !bill) {
-      return Alert.alert("Error", "Please fill all required fields and upload a bill.");
+      return Toast.show({ type: "error", text1: "Validation Error", text2: "Please fill all required fields and upload a bill." });
+    }
+
+    // ✅ Email validation
+    if (!validateEmail(toMail)) {
+      return Toast.show({ type: "error", text1: "Invalid Email", text2: "Only Gmail, Yahoo, Outlook, Hotmail allowed." });
+    }
+
+    // ✅ Date validation (cannot be future date)
+    const today = new Date().toISOString().split("T")[0];
+    if (date > today) {
+      return Toast.show({ type: "error", text1: "Invalid Date", text2: "Date cannot be in the future." });
     }
 
     const formData = new FormData();
@@ -70,11 +90,11 @@ const ReimbursementForm = ({ navigation }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      Alert.alert("Success", "Reimbursement submitted successfully!");
+      Toast.show({ type: "success", text1: "Success", text2: "Reimbursement submitted successfully!" });
       navigation.navigate("ReimbursementlistScreen", { refresh: true });
     } catch (err) {
       console.error("Failed to submit reimbursement:", err);
-      Alert.alert("Error", "Failed to submit reimbursement.");
+      Toast.show({ type: "error", text1: "Error", text2: "Failed to submit reimbursement." });
     } finally {
       setLoading(false);
     }
@@ -116,28 +136,20 @@ const ReimbursementForm = ({ navigation }) => {
           onChangeText={setToMail}
         />
 
-       {/* Upload Bill */}
-<TouchableOpacity
-  style={styles.uploadButton}
-  activeOpacity={0.8}
-  onPress={pickImage}
->
-  <Ionicons name="add" size={20} color="#fff" />
-  <Text style={styles.uploadButtonText}>Upload Bill</Text>
-</TouchableOpacity>
+        {/* Upload Bill */}
+        <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
+          <Ionicons name="add" size={20} color="#fff" />
+          <Text style={styles.uploadButtonText}>Upload Bill</Text>
+        </TouchableOpacity>
 
-{bill && (
-  <View style={styles.imageWrapper}>
-    <Image source={{ uri: bill.uri }} style={styles.billImage} />
-    <TouchableOpacity
-      style={styles.closeIcon}
-      onPress={() => setBill(null)} // remove selected image
-    >
-      <Ionicons name="close-circle" size={22} color="red" />
-    </TouchableOpacity>
-  </View>
-)}
-
+        {bill && (
+          <View style={styles.imageWrapper}>
+            <Image source={{ uri: bill.uri }} style={styles.billImage} />
+            <TouchableOpacity style={styles.closeIcon} onPress={() => setBill(null)}>
+              <Ionicons name="close-circle" size={22} color="red" />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Note */}
         <Text style={styles.label}>Add note</Text>
@@ -172,7 +184,7 @@ const ReimbursementForm = ({ navigation }) => {
           <View style={styles.halfInputContainer}>
             <Text style={styles.label}>Enter Amount (AED)</Text>
             <TextInput
-              placeholder="250"
+              placeholder=""
               placeholderTextColor="#8A8F9E"
               style={styles.input}
               keyboardType="numeric"
@@ -183,10 +195,20 @@ const ReimbursementForm = ({ navigation }) => {
         </View>
 
         {/* Submit */}
-        <TouchableOpacity style={styles.submitButton} activeOpacity={0.8} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>{loading ? "Submitting..." : "Submit"}</Text>
+        <TouchableOpacity
+          style={[styles.submitButton, loading && { opacity: 0.6 }]}
+          activeOpacity={0.8}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          <Text style={styles.submitButtonText}>
+            {loading ? "Submitting..." : "Submit"}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* ✅ Toast container */}
+      <Toast />
     </View>
   );
 };
