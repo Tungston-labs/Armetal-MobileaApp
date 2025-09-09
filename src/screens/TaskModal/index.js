@@ -10,9 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 import authAxios from '../../utils/authAxios';
-// import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
 
 export default function TaskModal({
   visible,
@@ -27,71 +25,47 @@ export default function TaskModal({
 }) {
   const handleSubmit = async () => {
     if (!project || !task || !timeTaken) {
-      Toast.show({
-        type: 'error',
-        text1: 'Validation Error',
-        text2: 'All fields are required.',
-      });
+      Alert.alert('Validation Error', 'All fields are required.');
       return;
     }
-  
+
     // ✅ Validate numeric value
     const hours = parseFloat(timeTaken);
     if (isNaN(hours) || hours <= 0) {
-      Toast.show({
-        type: 'error',
-        text1: '',
-        text2: 'Time taken must be a valid number greater than 0.',
-      });
+      Alert.alert('Invalid Input', 'Time taken must be a valid number greater than 0.');
       return;
     }
-  
+
     // ✅ Validate hours <= 24
     if (hours > 24) {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid Hours',
-        text2: 'Time taken cannot be more than 24 hours.',
-      });
+      Alert.alert('Invalid Hours', 'Time taken cannot be more than 24 hours.');
       return;
     }
-  
+
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Token not found',
-        });
+        Alert.alert('Error', 'Token not found');
         return;
       }
-  
+
       const payload = {
         project,
         task,
         time_taken: hours,
       };
-  
+
       await authAxios.post('/employee/tasks/', payload);
-  
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'Task submitted successfully!',
-      });
-  
-      onSubmit(); // refresh list and clear form
+
+      Alert.alert('Success', 'Task submitted successfully!', [
+        { text: 'OK', onPress: () => onSubmit() },
+      ]);
     } catch (error) {
       console.error('❌ Task submission failed:', error.response?.data || error.message);
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Task submission failed.',
-      });
+      Alert.alert('Error', 'Task submission failed.');
     }
   };
-  
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalBackground}>
@@ -116,13 +90,12 @@ export default function TaskModal({
             placeholderTextColor="#8a8dad"
           />
 
-          <Text style={styles.inputLabel}>Time Taken(hours)</Text>
+          <Text style={styles.inputLabel}>Time Taken (hours)</Text>
           <View style={styles.timeInputRow}>
             <View style={styles.iconBox}>
               <Ionicons name="time" size={20} color="#8a8dad" />
             </View>
             <TextInput
-              placeholder=""
               value={timeTaken}
               onChangeText={setTimeTaken}
               style={styles.timeInput}

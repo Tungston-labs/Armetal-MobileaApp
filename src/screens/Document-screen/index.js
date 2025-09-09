@@ -7,10 +7,11 @@ import {
   Image,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-
+import SwipeLoader from "../../components/SwipeLoader"
 // ✅ Direct SVG import
 import DownloadIcon from "../../../assets/download.svg";
 
@@ -21,7 +22,7 @@ export default function DocumentsScreen() {
   const navigation = useNavigation();
   const [employeeId, setEmployeeId] = useState(null);
   const BASE_URL = "http://178.248.112.16:8001"; // 👈 match backend port
-
+  const [loading, setLoading] = useState(true); // loader state
 
   const [data, setData] = useState({
     healthCardImage: null,
@@ -36,29 +37,20 @@ export default function DocumentsScreen() {
 
   const normalizeUrl = (url) => {
     if (!url) return null;
-  
-    // Full http/https URL
+
     if (url.startsWith("http")) return url;
-  
-    // If backend sent `localhost`, replace it with device IP
-    if (url.includes("localhost")) {
-      return url.replace("localhost", "192.168.29.146");
-    }
-  
-    // If backend returned just `/media/...`
-    if (url.startsWith("/")) {
-      return `${BASE_URL}${url}`;
-    }
-  
-    // If backend returned only filename
+
+    if (url.includes("localhost")) return url.replace("localhost", "192.168.29.146");
+
+    if (url.startsWith("/")) return `${BASE_URL}${url}`;
+
     return `${BASE_URL}/media/${url}`;
   };
-  
-
 
   useEffect(() => {
     const fetchDocumentData = async () => {
       try {
+        setLoading(true); // start loader
         const summaryResponse = await authAxios.get("/employee/document-summary/");
         const summary = summaryResponse.data;
         setEmployeeId(summary.employee_id);
@@ -68,21 +60,6 @@ export default function DocumentsScreen() {
         );
         const detail = detailResponse.data;
 
-        const replaceLocalhost = (url) =>
-          typeof url === "string"
-            ? url.replace("localhost", "192.168.29.146")
-            : null;
-
-        const replaceLocalhostInArray = (arr) =>
-          Array.isArray(arr)
-            ? arr.map((url) =>
-              typeof url === "string"
-                ? url.replace("localhost", "192.168.29.146")
-                : url
-            )
-            : [];
-
-       
         setData({
           idCardImage: normalizeUrl(summary.id_card_image_url),
           workPermitUrls: detail.work_permit_urls.map(normalizeUrl),
@@ -92,16 +69,16 @@ export default function DocumentsScreen() {
           iqamaNumber: summary.iqama_number || "",
           visaExpiry: summary.visa_expiry_date || "",
         });
-        
       } catch (error) {
         console.error("❌ Failed to fetch documents:", error);
         Alert.alert("Error", "Could not load document data");
+      } finally {
+        setLoading(false); // stop loader
       }
     };
 
     fetchDocumentData();
   }, []);
-
 
   const handleImagePreview = (urls) => {
     if (urls && urls.length > 0) {
@@ -110,6 +87,14 @@ export default function DocumentsScreen() {
       Alert.alert("No Image", "No image available to preview.");
     }
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <SwipeLoader size="large" color="#3352BA" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -122,9 +107,7 @@ export default function DocumentsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-
         {/* ID Card */}
-        {/* ID Card or Fallback Image */}
         <View style={styles.card}>
           {data.idCardImage ? (
             <TouchableOpacity onPress={() => handleImagePreview([data.idCardImage])}>
@@ -141,13 +124,7 @@ export default function DocumentsScreen() {
               resizeMode="cover"
             />
           )}
-
-          {data.insuranceNumber ? (
-            <Text style={styles.cardNumberText}>{data.insuranceNumber}</Text>
-          ) : null}
         </View>
-
-
 
         {/* Work Permit */}
         <View style={styles.fieldContainer}>

@@ -8,18 +8,18 @@ import {
   FlatList,
   SafeAreaView,
   Alert,
-  Linking,
   Modal,
   Pressable,
-  PermissionsAndroid,
-   Platform
+  ActivityIndicator,
+  Platform,
+  PermissionsAndroid
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import authAxios from '../../utils/authAxios';
-
+import SwipeLoader from "../../components/SwipeLoader"
 
 const allMonths = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -34,16 +34,19 @@ const SalarySlipScreen = () => {
   const [selectedYear, setSelectedYear] = useState('2025');
   const [salaryData, setSalaryData] = useState([]);
   const [yearDropdownVisible, setYearDropdownVisible] = useState(false);
+  const [loading, setLoading] = useState(false);  // loader for fetch
+  const [downloading, setDownloading] = useState(false); // loader for download
 
-   const fetchSalaryRecords = async () => {
+  const fetchSalaryRecords = async () => {
     try {
-      const response = await authAxios.get(
-        `/employee/payslips/?year=${selectedYear}`
-      );
+      setLoading(true);
+      const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
       setSalaryData(response.data || []);
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Could not load salary data');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,67 +68,64 @@ const SalarySlipScreen = () => {
   const filtered = combinedList.filter((item) =>
     item.month.toLowerCase().includes(searchText.toLowerCase())
   );
-const requestStoragePermission = async () => {
-  if (Platform.OS === 'android' && Platform.Version < 33) {
-    try {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      ]);
 
-      return (
-        granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
-        granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED
-      );
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  } else {
-    // Android 13+ or iOS — permissions are managed differently
-    return true;
-  }
-};
-
-const handleDownload = async (monthNumber) => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken');
-    const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
-
-    // Add base URL
-    const baseUrl = "https://your-backend-domain.com"; // <-- change this to your API base
-    const downloadUrl = `${authAxios.defaults.baseURL}/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
-    const filePath = `${RNFS.DownloadDirectoryPath}/Payslip_${paddedMonth}_${selectedYear}.pdf`;
-
-    const hasPermission = await requestStoragePermission();
-    if (!hasPermission) {
-      Alert.alert('Permission Denied', 'Storage permission is required to download files.');
-      return;
-    }
-
-    const options = {
-      fromUrl: downloadUrl,
-      toFile: filePath,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    const result = await RNFS.downloadFile(options).promise;
-
-    if (result.statusCode === 200) {
-      Alert.alert('Success', 'Payslip downloaded successfully.');
+  const requestStoragePermission = async () => {
+    if (Platform.OS === 'android' && Platform.Version < 33) {
+      try {
+        const granted = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        ]);
+        return (
+          granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
+          granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED
+        );
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
     } else {
-      console.log(result);
-      Alert.alert('Error', 'Download failed. Try again.');
+      return true;
     }
+  };
 
-  } catch (err) {
-    console.error(err);
-    Alert.alert('Error', 'Could not download payslip');
-  }
-};
+  const handleDownload = async (monthNumber) => {
+    try {
+      setDownloading(true);
+      const token = await AsyncStorage.getItem('accessToken');
+      const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
 
+      const downloadUrl = `${authAxios.defaults.baseURL}/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
+      const filePath = `${RNFS.DownloadDirectoryPath}/Payslip_${paddedMonth}_${selectedYear}.pdf`;
+
+      const hasPermission = await requestStoragePermission();
+      if (!hasPermission) {
+        Alert.alert('Permission Denied', 'Storage permission is required to download files.');
+        return;
+      }
+
+      const options = {
+        fromUrl: downloadUrl,
+        toFile: filePath,
+        headers: { Authorization: `Bearer ${token}` },
+      };
+
+      const result = await RNFS.downloadFile(options).promise;
+
+      if (result.statusCode === 200) {
+        Alert.alert('Success', 'Payslip downloaded successfully.');
+      } else {
+        console.log(result);
+        Alert.alert('Error', 'Download failed. Try again.');
+      }
+
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', 'Could not download payslip');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -187,27 +187,38 @@ const handleDownload = async (monthNumber) => {
         </TouchableOpacity>
       </Modal>
 
-      {/* Month List */}
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => `${item.month}-${item.year}`}
-        contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View>
-              <Text style={styles.monthText}>{item.month}</Text>
-              <Text style={styles.yearText}>{item.year}</Text>
-            </View>
-            {item.hasData ? (
-              <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-                <Ionicons name="download-outline" size={22} color="#fff" />
-              </TouchableOpacity>
-            ) : (
-              <Ionicons name="close-circle-outline" size={22} color="#888" />
+      {/* Loader while fetching */}
+      {loading ? (
+        <SwipeLoader text="Loading salary data..." />
+      ) : (
+        <>
+          {/* Month List */}
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => `${item.month}-${item.year}`}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View>
+                  <Text style={styles.monthText}>{item.month}</Text>
+                  <Text style={styles.yearText}>{item.year}</Text>
+                </View>
+                {item.hasData ? (
+                  <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
+                    {downloading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Ionicons name="download-outline" size={22} color="#fff" />
+                    )}
+                  </TouchableOpacity>
+                ) : (
+                  <Ionicons name="close-circle-outline" size={22} color="#888" />
+                )}
+              </View>
             )}
-          </View>
-        )}
-      />
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 };

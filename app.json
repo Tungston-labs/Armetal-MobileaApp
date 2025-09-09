@@ -8,14 +8,13 @@
     "scheme": "armetalmbl",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.ARMETALMBL"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -29,13 +28,11 @@
     "experiments": {
       "typedRoutes": true
     },
+    "owner": "ansal_m_azeez",
     "extra": {
       "eas": {
-        "projectId": "21661e23-2a8d-4fc3-8616-faa8413342cc"
+        "projectId": "49f54ba6-de00-44d7-a877-49ef5b834a94"
       }
-    },
-    "owner": "ansalmazeez"
+    }
   }
 }
-
-

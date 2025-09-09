@@ -80,13 +80,16 @@ export default StyleSheet.create({
   fixedButton: {
     position: "absolute",
     bottom: 100, // above navbar
-    left: 20,
+    left: 300,
     right: 20,
     backgroundColor: "#3352BA",
-    paddingVertical: 13,
-    borderRadius: 12,
+    width: 60, // set width
+    height: 60, // set height (same as width)
+    borderRadius: 30, // half of width/height
+    justifyContent: "center",
     alignItems: "center",
   },
+  
   fixedButtonText: {
     color: "#fff",
     fontSize: 16,
@@ -99,6 +102,32 @@ export default StyleSheet.create({
     left: 5,
     right: 5,
   },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 90,
+    backgroundColor: '#3352BA',
+    width: 50,
+    height: 50,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+  },
+  imageWrapper: {
+    marginTop: 12,
+    position: "relative",
+    width: 90,
+    height: 110,
+  },
+  
+  closeIcon: {
+    position: "absolute",
+    top: -6,
+    right: -6,
+    zIndex: 10,
+  }
+  
 });
  
 

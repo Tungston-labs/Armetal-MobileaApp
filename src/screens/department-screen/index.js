@@ -13,9 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import authAxios from '../../utils/authAxios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import axios from 'axios';
-
+import SwipeLoader from "../../components/SwipeLoader"
 const defaultAvatar = require('../../assets/avatar.png');
 
 const DepartmentScreen = () => {
@@ -25,11 +23,10 @@ const DepartmentScreen = () => {
   const [departmentHead, setDepartmentHead] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // const API_URL = 'http://178.248.112.16:8000/api/employees/my-department/';
-
- const fetchDepartmentMembers = async () => {
+  const fetchDepartmentMembers = async () => {
     try {
-      const res = await authAxios.get('/employees/my-department/'); // ✅ shortened URL
+      setLoading(true);
+      const res = await authAxios.get('/employees/my-department/');
       setMembers(res.data.members || []);
       setDepartmentName(res.data.department || 'Department');
       setDepartmentHead(res.data.head || null);
@@ -40,31 +37,29 @@ const DepartmentScreen = () => {
     }
   };
 
-
   useEffect(() => {
     fetchDepartmentMembers();
   }, []);
 
-  const renderMember = ({ item }) => {
-  const imageUrl = item.profile_pic?.startsWith('http')
-    ? item.profile_pic
-    : `http://178.248.112.16:8001${item.profile_pic}`;
+  const getFullImageUrl = (url) => {
+    if (!url) return null;
+    return url.startsWith('http') ? url : `http://178.248.112.16:8001${url}`;
+  };
 
-  return (
+  const renderMember = ({ item }) => (
     <View style={styles.memberItem}>
       <Image
-        source={item.profile_pic ? { uri: imageUrl } : defaultAvatar}
+        source={item.profile_pic ? { uri: getFullImageUrl(item.profile_pic) } : defaultAvatar}
         style={styles.avatar}
       />
       <Text style={styles.memberName}>{item.name}</Text>
     </View>
   );
-};
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#3352BA" style={{ marginTop: 50 }} />
+        <SwipeLoader size="large" color="#3352BA" style={{ marginTop: 50 }} />
       </SafeAreaView>
     );
   }
@@ -92,7 +87,7 @@ const DepartmentScreen = () => {
           <Image
             source={
               departmentHead?.profile_pic
-                ? { uri: departmentHead.profile_pic }
+                ? { uri: getFullImageUrl(departmentHead.profile_pic) }
                 : defaultAvatar
             }
             style={styles.leadAvatar}

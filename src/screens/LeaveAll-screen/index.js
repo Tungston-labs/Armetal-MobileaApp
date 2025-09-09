@@ -99,9 +99,14 @@ export default function LeaveAllScreen({ navigation, route }) {
           <Text style={styles.value}>{item.leave_type}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Reason</Text>
-          <Text style={styles.value}>{item.reason}</Text>
-        </View>
+  <Text style={styles.label}>Reason</Text>
+  <Text style={styles.value}>
+    {item.reason && item.reason.length > 10
+      ? item.reason.substring(0, 25) + "...."
+      : item.reason}
+  </Text>
+</View>
+
       </View>
     </View>
   );

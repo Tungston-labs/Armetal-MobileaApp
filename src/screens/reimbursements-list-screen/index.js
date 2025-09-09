@@ -3,22 +3,25 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
+  Image,
   Alert,
   FlatList,
   RefreshControl,
   Platform,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
-import SwipeLoader from "../../components/SwipeLoader"
+import SwipeLoader from "../../components/SwipeLoader";
+import { Ionicons } from "@expo/vector-icons";
+
 const STATUS_COLORS = {
   Approve: "#2ecc71",          // green
   "In Verification": "#facc15", // yellow
   "On Hold": "#f97316",        // orange
-  Default: "#ccc",             // fallback color
+  Default: "#ccc",
 };
 
 const STATUS_LABELS = {
@@ -31,7 +34,9 @@ export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [bill, setBill] = useState(null); // single image state
 
+  // fetch reimbursements
   const fetchReimbursements = async () => {
     try {
       if (!refreshing) setLoading(true);
@@ -46,7 +51,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     }
   };
 
-  // ✅ Refresh whenever screen comes into focus
+  // refresh on screen focus
   useFocusEffect(
     useCallback(() => {
       fetchReimbursements();
@@ -58,6 +63,30 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     fetchReimbursements();
   }, []);
 
+  // pick image with single-image restriction
+  const pickImage = async () => {
+    try {
+      if (bill) {
+        Alert.alert("Limit Reached", "You can only upload one bill.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setBill(result.assets[0]);
+      }
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Failed to pick image.");
+    }
+  };
+
+  // render each reimbursement card
   const renderItem = ({ item }) => {
     const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.Default;
     return (
@@ -91,16 +120,39 @@ export default function ReimbursementlistScreen({ navigation, route }) {
   };
 
   return (
-    
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Reimbursement</Text>
       </View>
 
+      {/* Upload Bill Section */}
+      <View style={{ padding: 15 }}>
+        {/* <TouchableOpacity
+          style={styles.uploadButton}
+          activeOpacity={0.8}
+          onPress={pickImage}
+        >
+          <Ionicons name="add" size={20} color="#fff" />
+          <Text style={styles.uploadButtonText}>Upload Bill</Text>
+        </TouchableOpacity> */}
+
+        {bill && (
+          <View style={styles.imageWrapper}>
+            <Image source={{ uri: bill.uri }} style={styles.billImage} />
+            <TouchableOpacity
+              style={styles.closeIcon}
+              onPress={() => setBill(null)}
+            >
+              <Ionicons name="close-circle" size={22} color="red" />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+
       {/* Content */}
       {loading && !refreshing ? (
-         <SwipeLoader text="Loading reimbursements..." />
+        <SwipeLoader text="Loading reimbursements..." />
       ) : (
         <FlatList
           data={reimbursements}
@@ -110,32 +162,34 @@ export default function ReimbursementlistScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#ffffff", "#d3d3d3"]} // ✅ Android spinner colors
-            tintColor="#ffffff" 
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
               progressBackgroundColor={
                 Platform.OS === "android" ? "#f5f5f5" : "transparent"
               }
             />
           }
           ListEmptyComponent={
-            <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
+            <Text
+              style={{ color: "#888", textAlign: "center", marginTop: 20 }}
+            >
               No reimbursements found.
             </Text>
           }
         />
       )}
 
-      {/* Fixed Button */}
+      {/* FAB */}
       <TouchableOpacity
-        style={styles.fixedButton}
+        style={styles.fab}
         onPress={() => navigation.navigate("ReimbursementForm")}
       >
-        <Text style={styles.fixedButtonText}>+ Reimbursement</Text>
+        <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      {/* ✅ Fixed Bottom Navbar */}
+      {/* Fixed Bottom Navbar */}
       <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
         <BottomNavbar navigation={navigation} route={route} />
       </View>

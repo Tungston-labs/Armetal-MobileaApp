@@ -30,17 +30,17 @@ export default function LeaveRequestFormScreen() {
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
   const [reason, setReason] = useState('');
-  const [ loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Stats
   const [pendingLeaveCount, setPendingLeaveCount] = useState(0);
   const [lopDays, setLopDays] = useState(0);
   const [lopAmount, setLopAmount] = useState(0);
 
-const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
 
   const leaveTypes = [
@@ -50,86 +50,116 @@ const isValidEmail = (email) => {
     { id: 4, type: 'maternity' },
     { id: 5, type: 'others' },
   ];
+  // inside your LeaveRequestFormScreen component
 
-  // Fetch summary data from /summary endpoint
- 
-
-useEffect(() => {
-  const fetchLeaveSummary = async () => {
-    try {
-      const response = await authAxios.get("/leave/summary/");
-
-      if (response.status === 200) {
-        const summary = response.data;
-        setPendingLeaveCount(summary.pending_count || 0);
-        setLopDays(summary.lop_days || 0);
-        setLopAmount(summary.lop_amount || 0);
-      } else {
-        console.warn("Failed to fetch leave summary");
-      }
-    } catch (err) {
-      console.error("❌ Error fetching summary:", err);
-    }
+  // Reset / clear form function
+  const clearForm = () => {
+    setFromDate(new Date());
+    setToDate(new Date());
+    setSelectedLeaveType("casual");
+    setToEmail("");
+    setCcEmail("");
+    setReason("");
   };
 
-  fetchLeaveSummary();
-}, []);
 
 
+  // Fetch summary data from /summary endpoint
+
+
+  useEffect(() => {
+    const fetchLeaveSummary = async () => {
+      try {
+        const response = await authAxios.get("/leave/summary/");
+
+        if (response.status === 200) {
+          const summary = response.data;
+          setPendingLeaveCount(summary.pending_count || 0);
+          setLopDays(summary.lop_days || 0);
+          setLopAmount(summary.lop_amount || 0);
+        } else {
+          console.warn("Failed to fetch leave summary");
+        }
+      } catch (err) {
+        console.error("❌ Error fetching summary:", err);
+      }
+    };
+
+    fetchLeaveSummary();
+  }, []);
+
+
+  // Date change with prior-date validation
   const onFromChange = (event, selectedDate) => {
     setShowFromPicker(false);
-    if (selectedDate) setFromDate(selectedDate);
+    if (selectedDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // ignore time
+      if (selectedDate < today) {
+        Alert.alert("Invalid Date", "You cannot select a past date for leave.");
+        return;
+      }
+      setFromDate(selectedDate);
+    }
   };
 
   const onToChange = (event, selectedDate) => {
     setShowToPicker(false);
-    if (selectedDate) setToDate(selectedDate);
+    if (selectedDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        Alert.alert("Invalid Date", "You cannot select a past date for leave.");
+        return;
+      }
+      setToDate(selectedDate);
+    }
   };
 
-const submitLeaveRequest = async () => {
-  if (!reason || !toEmail) {
-    Alert.alert('Validation Error', 'Please fill all required fields.');
-    return;
-  }
-
-  if (!isValidEmail(toEmail)) {
-    Alert.alert('Invalid Email', 'Please enter a valid "To" email address.');
-    return;
-  }
-
-  if (ccEmail && !isValidEmail(ccEmail)) {
-    Alert.alert('Invalid Email', 'Please enter a valid "CC" email address.');
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const response = await authAxios.post("/leave/", {
-      leave_type: selectedLeaveType,
-      reason,
-      from_date: fromDate.toISOString().split('T')[0],
-      to_date: toDate.toISOString().split('T')[0],
-      to_email: toEmail,
-      cc_email: ccEmail,
-    });
-
-    if (response.status === 201 || response.status === 200) {
-      Alert.alert('Success', 'Leave request submitted successfully!', [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('LeavePendingScreen'),
-        },
-      ]);
-    } else {
-      Alert.alert('Error', response.data?.detail || 'Something went wrong.');
+  const submitLeaveRequest = async () => {
+    if (!reason || !toEmail) {
+      Alert.alert('Validation Error', 'Please fill all required fields.');
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    Alert.alert('Error', 'Unable to connect to the server.');
-  } finally {
-    setLoading(false);
-  }
-};
+
+    if (!isValidEmail(toEmail)) {
+      Alert.alert('Invalid Email', 'Please enter a valid "To" email address.');
+      return;
+    }
+
+    if (ccEmail && !isValidEmail(ccEmail)) {
+      Alert.alert('Invalid Email', 'Please enter a valid "CC" email address.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await authAxios.post("/leave/", {
+        leave_type: selectedLeaveType,
+        reason,
+        from_date: fromDate.toISOString().split('T')[0],
+        to_date: toDate.toISOString().split('T')[0],
+        to_email: toEmail,
+        cc_email: ccEmail,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        Alert.alert('Success', 'Leave request submitted successfully!', [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('LeavePendingScreen'),
+          },
+        ]);
+      } else {
+        Alert.alert('Error', response.data?.detail || 'Something went wrong.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Unable to connect to the server.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
@@ -137,7 +167,7 @@ const submitLeaveRequest = async () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff"/>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Leave Request</Text>
       </View>
@@ -244,19 +274,21 @@ const submitLeaveRequest = async () => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.deleteButton}>
+        <TouchableOpacity style={styles.deleteButton} onPress={clearForm}>
           <Ionicons name="trash" size={24} color="#ff3333" />
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.applyButton}
           onPress={submitLeaveRequest}
           disabled={loading}
         >
           <Text style={styles.applyButtonText}>
-            {loading ? 'Applying...' : 'Apply Leave'}
+            {loading ? "Applying..." : "Apply Leave"}
           </Text>
         </TouchableOpacity>
       </View>
+
     </SafeAreaView>
   );
 }

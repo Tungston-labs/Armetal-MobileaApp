@@ -109,5 +109,18 @@ export default StyleSheet.create({
     marginBottom: 12,
     overflow: "hidden",
   },
+  imageWrapper: {
+    marginTop: 12,
+    position: "relative", // allows absolute positioning of close icon
+    width: 90, // same as billImage width
+    height: 110, // same as billImage height
+  },
+  
+  closeIcon: {
+    position: "absolute",
+    top: -6,
+    right: -6,
+    zIndex: 10,
+  }
   
 });

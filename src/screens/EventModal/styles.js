@@ -62,6 +62,27 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
   },
+  timePickerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#253157",
+    borderRadius: 12,
+    marginBottom: 12,
+    backgroundColor: "#101C3A",
+   
+  },
+  
+  timePicker: {
+    flex: 1,
+    color: "#e0e7ff", 
+  },
+  label: {
+    fontSize: 14,
+    color: "#e0e7ff",
+    marginBottom: 6,
+  },
+  
 });
 
 export default styles;

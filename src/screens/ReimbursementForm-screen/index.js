@@ -116,12 +116,28 @@ const ReimbursementForm = ({ navigation }) => {
           onChangeText={setToMail}
         />
 
-        {/* Upload Bill */}
-        <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
-          <Ionicons name="add" size={20} color="#fff" />
-          <Text style={styles.uploadButtonText}>Upload Bill</Text>
-        </TouchableOpacity>
-        {bill && <Image source={{ uri: bill.uri }} style={[styles.billImage, { marginTop: 12 }]} />}
+       {/* Upload Bill */}
+<TouchableOpacity
+  style={styles.uploadButton}
+  activeOpacity={0.8}
+  onPress={pickImage}
+>
+  <Ionicons name="add" size={20} color="#fff" />
+  <Text style={styles.uploadButtonText}>Upload Bill</Text>
+</TouchableOpacity>
+
+{bill && (
+  <View style={styles.imageWrapper}>
+    <Image source={{ uri: bill.uri }} style={styles.billImage} />
+    <TouchableOpacity
+      style={styles.closeIcon}
+      onPress={() => setBill(null)} // remove selected image
+    >
+      <Ionicons name="close-circle" size={22} color="red" />
+    </TouchableOpacity>
+  </View>
+)}
+
 
         {/* Note */}
         <Text style={styles.label}>Add note</Text>

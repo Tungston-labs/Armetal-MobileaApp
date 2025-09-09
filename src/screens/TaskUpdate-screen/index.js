@@ -219,10 +219,18 @@ export default function TaskUpdateScreen() {
     
 
       {/* Add Task */}
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+      {/* <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
         <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addText}>Add Task</Text>
+      </TouchableOpacity> */}
+
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => setModalVisible(true)}>
+      
+        <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
+
 
       {/* Modal */}
       <TaskModal

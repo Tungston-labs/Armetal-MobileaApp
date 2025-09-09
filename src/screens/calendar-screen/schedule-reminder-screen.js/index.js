@@ -318,13 +318,22 @@ const ReminderTab = () => {
       )}
 
       {/* Add Event Button */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.addEventBtn}
         onPress={() => setShowAddModal(true)}
       >
         <Ionicons name="add" size={20} color="#fff" />
         <Text style={styles.addEventText}>Add Event</Text>
+      </TouchableOpacity> */}
+
+
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => setShowAddModal(true)}
+      >
+        <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
+
 
       {showAddModal && (
         <AddEventModal
