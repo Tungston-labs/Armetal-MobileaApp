@@ -5,12 +5,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 import authAxios from '../../utils/authAxios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 export default function TaskModal({
   visible,
@@ -25,27 +25,53 @@ export default function TaskModal({
 }) {
   const handleSubmit = async () => {
     if (!project || !task || !timeTaken) {
-      Alert.alert('Validation Error', 'All fields are required.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'All fields are required.',
+      });
+      return;
+    }
+
+    // ✅ Project title length validation
+    if (project.length > 100) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Project Name',
+        text2: 'Project title cannot exceed 100 characters.',
+      });
       return;
     }
 
     // ✅ Validate numeric value
     const hours = parseFloat(timeTaken);
     if (isNaN(hours) || hours <= 0) {
-      Alert.alert('Invalid Input', 'Time taken must be a valid number greater than 0.');
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Input',
+        text2: 'Time taken must be a valid number greater than 0.',
+      });
       return;
     }
 
     // ✅ Validate hours <= 24
     if (hours > 24) {
-      Alert.alert('Invalid Hours', 'Time taken cannot be more than 24 hours.');
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Hours',
+        text2: 'Time taken cannot be more than 24 hours.',
+      });
       return;
     }
 
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        Alert.alert('Error', 'Token not found');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Token not found. Please log in again.',
+        });
         return;
       }
 
@@ -57,12 +83,21 @@ export default function TaskModal({
 
       await authAxios.post('/employee/tasks/', payload);
 
-      Alert.alert('Success', 'Task submitted successfully!', [
-        { text: 'OK', onPress: () => onSubmit() },
-      ]);
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Task submitted successfully!',
+      });
+
+      onSubmit();
+      onClose();
     } catch (error) {
       console.error('❌ Task submission failed:', error.response?.data || error.message);
-      Alert.alert('Error', 'Task submission failed.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Task submission failed. Try again later.',
+      });
     }
   };
 
@@ -79,6 +114,7 @@ export default function TaskModal({
             onChangeText={setProject}
             style={styles.input}
             placeholderTextColor="#8a8dad"
+            maxLength={100} // ✅ prevent typing beyond 100 chars
           />
 
           <Text style={styles.inputLabel}>Task</Text>
