@@ -229,9 +229,8 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     textAlign: "left",
-    marginTop: 9,
+    marginTop: 8,
     marginBottom: 10,
-
   },
   profilePic: {
     width: 40,

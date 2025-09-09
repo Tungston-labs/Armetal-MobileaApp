@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // install if not yet
+import { Picker } from "@react-native-picker/picker";
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 import * as Notifications from "expo-notifications";
+import Toast from "react-native-toast-message"; // ✅ Add this
 
 const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
   const [title, setTitle] = useState("");
@@ -30,7 +30,6 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
         },
         trigger: eventDate,
       });
-      console.log(`Notification scheduled for: ${eventDate}`);
     } catch (error) {
       console.error("Error scheduling notification:", error);
     }
@@ -39,12 +38,26 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
   const handleSubmit = async () => {
     try {
       if (!title || !description) {
-        alert("Please fill in all fields");
+        Toast.show({
+          type: "error",
+          text1: "Validation Error",
+          text2: "Please fill in all fields",
+        });
+        return;
+      }
+
+      // ✅ Title length validation
+      if (title.length > 100) {
+        Toast.show({
+          type: "error",
+          text1: "Validation Error",
+          text2: "Title cannot exceed 100 characters",
+        });
         return;
       }
 
       // Convert 12-hour to 24-hour
-      let hours24 = hour % 12; // convert 12 → 0
+      let hours24 = hour % 12;
       if (ampm === "PM") hours24 += 12;
 
       const datetime = new Date(selectedDate);
@@ -60,16 +73,21 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
 
       await scheduleNotification(datetime, res.data.title, res.data.body);
 
-      alert("Reminder set successfully!");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Reminder set successfully!",
+      });
+
       onEventAdded(res.data);
       onClose();
     } catch (error) {
       console.error("❌ Failed to add reminder:", error.response?.data || error.message);
-      alert(
-        `Failed to add reminder: ${
-          typeof error.response?.data === "string" ? error.response.data : error.message
-        }`
-      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to add reminder",
+      });
     }
   };
 
@@ -85,6 +103,7 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
             style={styles.input}
             value={title}
             onChangeText={setTitle}
+            maxLength={100} // ✅ prevent typing beyond 100 chars
           />
 
           <TextInput
@@ -97,49 +116,48 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
           />
 
           {/* Time Picker Section */}
-         {/* Time Picker Section */}
-<Text style={styles.label}>Select Time</Text>
-<View style={styles.timePickerContainer}>
-  {/* Hour Picker */}
-  <Picker
-    selectedValue={hour}
-    dropdownIconColor="#e0e7ff"
-    style={styles.timePicker}
-    onValueChange={(itemValue) => setHour(itemValue)}
-  >
-    {[...Array(12)].map((_, i) => (
-      <Picker.Item key={i} label={`${i + 1}`} value={i + 1} color="black" />
-    ))}
-  </Picker>
+          <Text style={styles.label}>Select Time</Text>
+          <View style={styles.timePickerContainer}>
+            {/* Hour Picker */}
+            <Picker
+              selectedValue={hour}
+              dropdownIconColor="#e0e7ff"
+              style={styles.timePicker}
+              onValueChange={(itemValue) => setHour(itemValue)}
+            >
+              {[...Array(12)].map((_, i) => (
+                <Picker.Item key={i} label={`${i + 1}`} value={i + 1} color="black" />
+              ))}
+            </Picker>
 
-  {/* Minute Picker */}
-  <Picker
-    selectedValue={minute}
-    dropdownIconColor="#e0e7ff"
-    style={styles.timePicker}
-    onValueChange={(itemValue) => setMinute(itemValue)}
-  >
-    {[...Array(60)].map((_, i) => (
-      <Picker.Item
-        key={i}
-        label={i.toString().padStart(2, "0")}
-        value={i}
-        color="black"
-      />
-    ))}
-  </Picker>
+            {/* Minute Picker */}
+            <Picker
+              selectedValue={minute}
+              dropdownIconColor="#e0e7ff"
+              style={styles.timePicker}
+              onValueChange={(itemValue) => setMinute(itemValue)}
+            >
+              {[...Array(60)].map((_, i) => (
+                <Picker.Item
+                  key={i}
+                  label={i.toString().padStart(2, "0")}
+                  value={i}
+                  color="black"
+                />
+              ))}
+            </Picker>
 
-  {/* AM/PM Picker */}
-  <Picker
-    selectedValue={ampm}
-    dropdownIconColor="#e0e7ff"
-    style={styles.timePicker}
-    onValueChange={(itemValue) => setAmPm(itemValue)}
-  >
-    <Picker.Item label="AM" value="AM" color="black" />
-    <Picker.Item label="PM" value="PM" color="black" />
-  </Picker>
-</View>
+            {/* AM/PM Picker */}
+            <Picker
+              selectedValue={ampm}
+              dropdownIconColor="#e0e7ff"
+              style={styles.timePicker}
+              onValueChange={(itemValue) => setAmPm(itemValue)}
+            >
+              <Picker.Item label="AM" value="AM" color="black" />
+              <Picker.Item label="PM" value="PM" color="black" />
+            </Picker>
+          </View>
 
           <View style={styles.buttonRow}>
             <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
@@ -151,6 +169,8 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
           </View>
         </View>
       </View>
+      {/* ✅ Toast container */}
+      <Toast />
     </Modal>
   );
 };

@@ -33,11 +33,11 @@ export default function TaskModal({
       return;
     }
 
-    // ✅ Project title length validation
+    // ✅ Validate project title length
     if (project.length > 100) {
       Toast.show({
         type: 'error',
-        text1: 'Invalid Project Name',
+        text1: 'Too Long',
         text2: 'Project title cannot exceed 100 characters.',
       });
       return;
@@ -49,7 +49,7 @@ export default function TaskModal({
       Toast.show({
         type: 'error',
         text1: 'Invalid Input',
-        text2: 'Time taken must be a valid number greater than 0.',
+        text2: 'Time taken must be a number greater than 0.',
       });
       return;
     }
@@ -70,7 +70,7 @@ export default function TaskModal({
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Token not found. Please log in again.',
+          text2: 'Token not found.',
         });
         return;
       }
@@ -90,15 +90,21 @@ export default function TaskModal({
       });
 
       onSubmit();
-      onClose();
     } catch (error) {
-      console.error('❌ Task submission failed:', error.response?.data || error.message);
+      const errorMsg =
+        error.response?.data?.time_taken?.[0] ||
+        error.response?.data?.detail ||
+        'Daily total cannot exceed 24 hours.';
+    
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Task submission failed. Try again later.',
+        text1: '',
+        text2: errorMsg,
       });
+    
+      // console.error('❌ Task submission failed:', error.response?.data || error.message);
     }
+    
   };
 
   return (
@@ -114,7 +120,6 @@ export default function TaskModal({
             onChangeText={setProject}
             style={styles.input}
             placeholderTextColor="#8a8dad"
-            maxLength={100} // ✅ prevent typing beyond 100 chars
           />
 
           <Text style={styles.inputLabel}>Task</Text>
@@ -151,6 +156,9 @@ export default function TaskModal({
           </View>
         </View>
       </View>
+
+      {/* ✅ Toast container */}
+      <Toast />
     </Modal>
   );
 }
