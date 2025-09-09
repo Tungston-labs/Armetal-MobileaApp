@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: "#f30606ff",
     paddingVertical: 12,
-    paddingHorizontal: 64,
+    paddingHorizontal: 44,
     borderRadius: 20,
   },
   cancelText: {
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   doneButton: {
     backgroundColor: "#1d478bff",
     paddingVertical: 12,
-    paddingHorizontal: 64,
+    paddingHorizontal: 44,
     borderRadius: 20,
   },
   doneText:{
