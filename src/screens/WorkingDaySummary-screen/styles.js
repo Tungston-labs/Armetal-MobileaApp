@@ -18,7 +18,7 @@ export default StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 20,
+    fontSize: 22,
     color: '#FFFFFF',
     fontWeight: '600',
     marginLeft:18,
@@ -68,12 +68,13 @@ export default StyleSheet.create({
     padding: 15,
     marginTop: 10,
      marginHorizontal: 15,
+     
   },
 
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 1,
+    marginBottom: 10,
   },
   centerRow: {
     flexDirection: 'row',
@@ -101,11 +102,16 @@ export default StyleSheet.create({
   },
   centerText: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: "800",
     marginLeft: 6,
   },
-
+  divider: {
+    height: 0.1,
+    backgroundColor: "#ccc",  // light gray line
+    // marginVertical: 8,        // spacing above/below line
+  },
+  
   statusCard: {
     marginTop: 10,
   },

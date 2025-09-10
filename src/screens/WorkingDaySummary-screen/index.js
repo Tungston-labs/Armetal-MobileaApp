@@ -153,13 +153,18 @@ export default function WorkingDaySummary() {
             <Text style={styles.value}>{summary.total_working_days}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.subLabel}>Total Work Hours </Text>
-            <Text style={styles.subValue}>
-              {summary.total_working_hours} Hrs
-            </Text>
-          </View>
+  <Text style={styles.subLabel}>Total Work Hours </Text>
+  <Text style={styles.subValue}>
+    {summary.total_working_hours} Hrs
+  </Text>
+  
+</View>
+<View style={styles.divider} />
+
+
+
           <View style={styles.centerRow}>
-            <Ionicons name="time-outline" size={20} color="#fff" />
+            <Ionicons name="time-outline" size={25} color="#fff" />
             <Text style={styles.centerText}>
               {summary.total_working_hours} Hrs
             </Text>

@@ -61,7 +61,7 @@ export default function VerificationScreen() {
     }
 
     try {
-      const response = await axios.post('http://178.248.112.16:8000/api/forgot-password/verify-otp/', {
+      const response = await axios.post('http://178.248.112.16:8001/api/forgot-password/verify-otp/', {
         email,
         otp: enteredOtp,
       });
@@ -84,7 +84,7 @@ export default function VerificationScreen() {
 
   const handleResend = async () => {
     try {
-      await axios.post('http://178.248.112.16:8000/api/forgot-password/send-otp/', { email });
+      await axios.post('http://178.248.112.16:8001/api/forgot-password/send-otp/', { email });
      Toast.show({
         type: 'success',
         text1: 'OTP Sent',

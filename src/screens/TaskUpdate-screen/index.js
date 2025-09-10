@@ -81,7 +81,7 @@ export default function TaskUpdateScreen() {
   };
 
   useEffect(() => {
-    const start = moment(); 
+    const start = moment();
     setDates(getDateRange(start, selectedDate));
     fetchProfilePicture();
   }, []);
@@ -147,11 +147,23 @@ export default function TaskUpdateScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Daily task update</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <Image source={{ uri: profilePic }} style={styles.avatarImage} />
-        </TouchableOpacity>
-      </View>
+  {/* Back Arrow + Title in one row */}
+  <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+  <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
+    <Ionicons name="arrow-back" size={24} color="#fff" />
+  </TouchableOpacity>
+  <Text style={styles.title}>Daily task update</Text>
+</View>
+
+
+
+  {/* Profile Pic */}
+  <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+    <Image source={{ uri: profilePic }} style={styles.avatarImage} />
+  </TouchableOpacity>
+</View>
+
+
 
       {/* Calendar */}
       <View style={styles.calendarWrapper}>
@@ -189,45 +201,41 @@ export default function TaskUpdateScreen() {
       {loading ? (
         <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
       ) : (
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={tasks}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id?.toString()}
-          contentContainerStyle={styles.taskList}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]}
-              tintColor="#ffffff"
-              progressBackgroundColor={
-                Platform.OS === "android" ? "#2c2c2c" : "transparent"
-              }
-            />
-          }
-          ListEmptyComponent={
-            <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
-              No tasks found for this date.
-            </Text>
-          }
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={tasks}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id?.toString()}
+            contentContainerStyle={styles.taskList}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#ffffff", "#d3d3d3"]}
+                tintColor="#ffffff"
+                progressBackgroundColor={
+                  Platform.OS === "android" ? "#2c2c2c" : "transparent"
+                }
+              />
+            }
+            ListEmptyComponent={
+              <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
+                No tasks found for this date.
+              </Text>
+            }
+          />
         </View>
       )}
-       
-    
 
-      {/* Add Task */}
-      {/* <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Ionicons name="add" size={20} color="#fff" />
-        <Text style={styles.addText}>Add Task</Text>
-      </TouchableOpacity> */}
+
+
+
 
       <TouchableOpacity
         style={styles.fab}
         onPress={() => setModalVisible(true)}>
-      
+
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
@@ -247,8 +255,8 @@ export default function TaskUpdateScreen() {
 
       {/* Bottom Nav */}
       <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-      <BottomNavbar navigation={navigation} route={route} />
-    </View>
+        <BottomNavbar navigation={navigation} route={route} />
+      </View>
     </SafeAreaView>
   );
 }
