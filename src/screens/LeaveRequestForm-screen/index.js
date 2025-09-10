@@ -89,95 +89,24 @@ export default function LeaveRequestFormScreen() {
   }, []);
 
 
-  // Date change with prior-date validation
-//   const onFromChange = (event, selectedDate) => {
-//     setShowFromPicker(false);
-//     if (selectedDate) {
-//       const today = new Date();
-//       today.setHours(0, 0, 0, 0); // ignore time
-//       if (selectedDate < today) {
-//         Alert.alert("Invalid Date", "You cannot select a past date for leave.");
-//         return;
-//       }
-//       setFromDate(selectedDate);
-//     }
-//   };
+  useEffect(() => {
+    const fetchDepartmentHeadEmail = async () => {
+      try {
+        const response = await authAxios.get("/my-department-head/");
+        if (response.status === 200) {
+          setToEmail(response.data.email); // Autofill To Email field
+        } else {
+          console.warn("Failed to fetch department head email");
+        }
+      } catch (err) {
+        console.error("❌ Error fetching department head email:", err);
+      }
+    };
+  
+    fetchDepartmentHeadEmail();
+  }, []);
+  
 
-// const onToChange = (event, selectedDate) => {
-//   setShowToPicker(false);
-//   if (selectedDate) {
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0);
-
-//     if (selectedDate < today) {
-//       Toast.show({
-//         type: "error",
-//         text1: "Invalid Date",
-//         text2: "You cannot select a past date for leave.",
-//       });
-//       return;
-//     }
-
-//     if (selectedDate < fromDate) {
-//       Toast.show({
-//         type: "error",
-//         text1: "Invalid Range",
-//         text2: "To date cannot be earlier than From date.",
-//       });
-//       return;
-//     }
-
-//     setToDate(selectedDate);
-//   }
-// };
-
-
-//   const submitLeaveRequest = async () => {
-//     if (!reason || !toEmail) {
-//       Alert.alert('Validation Error', 'Please fill all required fields.');
-//       return;
-//     }
-
-//     if (!isValidEmail(toEmail)) {
-//       Alert.alert('Invalid Email', 'Please enter a valid "To" email address.');
-//       return;
-//     }
-
-//     if (ccEmail && !isValidEmail(ccEmail)) {
-//       Alert.alert('Invalid Email', 'Please enter a valid "CC" email address.');
-//       return;
-//     }
-
-//     setLoading(true);
-//     try {
-//       const response = await authAxios.post("/leave/", {
-//         leave_type: selectedLeaveType,
-//         reason,
-//         from_date: fromDate.toISOString().split('T')[0],
-//         to_date: toDate.toISOString().split('T')[0],
-//         to_email: toEmail,
-//         cc_email: ccEmail,
-//       });
-
-//       if (response.status === 201 || response.status === 200) {
-//         Alert.alert('Success', 'Leave request submitted successfully!', [
-//           {
-//             text: 'OK',
-//             onPress: () => navigation.navigate('LeavePendingScreen'),
-//           },
-//         ]);
-//       } else {
-//         Alert.alert('Error', response.data?.detail || 'Something went wrong.');
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       Alert.alert('Error', 'Unable to connect to the server.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   import Toast from "react-native-toast-message";
 
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
