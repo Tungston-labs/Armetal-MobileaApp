@@ -7,11 +7,13 @@ import {
   Image,
   ScrollView,
   Alert,
-  ActivityIndicator,
+  ActivityIndicator,StyleSheet
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import SwipeLoader from "../../components/SwipeLoader"
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 // ✅ Direct SVG import
 import DownloadIcon from "../../../assets/download.svg";
 
@@ -140,49 +142,50 @@ export default function DocumentsScreen() {
           )}
         </View>
 
-        {/* Work Permit */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Work Permit</Text>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.inputWithIcon}
-              placeholder="Work Permit"
-              value={data.workPermitUrls.length > 0 ? "Available" : ""}
-              editable={false}
-              placeholderTextColor="#8a8dad"
-            />
-            {data.workPermitUrls.length > 0 && (
-              <TouchableOpacity
-                style={styles.inputIcon}
-                onPress={() => handleImagePreview(data.workPermitUrls)}
-              >
-                <DownloadIcon width={20} height={20} />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+{/* Work Permit */}
+<View style={styles.fieldContainer}>
+  <Text style={styles.label}>Work Permit</Text>
+  <View style={styles.inputRow}>
+    <TextInput
+      style={styles.inputField} // Use the new inputField style
+      placeholder="Work Permit"
+      value={data.workPermitUrls.length > 0 ? "Work Permit" : ""}
+      editable={false}
+      placeholderTextColor="#8a8dad"
+    />
+    {data.workPermitUrls.length > 0 && (
+      <TouchableOpacity
+        style={styles.iconBox} // Small separate box
+        onPress={() => handleImagePreview(data.workPermitUrls)}
+      >
+        <MaterialCommunityIcons name="image-outline" size={28} color="grey" />
+      </TouchableOpacity>
+    )}
+  </View>
+</View>
 
-        {/* Employment Contract */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Employment Contract</Text>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.inputWithIcon}
-              placeholder="Contract"
-              value={data.contractUrls.length > 0 ? "Available" : ""}
-              editable={false}
-              placeholderTextColor="#8a8dad"
-            />
-            {data.contractUrls.length > 0 && (
-              <TouchableOpacity
-                style={styles.inputIcon}
-                onPress={() => handleImagePreview(data.contractUrls)}
-              >
-                <DownloadIcon width={20} height={20} />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+{/* Employment Contract */}
+<View style={styles.fieldContainer}>
+  <Text style={styles.label}>Employment Contract</Text>
+  <View style={styles.inputRow}>
+    <TextInput
+      style={styles.inputField} // Change from inputWithIcon to inputField
+      placeholder="Contract"
+      value={data.contractUrls.length > 0 ? "Employment Contract" : ""}
+      editable={false}
+      placeholderTextColor="#8a8dad"
+    />
+    {data.contractUrls.length > 0 && (
+      <TouchableOpacity
+        style={styles.iconBox} // Small separate box
+        onPress={() => handleImagePreview(data.contractUrls)}
+      >
+        <MaterialCommunityIcons name="image-outline" size={28} color="grey" />
+      </TouchableOpacity>
+    )}
+  </View>
+</View>
+
 
         {/* Passport Number */}
         <View style={styles.fieldContainer}>
@@ -215,7 +218,7 @@ export default function DocumentsScreen() {
 
         {/* Insurance Number */}
         <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Insurance Number</Text>
+          <Text style={styles.label}>Medical Insurance Number</Text>
           <TextInput
             style={styles.input}
             placeholder="Insurance Number"

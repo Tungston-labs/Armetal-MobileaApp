@@ -18,9 +18,10 @@ export default StyleSheet.create({
     flex: 1,
     fontSize: 20,
     color: '#FFFFFF',
-    fontWeight: '600',
     marginLeft: 18,
     marginTop: 25,
+    fontFamily: 'Raleway_700Bold', // <-- add this
+
   },
 
   circleWrapper: {
@@ -65,6 +66,7 @@ export default StyleSheet.create({
     padding: 15,
     marginTop: 10,
     marginHorizontal: 15,
+    
   },
 
   row: {
@@ -82,21 +84,23 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     marginBottom: 10,
-    fontWeight: "500",
+    fontFamily: 'Raleway_700Bold', // <-- add this
+
 
   },
 
   value: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
   },
   subLabel: {
-    color: '#ccc',
-    fontSize: 14,
+    color: '#fff',
+    fontFamily: 'Raleway_700', // <-- add this
+
   },
   subValue: {
-    color: '#ccc',
+    color: '#fff',
     fontSize: 14,
   },
 
