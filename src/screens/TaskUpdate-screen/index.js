@@ -34,6 +34,8 @@ export default function TaskUpdateScreen() {
   const [timeTaken, setTimeTaken] = useState('');
   const [loading, setLoading] = useState(true);   // ✅ new
   const [refreshing, setRefreshing] = useState(false); // ✅ new
+  const [description, setDescription] = useState('');
+
 
   const getDateRange = (startDate, selected) => {
     return Array.from({ length: 7 }).map((_, index) => {
@@ -56,6 +58,7 @@ export default function TaskUpdateScreen() {
         id: item.id,
         project: item.project,
         task: item.task,
+        description: item.description, // ✅ include description
         time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
         submittedAt: moment(item.updated_at).format('hh:mm A'),
       }));
@@ -66,6 +69,7 @@ export default function TaskUpdateScreen() {
       setLoading(false);
     }
   };
+  
 
   const fetchProfilePicture = async () => {
     try {
@@ -107,28 +111,40 @@ export default function TaskUpdateScreen() {
     setProject('');
     setTask('');
     setTimeTaken('');
+    setDescription(''); // ✅ reset description
     fetchTasks(selectedDate);
   };
+  
 
-const renderItem = ({ item }) => (
-  <View style={{ marginBottom: 12 }}>
-    {/* Task Card */}
-    <View style={styles.taskCard}>
-      <View style={styles.taskRow}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.projectLabel}>Project</Text>
-          <Text style={styles.projectText}>{item.project}</Text>
-          <Text style={styles.taskLabel}>Task</Text>
-          <Text style={styles.taskText}>{item.task}</Text>
+  const renderItem = ({ item }) => (
+    <View style={{ marginBottom: 12 }}>
+      {/* Task Card */}
+      <View style={styles.taskCard}>
+        <View style={styles.taskRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.projectLabel}>Project</Text>
+            <Text style={styles.projectText}>{item.project}</Text>
+  
+            <Text style={styles.taskLabel}>Task</Text>
+            <Text style={styles.taskText}>{item.task}</Text>
+  
+            {/* ✅ Description */}
+            {item.description ? (
+              <>
+                <Text style={styles.descriptionLabel}>Description</Text>
+                <Text style={styles.descriptionText}>{item.description}</Text>
+              </>
+            ) : null}
+          </View>
+          <Text style={styles.timeText}>{item.time}</Text>
         </View>
-        <Text style={styles.timeText}>{item.time}</Text>
       </View>
+  
+      {/* Timestamp outside the card */}
+      <Text style={styles.timestamp}>{item.submittedAt}</Text>
     </View>
-
-    {/* ✅ Timestamp outside the card */}
-    <Text style={styles.timestamp}>{item.submittedAt}</Text>
-  </View>
-);
+  );
+  
 
 
   const scrollCalendar = (direction) => {
@@ -164,9 +180,9 @@ const renderItem = ({ item }) => (
 
 
   {/* Profile Pic */}
-  <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+  {/* <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
     <Image source={{ uri: profilePic }} style={styles.avatarImage} />
-  </TouchableOpacity>
+  </TouchableOpacity> */}
 </View>
 
 
@@ -248,16 +264,19 @@ const renderItem = ({ item }) => (
 
       {/* Modal */}
       <TaskModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        project={project}
-        setProject={setProject}
-        task={task}
-        setTask={setTask}
-        timeTaken={timeTaken}
-        setTimeTaken={setTimeTaken}
-        onSubmit={handleSubmit}
-      />
+  visible={modalVisible}
+  onClose={() => setModalVisible(false)}
+  project={project}
+  setProject={setProject}
+  task={task}
+  setTask={setTask}
+  timeTaken={timeTaken}
+  setTimeTaken={setTimeTaken}
+  description={description}        // ✅ pass description
+  setDescription={setDescription} // ✅ pass setter
+  onSubmit={handleSubmit}
+/>
+
 
       {/* Bottom Nav */}
       <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>

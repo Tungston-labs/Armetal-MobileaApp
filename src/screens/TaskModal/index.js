@@ -22,6 +22,9 @@ export default function TaskModal({
   timeTaken,
   setTimeTaken,
   onSubmit,
+  description,
+  setDescription,
+
 }) {
   const handleSubmit = async () => {
     if (!project || !task || !timeTaken) {
@@ -42,6 +45,8 @@ export default function TaskModal({
       });
       return;
     }
+
+    
 
     // ✅ Validate numeric value
     const hours = parseFloat(timeTaken);
@@ -78,8 +83,10 @@ export default function TaskModal({
       const payload = {
         project,
         task,
+        description, // include this
         time_taken: hours,
       };
+      
 
       await authAxios.post('/employee/tasks/', payload);
 
@@ -95,16 +102,16 @@ export default function TaskModal({
         error.response?.data?.time_taken?.[0] ||
         error.response?.data?.detail ||
         'Daily total cannot exceed 24 hours.';
-    
+
       Toast.show({
         type: 'error',
         text1: '',
         text2: errorMsg,
       });
-    
+
       // console.error('❌ Task submission failed:', error.response?.data || error.message);
     }
-    
+
   };
 
   return (
@@ -130,6 +137,16 @@ export default function TaskModal({
             style={styles.input}
             placeholderTextColor="#8a8dad"
           />
+          <Text style={styles.inputLabel}>Description</Text>
+          <TextInput
+            placeholder="Task Description"
+            value={description}
+            onChangeText={setDescription}
+            style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+            placeholderTextColor="#8a8dad"
+            multiline={true}
+          />
+
 
           <Text style={styles.inputLabel}>Time Taken (hours)</Text>
           <View style={styles.timeInputRow}>

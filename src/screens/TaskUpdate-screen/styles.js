@@ -19,6 +19,18 @@ export default StyleSheet.create({
     // paddingBottom: 20,
 
   },
+  descriptionLabel: {
+    marginTop: 6,
+    fontWeight: '600',
+    color: '#747C98',
+    fontSize: 12,
+  },
+  descriptionText: {
+    color: '#fff',
+    fontSize: 14,
+    marginTop: 2,
+  },
+  
   
   title: {
     fontSize: 24,
