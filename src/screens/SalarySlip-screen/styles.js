@@ -26,11 +26,13 @@ export default StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     color: '#FFFF',
-    fontWeight: 'bold',
-    marginTop:60,
-    marginLeft:48
-    
+    // fontWeight: 'bold', // optional, Raleway already has weights
+    fontFamily: 'Raleway_700Bold', // <-- add this
+    marginTop: 60,
+    marginLeft: 48,
+    paddingLeft: 100,
   },
+  
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -45,11 +47,15 @@ export default StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     height: 42,
+    borderWidth: 0.5,          
+    borderColor: 'grey',     
   },
+  
   searchInput: {
     marginLeft: 6,
     color: '#FFFF',
     flex: 1,
+    
   },
   dropdownBox: {
     height: 42,
@@ -58,6 +64,8 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 0.5,          // 👈 thickness of border
+    borderColor: 'grey',
   },
   dropdownText: {
     color: '#FFFF',
@@ -67,7 +75,7 @@ export default StyleSheet.create({
     width: 42,
     height: 42,
     backgroundColor: '#3352BA',
-    borderRadius: 10,
+    borderRadius: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },
