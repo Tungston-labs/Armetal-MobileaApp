@@ -13,9 +13,11 @@ import {
 import styles from "./styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import DateTimePickerModal from "react-native-modal-datetime-picker"; // ✅ for dropdown date picker
 import authAxios from "../../utils/authAxios";
 import BottomNavbar from "../BottomNavbar";
-import SwipeLoader from "../../components/SwipeLoader"
+import SwipeLoader from "../../components/SwipeLoader";
+
 const API_BASE_URL = "http://178.248.112.16:8001";
 
 const AttendanceScreen = () => {
@@ -25,8 +27,10 @@ const AttendanceScreen = () => {
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [profilePic, setProfilePic] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ full-page loader
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const { date } = route.params || {};
     return date ? new Date(date) : new Date();
@@ -34,19 +38,24 @@ const AttendanceScreen = () => {
 
   const fetchAttendanceData = async () => {
     try {
-      setLoading(true); // start loader
+      setLoading(true);
 
-      // Fetch attendance sessions
+      // Format date yyyy-mm-dd
       const formattedDate = selectedDate.toLocaleDateString("en-CA");
       const res = await authAxios.get(`/attendance/today`, {
         params: { date: formattedDate },
       });
       const data = res.data;
+
       setSessions(data.sessions || []);
+
+      // ✅ calculate hours
       const hours = parseFloat(data.total_hours || 0);
       const h = Math.floor(hours);
       const m = Math.round((hours - h) * 60);
-      setTotalHours(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`);
+      setTotalHours(
+        `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
+      );
 
       // Fetch profile picture
       const profileRes = await authAxios.get("/profile/");
@@ -54,14 +63,15 @@ const AttendanceScreen = () => {
         ? `${API_BASE_URL}${profileRes.data.profile_pic}`
         : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
       setProfilePic(imageUrl);
-
     } catch (error) {
       console.error("Attendance fetch error:", error);
       setSessions([]);
       setTotalHours("00:00 Hrs");
-      setProfilePic("https://cdn-icons-png.flaticon.com/512/149/149071.png");
+      setProfilePic(
+        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      );
     } finally {
-      setLoading(false); // stop loader
+      setLoading(false);
     }
   };
 
@@ -77,23 +87,43 @@ const AttendanceScreen = () => {
 
   const renderItem = ({ item }) => {
     const punchIn = item.time_in
-      ? new Date(item.time_in).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
+      ? new Date(item.time_in).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
       : "-- --";
     const punchOut = item.time_out
-      ? new Date(item.time_out).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
+      ? new Date(item.time_out).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
       : "-- --";
 
     return (
       <View style={styles.row}>
-        <Text style={[styles.cell, { color: "#00FF00" }]}>{punchIn}</Text>
-        <Text style={[styles.cell, { color: punchOut !== "-- --" ? "#FF4B4B" : "#ccc" }]}>{punchOut}</Text>
+        <Text style={[styles.cell, { color: "#00FF26" }]}>{punchIn}</Text>
+        <Text
+          style={[
+            styles.cell,
+            { color: punchOut !== "-- --" ? "#FF2304" : "#ccc" },
+          ]}
+        >
+          {punchOut}
+        </Text>
       </View>
     );
   };
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <SwipeLoader size="large" color="#3352BA" />
       </View>
     );
@@ -104,11 +134,45 @@ const AttendanceScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 6 }} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="#fff"
+            style={{ marginTop: 6 }}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Attendance details</Text>
         <Image source={{ uri: profilePic }} style={styles.profileImage} />
       </View>
+
+      {/* ✅ Date dropdown */}
+      <TouchableOpacity
+        style={styles.dateCard}
+        onPress={() => setDatePickerVisible(true)}
+      >
+        <Ionicons name="calendar-outline" size={20} color="#fff" />
+
+        {/* Text container for vertical alignment */}
+        <View style={{ marginLeft: 8, flex: 1 }}>
+          <Text style={styles.selectDateText}>select a day</Text>
+          <Text style={styles.selectedDate}>
+            {selectedDate.toLocaleDateString("en-GB").replace(/\//g, '.')}
+          </Text>
+        </View>
+
+        <Ionicons name="chevron-down" size={18} color="#fff" />
+      </TouchableOpacity>
+
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={selectedDate}
+        onConfirm={(date) => {
+          setSelectedDate(date);
+          setDatePickerVisible(false);
+        }}
+        onCancel={() => setDatePickerVisible(false)}
+      />
 
       {/* Attendance Table */}
       <View style={styles.tableContainer}>
@@ -116,6 +180,11 @@ const AttendanceScreen = () => {
           <Text style={styles.headerCell}>Punch In</Text>
           <Text style={styles.headerCell}>Punch Out</Text>
         </View>
+
+
+        {/* Divider line */}
+        <View style={styles.divider} />
+
         <FlatList
           data={sessions}
           renderItem={renderItem}
@@ -126,10 +195,18 @@ const AttendanceScreen = () => {
               onRefresh={handleRefresh}
               colors={["#ffffff", "#d3d3d3"]}
               tintColor="#ffffff"
-              progressBackgroundColor={Platform.OS === "android" ? "#2c2c2c" : "transparent"}
+              progressBackgroundColor={
+                Platform.OS === "android" ? "#2c2c2c" : "transparent"
+              }
             />
           }
         />
+      </View>
+
+      {/* ✅ Total working hours */}
+      <View style={styles.totalHoursCard}>
+        <Text style={styles.totalHoursLabel}>Total working hour</Text>
+        <Text style={styles.totalHoursValue}>{totalHours}</Text>
       </View>
 
       {/* Bottom Navigation */}

@@ -175,7 +175,6 @@ export default function WorkingDaySummary() {
           </View>
         )}
 
-
         {/* Status Summary */}
         {summary && (
           <View style={styles.statusCard}>

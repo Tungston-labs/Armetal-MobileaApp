@@ -33,11 +33,11 @@ export default StyleSheet.create({
   },
 
 
-dateLabel: {
-  fontSize: 13,
-  color: '#ccc',
-  fontFamily: 'Satoshi-Regular',
-},
+  dateLabel: {
+    fontSize: 13,
+    color: '#ccc',
+    fontFamily: 'Satoshi-Regular',
+  },
 
   noteCard: {
     backgroundColor: '#1C2D5B',
@@ -76,8 +76,8 @@ dateLabel: {
     color: '#FFF',
     flex: 1,
     marginLeft: 12,
-    marginTop:6,
-    fontFamily: 'Raleway-Bold', 
+    marginTop: 6,
+    fontFamily: 'Raleway-Bold',
   },
 
   profileImage: {
@@ -99,13 +99,22 @@ dateLabel: {
     justifyContent: 'space-between',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    borderBottomColor:'#FFFF'
+    borderBottomColor: '#FFFF'
   },
 
   headerCell: {
     fontWeight: 'bold',
     color: '#fff',
     fontSize: 16,
+  },
+
+  divider: {
+    height: 1,                 // thin line
+    backgroundColor: '#fff',   // line color
+    opacity: 0.4,              // match your theme
+    width: '90%',               // line length (adjust as needed)
+    alignSelf: 'center',        // center the line
+    marginVertical: 8,          // optional spacing
   },
 
   row: {
@@ -119,7 +128,7 @@ dateLabel: {
 
   cell: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 20,
     fontFamily: 'Satoshi-Regular',
   },
 
@@ -131,7 +140,7 @@ dateLabel: {
     alignItems: 'center',
     borderTopWidth: 0.5,
     borderTopColor: '#3a4ca0',
-    marginTop:50,
+    marginTop: 50,
   },
   bottomNavbarContainer: {
     position: 'absolute',
@@ -139,9 +148,9 @@ dateLabel: {
     left: 0,
     right: 0,
   },
-    dateCard: {
+  dateCard: {
     backgroundColor: '#172554',
-    margin: 6,
+    margin: 16,
     borderRadius: 12,
     padding: 12,
     flexDirection: 'row',
@@ -153,20 +162,27 @@ dateLabel: {
     color: '#fff',
     fontFamily: 'Satoshi-Regular',
   },
-  
-selectedDate: {
-  fontSize: 16,
-  color: '#fff',
-  fontWeight: '600',
-  fontFamily: 'Satoshi-Bold',
-},
+
+  selectDateText: {
+    fontSize: 14,
+    color: '#ccc',
+    fontWeight: '400',
+    fontFamily: 'Satoshi-Regular',
+  },
+  selectedDate: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
+    fontFamily: 'Satoshi-Bold',
+  },
+
   inlineCalendarContainer: {
-  backgroundColor: '#172554',
-  marginHorizontal: 16,
-  marginTop: 8,
-  borderRadius: 12,
-  padding: 10,
-},
+    backgroundColor: '#172554',
+    marginHorizontal: 16,
+    marginTop: 8,
+    borderRadius: 12,
+    padding: 10,
+  },
 
   cancelText: {
     color: '#fff',
@@ -177,100 +193,128 @@ selectedDate: {
     fontWeight: '600',
   },
   pickerContainer: {
-  backgroundColor: '#172554',
-  borderRadius: 16,
-  padding: 16,
-  marginTop: 0,
-},
-pickerButtons: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: 16,
-},
+    backgroundColor: '#172554',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 0,
+  },
+  pickerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
   calendar: {
-  height: 320, 
-  width: '95%',
-  alignSelf: 'center',
-},
-calendarWrapper: {
-  marginHorizontal: 16,
-  backgroundColor: '#172554',
-  borderRadius: 16,
-  paddingVertical: 2,
-  borderWidth:0.3,
-  borderColor:"#fff"
-},
-calendarContainer: {
-  borderRadius: 12,
-  overflow: 'hidden',
-},
-calendarHeader: {
-  display:"flex",
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  paddingVertical: 10,
-  backgroundColor: '#172554',
-  width:"98%",
-},
-monthWithArrow: {
-  flexDirection: 'row',
-  width:"50%"
- // alignItems: 'center',
-  //gap: 6,
-},
+    height: 320,
+    width: '95%',
+    alignSelf: 'center',
+  },
+  calendarWrapper: {
+    marginHorizontal: 16,
+    backgroundColor: '#172554',
+    borderRadius: 16,
+    paddingVertical: 2,
+    borderWidth: 0.3,
+    borderColor: "#fff"
+  },
+  calendarContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  calendarHeader: {
+    display: "flex",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    backgroundColor: '#172554',
+    width: "98%",
+  },
+  monthWithArrow: {
+    flexDirection: 'row',
+    width: "50%"
+    // alignItems: 'center',
+    //gap: 6,
+  },
 
-monthText: {
-  color: '#fff',
-  fontSize: 18,
-  fontWeight: 'bold',
-},
+  monthText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 
-yearText: {
-  color: '#fff',
-  fontSize: 16,
-  fontWeight: '500',
-  marginLeft: 12, // keep it slightly spaced from arrow group
-},
+  yearText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 12, // keep it slightly spaced from arrow group
+  },
 
-buttonRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: 16,
-  marginHorizontal: 30,
-},
-cancelButton: {
-  backgroundColor: '#f30606ff',
-  paddingVertical: 12,
-  paddingHorizontal: 64,
-  borderRadius: 20,
-},
-doneButton: {
-  backgroundColor: '#1d478bff',
-  paddingVertical: 12,
-  paddingHorizontal: 64,
-  borderRadius: 20,
-},
-yearPickerContainer: {
-  backgroundColor: '#172554',
-  borderRadius: 12,
-  padding: 10,
-  marginVertical:250,
-  marginTop:10,
-  marginHorizontal:300,
-  width: 100,
-  maxHeight: 200,
-},
-yearItem: {
-  fontSize: 16,
-  color: '#fff',
-  textAlign: 'center',
-  paddingVertical: 10,
-},
-modalOverlay: {
-  flex: 1,
-  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-  justifyContent: 'center',
-  // alignItems: 'center',
-},
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    marginHorizontal: 30,
+  },
+  cancelButton: {
+    backgroundColor: '#f30606ff',
+    paddingVertical: 12,
+    paddingHorizontal: 64,
+    borderRadius: 20,
+  },
+  doneButton: {
+    backgroundColor: '#1d478bff',
+    paddingVertical: 12,
+    paddingHorizontal: 64,
+    borderRadius: 20,
+  },
+  yearPickerContainer: {
+    backgroundColor: '#172554',
+    borderRadius: 12,
+    padding: 10,
+    marginVertical: 250,
+    marginTop: 10,
+    marginHorizontal: 300,
+    width: 100,
+    maxHeight: 200,
+  },
+  yearItem: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    // alignItems: 'center',
+  },
+
+  totalHoursCard: {
+    backgroundColor: "#172554",
+    margin: 12,
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  totalHoursLabel: {
+    fontSize: 15,
+    color: "#fff",
+    fontWeight: "800",
+    fontFamily: "Satoshi-Regular",
+  },
+  totalHoursValue: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#ccc",
+    fontFamily: "Satoshi-Bold",
+  },
+
+
+
 });
+
+
