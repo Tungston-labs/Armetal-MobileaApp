@@ -1,5 +1,5 @@
 // index.js
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,14 +7,47 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 import styles from './styles';
 
 const ForgotPasswordScreen = ({ navigation }) => {
-  
-  const handleResetPassword = () => {
-    navigation.navigate('VerificationScreen');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      Alert.alert('Validation Error', 'Please enter your email address.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        'http://178.248.112.16:8001/api/forgot-password/send-otp/',
+        { email }
+      );
+
+      setLoading(false);
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'OTP sent to your email.');
+        // Navigate to Verification screen with email
+        navigation.navigate('VerificationScreen', { email });
+      }
+    } catch (error) {
+      setLoading(false);
+
+      if (error.response) {
+        Alert.alert('Error', error.response.data.detail || 'Failed to send OTP.');
+      } else {
+        Alert.alert('Error', 'Something went wrong. Try again later.');
+      }
+    }
   };
 
   return (
@@ -38,10 +71,21 @@ const ForgotPasswordScreen = ({ navigation }) => {
           placeholder="Your Email Address"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
-          <Text style={styles.buttonText}>Reset password</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleResetPassword}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Reset password</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

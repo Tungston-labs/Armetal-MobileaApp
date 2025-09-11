@@ -41,11 +41,20 @@ const handleLogin = async () => {
       password,
     });
 
-    const { access, refresh } = response.data;
+    const { access, refresh, user } = response.data; // <-- destructure user here
+
+    if (!user) {
+      throw new Error("User data missing in login response");
+    }
+
+    // Store tokens
     await AsyncStorage.setItem('accessToken', access);
     await AsyncStorage.setItem('refreshToken', refresh);
 
-    // ✅ Direct navigation without alert
+    // Store country from the user object
+    await AsyncStorage.setItem('country', user.company.country);
+
+    // Navigate to PunchinScreen
     navigation.reset({
       index: 0,
       routes: [{ name: 'PunchinScreen' }],
@@ -64,6 +73,7 @@ const handleLogin = async () => {
     }
   }
 };
+
 
 
   const handleForgotPassword = () => {

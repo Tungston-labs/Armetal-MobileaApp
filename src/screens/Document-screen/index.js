@@ -17,6 +17,8 @@ import DownloadIcon from "../../../assets/download.svg";
 
 import styles from "./styles";
 import authAxios from "../../utils/authAxios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function DocumentsScreen() {
   const navigation = useNavigation();
@@ -32,8 +34,13 @@ export default function DocumentsScreen() {
     insuranceNumber: "",
     iqamaNumber: "",
     visaExpiry: "",
+    aadarNumber: "",
+    contractExpiry: "",
     idCardImage: null,
   });
+  
+  const [country, setCountry] = useState(null);
+
 
   const normalizeUrl = (url) => {
     if (!url) return null;
@@ -51,6 +58,10 @@ export default function DocumentsScreen() {
     const fetchDocumentData = async () => {
       try {
         setLoading(true); // start loader
+        const storedCountry = await AsyncStorage.getItem("country");
+        console.log("country is:",storedCountry);
+        
+        setCountry(storedCountry);
         const summaryResponse = await authAxios.get("/employee/document-summary/");
         const summary = summaryResponse.data;
         setEmployeeId(summary.employee_id);
@@ -68,7 +79,10 @@ export default function DocumentsScreen() {
           insuranceNumber: summary.healthcard_number || "",
           iqamaNumber: summary.iqama_number || "",
           visaExpiry: summary.visa_expiry_date || "",
+          aadarNumber: summary.adhar_number || "",        // ✅
+          contractExpiry: summary.contract_expiry_date || "", // ✅
         });
+        
       } catch (error) {
         console.error("❌ Failed to fetch documents:", error);
         Alert.alert("Error", "Could not load document data");
@@ -182,17 +196,22 @@ export default function DocumentsScreen() {
           />
         </View>
 
-        {/* Iqama Number */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Iqama Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Iqama Number"
-            value={data.iqamaNumber}
-            editable={false}
-            placeholderTextColor="#8a8dad"
-          />
-        </View>
+        {/* Conditional Field: Aadhar vs Iqama */}
+<View style={styles.fieldContainer}>
+  <Text style={styles.label}>
+    {country === "IN" ? "Aadhar Number" : "Iqama Number"}
+  </Text>
+  <TextInput
+    style={styles.input}
+    placeholder={country === "IN" ? "Aadhar Number" : "Iqama Number"}
+    value={country === "IN" ? data.aadarNumber : data.iqamaNumber}
+    editable={false}
+    placeholderTextColor="#8a8dad"
+  />
+</View>
+
+
+
 
         {/* Insurance Number */}
         <View style={styles.fieldContainer}>
@@ -206,17 +225,19 @@ export default function DocumentsScreen() {
           />
         </View>
 
-        {/* Visa Expiry */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Visa Expiry Date</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Visa Expiry Date"
-            value={data.visaExpiry}
-            editable={false}
-            placeholderTextColor="#8a8dad"
-          />
-        </View>
+        {/* Conditional Field: Contract Expiry vs Visa Expiry */}
+<View style={styles.fieldContainer}>
+  <Text style={styles.label}>
+    {country === "IN" ? "Contract Expiry Date" : "Visa Expiry Date"}
+  </Text>
+  <TextInput
+    style={styles.input}
+    placeholder={country === "IN" ? "Contract Expiry Date" : "Visa Expiry Date"}
+    value={country === "IN" ? data.contractExpiry : data.visaExpiry}
+    editable={false}
+    placeholderTextColor="#8a8dad"
+  />
+</View>
       </ScrollView>
     </View>
   );

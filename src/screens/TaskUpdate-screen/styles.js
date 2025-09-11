@@ -8,21 +8,23 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
+ 
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingVertical: 12,
+    backgroundColor: "#0B1437",
     paddingBottom: 20,
-    backgroundColor: '#262D40',
-  
+
   },
+  
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginTop:40,
+    // marginTop:40,
   },
   avatarImage: {
     width: 44,
