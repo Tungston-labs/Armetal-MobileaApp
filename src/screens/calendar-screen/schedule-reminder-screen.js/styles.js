@@ -124,40 +124,44 @@ const styles = StyleSheet.create({
   monthWithArrow: {
     flexDirection: "row",
     width: "50%",
+  
   },
 
   monthText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+     marginHorizontal: 12,
   },
   yearText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "500",
-    marginLeft: 12, // keep it slightly spaced from arrow group
+    marginLeft: 12, 
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    justifyContent: "center",
-  },
-  yearPickerContainer: {
-    backgroundColor: "#172554",
-    borderRadius: 12,
-    padding: 10,
-    marginVertical: 250,
-    marginTop: 10,
-    marginHorizontal: 300,
-    width: 100,
-    maxHeight: 200,
-  },
-  yearItem: {
-    fontSize: 16,
-    color: "#fff",
-    textAlign: "center",
-    paddingVertical: 10,
-  },
+modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0, 0, 0, 0.6)",
+  justifyContent: "center",
+  alignItems: "center", 
+},
+yearPickerContainer: {
+  backgroundColor: "#172554",
+  borderRadius: 12,
+  padding: 10,
+  width: 120,        // fixed width for nice shape
+  maxHeight: 200,
+},
+yearItem: {
+  fontSize: 16,
+  color: "#fff",
+  textAlign: "center",
+  paddingVertical: 10,
+},
+backButton: {
+  alignSelf: "flex-start", // back icon on top-left
+  marginBottom: 8,
+},
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
