@@ -25,13 +25,11 @@ export default StyleSheet.create({
     backgroundColor: '#262D40',
   },
 
-
   dateText: {
     fontSize: 16,
     color: '#fff',
     fontFamily: 'Satoshi-Regular',
   },
-
 
   dateLabel: {
     fontSize: 13,
@@ -70,14 +68,14 @@ export default StyleSheet.create({
     textAlignVertical: 'top',
   },
 
+  // Heading / Title updated to Raleway
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Raleway_700Bold',
     color: '#FFF',
     flex: 1,
     marginLeft: 12,
     marginTop: 6,
-    fontFamily: 'Raleway-Bold',
   },
 
   profileImage: {
@@ -99,22 +97,23 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    borderBottomColor: '#FFFF'
+    borderBottomColor: '#FFFF',
   },
 
+  // Table header text uses Raleway for headings
   headerCell: {
-    fontWeight: 'bold',
+    fontFamily: 'Raleway_700Bold',
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
   },
 
   divider: {
-    height: 1,                 // thin line
-    backgroundColor: '#fff',   // line color
-    opacity: 0.4,              // match your theme
-    width: '90%',               // line length (adjust as needed)
-    alignSelf: 'center',        // center the line
-    marginVertical: 8,          // optional spacing
+    height: 1,
+    backgroundColor: '#fff',
+    opacity: 0.4,
+    width: '90%',
+    alignSelf: 'center',
+    marginVertical: 8,
   },
 
   row: {
@@ -157,23 +156,17 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  dateText: {
-    fontSize: 16,
-    color: '#fff',
-    fontFamily: 'Satoshi-Regular',
-  },
 
   selectDateText: {
-    fontSize: 14,
-    color: '#ccc',
-    fontWeight: '400',
-    fontFamily: 'Satoshi-Regular',
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_400Regular',
   },
+
   selectedDate: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
-    fontFamily: 'Satoshi-Bold',
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat_700Bold',
   },
 
   inlineCalendarContainer: {
@@ -214,39 +207,40 @@ export default StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 2,
     borderWidth: 0.3,
-    borderColor: "#fff"
+    borderColor: '#fff',
   },
   calendarContainer: {
     borderRadius: 12,
     overflow: 'hidden',
   },
   calendarHeader: {
-    display: "flex",
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,
     backgroundColor: '#172554',
-    width: "98%",
+    width: '98%',
   },
   monthWithArrow: {
     flexDirection: 'row',
-    width: "50%"
-    // alignItems: 'center',
-    //gap: 6,
+    width: '50%',
   },
 
+  // Month text updated to Raleway
   monthText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    fontFamily: 'Raleway_700Bold',
   },
 
   yearText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
-    marginLeft: 12, // keep it slightly spaced from arrow group
+    fontFamily: 'Raleway_700Bold',
+    marginLeft: 12,
   },
 
   buttonRow: {
@@ -287,34 +281,26 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
-    // alignItems: 'center',
   },
 
   totalHoursCard: {
-    backgroundColor: "#172554",
+    backgroundColor: '#172554',
     margin: 12,
     borderRadius: 10,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   totalHoursLabel: {
     fontSize: 15,
-    color: "#fff",
-    fontWeight: "800",
-    fontFamily: "Satoshi-Regular",
+    color: '#fff', 
+    fontFamily: 'Montserrat_700Bold',
   },
   totalHoursValue: {
     fontSize: 15,
-    fontWeight: "600",
-    color: "#ccc",
-    fontFamily: "Satoshi-Bold",
+    color: '#ccc',
+    fontFamily: 'Montserrat_700Bold',
   },
-
-
-
 });
-
-

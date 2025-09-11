@@ -19,9 +19,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 
-
-
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -167,7 +164,7 @@ const SalarySlipScreen = () => {
           </Text>
 
 
-<MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
+          <MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>

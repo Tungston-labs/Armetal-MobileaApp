@@ -150,11 +150,11 @@ const AttendanceScreen = () => {
         style={styles.dateCard}
         onPress={() => setDatePickerVisible(true)}
       >
-        <Ionicons name="calendar-outline" size={20} color="#fff" />
+        <Ionicons name="calendar-outline" size={29} color="#fff" />
 
         {/* Text container for vertical alignment */}
         <View style={{ marginLeft: 8, flex: 1 }}>
-          <Text style={styles.selectDateText}>select a day</Text>
+          <Text style={styles.selectDateText}>Select a day</Text>
           <Text style={styles.selectedDate}>
             {selectedDate.toLocaleDateString("en-GB").replace(/\//g, '.')}
           </Text>

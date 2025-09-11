@@ -12,6 +12,7 @@ import * as Notifications from "expo-notifications";
 
 // ✅ Import font utilities
 import { useFonts, Raleway_400Regular, Raleway_500Medium, Raleway_700Bold } from "@expo-google-fonts/raleway";
+import { Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold, Montserrat_800ExtraBold } from "@expo-google-fonts/montserrat";
 import AppLoading from "expo-app-loading";
 
 enableScreens();
@@ -37,11 +38,15 @@ const InitAuth = ({ children }) => {
 };
 
 const App = () => {
-  // ✅ Load Raleway fonts
+  // ✅ Load Raleway and Montserrat fonts
   const [fontsLoaded] = useFonts({
     Raleway_400Regular,
     Raleway_500Medium,
     Raleway_700Bold,
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_700Bold,
+    Montserrat_800ExtraBold,
   });
 
   useEffect(() => {
