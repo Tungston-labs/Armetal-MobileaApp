@@ -115,12 +115,14 @@ export default StyleSheet.create({
     marginVertical: 2,
   },
   label: {
-    color: '#FFFFFF',
+     color: '#aaa',
     fontSize: 13,
+    // fontFamily: 'Montserrat_400Regular',
   },
   value: {
     color: '#FFFFFF',
     fontSize: 13,
+    fontFamily: 'Montserrat_400Regular',
   },
   fab: {
     position: 'absolute',

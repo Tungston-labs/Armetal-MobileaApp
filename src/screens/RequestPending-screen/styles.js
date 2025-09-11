@@ -83,12 +83,14 @@ headerLeft: {
     color: '#575F7D',
     fontSize: 13,
     marginBottom: 4,
+    fontFamily: 'Montserrat_400Regular',
   },
 
   value: {
     color: '#FFFF',
     fontSize: 14,
     fontWeight: '500',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   section: {
@@ -99,12 +101,14 @@ headerLeft: {
     color: '#575F7D',
     fontSize: 14,
     marginBottom: 4,
+    fontFamily: 'Montserrat_400Regular',
   },
 
   sectionValue: {
     color: '#FFFF',
     fontSize: 15,
     fontWeight: '500',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   reasonText: {

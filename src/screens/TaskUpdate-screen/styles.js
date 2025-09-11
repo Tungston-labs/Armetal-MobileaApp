@@ -16,7 +16,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "#0B1437",
-    paddingBottom: 20,
+    // paddingBottom: 20,
 
   },
   
@@ -33,25 +33,26 @@ export default StyleSheet.create({
     marginTop:40,
     
   },
-  calendarWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    marginLeft:-12,
-  },
+calendarWrapper: {
+  flexDirection: "row",
+  alignItems: "center",   
+  justifyContent: "center",
+  // marginTop: 10,
+  // marginBottom: 16,
+  // paddingHorizontal: 1,
+},
   arrowBox: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 25,
     height: 100,
   },
-  calendar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flex: 1,
-  },
+ calendar: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",    
+  flex: 1,
+},
   dateBox: {
     width: boxWidth,
     alignItems: 'center',
@@ -109,8 +110,8 @@ export default StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     marginHorizontal: 16,
-    marginBottom: 16,
-    borderWidth: 1,
+    // marginBottom: 16,
+    borderWidth: 0.1,
     borderColor: '#FFFFFF',
   },
   taskRow: {
@@ -139,12 +140,14 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  timestamp: {
-    textAlign: 'right',
-    marginTop: 6,
-    fontSize: 12,
-    color: '#FFFFFF',
-  },
+timestamp: {
+  fontSize: 12,
+  color: "#bbb",
+  // marginTop: 6,
+  textAlign: "right",  
+  marginRight:20
+},
+
   addButton: {
     position: 'absolute',
     bottom: 80,

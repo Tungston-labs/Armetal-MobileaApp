@@ -84,30 +84,34 @@ export default StyleSheet.create({
   label: {
     color: '#575F7D',
     fontSize: 13,
-    marginBottom: 4,
+    // marginBottom: 4,
+      fontFamily: 'Montserrat_400Regular',
   },
 
   value: {
     color: '#FFFF',
     fontSize: 14,
     fontWeight: '500',
+  fontFamily: 'Montserrat_400Regular',
   },
 
   // For Leave Type and Reason sections
   section: {
-    marginTop: 12,
+    // marginTop: 12,
   },
 
   sectionLabel: {
     color: '#575F7D',
     fontSize: 14,
     marginBottom: 4,
+    fontFamily: 'Montserrat_400Regular',
   },
 
   sectionValue: {
     color: '#FFFF',
     fontSize: 15,
     fontWeight: '500',
+         fontFamily: 'Montserrat_400Regular',
   },
 
   reasonText: {
@@ -115,5 +119,6 @@ export default StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
     lineHeight: 20,
+         fontFamily: 'Montserrat_400Regular',
   },
 });

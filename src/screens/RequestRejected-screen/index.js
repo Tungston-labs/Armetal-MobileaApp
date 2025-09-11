@@ -15,7 +15,7 @@ import BottomNavbar from '../BottomNavbar';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import authAxios from '../../utils/authAxios';
-
+import { useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 export default function RequestRejected({ navigation, route }) {
   const { leaveId } = route.params; // 👈 Receive leaveId from navigation
   const [leave, setLeave] = useState(null);
@@ -73,7 +73,12 @@ useEffect(() => {
 
     fetchLeaveDetail();
   }, [leaveId]);
-
+  
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_700Bold,
+  });
   if (loading || !leave) {
     return (
       <SafeAreaView style={styles.container}>

@@ -51,14 +51,16 @@ headerTitle: {
     fontSize: wp('3.2%'),
     marginBottom: hp('0.5%'),
     fontFamily: 'Satoshi',
-   
   },
   teamLeadInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: hp('0.5%'),
+  borderTopWidth: 0.5,
+    borderTopColor: '#B0B9D4',
   },
   leadAvatar: {
+    marginTop:10,
     width: wp('9%'),
     height: wp('9%'),
     borderRadius: wp('4.5%'),
@@ -70,17 +72,14 @@ headerTitle: {
     fontFamily: 'Satoshi',
   },
   memberRow: {
-    
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 0.5,
-    borderTopColor: '#B0B9D4',
     paddingTop: hp('1%'),
   },
   memberCount: {
-    color: '#B0B9D4',
-    fontSize: wp('3.8%'),
+    color: 'white',
+    fontSize: wp('4.1%'),
     fontFamily: 'Satoshi',
   },
   count: {

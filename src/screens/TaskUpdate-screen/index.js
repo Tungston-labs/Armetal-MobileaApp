@@ -110,7 +110,9 @@ export default function TaskUpdateScreen() {
     fetchTasks(selectedDate);
   };
 
-  const renderItem = ({ item }) => (
+const renderItem = ({ item }) => (
+  <View style={{ marginBottom: 12 }}>
+    {/* Task Card */}
     <View style={styles.taskCard}>
       <View style={styles.taskRow}>
         <View style={{ flex: 1 }}>
@@ -121,9 +123,13 @@ export default function TaskUpdateScreen() {
         </View>
         <Text style={styles.timeText}>{item.time}</Text>
       </View>
-      <Text style={styles.timestamp}>{item.submittedAt}</Text>
     </View>
-  );
+
+    {/* ✅ Timestamp outside the card */}
+    <Text style={styles.timestamp}>{item.submittedAt}</Text>
+  </View>
+);
+
 
   const scrollCalendar = (direction) => {
     const newStart = moment(dates[0].fullDate).add(direction * 7, "days");

@@ -103,67 +103,62 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
             style={styles.input}
             value={title}
             onChangeText={setTitle}
-            maxLength={100} // ✅ prevent typing beyond 100 chars
+            maxLength={100} 
           />
 
-         <TextInput
-  placeholder="Description"
-  placeholderTextColor="#999"
-  style={[styles.input, { height: 80, textAlignVertical: "top" }]}
-  multiline
-  value={description}
-  onChangeText={setDescription}
-/>
+          <TextInput
+            placeholder="Description"
+            placeholderTextColor="#999"
+            style={[styles.input, { height: 80 }]}
+            multiline
+            value={description}
+            onChangeText={setDescription}
+          />
 
           {/* Time Picker Section */}
-      <Text style={styles.label}>Select Time</Text>
-<View style={styles.timePickerContainer}>
-  {/* Hour Picker */}
-  <Picker
-    selectedValue={hour}
-    dropdownIconColor="#e0e7ff"
-    style={[styles.timePicker, { flex: 1 }]} // equal width
-    onValueChange={(itemValue) => setHour(itemValue)}
-  >
-    {[...Array(12)].map((_, i) => (
-      <Picker.Item
-        key={i}
-        label={`${i + 1}`}
-        value={i + 1}
-        color="black"
-      />
-    ))}
-  </Picker>
+          <Text style={styles.label}>Select Time</Text>
+          <View style={styles.timePickerContainer}>
+            {/* Hour Picker */}
+            <Picker
+              selectedValue={hour}
+              dropdownIconColor="#e0e7ff"
+              style={styles.timePicker}
+              onValueChange={(itemValue) => setHour(itemValue)}
+            >
+              {[...Array(12)].map((_, i) => (
+                <Picker.Item key={i} label={`${i + 1}`} value={i + 1} color="black" />
+              ))}
+            </Picker>
 
-  {/* Minute Picker */}
-  <Picker
-    selectedValue={minute}
-    dropdownIconColor="#e0e7ff"
-    style={[styles.timePicker, { flex: 1 }]} // equal width
-    onValueChange={(itemValue) => setMinute(itemValue)}
-  >
-    {[...Array(60)].map((_, i) => (
-      <Picker.Item
-        key={i}
-        label={i.toString().padStart(2, "0")}
-        value={i}
-        color="black"
-      />
-    ))}
-  </Picker>
+            {/* Minute Picker */}
+            <Picker
+              selectedValue={minute}
+              dropdownIconColor="#e0e7ff"
+              style={styles.timePicker}
+              onValueChange={(itemValue) => setMinute(itemValue)}
+            >
+              {[...Array(60)].map((_, i) => (
+                <Picker.Item
+                  key={i}
+                  label={i.toString().padStart(2, "0")}
+                  value={i}
+                  color="black"
+                  
+                />
+              ))}
+            </Picker>
 
-  {/* AM/PM Picker */}
-  <Picker
-    selectedValue={ampm}
-    dropdownIconColor="#e0e7ff"
-    style={[styles.timePicker, { flex: 0.8 }]} // slightly smaller
-    onValueChange={(itemValue) => setAmPm(itemValue)}
-  >
-    <Picker.Item label="AM" value="AM" color="black" />
-    <Picker.Item label="PM" value="PM" color="black" />
-  </Picker>
-</View>
-
+            {/* AM/PM Picker */}
+            <Picker
+              selectedValue={ampm}
+              dropdownIconColor="#e0e7ff"
+              style={styles.timePicker}
+              onValueChange={(itemValue) => setAmPm(itemValue)}
+            >
+              <Picker.Item label="AM" value="AM" color="black" />
+              <Picker.Item label="PM" value="PM" color="black" />
+            </Picker>
+          </View>
 
           <View style={styles.buttonRow}>
   <TouchableOpacity onPress={onClose} style={styles.cancelButton}>

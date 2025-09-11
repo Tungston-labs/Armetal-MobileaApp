@@ -5,23 +5,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0F1A35",
   },
-  header: {
-    height: 100,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#FFFF',
-    backgroundColor: '#262D40',
-    position: 'relative',
-   
-   
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
-    marginTop:64,
-    marginLeft:24
+header: {
+  height: 100,
+  borderBottomWidth: 0.5,
+  borderBottomColor: '#FFFF',
+  backgroundColor: '#262D40',
+  flexDirection: 'row',         // ✅ row layout
+  alignItems: 'center',         // ✅ vertical alignment
+  justifyContent: 'flex-start', // keeps items left
+  paddingHorizontal: 16,
+  paddingTop: 40,               // adjust for status bar spacing
+},
 
-  },
+backButton: {
+  marginRight: 12,
+},
+
+headerTitle: {
+  color: "#fff",
+  fontSize: 22,
+  fontWeight: "700",
+  fontFamily: "raleway",
+},
+
   tabsContainer: {
     flexDirection: "row",
     justifyContent: "center",

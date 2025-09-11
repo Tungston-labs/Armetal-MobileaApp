@@ -3,19 +3,16 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    //  backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: "#000000aa",
     justifyContent: "flex-end",
-    marginBottom:0
   },
   modalContent: {
-    backgroundColor: "#0C1124", 
+    backgroundColor: "#0C1124", // darker background for modal
     padding: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     borderTopWidth: 1,
     borderColor: "#1F2A46",
-     marginBottom: 50,
-
   },
   header: {
     fontSize: 18,
@@ -72,23 +69,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   
-timePickerContainer: {
-  flexDirection: "row",
-  justifyContent: "space-evenly", 
-  alignItems: "center",
-  borderWidth: 1,
-  borderColor: "#253157",
-  borderRadius: 12,
-  marginBottom: 12,
-  backgroundColor: "#101C3A",
-  paddingHorizontal: 9,
-},
+  timePickerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#253157",
+    borderRadius: 12,
+    marginBottom: 12,
+    backgroundColor: "#101C3A",
+   
+  },
   
- timePicker: {
-  color: "#e0e7ff",
-  height: 50,          // uniform height
-  textAlign: "center", // centers labels
-},
+  timePicker: {
+    flex: 1,
+    color: "#e0e7ff", 
+    
+  },
   label: {
     fontSize: 14,
     color: "#e0e7ff",
