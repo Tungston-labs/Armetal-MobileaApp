@@ -50,7 +50,7 @@ const HolidayTab = () => {
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.cardContent}>
-        {/* <Text style={styles.dateText}>{item.date}</Text> */}
+        <Text style={styles.dateText}>{item.date}</Text>
         <Text style={styles.titleText}>{item.title}</Text>
         <Text style={styles.dateRange}>
           {item.type} |{" "}
