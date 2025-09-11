@@ -10,6 +10,10 @@ import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
 import * as Notifications from "expo-notifications";
 
+// ✅ Import font utilities
+import { useFonts, Raleway_400Regular, Raleway_500Medium, Raleway_700Bold } from "@expo-google-fonts/raleway";
+import AppLoading from "expo-app-loading";
+
 enableScreens();
 
 Notifications.setNotificationHandler({
@@ -33,6 +37,12 @@ const InitAuth = ({ children }) => {
 };
 
 const App = () => {
+  // ✅ Load Raleway fonts
+  const [fontsLoaded] = useFonts({
+    Raleway_400Regular,
+    Raleway_500Medium,
+    Raleway_700Bold,
+  });
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -44,6 +54,11 @@ const App = () => {
 
     requestPermissions();
   }, []);
+
+  // ✅ Show loading until fonts are ready
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   return (
     <Provider store={store}>
