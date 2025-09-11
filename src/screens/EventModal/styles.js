@@ -31,37 +31,37 @@ const styles = StyleSheet.create({
     color: "#e0e7ff", // light text
     backgroundColor: "#101C3A", // input background matching screenshot
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
+ buttonRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  marginTop: 20,
+},
   
-  cancelButton: {
-    flex: 1,
-    paddingVertical: 12,
-    marginRight: 10, // spacing between buttons
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#FF6B6B",
-    alignItems: "center",
-  },
+ cancelButton: {
+  flex: 0.6,   
+  paddingVertical: 12,
+  marginRight: 10, 
+  backgroundColor: "#FBE6D8",
+  borderRadius: 25,
+  borderWidth: 2,
+  borderColor: "red",
+  alignItems: "center",
+},
   
   cancelText: {
-    color: "#FF6B6B",
+    color: "red",
     fontWeight: "600",
     fontSize: 16,
   },
   
   saveButton: {
-    flex: 1,
-    paddingVertical: 12,
-    marginLeft: 10,
-    borderRadius: 20,
-    backgroundColor: "#4361EE",
-    alignItems: "center",
-  },
+  flex: 1.4,   // larger width
+  paddingVertical: 12,
+  marginLeft: 10,
+  borderRadius: 25,
+  backgroundColor: "#4361EE",
+  alignItems: "center",
+},
   
   saveText: {
     color: "#fff",
@@ -83,11 +83,13 @@ const styles = StyleSheet.create({
   timePicker: {
     flex: 1,
     color: "#e0e7ff", 
+    
   },
   label: {
     fontSize: 14,
     color: "#e0e7ff",
     marginBottom: 6,
+
   },
   
   

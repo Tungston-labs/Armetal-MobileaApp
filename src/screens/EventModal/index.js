@@ -143,6 +143,7 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
                   label={i.toString().padStart(2, "0")}
                   value={i}
                   color="black"
+                  
                 />
               ))}
             </Picker>
@@ -160,13 +161,14 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
           </View>
 
           <View style={styles.buttonRow}>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSubmit} style={styles.saveButton}>
-              <Text style={styles.saveText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
+  <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+    <Text style={styles.cancelText}>Cancel</Text>
+  </TouchableOpacity>
+  <TouchableOpacity onPress={handleSubmit} style={styles.saveButton}>
+    <Text style={styles.saveText}>Submit</Text>
+  </TouchableOpacity>
+</View>
+
         </View>
       </View>
       {/* ✅ Toast container */}
