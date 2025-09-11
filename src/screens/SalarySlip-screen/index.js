@@ -15,6 +15,13 @@ import {
   PermissionsAndroid
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+
+
+
+
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -141,7 +148,7 @@ const SalarySlipScreen = () => {
       {/* Search & Year Filter */}
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={18} color="#ccc" />
+          <Ionicons name="search" size={25} color="#ccc" />
           <TextInput
             placeholder="Search Month"
             placeholderTextColor="#ccc"
@@ -155,8 +162,12 @@ const SalarySlipScreen = () => {
           style={styles.dropdownBox}
           onPress={() => setYearDropdownVisible(true)}
         >
-          <Text style={styles.dropdownText}>{selectedYear}</Text>
-          <Ionicons name="chevron-down" size={16} color="#fff" />
+          <Text style={styles.dropdownText}>
+            Year
+          </Text>
+
+
+<MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>
@@ -204,13 +215,15 @@ const SalarySlipScreen = () => {
                   <Text style={styles.monthText}>{item.month}</Text>
                   <Text style={styles.yearText}>{item.year}</Text>
                 </View>
+
                 <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
                   {downloading[item.monthNumber] ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Ionicons name="download-outline" size={22} color="#fff" />
+                    <MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" />
                   )}
                 </TouchableOpacity>
+
 
               </View>
             )}

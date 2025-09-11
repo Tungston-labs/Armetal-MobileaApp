@@ -225,34 +225,43 @@ const ReminderTab = () => {
                 style={styles.calendar}
               />
 
-              {yearPickerVisible && (
-                <Modal transparent animationType="fade">
-                  <View style={styles.modalOverlay}>
-                    <View style={styles.yearPickerContainer}>
-                      <FlatList
-                        data={Array.from({ length: 20 }, (_, i) => 2010 + i)}
-                        keyExtractor={(item) => item.toString()}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity
-                            onPress={() => {
-                              const updated = new Date(calendarMonth);
-                              updated.setFullYear(item);
-                              setCalendarMonth(updated);
-                              setYearPickerVisible(false);
-                            }}
-                          >
-                            <Text style={styles.yearItem}>{item}</Text>
-                          </TouchableOpacity>
-                        )}
-                      />
-                    </View>
-                  </View>
-                </Modal>
-              )}
+             {yearPickerVisible && (
+  <Modal transparent animationType="fade">
+    <View style={styles.modalOverlay}>
+      <View style={styles.yearPickerContainer}>
+        {/* Back / Close button */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setYearPickerVisible(false)}
+        >
+          <Ionicons name="chevron-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <FlatList
+          data={Array.from({ length: 20 }, (_, i) => 2010 + i)}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                const updated = new Date(calendarMonth);
+                updated.setFullYear(item);
+                setCalendarMonth(updated);
+                setYearPickerVisible(false);
+              }}
+            >
+              <Text style={styles.yearItem}>{item}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </View>
+  </Modal>
+)}
+
             </View>
           </View>
 
-          <View style={styles.buttonRow}>
+          {/* <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => setShowCalendar(false)}
@@ -265,7 +274,7 @@ const ReminderTab = () => {
             >
               <Text style={styles.doneText}>Done</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </>
       )}
 
