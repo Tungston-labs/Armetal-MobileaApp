@@ -17,24 +17,29 @@ import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
 
-const STATUS_COLORS = {
-  Approve: "#2ecc71",          // green
-  "In Verification": "#facc15", // yellow
-  "On Hold": "#f97316",        // orange
-  Default: "#ccc",
-};
+
 
 const STATUS_LABELS = {
   Approve: "Approved",
   "In Verification": "In Verification",
   "On Hold": "On Hold",
 };
+const STATUS_STYLES = {
+  Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },       // light green bg
+  "In Verification": { color: "#facc15", background: "rgba(250, 204, 21, 0.15)" }, // light yellow bg
+  "On Hold": { color: "#f97316", background: "rgba(249, 115, 22, 0.15)" },     // light orange bg
+  Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
+};
+
 
 export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [bill, setBill] = useState(null); // single image state
+
+
+  
 
   // fetch reimbursements
   const fetchReimbursements = async () => {
@@ -88,7 +93,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
 
   // render each reimbursement card
   const renderItem = ({ item }) => {
-    const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.Default;
+    const styleConfig = STATUS_STYLES[item.status] || STATUS_STYLES.Default;
     return (
       <TouchableOpacity
         style={styles.card}
@@ -97,11 +102,20 @@ export default function ReimbursementlistScreen({ navigation, route }) {
           navigation.navigate("ReimbursementScreen", { reimbursementId: item.id })
         }
       >
-        <View style={[styles.statusBadge, { borderColor: statusColor }]}>
-          <Text style={[styles.statusText, { color: statusColor }]}>
-            {STATUS_LABELS[item.status] || item.status}
-          </Text>
-        </View>
+
+
+<View
+  style={[
+    styles.statusBadge,
+    { borderColor: styleConfig.color, backgroundColor: styleConfig.background },
+  ]}
+>
+  <Text style={[styles.statusText, { color: styleConfig.color }]}>
+    {STATUS_LABELS[item.status] || item.status}
+  </Text>
+</View>
+
+
 
         <View style={styles.cardRow}>
           <View>
@@ -126,16 +140,8 @@ export default function ReimbursementlistScreen({ navigation, route }) {
         <Text style={styles.headerText}>Reimbursement</Text>
       </View>
 
-      {/* Upload Bill Section */}
-      <View style={{ padding: 15 }}>
-        {/* <TouchableOpacity
-          style={styles.uploadButton}
-          activeOpacity={0.8}
-          onPress={pickImage}
-        >
-          <Ionicons name="add" size={20} color="#fff" />
-          <Text style={styles.uploadButtonText}>Upload Bill</Text>
-        </TouchableOpacity> */}
+      <View style={{ padding: 5 }}>
+      
 
         {bill && (
           <View style={styles.imageWrapper}>

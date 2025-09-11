@@ -15,8 +15,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Toast from "react-native-toast-message";   // ✅ Toast import
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
+import BottomNavbar from "../BottomNavbar";
 
-const ReimbursementForm = ({ navigation }) => {
+const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
   const [toMail, setToMail] = useState("");
   const [note, setNote] = useState("");
@@ -114,16 +115,37 @@ const ReimbursementForm = ({ navigation }) => {
         {/* Expense Category */}
         <Text style={styles.label}>Expense Category</Text>
         <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={expenseCategory}
-            onValueChange={(value) => setExpenseCategory(value)}
-            style={{ color: "#fff" }}
-          >
-            <Picker.Item label="Select category" value="" />
-            {EXPENSE_CATEGORIES.map((cat) => (
-              <Picker.Item key={cat} label={cat} value={cat} />
-            ))}
-          </Picker>
+        <View style={{ position: "relative" }}>
+  <Picker
+    selectedValue={expenseCategory}
+    onValueChange={(value) => setExpenseCategory(value)}
+    style={{
+      color: "#fff",
+      backgroundColor: "#172554",
+      paddingRight: 40, // space for + icon
+    }}
+    dropdownIconColor="transparent" // hides default arrow
+  >
+    <Picker.Item label="Select category" value="" />
+    {EXPENSE_CATEGORIES.map((cat) => (
+      <Picker.Item key={cat} label={cat} value={cat} />
+    ))}
+  </Picker>
+
+  {/* + icon positioned on the right */}
+  <Ionicons
+    name="add"
+    size={22}
+    color="#fff"
+    style={{
+      position: "absolute",
+      right: 10,
+      top: "50%",
+      transform: [{ translateY: -11 }],
+    }}
+  />
+</View>
+
         </View>
 
         {/* To */}
@@ -139,7 +161,7 @@ const ReimbursementForm = ({ navigation }) => {
         {/* Upload Bill */}
         <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
           <Ionicons name="add" size={20} color="#fff" />
-          <Text style={styles.uploadButtonText}>Upload Bill</Text>
+          <Text style={styles.uploadButtonText}>Upload Image</Text>
         </TouchableOpacity>
 
         {bill && (
@@ -184,7 +206,7 @@ const ReimbursementForm = ({ navigation }) => {
           <View style={styles.halfInputContainer}>
             <Text style={styles.label}>Enter Amount (AED)</Text>
             <TextInput
-              placeholder=""
+              placeholder="0.00"
               placeholderTextColor="#8A8F9E"
               style={styles.input}
               keyboardType="numeric"
@@ -205,10 +227,15 @@ const ReimbursementForm = ({ navigation }) => {
             {loading ? "Submitting..." : "Submit"}
           </Text>
         </TouchableOpacity>
+
       </ScrollView>
+<View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+        <BottomNavbar navigation={navigation} route={route} />
+      </View>
 
       {/* ✅ Toast container */}
       <Toast />
+      
     </View>
   );
 };

@@ -27,6 +27,7 @@ export default function LeavePendingScreen() {
 
   const fetchPendingLeaves = async () => {
     try {
+      setLoading(true); // ✅ show loader again
       const response = await authAxios.get("leave/by-status/?status=pending");
       setLeaveData(response.data);
     } catch (error) {
@@ -35,6 +36,7 @@ export default function LeavePendingScreen() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (isFocused) {
