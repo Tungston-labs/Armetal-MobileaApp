@@ -14,14 +14,8 @@ import {
   Platform,
   PermissionsAndroid
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-
-
-
-
-
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -142,7 +136,7 @@ const SalarySlipScreen = () => {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Salary Slip</Text>
+        <Text style={styles.headerTitle}>Salary slip</Text>
       </View>
 
       {/* Search & Year Filter */}
@@ -167,7 +161,7 @@ const SalarySlipScreen = () => {
           </Text>
 
 
-<MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
+          <MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>
@@ -210,12 +204,23 @@ const SalarySlipScreen = () => {
             keyExtractor={(item) => `${item.month}-${item.year}`}
             contentContainerStyle={styles.listContainer}
             renderItem={({ item }) => (
+
               <View style={styles.card}>
-                <View>
-                  <Text style={styles.monthText}>{item.month}</Text>
-                  <Text style={styles.yearText}>{item.year}</Text>
+                {/* Month/Year with Note Icon */}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons
+                    name="reader"       // filled version
+                    size={25}
+                    color="#ccc"        // your desired fill color
+                    style={{ marginRight: 5 }}
+                  />
+                  <View>
+                    <Text style={styles.monthText}>{item.month}</Text>
+                    <Text style={styles.yearText}>{item.year}</Text>
+                  </View>
                 </View>
 
+                {/* Download Button */}
                 <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
                   {downloading[item.monthNumber] ? (
                     <ActivityIndicator size="small" color="#fff" />
@@ -223,9 +228,8 @@ const SalarySlipScreen = () => {
                     <MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" />
                   )}
                 </TouchableOpacity>
-
-
               </View>
+
             )}
           />
 

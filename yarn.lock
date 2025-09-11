@@ -1725,7 +1725,7 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-community/datetimepicker@^8.4.4":
+"@react-native-community/datetimepicker@^8.4.4", "@react-native-community/datetimepicker@>=6.7.0":
   version "8.4.4"
   resolved "https://registry.npmjs.org/@react-native-community/datetimepicker/-/datetimepicker-8.4.4.tgz"
   integrity sha512-bc4ZixEHxZC9/qf5gbdYvIJiLZ5CLmEsC3j+Yhe1D1KC/3QhaIfGDVdUcid0PdlSoGOSEq4VlB93AWyetEyBSQ==
@@ -4045,6 +4045,11 @@ expo-asset@~11.1.7:
     "@expo/image-utils" "^0.7.6"
     expo-constants "~17.1.7"
 
+expo-blur@^15.0.6:
+  version "15.0.6"
+  resolved "https://registry.npmjs.org/expo-blur/-/expo-blur-15.0.6.tgz"
+  integrity sha512-MvHkrRtuBSNDVppmHfgMbJkxei8Sa89FLm5XhCzflogAqDJBBzTM2oYs9b5avdA3KJn/aapDNnEOUHiN2voeIA==
+
 expo-checkbox@~4.1.4:
   version "4.1.4"
   resolved "https://registry.npmjs.org/expo-checkbox/-/expo-checkbox-4.1.4.tgz"
@@ -4191,6 +4196,13 @@ expo-notifications@^0.31.4:
     expo-application "~6.1.5"
     expo-constants "~17.1.7"
 
+expo-splash-screen@^0.30.10:
+  version "0.30.10"
+  resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.30.10.tgz"
+  integrity sha512-Tt9va/sLENQDQYeOQ6cdLdGvTZ644KR3YG9aRlnpcs2/beYjOX1LHT510EGzVN9ljUTg+1ebEo5GGt2arYtPjw==
+  dependencies:
+    "@expo/prebuild-config" "^9.0.10"
+
 expo-splash-screen@~0.17.0:
   version "0.17.5"
   resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.17.5.tgz"
@@ -4198,13 +4210,6 @@ expo-splash-screen@~0.17.0:
   dependencies:
     "@expo/configure-splash-screen" "^0.6.0"
     "@expo/prebuild-config" "5.0.7"
-
-expo-splash-screen@~0.30.9:
-  version "0.30.10"
-  resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.30.10.tgz"
-  integrity sha512-Tt9va/sLENQDQYeOQ6cdLdGvTZ644KR3YG9aRlnpcs2/beYjOX1LHT510EGzVN9ljUTg+1ebEo5GGt2arYtPjw==
-  dependencies:
-    "@expo/prebuild-config" "^9.0.10"
 
 expo-status-bar@~2.2.3:
   version "2.2.3"
@@ -6880,6 +6885,13 @@ react-native-maps@*:
   dependencies:
     "@types/geojson" "^7946.0.13"
 
+react-native-modal-datetime-picker@^18.0.0:
+  version "18.0.0"
+  resolved "https://registry.npmjs.org/react-native-modal-datetime-picker/-/react-native-modal-datetime-picker-18.0.0.tgz"
+  integrity sha512-0jdvhhraZQlRACwr7pM6vmZ2kxgzJ4CpnmV6J3TVA6MrXMXK6Zo/upRBKkRp0+fTOiKuNblzesA2U59rYo6SGA==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-paper@^5.14.5:
   version "5.14.5"
   resolved "https://registry.npmjs.org/react-native-paper/-/react-native-paper-5.14.5.tgz"
@@ -6987,7 +6999,7 @@ react-native-web@*, "react-native-web@>= 0.11", react-native-web@~0.20.0:
     postcss-value-parser "^4.2.0"
     styleq "^0.1.3"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.65 <1.0", "react-native@>= 0.30.0", "react-native@>= 0.62", "react-native@>= 0.76.0", react-native@>=0.33, react-native@>=0.35, react-native@>=0.58.4, react-native@>=0.59.0, react-native@0.79.4:
+react-native@*, "react-native@^0.0.0-0 || >=0.65 <1.0", "react-native@>= 0.30.0", "react-native@>= 0.62", "react-native@>= 0.76.0", react-native@>=0.33, react-native@>=0.35, react-native@>=0.58.4, react-native@>=0.59.0, react-native@>=0.65.0, react-native@0.79.4:
   version "0.79.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.79.4.tgz"
   integrity sha512-CfxYMuszvnO/33Q5rB//7cU1u9P8rSOvzhE2053Phdb8+6bof9NLayCllU2nmPrm8n9o6RU1Fz5H0yquLQ0DAw==
