@@ -35,7 +35,7 @@ const SalarySlipScreen = () => {
   const [salaryData, setSalaryData] = useState([]);
   const [yearDropdownVisible, setYearDropdownVisible] = useState(false);
   const [loading, setLoading] = useState(false);  // loader for fetch
-  const [downloading, setDownloading] = useState(false); // loader for download
+  const [downloading, setDownloading] = useState({}); // store per month
 
   const fetchSalaryRecords = async () => {
     try {
@@ -55,15 +55,15 @@ const SalarySlipScreen = () => {
   }, [selectedYear]);
 
   // Only show months returned from API
-const combinedList = salaryData.map((item) => {
-  const monthIndex = Number(item.month);
-  return {
-    month: allMonths[monthIndex - 1], // convert 1 → January
-    monthNumber: monthIndex,
-    year: selectedYear,
-    hasData: true,
-  };
-});
+  const combinedList = salaryData.map((item) => {
+    const monthIndex = Number(item.month);
+    return {
+      month: allMonths[monthIndex - 1], // convert 1 → January
+      monthNumber: monthIndex,
+      year: selectedYear,
+      hasData: true,
+    };
+  });
 
 
   const filtered = combinedList.filter((item) =>
@@ -89,10 +89,10 @@ const combinedList = salaryData.map((item) => {
       return true;
     }
   };
-
   const handleDownload = async (monthNumber) => {
     try {
-      setDownloading(true);
+      setDownloading(prev => ({ ...prev, [monthNumber]: true }));
+
       const token = await AsyncStorage.getItem('accessToken');
       const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
 
@@ -119,14 +119,14 @@ const combinedList = salaryData.map((item) => {
         console.log(result);
         Alert.alert('Error', 'Download failed. Try again.');
       }
-
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Could not download payslip');
     } finally {
-      setDownloading(false);
+      setDownloading(prev => ({ ...prev, [monthNumber]: false }));
     }
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,25 +195,26 @@ const combinedList = salaryData.map((item) => {
         <>
           {/* Month List */}
           <FlatList
-  data={filtered}
-  keyExtractor={(item) => `${item.month}-${item.year}`}
-  contentContainerStyle={styles.listContainer}
-  renderItem={({ item }) => (
-    <View style={styles.card}>
-      <View>
-        <Text style={styles.monthText}>{item.month}</Text>
-        <Text style={styles.yearText}>{item.year}</Text>
-      </View>
-      <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-        {downloading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Ionicons name="download-outline" size={22} color="#fff" />
-        )}
-      </TouchableOpacity>
-    </View>
-  )}
-/>
+            data={filtered}
+            keyExtractor={(item) => `${item.month}-${item.year}`}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View>
+                  <Text style={styles.monthText}>{item.month}</Text>
+                  <Text style={styles.yearText}>{item.year}</Text>
+                </View>
+                <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
+                  {downloading[item.monthNumber] ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Ionicons name="download-outline" size={22} color="#fff" />
+                  )}
+                </TouchableOpacity>
+
+              </View>
+            )}
+          />
 
         </>
       )}
