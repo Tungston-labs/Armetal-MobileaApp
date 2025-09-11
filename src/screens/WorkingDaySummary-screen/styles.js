@@ -5,31 +5,29 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
-   
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical:25,
+    paddingVertical: 25,
     borderBottomWidth: 0.3,
     backgroundColor: "#262D40",
     borderBottomColor: '#FFFFFF',
-
   },
   headerTitle: {
     flex: 1,
     fontSize: 20,
     color: '#FFFFFF',
     fontWeight: '600',
-    marginLeft:18,
-    marginTop:25,
+    marginLeft: 18,
+    marginTop: 25,
   },
 
   circleWrapper: {
     alignItems: "center",
     justifyContent: "center",
-     marginTop:10,
-     position: "relative",
+    marginTop: 10,
+    position: "relative",
     width: 200,
     height: 200,
     alignSelf: "center",
@@ -51,15 +49,14 @@ export default StyleSheet.create({
   dayText: { color: "#FFFFFF", fontSize: 16 },
   monthText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "700",
     marginTop: 5,
-    
+
   },
   dateText: {
     color: "#fff",
-    fontSize: 28,
-    marginTop: 5,
+    fontSize: 20,
     fontWeight: "600",
   },
 
@@ -67,7 +64,7 @@ export default StyleSheet.create({
     backgroundColor: '#172555',
     padding: 15,
     marginTop: 10,
-     marginHorizontal: 15,
+    marginHorizontal: 15,
   },
 
   row: {
@@ -84,8 +81,11 @@ export default StyleSheet.create({
   label: {
     color: '#fff',
     fontSize: 18,
+    marginBottom: 10,
     fontWeight: "500",
+
   },
+
   value: {
     color: '#fff',
     fontSize: 16,
@@ -99,6 +99,14 @@ export default StyleSheet.create({
     color: '#ccc',
     fontSize: 14,
   },
+
+  divider: {
+    height: 1,           // thin line
+    backgroundColor: '#fff', // line color
+    opacity: 5,        // match your theme
+    marginVertical: 10,  // spacing above and below
+  },
+
   centerText: {
     color: '#fff',
     fontSize: 15,
@@ -143,7 +151,7 @@ export default StyleSheet.create({
     width: 3,
   },
 
-    bottomNavbarContainer: {
+  bottomNavbarContainer: {
     position: 'absolute',
     bottom: 8,
     left: 0,

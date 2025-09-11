@@ -10,7 +10,7 @@ import FileIcon from '../../../assets/images/filr.svg';   // ✅ actual filename
 import FolderIcon from '../../../assets/images/folder.svg';
 import BillIcon from '../../../assets/images/bill.svg';
 
-const ICON_SIZE = 32; // Increased size for better visibility
+const ICON_SIZE = 35; // Increased size for better visibility
 
 const BottomNavbar = ({ navigation, route }) => {
   return (

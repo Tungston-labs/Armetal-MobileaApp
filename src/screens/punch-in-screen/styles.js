@@ -1,5 +1,3 @@
-
-
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -35,12 +33,13 @@ export default StyleSheet.create({
     fontWeight: "600",
     textAlign: "left",
     marginTop: 8,
-    marginBottom: 10,
+  
   },
   profilePic: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    marginBottom:35,
   },
 
   // Circle
@@ -131,47 +130,51 @@ export default StyleSheet.create({
     marginTop: 8,
   },
 
-  // Attendance Box
   attendanceBox: {
     backgroundColor: "#172555",
-    padding: 10,
+    padding: 18,
     marginTop: -40,
-    borderRadius: 12,
+    borderRadius: 15,
   },
-
+  
+  // New header row (date + hours)
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  
   attendanceTitle: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "500",
-    marginBottom: 1,
-    textAlign: "center",
   },
+  
   timeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 1,
   },
+  
   timeLabel: { color: "#fff", fontSize: 13 },
   timeValue: { color: "#fff", fontSize: 13 },
-  line: {
-    
-    backgroundColor: "#fff",
-    opacity: 0.3,
-    marginVertical: 0,
-  },
+  
+  
+  
+  // Align hours + clock in top-right
   totalHoursRow: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    marginTop: 3,
   },
-  totalHoursText: { color: "#fff", fontSize: 16, marginLeft: 4 },
+  
   hours: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
-    marginLeft: 1,
+    color: "#5D6687",
+    fontSize: 14,
+    fontWeight: "500",
+    marginLeft: 4,
   },
+  
 
   // Bottom Navbar
   bottomNavbarContainer: {

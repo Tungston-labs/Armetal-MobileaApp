@@ -15,14 +15,14 @@ import Animated, {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SwipeButton = ({
-  width = 320,
+  width = 330,
   height = 55,
   title = 'Swipe to punch in',
   successTitle = 'Punched In!',
   onSwipeSuccess,
   backgroundColor = '#e3e9ed',
   thumbColor = '#182040',
-  borderRadius = height / 2,
+  borderRadius = 150,
   textColor = '#000',
   fontSize = 18,
   icon,

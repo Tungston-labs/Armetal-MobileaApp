@@ -103,7 +103,7 @@ const AttendanceScreen = () => {
 
       setDayStatus(orderedStatuses);
     } catch (error) {
-      console.error("Failed to fetch day status:", error);
+      // console.error("Failed to fetch day status:", error);
       setDayStatus([]);
     }
   };
@@ -194,11 +194,6 @@ const AttendanceScreen = () => {
     }
   };
 
-
-
-
-
-
   useEffect(() => {
     (async () => {
       try {
@@ -206,7 +201,7 @@ const AttendanceScreen = () => {
         setEmployee(profileRes.data);
         await fetchTodayAttendance();
       } catch (err) {
-        console.error("Init error:", err.message);
+        //console.error("Init error:", err.message);
       } finally {
         setLoading(false);
       }
@@ -388,13 +383,21 @@ const AttendanceScreen = () => {
             style={styles.attendanceBox}
             onPress={() => navigation.navigate("AttendanceScreen")}
           >
-            <Text style={styles.attendanceTitle}>
-              {today.toLocaleDateString("en-US", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
-            </Text>
+            {/* Date (left) + Hours with Clock (right) in same row */}
+            <View style={styles.headerRow}>
+              <Text style={styles.attendanceTitle}>
+                {today.toLocaleDateString("en-US", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
+              </Text>
+
+              <View style={styles.totalHoursRow}>
+                <Ionicons name="time-outline" size={20} color="#fff" />
+                <Text style={styles.hours}>{totalHours}</Text>
+              </View>
+            </View>
 
             <View style={styles.timeRow}>
               <Text style={styles.timeLabel}>Time in :</Text>
@@ -415,13 +418,8 @@ const AttendanceScreen = () => {
             </View>
 
             <View style={styles.line} />
-
-            <View style={styles.totalHoursRow}>
-              <Ionicons name="time-outline" size={20} color="#fff" />
-              <Text style={styles.totalHoursText}></Text>
-              <Text style={styles.hours}>{totalHours}</Text>
-            </View>
           </Pressable>
+
 
           {/* 🔄 Loader or SwipeButton */}
           {punching ? (

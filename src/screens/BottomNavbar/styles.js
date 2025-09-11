@@ -12,13 +12,13 @@ export default StyleSheet.create({
   },
   tabIconActive: {
     backgroundColor: '#3352BA',
-    padding: 12,          // ✅ more padding for larger icons
+    padding: 8,          // ✅ more padding for larger icons
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
   tabIconNormal: {
-    padding: 10,
+    padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },

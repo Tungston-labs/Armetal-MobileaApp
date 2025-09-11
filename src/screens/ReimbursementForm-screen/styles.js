@@ -20,7 +20,7 @@ export default StyleSheet.create({
   },
   scrollContent: {
     padding: 15,
-    paddingBottom: 50,
+    paddingBottom: 300,
   },
   label: {
     color: "#FFFFFF",
