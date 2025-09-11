@@ -11,12 +11,16 @@ export default StyleSheet.create({
     paddingVertical: 35,
     paddingHorizontal: 15,
     backgroundColor: "#262D40",
+    fontFamily: 'Raleway_700Bold',
+
   },
   headerTitle: {
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "600",
     marginLeft: 10,
+    fontFamily: 'Raleway_700',
+
   },
   scrollContent: {
     padding: 15,
@@ -45,10 +49,10 @@ export default StyleSheet.create({
 
   // ✅ EXACT like "Approved" button image
   statusBadge: {
-    borderWidth: 1,
+    borderWidth: 0.3,
     borderColor: "#26B887",
     paddingVertical: 6,
-    paddingHorizontal: 18,
+    paddingHorizontal: 30,
     borderRadius: 8,
     backgroundColor: "#1E2C27",
   },
@@ -74,7 +78,7 @@ export default StyleSheet.create({
   billImage: {
     width: 70,
     height: 90,
-    borderRadius: 6,
+    borderRadius: 4,
     marginRight: 10,
     marginTop: 8,
   },
@@ -85,15 +89,20 @@ export default StyleSheet.create({
     borderColor: "#FF2304",
     borderWidth: 1.5,
     borderRadius: 25,
-    paddingVertical: 12,
+    paddingVertical: 15,
+    paddingHorizontal: 90,  // ✅ controls width nicely
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#371F1B",
+    alignSelf: "center",    // ✅ centers the button
   },
+  
   cancelButtonText: {
     color: "#FF2304",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: 'Raleway_700Bold',
+
+   
   },
 
   bottomNavbarContainer: {

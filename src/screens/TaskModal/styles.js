@@ -21,20 +21,22 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Raleway_700Bold',
   },
   inputLabel: {
     color: '#FFFFFF',
     marginTop: 12,
     marginBottom: 6,
     fontSize: 14,
+    fontFamily: 'Raleway_700',
+
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: '#FFFFFF',
     backgroundColor: '#172554',
     color: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 6,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
@@ -43,7 +45,7 @@ export default StyleSheet.create({
   timeInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: '#FFFFFF',
     backgroundColor: '#172554',
     borderRadius: 12,
@@ -62,6 +64,8 @@ export default StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 15,
+    borderWidth: 0.2,
+
   },
   modalActions: {
     flexDirection: 'row',
@@ -70,7 +74,7 @@ export default StyleSheet.create({
     marginTop: 24,
   },
   cancelBtn: {
-    flex: 1,
+    flex: 0.6,
     backgroundColor: '#FBE6D8',
     borderColor: '#FF2304',
     borderWidth: 3,

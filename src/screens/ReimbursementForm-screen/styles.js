@@ -9,14 +9,15 @@ export default StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 35,
-    paddingHorizontal: 15,
+    paddingHorizontal: 14,
     backgroundColor: "#262D40",
   },
   headerTitle: {
     color: "#FFFFFF",
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: 'Raleway_700Bold',
     marginLeft: 10,
+
   },
   scrollContent: {
     padding: 15,
@@ -27,6 +28,7 @@ export default StyleSheet.create({
     fontSize: 12,
     marginTop: 12,
     marginBottom: 6,
+    
   },
   input: {
     backgroundColor: "#172554",
@@ -35,6 +37,8 @@ export default StyleSheet.create({
     paddingHorizontal: 12,
     color: "#FFFFFF",
     fontSize: 15,
+    borderWidth: 0.1,
+    borderColor: "#ffff",
   },
   uploadButton: {
     flexDirection: "row",
@@ -44,6 +48,8 @@ export default StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 14,
     marginTop: 15,
+    borderWidth: 0.2,
+    borderColor: "#ffff",
   },
   uploadButtonText: {
     color: "#FFFFFF",
@@ -64,8 +70,10 @@ export default StyleSheet.create({
     paddingHorizontal: 12,
     color: "#FFFFFF",
     fontSize: 14,
-    minHeight: 90,
+    minHeight: 150,
     textAlignVertical: "top",
+    borderWidth: 0.1,
+    borderColor: "#ffff",
   },
   row: {
     flexDirection: "row",
@@ -96,6 +104,10 @@ export default StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: "center",
+    borderWidth: 0.2,
+    borderColor: "#ffff",
+    fontFamily: 'Raleway_700',
+
   },
   submitButtonText: {
     color: "#FFFFFF",
@@ -103,8 +115,8 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
   pickerWrapper: {
-    borderWidth: 1,
-    borderColor: "#8A8F9E",
+    borderWidth: 0.2,
+    borderColor: "#ffff",
     borderRadius: 8,
     marginBottom: 12,
     overflow: "hidden",

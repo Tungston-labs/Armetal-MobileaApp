@@ -10,12 +10,16 @@ export default StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 15,
     paddingHorizontal: 20,
-    backgroundColor: "#262D40",
+    borderBottomWidth: 0.1,
+
+    borderBottomColor: '#FFFF',
+  backgroundColor: '#262D40',
   },
   headerText: {
     color: "#fff",
     fontSize: 20,
-    fontWeight: "600",
+    fontFamily: 'Raleway_700Bold', // <-- add this
+
   },
 
   scrollContainer: {
@@ -29,21 +33,25 @@ export default StyleSheet.create({
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
+    borderWidth:0.4,
+    borderColor:"grey"
   },
 
   // ✅ Rectangle status badge with border
   statusBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+    paddingHorizontal: 40,   // more width
+    paddingVertical: 5,
     borderRadius: 6,
-    borderWidth: 1.2,
+    borderWidth: 0.5,
     marginBottom: 10,
-    backgroundColor: "#172554", // match card background
   },
+ 
+  
   statusText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: 'Raleway_700', 
+
   },
 
   cardRow: {
@@ -60,7 +68,8 @@ export default StyleSheet.create({
   category: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: 'Raleway_700',
+
   },
   amount: {
     color: "#fff",

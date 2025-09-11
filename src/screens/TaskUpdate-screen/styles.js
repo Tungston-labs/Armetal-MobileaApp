@@ -15,14 +15,26 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#0B1437",
+    backgroundColor: "#262D40",
     // paddingBottom: 20,
 
   },
+  descriptionLabel: {
+    marginTop: 6,
+    fontWeight: '600',
+    color: '#747C98',
+    fontSize: 12,
+  },
+  descriptionText: {
+    color: '#fff',
+    fontSize: 14,
+    marginTop: 2,
+  },
+  
   
   title: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Raleway_700Bold',
     color: '#FFFFFF',
     // marginTop:40,
   },
