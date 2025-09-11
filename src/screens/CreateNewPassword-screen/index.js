@@ -83,7 +83,7 @@ export default function CreateNewPasswordScreen() {
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff"  />
+          <Ionicons name="chevron-back" size={24} color="#fff"  />
         </TouchableOpacity>
       </View>
 

@@ -22,7 +22,7 @@ const API_BASE_URL = "http://178.248.112.16:8001";
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [employee, setEmployee] = useState(null);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -77,7 +77,12 @@ const ProfileScreen = () => {
           style={styles.optionCard}
           onPress={() => navigation.navigate("SalarySlipScreen")}
         >
-          <Ionicons name="receipt-outline" size={22} color="#ccc" />
+          <Ionicons
+            name="reader"       // filled version
+            size={25}
+            color="#ccc"        // your desired fill color
+            style={{ marginRight: 5 }}
+          />
           <Text style={styles.optionText}>Salary slip</Text>
         </TouchableOpacity>
 
@@ -99,16 +104,33 @@ const ProfileScreen = () => {
 
         <TouchableOpacity
           style={styles.optionCard}
-          onPress={async () => {
-            await AsyncStorage.removeItem("accessToken");
-            await AsyncStorage.removeItem("refreshToken");
-            dispatch(logout());
-            navigation.replace("LoginScreen"); 
+          onPress={() => {
+            Alert.alert(
+              "Confirm Logout",
+              "Are you sure you want to log out?",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Yes",
+                  onPress: async () => {
+                    await AsyncStorage.removeItem("accessToken");
+                    await AsyncStorage.removeItem("refreshToken");
+                    dispatch(logout());
+                    navigation.replace("LoginScreen");
+                  },
+                },
+              ],
+              { cancelable: true }
+            );
           }}
         >
           <Ionicons name="log-out-outline" size={22} color="#ccc" />
           <Text style={styles.optionText}>Log out</Text>
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );

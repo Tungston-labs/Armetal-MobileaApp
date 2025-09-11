@@ -1,5 +1,5 @@
 // App.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
 import * as Notifications from "expo-notifications";
+import * as SplashScreen from "expo-splash-screen";
 
 // ✅ Import font utilities
 import { useFonts, Raleway_400Regular, Raleway_500Medium, Raleway_700Bold } from "@expo-google-fonts/raleway";
@@ -16,6 +17,7 @@ import { Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold, Montse
 import AppLoading from "expo-app-loading";
 
 enableScreens();
+SplashScreen.preventAutoHideAsync(); // Keep splash until fonts load
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -39,6 +41,9 @@ const InitAuth = ({ children }) => {
 
 const App = () => {
   // ✅ Load Raleway and Montserrat fonts
+  const [appReady, setAppReady] = useState(false);
+
+  // ✅ Load Raleway fonts
   const [fontsLoaded] = useFonts({
     Raleway_400Regular,
     Raleway_500Medium,
@@ -50,19 +55,28 @@ const App = () => {
   });
 
   useEffect(() => {
-    const requestPermissions = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== "granted") {
-        alert("Permission for notifications not granted!");
+    const prepareApp = async () => {
+      try {
+        // Request notification permissions
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          alert("Permission for notifications not granted!");
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        if (fontsLoaded) {
+          await SplashScreen.hideAsync(); // Hide splash when ready
+          setAppReady(true);
+        }
       }
     };
 
-    requestPermissions();
-  }, []);
+    prepareApp();
+  }, [fontsLoaded]);
 
-  // ✅ Show loading until fonts are ready
-  if (!fontsLoaded) {
-    return <AppLoading />;
+  if (!appReady) {
+    return null; // Splash screen is visible
   }
 
   return (

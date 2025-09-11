@@ -21,14 +21,17 @@ export default StyleSheet.create({
     paddingTop: height * 0.15,
     paddingBottom: 30,
     marginTop:-20,
+    
   },
 
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 23,
     color: '#FFFF',
     textAlign: 'center',
     marginBottom: 6,
+    fontFamily: 'Raleway_700Bold', // <-- add this
+
+    
   },
 
   subtitle: {
@@ -37,6 +40,9 @@ export default StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 20,
+    fontFamily: 'Raleway_700', // <-- add this
+
+    
   },
 
   label: {
@@ -71,7 +77,8 @@ export default StyleSheet.create({
 
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontFamily: 'Raleway_700Bold', // <-- add this
+
   },
 });

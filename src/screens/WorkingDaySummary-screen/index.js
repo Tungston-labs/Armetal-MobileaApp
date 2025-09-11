@@ -6,6 +6,9 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+
 
 // Get number of days in a given date's month
 function getDaysInMonth(dateStr) {
@@ -157,7 +160,7 @@ export default function WorkingDaySummary() {
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.subLabel}>Total Work Hours </Text>
+              <Text style={styles.subLabel}>Total Work Hours(This Month) </Text>
               <Text style={styles.subValue}>
                 {summary.total_working_hours} Hrs
               </Text>
@@ -167,7 +170,7 @@ export default function WorkingDaySummary() {
             <View style={styles.divider} />
 
             <View style={styles.centerRow}>
-              <Ionicons name="time-outline" size={20} color="#fff" />
+              <Ionicons name="time-outline" size={24} color="#fff" />
               <Text style={styles.centerText}>
                 {summary.total_working_hours} Hrs
               </Text>

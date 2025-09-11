@@ -4045,6 +4045,11 @@ expo-asset@~11.1.7:
     "@expo/image-utils" "^0.7.6"
     expo-constants "~17.1.7"
 
+expo-blur@^15.0.6:
+  version "15.0.6"
+  resolved "https://registry.npmjs.org/expo-blur/-/expo-blur-15.0.6.tgz"
+  integrity sha512-MvHkrRtuBSNDVppmHfgMbJkxei8Sa89FLm5XhCzflogAqDJBBzTM2oYs9b5avdA3KJn/aapDNnEOUHiN2voeIA==
+
 expo-checkbox@~4.1.4:
   version "4.1.4"
   resolved "https://registry.npmjs.org/expo-checkbox/-/expo-checkbox-4.1.4.tgz"
