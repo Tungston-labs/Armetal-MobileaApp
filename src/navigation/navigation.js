@@ -52,7 +52,10 @@ export default function Navigation() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+     <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="SplashScreen"
+      >
         {/* Splash / Auth loading screen */}
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />

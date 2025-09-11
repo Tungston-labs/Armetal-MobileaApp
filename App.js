@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect, useState } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -11,13 +10,22 @@ import { restoreSession } from "./src/redux/features/authSlice";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 
-// ✅ Import font utilities
-import { useFonts, Raleway_400Regular, Raleway_500Medium, Raleway_700Bold } from "@expo-google-fonts/raleway";
-import { Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold, Montserrat_800ExtraBold } from "@expo-google-fonts/montserrat";
-import AppLoading from "expo-app-loading";
+// Fonts
+import {
+  useFonts,
+  Raleway_400Regular,
+  Raleway_500Medium,
+  Raleway_700Bold,
+} from "@expo-google-fonts/raleway";
+import {
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_700Bold,
+  Montserrat_800ExtraBold,
+} from "@expo-google-fonts/montserrat";
 
 enableScreens();
-SplashScreen.preventAutoHideAsync(); // Keep splash until fonts load
+SplashScreen.preventAutoHideAsync(); // ⏳ Keep splash until ready
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -40,10 +48,8 @@ const InitAuth = ({ children }) => {
 };
 
 const App = () => {
-  // ✅ Load Raleway and Montserrat fonts
   const [appReady, setAppReady] = useState(false);
 
-  // ✅ Load Raleway fonts
   const [fontsLoaded] = useFonts({
     Raleway_400Regular,
     Raleway_500Medium,
@@ -57,7 +63,6 @@ const App = () => {
   useEffect(() => {
     const prepareApp = async () => {
       try {
-        // Request notification permissions
         const { status } = await Notifications.requestPermissionsAsync();
         if (status !== "granted") {
           alert("Permission for notifications not granted!");
@@ -66,8 +71,8 @@ const App = () => {
         console.warn(e);
       } finally {
         if (fontsLoaded) {
-          await SplashScreen.hideAsync(); // Hide splash when ready
           setAppReady(true);
+          await SplashScreen.hideAsync(); // ✅ Hide when ready
         }
       }
     };
@@ -76,7 +81,7 @@ const App = () => {
   }, [fontsLoaded]);
 
   if (!appReady) {
-    return null; // Splash screen is visible
+    return null; // Stay on splash
   }
 
   return (
