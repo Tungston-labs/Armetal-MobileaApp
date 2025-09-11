@@ -52,37 +52,42 @@ export default function LeaveApproveScreen() {
       }
       style={styles.card}
     >
+      {/* Status */}
       <View style={styles.statusContainer}>
         <Text style={styles.statusText}>
           {item.status.charAt(0).toUpperCase() +
             item.status.slice(1).toLowerCase()}
         </Text>
       </View>
+
+      {/* Card Content */}
       <View style={styles.cardContent}>
+        {/* Row: From | To | Time */}
         <View style={styles.row}>
-          <Text style={styles.label}>From</Text>
-          <Text style={styles.value}>{item.from_date}</Text>
+          <View>
+            <Text style={styles.label}>From</Text>
+            <Text style={styles.value}>{item.from_date}</Text>
+          </View>
+
+          <View>
+            <Text style={styles.label}>To</Text>
+            <Text style={styles.value}>{item.to_date}</Text>
+          </View>
+
+          <View>
+            <Text style={styles.label}>Time</Text>
+            <Text style={styles.value}>{item.time}</Text>
+          </View>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>To</Text>
-          <Text style={styles.value}>{item.to_date}</Text>
-        </View>
-        <View style={styles.row}>
+
+        {/* Leave Type in second line */}
+        <View style={{ marginTop: 8 }}>
           <Text style={styles.label}>Leave Type</Text>
           <Text style={styles.value}>{item.leave_type}</Text>
-        </View>
-                <View style={styles.row}>
-          <Text style={styles.label}>Reason</Text>
-          <Text style={styles.value}>
-            {item.reason && item.reason.length > 10
-              ? item.reason.substring(0, 25) + "...."
-              : item.reason}
-          </Text>
         </View>
       </View>
     </TouchableOpacity>
   );
-
   return (
     <SafeAreaView style={styles.container}>
       <LeaveHeader navigation={navigation} route={route} />

@@ -74,8 +74,9 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 12,
-    marginHorizontal: 16,
+    marginTop: 16,
+    marginHorizontal: 19,
+    marginVertical: 15,
   },
   listContent: {
     padding: 16,
@@ -85,9 +86,8 @@ export default StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
-    borderWidth: 0.2,
-    // borderColor: '#333',
-     borderColor: '#FFFFFF',
+    borderWidth: 0.3,
+    borderColor: '#FFFFFF',
   },
   statusBadgeRejected: {
     borderWidth: 1,
@@ -107,8 +107,8 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6,
+    justifyContent: 'space-between', // spreads From | To | Time evenly
+    marginVertical: 4,
   },
   label: {
     color: '#aaa',

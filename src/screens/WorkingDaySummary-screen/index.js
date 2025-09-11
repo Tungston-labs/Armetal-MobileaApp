@@ -6,9 +6,10 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
+// import { LinearGradient } from "expo-linear-gradient";
+// import { BlurView } from "expo-blur";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
+
 
 // Get number of days in a given date's month
 function getDaysInMonth(dateStr) {
