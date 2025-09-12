@@ -24,42 +24,49 @@ export default StyleSheet.create({
 
   },
 
-  circleWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-    position: "relative",
-    width: 200,
-    height: 200,
-    alignSelf: "center",
-  },
-  circle: {
-    width: 140,
-    height: 140,
-    borderRadius: 100,
-    backgroundColor: "#1D2C60",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  segment: {
-    position: "absolute",
-    width: 10,
-    height: 7,
-    borderRadius: 1,
-  },
-  dayText: { color: "#FFFFFF", fontSize: 16 },
-  monthText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    marginTop: 5,
-
-  },
-  dateText: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "600",
-  },
+circleWrapper: {
+  marginTop:30,
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: -10,
+  position: "relative",
+  width: 160,
+  height: 160,
+  alignSelf: "center",
+  marginBottom:20,
+},
+circle: {
+  width: 140,
+  height: 140,
+  borderRadius: 80,   // ✅ half of 140 for a perfect circle
+  overflow: "hidden", // ✅ clip the gradient inside
+  justifyContent: "center",
+  alignItems: "center",
+},
+segment: {
+  position: "absolute",
+  width: 10,
+  height: 7,
+  borderRadius: 1,
+},
+dayText: { color: "#FFFFFF", fontSize: 16 },
+monthText: {
+  color: "#fff",
+  fontSize: 15,
+  fontWeight: "700",
+  marginTop: 5,
+},
+dateText: {
+  color: "#fff",
+  fontSize: 20,
+  marginTop: 5,
+  fontWeight: "600",
+},
+textContainer: {
+  position: "absolute",
+  justifyContent: "center",
+  alignItems: "center",
+},
 
   summaryCard: {
     backgroundColor: '#172555',

@@ -21,8 +21,7 @@ headerTitle: {
   marginLeft: 20,
   fontSize: 22,
   color: '#FFFFFF',
-  fontWeight: 'bold',
-  // marginTop removed
+  fontFamily: 'Raleway_700Bold',
 },
 
   separator: {
@@ -32,7 +31,7 @@ headerTitle: {
   content: {
     paddingHorizontal: 16,
     paddingVertical: 20,
-    paddingBottom: 120, // space for bottom bar
+    paddingBottom: 350, // space for bottom bar
   },
   statsContainer: {
     flexDirection: 'row',
@@ -50,6 +49,8 @@ headerTitle: {
   statLabel: {
     color: '#FFFFFF',
     fontSize: 13,
+    fontFamily: 'Montserrat_400Regular',
+
   },
   statValue: {
     color: '#FFFFFF',
@@ -72,6 +73,8 @@ headerTitle: {
   inputLabel: {
     color: '#FFFFFF',
     fontSize: 13,
+    fontFamily: 'Montserrat_400Regular',
+
     marginBottom: 6,
   },
   dateField: {
@@ -140,8 +143,9 @@ headerTitle: {
   },
   applyButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontFamily: 'Montserrat_700Bold',
+
   },
   pickerWrapper: {
   backgroundColor: '#green',

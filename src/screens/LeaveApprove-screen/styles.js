@@ -84,11 +84,11 @@ export default StyleSheet.create({
   },
   card: {
     backgroundColor: '#172554',
-    borderRadius: 12,
+    borderRadius: 10,
     marginHorizontal: 16,
     marginBottom: 12,
     padding: 16,
-    borderWidth: 0.2,
+    borderWidth: 0.3,
     borderColor: '#FFFFFF',
   },
   statusContainer: {
@@ -111,11 +111,12 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 2,
+    justifyContent: 'space-between', // spreads From | To | Time evenly
+    marginVertical: 4,
   },
   label: {
-     color: '#aaa',
+    color: '#B8B7BB',
+    fontFamily: 'Montserrat_400Regular',
     fontSize: 13,
     // fontFamily: 'Montserrat_400Regular',
   },

@@ -28,13 +28,13 @@ export default StyleSheet.create({
   dateText: {
     fontSize: 16,
     color: '#fff',
-    fontFamily: 'Satoshi-Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   dateLabel: {
     fontSize: 13,
     color: '#ccc',
-    fontFamily: 'Satoshi-Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   noteCard: {
@@ -53,13 +53,13 @@ export default StyleSheet.create({
   noteText: {
     color: '#fff',
     fontSize: 14,
-    fontFamily: 'Satoshi-Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   noteInput: {
     color: '#fff',
     fontSize: 14,
-    fontFamily: 'Satoshi-Regular',
+    fontFamily: 'Montserrat_400Regular',
     borderWidth: 1,
     borderColor: '#2f3e74',
     padding: 8,
@@ -128,7 +128,7 @@ export default StyleSheet.create({
   cell: {
     color: '#fff',
     fontSize: 20,
-    fontFamily: 'Satoshi-Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   bottomTab: {

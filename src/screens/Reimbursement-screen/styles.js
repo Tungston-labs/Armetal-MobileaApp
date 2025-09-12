@@ -6,21 +6,22 @@ export default StyleSheet.create({
     backgroundColor: "#151D34", // dark background
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 35,
-    paddingHorizontal: 15,
-    backgroundColor: "#262D40",
-    fontFamily: 'Raleway_700Bold',
-
+    flexDirection: 'row',       // ensures children are in one line
+    alignItems: 'center',       // vertical alignment
+    paddingTop: 65,
+    paddingBottom: 18,
+    paddingHorizontal: 16,      // use standard padding, not too wide
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
+    backgroundColor: '#262D40',
   },
-  headerTitle: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "600",
-    marginLeft: 10,
-    fontFamily: 'Raleway_700',
 
+  headerTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontFamily: 'Raleway_700Bold',
+    marginLeft: 12,             // space between arrow and text
+    flex: 1,                     // makes title take remaining space
   },
   scrollContent: {
     padding: 15,
@@ -40,11 +41,12 @@ export default StyleSheet.create({
     color: "#485378",
     fontSize: 12,
     marginBottom: 2,
+    fontFamily: 'Montserrat_400Regular',
   },
   expenseText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: 'Montserrat_700Bold',
   },
 
   // ✅ EXACT like "Approved" button image
@@ -69,6 +71,7 @@ export default StyleSheet.create({
   value: {
     color: "#FFFFFF",
     fontSize: 14,
+    fontFamily: 'Montserrat_400Regular',
   },
   noteText: {
     color: "#FFFFFF",
@@ -88,7 +91,7 @@ export default StyleSheet.create({
     marginTop: 20,
     borderColor: "#FF2304",
     borderWidth: 1.5,
-    borderRadius: 25,
+    borderRadius: 33,
     paddingVertical: 15,
     paddingHorizontal: 90,  // ✅ controls width nicely
     alignItems: "center",
@@ -99,10 +102,8 @@ export default StyleSheet.create({
   
   cancelButtonText: {
     color: "#FF2304",
-    fontSize: 16,
-    fontFamily: 'Raleway_700Bold',
-
-   
+    fontSize: 17,
+    fontFamily: 'Montserrat_700Bold',
   },
 
   bottomNavbarContainer: {

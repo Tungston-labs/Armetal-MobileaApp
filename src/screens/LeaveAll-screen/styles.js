@@ -7,7 +7,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
- 
+
 
   header: {
     flexDirection: 'row',
@@ -30,7 +30,7 @@ export default StyleSheet.create({
     color: '#FFFF',
     fontSize: 15,
     marginLeft: 20,
-    marginTop:20,
+    marginTop: 20,
     marginBottom: 10,
     fontWeight: 'bold',
   },
@@ -43,6 +43,8 @@ export default StyleSheet.create({
     borderRadius: 8,
     marginBottom: 16,
     padding: 16,
+    borderWidth: 0.3,
+    borderColor: '#FFFFFF',
   },
   statusBadge: {
     alignSelf: 'flex-start',
@@ -54,17 +56,17 @@ export default StyleSheet.create({
   statusApproved: {
     borderColor: '#00d47f',
     borderWidth: 1,
-     backgroundColor: 'rgba(0, 212, 127, 0.1)',
+    backgroundColor: 'rgba(0, 212, 127, 0.1)',
   },
   statusRejected: {
     borderColor: '#f44336',
     borderWidth: 1,
-     backgroundColor: 'rgba(244, 67, 54, 0.1)',
+    backgroundColor: 'rgba(244, 67, 54, 0.1)',
   },
   statusPending: {
     borderColor: '#ff9800',
     borderWidth: 1,
-       backgroundColor: 'rgba(255, 152, 0, 0.1)',
+    backgroundColor: 'rgba(255, 152, 0, 0.1)',
   },
   statusText: {
     color: '#FFFF',
@@ -75,17 +77,21 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+    justifyContent: 'space-between', // spreads From | To | Time evenly
+    marginVertical: 4,
   },
   label: {
-    color: '#aaa',
-    fontSize: 14,
+    color: '#B8B7BB',
+    fontFamily: 'Montserrat_400Regular',
+    fontSize: 13,
   },
   value: {
-    color: '#fff',
-    fontSize: 14,
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontFamily: 'Montserrat_700Bold',
+    marginTop: 2, // ensures value sits just below the label
   },
+
   fab: {
     position: 'absolute',
     right: 20,

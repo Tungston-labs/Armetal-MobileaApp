@@ -7,13 +7,12 @@ export default StyleSheet.create({
   },
 
   header: {
-    paddingTop: 50,
-    paddingBottom: 15,
+    paddingTop: 68,
+    paddingBottom: 18,
     paddingHorizontal: 20,
-    borderBottomWidth: 0.1,
-
+    borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
-  backgroundColor: '#262D40',
+    backgroundColor: '#262D40',
   },
   headerText: {
     color: "#fff",
@@ -33,8 +32,8 @@ export default StyleSheet.create({
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
-    borderWidth:0.4,
-    borderColor:"grey"
+    borderWidth: 0.4,
+    borderColor: "grey"
   },
 
   // ✅ Rectangle status badge with border
@@ -46,11 +45,11 @@ export default StyleSheet.create({
     borderWidth: 0.5,
     marginBottom: 10,
   },
- 
-  
+
+
   statusText: {
     fontSize: 14,
-    fontFamily: 'Raleway_700', 
+    fontFamily: 'Raleway_700',
 
   },
 
@@ -98,7 +97,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   fixedButtonText: {
     color: "#fff",
     fontSize: 16,
@@ -129,14 +128,14 @@ export default StyleSheet.create({
     width: 90,
     height: 110,
   },
-  
+
   closeIcon: {
     position: "absolute",
     top: -6,
     right: -6,
     zIndex: 10,
   }
-  
+
 });
- 
+
 

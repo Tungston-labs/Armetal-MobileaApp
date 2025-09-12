@@ -6,8 +6,9 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
+// import { LinearGradient } from "expo-linear-gradient";
+// import { BlurView } from "expo-blur";
+import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 
 
 // Get number of days in a given date's month
@@ -136,20 +137,46 @@ export default function WorkingDaySummary() {
 
 
         {/* Circle */}
-        <View style={{ alignItems: "center" }}>
-          <TouchableOpacity
-            style={styles.circleWrapper}
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate("WorkingDaySummary")}
-          >
-            {dayStatus.map((status, index) => getSegment(status, index))}
-            <View style={styles.circle}>
-              <Text style={styles.dayText}>{todayWeekday}</Text>
-              <Text style={styles.monthText}>{todayMonth}</Text>
-              <Text style={styles.dateText}>{today.getDate()}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity
+              style={styles.circleWrapper}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate("WorkingDaySummary")}
+            >
+              {dayStatus.map((status, index) => getSegment(status, index))}
+        
+              {/* Gradient Circle */}
+              <View style={styles.circle}>
+                <Svg height="160" width="160">
+                  <Defs>
+                    <RadialGradient
+                      id="grad"
+                      cx="50%"
+                      cy="50%"
+                      rx="50%"
+                      ry="50%"
+                      fx="50%"
+                      fy="50%"
+                      
+                    >
+                      <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
+                      <Stop offset="63.46%"  stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
+                      <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
+                    </RadialGradient>
+                  </Defs>
+                  {/* Fill full circle */}
+                  <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
+                </Svg>
+        
+                {/* Text on top of gradient */}
+                <View style={styles.textContainer}>
+                  <Text style={styles.dayText}>{todayWeekday}</Text>
+                  <Text style={styles.monthText}>{todayMonth}</Text>
+                  <Text style={styles.dateText}>{today.getDate()}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
 
         {/* Summary */}
         {summary && (
