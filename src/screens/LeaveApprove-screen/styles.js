@@ -123,7 +123,7 @@ export default StyleSheet.create({
   value: {
     color: '#FFFFFF',
     fontSize: 13,
-    fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_700Bold',
   },
   fab: {
     position: 'absolute',

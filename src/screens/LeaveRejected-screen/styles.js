@@ -116,9 +116,9 @@ export default StyleSheet.create({
     // fontFamily: 'Montserrat_400Regular',
   },
   value: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Montserrat_400Regular',
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontFamily: 'Montserrat_700Bold',
   },
   fab: {
     position: 'absolute',
