@@ -29,7 +29,8 @@ export default function SetNewPasswordScreen() {
       Toast.show({
         type: 'error',
         text1: 'Validation Error',
-        text2: 'Please fill out all fields.',
+        text2: 'Please fill out all fields.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -37,7 +38,8 @@ export default function SetNewPasswordScreen() {
       Toast.show({
         type: 'error',
         text1: 'Validation Error',
-        text2: 'Passwords do not match.',
+        text2: 'Passwords do not match.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -52,7 +54,8 @@ export default function SetNewPasswordScreen() {
        Toast.show({
         type: 'success',
         text1: 'Success',
-        text2: 'Password reset successful.',
+        text2: 'Password reset successful.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       navigation.navigate('LoginScreen');
     } catch (error) {
@@ -60,7 +63,8 @@ export default function SetNewPasswordScreen() {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: error.response?.data?.detail || 'Failed to reset password.',
+        text2: error.response?.data?.detail || 'Failed to reset password.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
     }
   };

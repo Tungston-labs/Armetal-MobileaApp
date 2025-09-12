@@ -31,7 +31,8 @@ export default function CreateNewPasswordScreen() {
       type,
       text1,
       text2,
-      position: 'bottom',
+      position: 'bottom',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+      text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
     });
   };
 

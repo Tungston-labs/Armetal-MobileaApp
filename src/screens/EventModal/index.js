@@ -41,7 +41,8 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
         Toast.show({
           type: "error",
           text1: "Validation Error",
-          text2: "Please fill in all fields",
+          text2: "Please fill in all fields",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+          text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
         });
         return;
       }
@@ -51,8 +52,9 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
         Toast.show({
           type: "error",
           text1: "Validation Error",
-          text2: "Title cannot exceed 100 characters",
-        });
+          text2: "Title cannot exceed 100 characters",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+          text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+          text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },        });
         return;
       }
 
@@ -76,7 +78,8 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Reminder set successfully!",
+        text2: "Reminder set successfully!",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
 
       onEventAdded(res.data);
@@ -86,7 +89,8 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Failed to add reminder",
+        text2: "Failed to add reminder",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
     }
   };
@@ -171,8 +175,6 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
 
         </View>
       </View>
-      {/* ✅ Toast container */}
-      <Toast />
     </Modal>
   );
 };

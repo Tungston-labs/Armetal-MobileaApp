@@ -31,7 +31,8 @@ export default function TaskModal({
       Toast.show({
         type: 'error',
         text1: 'Validation Error',
-        text2: 'All fields are required.',
+        text2: 'All fields are required.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -41,7 +42,8 @@ export default function TaskModal({
       Toast.show({
         type: 'error',
         text1: 'Too Long',
-        text2: 'Project title cannot exceed 100 characters.',
+        text2: 'Project title cannot exceed 100 characters.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -54,7 +56,8 @@ export default function TaskModal({
       Toast.show({
         type: 'error',
         text1: 'Invalid Input',
-        text2: 'Time taken must be a number greater than 0.',
+        text2: 'Time taken must be a number greater than 0.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -64,7 +67,8 @@ export default function TaskModal({
       Toast.show({
         type: 'error',
         text1: 'Invalid Hours',
-        text2: 'Time taken cannot be more than 24 hours.',
+        text2: 'Time taken cannot be more than 24 hours.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -76,6 +80,8 @@ export default function TaskModal({
           type: 'error',
           text1: 'Error',
           text2: 'Token not found.',
+          text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
         });
         return;
       }
@@ -94,7 +100,8 @@ export default function TaskModal({
         type: 'success',
         text1: 'Success',
         text2: 'Task submitted successfully!',text1Style: { fontSize: 20, fontWeight: "bold" },
-        text2Style: { fontSize: 16 },             
+        text2Style: { fontSize: 16 },text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },             
       });
 
       onSubmit();
@@ -107,7 +114,8 @@ export default function TaskModal({
       Toast.show({
         type: 'error',
         text1: '',
-        text2: errorMsg,
+        text2: errorMsg,text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
 
       // console.error('❌ Task submission failed:', error.response?.data || error.message);
@@ -176,7 +184,6 @@ export default function TaskModal({
       </View>
 
       {/* ✅ Toast container */}
-      <Toast />
     </Modal>
   );
 }

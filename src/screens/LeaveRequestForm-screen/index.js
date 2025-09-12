@@ -128,7 +128,8 @@ const onFromChange = (event, selectedDate) => {
       Toast.show({
         type: "error",
         text1: "Invalid Date",
-        text2: "You cannot select a past date.",
+        text2: "You cannot select a past date.",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -147,7 +148,8 @@ const onToChange = (event, selectedDate) => {
       Toast.show({
         type: "error",
         text1: "Invalid Date",
-        text2: "You cannot select a past date.",
+        text2: "You cannot select a past date.",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -155,7 +157,8 @@ const onToChange = (event, selectedDate) => {
       Toast.show({
         type: "error",
         text1: "Invalid Range",
-        text2: "To date cannot be earlier than From date.",
+        text2: "To date cannot be earlier than From date.",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
       return;
     }
@@ -178,7 +181,8 @@ const submitLeaveRequest = async () => {
     Toast.show({
       type: "error",
       text1: "Invalid Email",
-      text2: "Enter a valid Gmail, Yahoo, or Outlook email.",
+      text2: "Enter a valid Gmail, Yahoo, or Outlook email.",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+      text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
     });
     return;
   }
@@ -187,7 +191,8 @@ const submitLeaveRequest = async () => {
     Toast.show({
       type: "error",
       text1: "Invalid CC Email",
-      text2: "Enter a valid Gmail, Yahoo, or Outlook email.",
+      text2: "Enter a valid Gmail, Yahoo, or Outlook email.",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
     });
     return;
   }
