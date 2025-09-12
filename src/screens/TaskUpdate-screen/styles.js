@@ -17,7 +17,8 @@ export default StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: "#262D40",
     // paddingBottom: 20,
-
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
   },
   descriptionLabel: {
     marginTop: 6,

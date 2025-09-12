@@ -5,20 +5,26 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#151D34", // dark bg
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 35,
-    paddingHorizontal: 14,
-    backgroundColor: "#262D40",
-  },
-  headerTitle: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontFamily: 'Raleway_700Bold',
-    marginLeft: 10,
 
+  header: {
+    flexDirection: 'row',       // ensures children are in one line
+    alignItems: 'center',       // vertical alignment
+    paddingTop: 65,
+    paddingBottom: 18,
+    paddingHorizontal: 16,      // use standard padding, not too wide
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
+    backgroundColor: '#262D40',
   },
+
+  headerTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontFamily: 'Raleway_700Bold',
+    marginLeft: 12,             // space between arrow and text
+    flex: 1,                     // makes title take remaining space
+  },
+
   scrollContent: {
     padding: 15,
     paddingBottom: 300,
@@ -26,9 +32,9 @@ export default StyleSheet.create({
   label: {
     color: "#FFFFFF",
     fontSize: 12,
+    fontFamily: 'Montserrat_400Regular',
     marginTop: 12,
     marginBottom: 6,
-    
   },
   input: {
     backgroundColor: "#172554",
@@ -54,7 +60,7 @@ export default StyleSheet.create({
   uploadButtonText: {
     color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: 'Montserrat_700Bold',
     marginLeft: 8,
   },
   billImage: {
@@ -112,7 +118,7 @@ export default StyleSheet.create({
   submitButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: 'Montserrat_700Bold',
   },
   pickerWrapper: {
     borderWidth: 0.2,
@@ -127,12 +133,12 @@ export default StyleSheet.create({
     width: 90, // same as billImage width
     height: 110, // same as billImage height
   },
-  
+
   closeIcon: {
     position: "absolute",
     top: -6,
     right: -6,
     zIndex: 10,
   }
-  
+
 });

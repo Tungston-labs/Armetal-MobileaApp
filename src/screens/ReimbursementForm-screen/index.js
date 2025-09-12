@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { Picker } from "@react-native-picker/picker"; 
+import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Toast from "react-native-toast-message";   // ✅ Toast import
 import authAxios from "../../utils/authAxios";
@@ -111,40 +111,41 @@ const ReimbursementForm = ({ navigation, route }) => {
         <Text style={styles.headerTitle}>Reimbursement</Text>
       </View>
 
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Expense Category */}
         <Text style={styles.label}>Expense Category</Text>
         <View style={styles.pickerWrapper}>
-        <View style={{ position: "relative" }}>
-  <Picker
-    selectedValue={expenseCategory}
-    onValueChange={(value) => setExpenseCategory(value)}
-    style={{
-      color: "#fff",
-      backgroundColor: "#172554",
-      paddingRight: 40, // space for + icon
-    }}
-    dropdownIconColor="transparent" // hides default arrow
-  >
-    <Picker.Item label="Select category" value="" />
-    {EXPENSE_CATEGORIES.map((cat) => (
-      <Picker.Item key={cat} label={cat} value={cat} />
-    ))}
-  </Picker>
+          <View style={{ position: "relative" }}>
+            <Picker
+              selectedValue={expenseCategory}
+              onValueChange={(value) => setExpenseCategory(value)}
+              style={{
+                color: "#fff",
+                backgroundColor: "#172554",
+                paddingRight: 40, // space for + icon
+              }}
+              dropdownIconColor="transparent" // hides default arrow
+            >
+              <Picker.Item label="Select category" value="" />
+              {EXPENSE_CATEGORIES.map((cat) => (
+                <Picker.Item key={cat} label={cat} value={cat} />
+              ))}
+            </Picker>
 
-  {/* + icon positioned on the right */}
-  <Ionicons
-    name="add"
-    size={22}
-    color="#fff"
-    style={{
-      position: "absolute",
-      right: 10,
-      top: "50%",
-      transform: [{ translateY: -11 }],
-    }}
-  />
-</View>
+            {/* + icon positioned on the right */}
+            <Ionicons
+              name="add"
+              size={22}
+              color="#fff"
+              style={{
+                position: "absolute",
+                right: 10,
+                top: "50%",
+                transform: [{ translateY: -11 }],
+              }}
+            />
+          </View>
 
         </View>
 
@@ -229,13 +230,13 @@ const ReimbursementForm = ({ navigation, route }) => {
         </TouchableOpacity>
 
       </ScrollView>
-<View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
         <BottomNavbar navigation={navigation} route={route} />
       </View>
 
       {/* ✅ Toast container */}
       <Toast />
-      
+
     </View>
   );
 };
