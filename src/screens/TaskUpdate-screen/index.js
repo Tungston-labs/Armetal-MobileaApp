@@ -115,18 +115,24 @@ export default function TaskUpdateScreen() {
     fetchTasks(selectedDate);
   };
   
-
   const renderItem = ({ item }) => (
     <View style={{ marginBottom: 12 }}>
       {/* Task Card */}
       <View style={styles.taskCard}>
         <View style={styles.taskRow}>
           <View style={{ flex: 1 }}>
+            {/* Project */}
             <Text style={styles.projectLabel}>Project</Text>
             <Text style={styles.projectText}>{item.project}</Text>
   
+            {/* Task + Time in the same row */}            
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+
             <Text style={styles.taskLabel}>Task</Text>
+              <Text style={styles.timeText}>{item.time}</Text>
+            </View>
             <Text style={styles.taskText}>{item.task}</Text>
+
   
             {/* ✅ Description */}
             {item.description ? (
@@ -136,7 +142,6 @@ export default function TaskUpdateScreen() {
               </>
             ) : null}
           </View>
-          <Text style={styles.timeText}>{item.time}</Text>
         </View>
       </View>
   
@@ -144,6 +149,7 @@ export default function TaskUpdateScreen() {
       <Text style={styles.timestamp}>{item.submittedAt}</Text>
     </View>
   );
+  
   
 
 

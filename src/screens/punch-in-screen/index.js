@@ -403,7 +403,11 @@ const AttendanceScreen = () => {
               <Text style={styles.timeLabel}>Time in :</Text>
               <Text style={styles.timeValue}>
                 {sessions[0]?.time_in
-                  ? new Date(sessions[0]?.time_in).toLocaleTimeString()
+                  ? new Date(sessions[0]?.time_in).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
                   : "-- --"}
               </Text>
             </View>
@@ -412,7 +416,11 @@ const AttendanceScreen = () => {
               <Text style={styles.timeLabel}>Time Out :</Text>
               <Text style={styles.timeValue}>
                 {getLatestSession()?.time_out
-                  ? new Date(getLatestSession()?.time_out).toLocaleTimeString()
+                  ? new Date(getLatestSession()?.time_out).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })
                   : "-- --"}
               </Text>
             </View>

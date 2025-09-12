@@ -91,11 +91,21 @@ const ReimbursementForm = ({ navigation, route }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      Toast.show({ type: "success", text1: "Success", text2: "Reimbursement submitted successfully!" });
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Reimbursement submitted successfully!",
+        text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
+      });
+      
       navigation.navigate("ReimbursementlistScreen", { refresh: true });
     } catch (err) {
       console.error("Failed to submit reimbursement:", err);
-      Toast.show({ type: "error", text1: "Error", text2: "Failed to submit reimbursement." });
+      Toast.show({ type: "error", text1: "Error", text2: "Failed to submit reimbursement.",
+        text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2Style: { fontSize: 14, fontFamily: "Raleway_500Medium" },
+       });
     } finally {
       setLoading(false);
     }
@@ -233,8 +243,7 @@ const ReimbursementForm = ({ navigation, route }) => {
         <BottomNavbar navigation={navigation} route={route} />
       </View>
 
-      {/* ✅ Toast container */}
-      <Toast />
+
       
     </View>
   );

@@ -93,7 +93,8 @@ export default function TaskModal({
       Toast.show({
         type: 'success',
         text1: 'Success',
-        text2: 'Task submitted successfully!',
+        text2: 'Task submitted successfully!',text1Style: { fontSize: 20, fontWeight: "bold" },
+        text2Style: { fontSize: 16 },             
       });
 
       onSubmit();
