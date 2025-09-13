@@ -47,6 +47,7 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     marginBottom: 8,
+    paddingHorizontal: 16,
     
   },
   inputRow: {

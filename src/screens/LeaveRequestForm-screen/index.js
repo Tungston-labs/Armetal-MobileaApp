@@ -259,7 +259,11 @@ const submitLeaveRequest = async () => {
             <Text style={styles.statLabel}>Loss of Pay Taken</Text>
             <Text style={styles.statValue}>₹ {lopAmount}-{lopDays}</Text>
           </View>
+
         </View>
+
+         {/* Divider line */}
+                <View style={styles.divider} />
 
         {/* Date Pickers */}
         <View style={styles.section}>

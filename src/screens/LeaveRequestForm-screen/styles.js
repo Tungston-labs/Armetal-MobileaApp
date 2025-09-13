@@ -58,6 +58,19 @@ headerTitle: {
     fontWeight: 'bold',
     marginTop: 6,
   },
+
+
+  divider: {
+    height: 1,
+    backgroundColor: '#fff',
+    opacity: 0.4,
+    width: '100%',
+    alignSelf: 'center',
+    marginVertical: 20,
+    marginBottom:40,
+    
+  },
+
   section: {
     marginBottom: 20,
   

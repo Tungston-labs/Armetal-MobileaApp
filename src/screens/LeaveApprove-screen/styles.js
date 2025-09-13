@@ -100,11 +100,12 @@ export default StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     marginBottom: 8,
+    backgroundColor: "#183259",
   },
   statusText: {
     color: '#26B887',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 16,
+    paddingHorizontal:12,
   },
   cardContent: {
     marginTop: 4,

@@ -84,22 +84,24 @@ const AttendanceScreen = () => {
     await fetchAttendanceData();
     setRefreshing(false);
   };
-
+  const formatTime = (time) => {
+    if (!time) return "-- --";
+  
+    const date = new Date(time);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+  
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 → 12
+    const formattedHours = hours.toString().padStart(2, "0");
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+  
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
+  };
   const renderItem = ({ item }) => {
-    const punchIn = item.time_in
-      ? new Date(item.time_in).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      })
-      : "-- --";
-    const punchOut = item.time_out
-      ? new Date(item.time_out).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      })
-      : "-- --";
+    const punchIn = formatTime(item.time_in);
+    const punchOut = formatTime(item.time_out);
 
     return (
       <View style={styles.row}>

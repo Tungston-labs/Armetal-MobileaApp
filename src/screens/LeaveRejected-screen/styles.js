@@ -91,16 +91,18 @@ export default StyleSheet.create({
   },
   statusBadgeRejected: {
     borderWidth: 1,
-    borderColor: 'red',
+    borderColor: '#FF2304',
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 4,
     alignSelf: 'flex-start',
     marginBottom: 8,
+    backgroundColor:"#2E254C",
   },
   statusTextRejected: {
-    color: 'red',
-    fontWeight: 'bold',
+    color: '#FF2304',
+    fontSize: 16, 
+    paddingHorizontal:12,
   },
   cardContent: {
     marginTop: 4,

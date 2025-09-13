@@ -18,7 +18,7 @@ const SwipeButton = ({
   width = 330,
   height = 55,
   title = 'Swipe to punch in',
-  successTitle = 'Punched In!',
+  successTitle = 'Punched In',
   onSwipeSuccess,
   backgroundColor = '#e3e9ed',
   thumbColor = '#182040',
@@ -69,10 +69,10 @@ const SwipeButton = ({
       <View
         style={[
           styles.container,
-          { width, height, backgroundColor, borderRadius },
+          { width, height, backgroundColor, borderRadius,},
         ]}
       >
-        <Text style={[styles.label, { color: textColor, fontSize }]}>
+        <Text style={[styles.label, { color: textColor, fontSize,  }]}>
           {swiped ? successTitle : title}
         </Text>
 
@@ -81,10 +81,11 @@ const SwipeButton = ({
             style={[
               styles.thumb,
               {
-                width: height,
-                height: height,
+                width: height-10,
+                height: height-10,
                 borderRadius: height / 2,
                 backgroundColor: thumbColor,
+               
               },
               animatedThumbStyle,
             ]}
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   label: {
     position: 'absolute',
     left: '30%',
-    fontWeight: 'bold',
+    fontFamily: 'Montserrat_700Bold',
     zIndex: 10,
   },
   thumb: {
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     zIndex: 5,
+    
   },
 });
 

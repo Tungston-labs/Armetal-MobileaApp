@@ -69,8 +69,9 @@ export default StyleSheet.create({
     backgroundColor: 'rgba(255, 152, 0, 0.1)',
   },
   statusText: {
-    color: '#FFFF',
-    fontSize: 14,
+    color: '#26B887',
+    fontSize: 16,
+    paddingHorizontal:10,
   },
   cardContent: {
     marginTop: 4,

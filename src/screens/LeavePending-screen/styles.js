@@ -96,10 +96,12 @@ export default StyleSheet.create({
     paddingVertical: 4,
     alignSelf: 'flex-start',
     marginBottom: 8,
+    backgroundColor: "#4C354F",
   },
   statusTextPending: {
     color: '#FF6A3D',
-    fontWeight: 'bold',
+    fontSize: 16, 
+    paddingHorizontal:12,
   },
   cardContent: {
     marginTop: 4,
