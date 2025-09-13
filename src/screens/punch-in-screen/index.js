@@ -386,7 +386,7 @@ const AttendanceScreen = () => {
 
             <TouchableOpacity
               style={styles.menuBox}
-              onPress={() => navigation.navigate("LeavePendingScreen")}
+              onPress={() => navigation.navigate("LeaveAllScreen")}
             >
               {/* ✅ Icon slightly lower */}
               <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />

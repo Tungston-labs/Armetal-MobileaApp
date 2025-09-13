@@ -9,8 +9,7 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withSpring, 
-  cancelAnimation,
+  withSpring,
 } from 'react-native-reanimated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -27,8 +26,9 @@ const SwipeButton = ({
   fontSize = 18,
   icon,
   resetAfterSuccess = true,
+  leftSpacing = 5,
 }) => {
-  const swipeThreshold = width - height;
+  const swipeThreshold = width - height - leftSpacing; 
   const translateX = useSharedValue(0);
   const [swiped, setSwiped] = useState(false);
 
@@ -54,14 +54,14 @@ const SwipeButton = ({
 
       if (shouldSwipe && !swiped) {
         translateX.value = withSpring(swipeThreshold);
-        runOnJS(handleSwipeSuccess)(); // ✅ This is now 100% safe
+        runOnJS(handleSwipeSuccess)();
       } else {
         translateX.value = withSpring(0);
       }
     });
 
   const animatedThumbStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
+    transform: [{ translateX: translateX.value + leftSpacing }],
   }));
 
   return (
@@ -69,10 +69,10 @@ const SwipeButton = ({
       <View
         style={[
           styles.container,
-          { width, height, backgroundColor, borderRadius,},
+          { width, height, backgroundColor, borderRadius },
         ]}
       >
-        <Text style={[styles.label, { color: textColor, fontSize,  }]}>
+        <Text style={[styles.label, { color: textColor, fontSize }]}>
           {swiped ? successTitle : title}
         </Text>
 
@@ -81,11 +81,10 @@ const SwipeButton = ({
             style={[
               styles.thumb,
               {
-                width: height-10,
-                height: height-10,
+                width: height - 10,
+                height: height - 10,
                 borderRadius: height / 2,
                 backgroundColor: thumbColor,
-               
               },
               animatedThumbStyle,
             ]}
@@ -111,7 +110,7 @@ const styles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
-    left: '30%',
+    left: '25%',
     fontFamily: 'Montserrat_700Bold',
     zIndex: 10,
   },
@@ -120,8 +119,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     zIndex: 5,
-    
   },
 });
 
 export default SwipeButton;
+
+

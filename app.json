@@ -24,11 +24,16 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.ARMETALMBL",
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "splash":{
+        "image": "./assets/images/adaptive-iconn.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#151D34"
+      }
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "experiments": {
       "typedRoutes": true
@@ -44,5 +49,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
     }
+
   }
 }

@@ -6,16 +6,16 @@ export default StyleSheet.create({
     backgroundColor: "#151D34", // dark background
   },
   header: {
+    height:100,
     flexDirection: 'row',       // ensures children are in one line
     alignItems: 'center',       // vertical alignment
-    paddingTop: 65,
+    paddingTop: 50,
     paddingBottom: 18,
     paddingHorizontal: 16,      // use standard padding, not too wide
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
   },
-
   headerTitle: {
     color: '#fff',
     fontSize: 20,

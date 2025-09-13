@@ -7,9 +7,12 @@ export default StyleSheet.create({
   },
 
   header: {
-    paddingTop: 68,
+    height: 100,
+    flexDirection: 'row',       // ensures children are in one line
+    alignItems: 'center',       // vertical alignment
+    paddingTop: 50,
     paddingBottom: 18,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,      // use standard padding, not too wide
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
@@ -18,7 +21,6 @@ export default StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontFamily: 'Raleway_700Bold', // <-- add this
-
   },
 
   scrollContainer: {

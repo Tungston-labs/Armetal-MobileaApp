@@ -8,7 +8,7 @@ export default StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 90,
+    height: 110,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
     borderBottomWidth: 0.2,

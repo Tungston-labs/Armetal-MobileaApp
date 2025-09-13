@@ -8,7 +8,6 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
- 
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -16,7 +15,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "#262D40",
-    // paddingBottom: 20,
+    height:100,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
   },
@@ -29,43 +28,36 @@ export default StyleSheet.create({
   descriptionText: {
     color: '#fff',
     fontSize: 14,
-    marginTop: 2,
+    marginTop: 12,
   },
-  
-  
   title: {
     fontSize: 24,
     fontFamily: 'Raleway_700Bold',
     color: '#FFFFFF',
-    // marginTop:40,
   },
   avatarImage: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    marginTop:40,
-    
+    marginTop: 40,
   },
-calendarWrapper: {
-  flexDirection: "row",
-  alignItems: "center",   
-  justifyContent: "center",
-  // marginTop: 10,
-  // marginBottom: 16,
-  // paddingHorizontal: 1,
-},
+  calendarWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   arrowBox: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 25,
     height: 100,
   },
- calendar: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",    
-  flex: 1,
-},
+  calendar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
+  },
   dateBox: {
     width: boxWidth,
     alignItems: 'center',
@@ -123,7 +115,6 @@ calendarWrapper: {
     borderRadius: 12,
     padding: 14,
     marginHorizontal: 16,
-    // marginBottom: 16,
     borderWidth: 0.1,
     borderColor: '#FFFFFF',
   },
@@ -153,14 +144,12 @@ calendarWrapper: {
     fontWeight: 'bold',
     fontSize: 14,
   },
-timestamp: {
-  fontSize: 12,
-  color: "#bbb",
-  // marginTop: 6,
-  textAlign: "right",  
-  marginRight:20
-},
-
+  timestamp: {
+    fontSize: 12,
+    color: "#bbb",
+    textAlign: "right",
+    marginRight: 20
+  },
   addButton: {
     position: 'absolute',
     bottom: 80,

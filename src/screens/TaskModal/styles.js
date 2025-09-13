@@ -1,4 +1,3 @@
-// components/modals/styles.js
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -29,7 +28,6 @@ export default StyleSheet.create({
     marginBottom: 6,
     fontSize: 14,
     fontFamily: 'Raleway_700',
-
   },
   input: {
     borderWidth: 0.2,
@@ -45,18 +43,18 @@ export default StyleSheet.create({
   timeInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 0.2,
-    borderColor: '#FFFFFF',
-    backgroundColor: '#172554',
-    borderRadius: 12,
-    overflow: 'hidden',
     marginBottom: 16,
   },
   iconBox: {
+    width: 50,
+    height: 50,
     backgroundColor: '#172554',
-    padding: 12,
-    borderRightWidth: 1,
-    borderRightColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginRight: 10,
+    borderWidth: 0.5,
+    borderColor: '#FFFFFF',
   },
   timeInput: {
     flex: 1,
@@ -64,8 +62,10 @@ export default StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 15,
+    backgroundColor: '#172554',
+    borderRadius: 10,
     borderWidth: 0.2,
-
+    borderColor: '#FFFFFF',
   },
   modalActions: {
     flexDirection: 'row',

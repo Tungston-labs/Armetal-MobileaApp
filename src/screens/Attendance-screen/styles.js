@@ -16,13 +16,15 @@ export default StyleSheet.create({
   },
 
   header: {
+    height: 100,  
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 50,
-    paddingBottom: 24,
+    paddingTop: 20,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
+    borderBottomWidth: 0.2,
+    borderBottomColor:"#FFFFFF",
   },
 
   dateText: {

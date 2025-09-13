@@ -214,8 +214,6 @@ export default function DocumentsScreen() {
 </View>
 
 
-
-
         {/* Insurance Number */}
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>Medical Insurance Number</Text>
