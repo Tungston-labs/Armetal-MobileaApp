@@ -116,10 +116,10 @@ const ReimbursementScreen = ({ navigation, route }) => {
           </View>
 
           {/* To */}
-          <View style={styles.section}>
+          {/* <View style={styles.section}>
             <Text style={styles.label}>To</Text>
             <Text style={styles.value}>{reimbursement.to_mail}</Text>
-          </View>
+          </View> */}
 
           {/* Note */}
           <View style={styles.section}>

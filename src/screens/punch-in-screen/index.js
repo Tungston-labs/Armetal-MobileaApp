@@ -506,9 +506,12 @@ const AttendanceScreen = () => {
 
         </ScrollView>
       </RefreshWrapper>
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      {!punching && (
+  <View style={styles.bottomNavbarContainer}>
+    <BottomNavbar navigation={navigation} route={route} />
+  </View>
+)}
+
 
     </SafeAreaView>
   );
