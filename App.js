@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
@@ -24,26 +24,24 @@ import {
   Montserrat_800ExtraBold,
 } from "@expo-google-fonts/montserrat";
 
+// Keep splash screen visible until app is ready
+
 enableScreens();
-SplashScreen.preventAutoHideAsync(); // ⏳ Keep splash until ready
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => {
-    return {
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    };
-  },
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
 });
 
+// Component to restore session before rendering app
 const InitAuth = ({ children }) => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     dispatch(restoreSession());
   }, [dispatch]);
-
   return children;
 };
 
@@ -60,33 +58,39 @@ const App = () => {
     Montserrat_800ExtraBold,
   });
 
+  // Prepare app: notifications + fonts + any setup
   useEffect(() => {
     const prepareApp = async () => {
       try {
         const { status } = await Notifications.requestPermissionsAsync();
         if (status !== "granted") {
-          alert("Permission for notifications not granted!");
+          console.warn("Notification permission not granted");
         }
       } catch (e) {
-        console.warn(e);
+        console.warn("Notification permission error:", e);
       } finally {
         if (fontsLoaded) {
           setAppReady(true);
-          await SplashScreen.hideAsync(); // ✅ Hide when ready
         }
       }
     };
-
     prepareApp();
   }, [fontsLoaded]);
 
+  // Hide splash screen when root view is ready
+  const onLayoutRootView = useCallback(async () => {
+    if (appReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appReady]);
+
   if (!appReady) {
-    return null; // Stay on splash
+    return null; // Keep splash screen visible
   }
 
   return (
     <Provider store={store}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <SafeAreaProvider>
           <InitAuth>
             <Navigation />

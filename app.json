@@ -4,7 +4,7 @@
     "slug": "ARMETAL-MBL",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/ico.png",
     "scheme": "armetalmbl",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/ico.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -40,9 +40,10 @@
       }
     },
     "splash": {
-      "image": "./assets/images/adaptive-iconn.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#151D34"
-    }
+  "image": "./assets/images/adaptive-iconn.png", 
+  "resizeMode": "contain",
+  "backgroundColor": "#151D34"
+}
+
   }
 }

@@ -16,6 +16,8 @@ import Toast from "react-native-toast-message";   // ✅ Toast import
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
@@ -61,36 +63,38 @@ const ReimbursementForm = ({ navigation, route }) => {
   };
 
   const handleSubmit = async () => {
-    // ✅ Required fields
-    if (!expenseCategory || !toMail || !amount || !date || !bill) {
-      return Toast.show({ type: "error", text1: "Validation Error", text2: "Please fill all required fields and upload a bill." });
+    // ✅ Required fields (removed toMail)
+    if (!expenseCategory || !amount || !date || !bill) {
+      return Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please fill all required fields and upload a bill.",
+      });
     }
-
-    // ✅ Email validation
-    if (!validateEmail(toMail)) {
-      return Toast.show({ type: "error", text1: "Invalid Email", text2: "Only Gmail, Yahoo, Outlook, Hotmail allowed." });
-    }
-
+  
     // ✅ Date validation (cannot be future date)
     const today = new Date().toISOString().split("T")[0];
     if (date > today) {
-      return Toast.show({ type: "error", text1: "Invalid Date", text2: "Date cannot be in the future." });
+      return Toast.show({
+        type: "error",
+        text1: "Invalid Date",
+        text2: "Date cannot be in the future.",
+      });
     }
-
+  
     const formData = new FormData();
     formData.append("expense_category", expenseCategory);
-    formData.append("to_mail", toMail);
     formData.append("note", note);
     formData.append("date", date);
     formData.append("amount", amount);
     formData.append("uploaded_images", bill);
-
+  
     setLoading(true);
     try {
       await authAxios.post("/reimbursements/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
+  
       Toast.show({
         type: "success",
         text1: "Success",
@@ -98,19 +102,22 @@ const ReimbursementForm = ({ navigation, route }) => {
         text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
-      
+  
       navigation.navigate("ReimbursementlistScreen", { refresh: true });
     } catch (err) {
       console.error("Failed to submit reimbursement:", err);
-      Toast.show({ type: "error", text1: "Error", text2: "Failed to submit reimbursement.",
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to submit reimbursement.",
         text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
         text2Style: { fontSize: 14, fontFamily: "Raleway_500Medium" },
-       });
+      });
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -122,7 +129,7 @@ const ReimbursementForm = ({ navigation, route }) => {
       </View>
 
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent}>
         {/* Expense Category */}
         <Text style={styles.label}>Expense Category</Text>
         <View style={styles.pickerWrapper}>
@@ -239,7 +246,7 @@ const ReimbursementForm = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
       {!loading && (
   <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
     <BottomNavbar navigation={navigation} route={route} />
