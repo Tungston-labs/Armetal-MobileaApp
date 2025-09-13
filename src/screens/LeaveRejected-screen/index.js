@@ -35,6 +35,14 @@ export default function LeaveRejectedScreen() {
       setLoading(false);
     }
   };
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   useEffect(() => {
     if (isFocused) {
@@ -73,7 +81,9 @@ export default function LeaveRejectedScreen() {
       
                 <View>
                   <Text style={styles.label}>Time</Text>
-                  <Text style={styles.value}>{item.time}</Text>
+                  <Text style={styles.value}>{formatTime(item.created_at)} 
+
+</Text>
                 </View>
               </View>
       

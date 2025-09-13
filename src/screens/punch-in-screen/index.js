@@ -27,6 +27,8 @@ import DocumentsIcon from "../../../assets/documents.svg";
 import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
+import { SvgUri } from "react-native-svg";
+
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -236,49 +238,49 @@ const AttendanceScreen = () => {
   };
 
   const renderRadialCircle = () => (
-  <View style={{ alignItems: "center" }}>
-    <TouchableOpacity
-      style={styles.circleWrapper}
-      activeOpacity={0.8}
-      onPress={() => navigation.navigate("WorkingDaySummary")}
-    >
-      {dayStatus.map((status, index) => getSegment(status, index))}
+    <View style={{ alignItems: "center" }}>
+      <TouchableOpacity
+        style={styles.circleWrapper}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate("WorkingDaySummary")}
+      >
+        {dayStatus.map((status, index) => getSegment(status, index))}
 
-      {/* Gradient Circle */}
-      <View style={styles.circle}>
-        <Svg height="160" width="160">
-          <Defs>
-            <RadialGradient
-              id="grad"
-              cx="50%"
-              cy="50%"
-              rx="50%"
-              ry="50%"
-              fx="50%"
-              fy="50%"
-              
-            >
-              <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
-              <Stop offset="63.46%"  stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
-              <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
-            </RadialGradient>
-          </Defs>
-          {/* Fill full circle */}
-          <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
-        </Svg>
+        {/* Gradient Circle */}
+        <View style={styles.circle}>
+          <Svg height="160" width="160">
+            <Defs>
+              <RadialGradient
+                id="grad"
+                cx="50%"
+                cy="50%"
+                rx="50%"
+                ry="50%"
+                fx="50%"
+                fy="50%"
 
-        {/* Text on top of gradient */}
-        <View style={styles.textContainer}>
-          <Text style={styles.dayText}>{todayWeekday}</Text>
-          <Text style={styles.monthText}>{todayMonth}</Text>
-          <Text style={styles.dateText}>{today.getDate()}</Text>
+              >
+                <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
+                <Stop offset="63.46%" stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
+                <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
+              </RadialGradient>
+            </Defs>
+            {/* Fill full circle */}
+            <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
+          </Svg>
+
+          {/* Text on top of gradient */}
+          <View style={styles.textContainer}>
+            <Text style={styles.dayText}>{todayWeekday}</Text>
+            <Text style={styles.monthText}>{todayMonth}</Text>
+            <Text style={styles.dateText}>{today.getDate()}</Text>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  </View>
-);
+      </TouchableOpacity>
+    </View>
+  );
 
-  
+
   const menuItems = [
     { label: "Salary Slip", icon: SalarySlipIcon, route: "SalarySlipScreen" },
     { label: "Attendance", icon: AttendanceIcon, route: "AttendanceScreen" },
@@ -317,15 +319,26 @@ const AttendanceScreen = () => {
         >
 
           <View style={styles.header}>
+
             <View style={styles.logoRow}>
-              <Image
-                source={require("../../../assets/logo.png")}
-                style={styles.logo}
-              />
+              {employee?.company_logo?.endsWith(".svg") ? (
+                <SvgUri
+                  uri={employee.company_logo}
+                  width={70}
+                  height={40}
+                />
+              ) : (
+                <Image
+                  source={{ uri: employee?.company_logo }}
+                  style={styles.logo}
+                />
+              )}
+
               <Text style={styles.helloText}>
                 Hello {employee?.name || "User"}
               </Text>
             </View>
+
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => navigation.navigate("ProfileScreen")}
