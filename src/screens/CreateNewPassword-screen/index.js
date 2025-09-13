@@ -31,7 +31,7 @@ export default function CreateNewPasswordScreen() {
       type,
       text1,
       text2,
-      position: 'bottom',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+      position: 'bottom', text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
       text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
     });
   };
@@ -84,7 +84,7 @@ export default function CreateNewPasswordScreen() {
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="#fff"  />
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 

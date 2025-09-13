@@ -10,6 +10,7 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
   },
 
+
   header: {
     height: 50,
     justifyContent: 'center',

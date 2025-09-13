@@ -8,13 +8,12 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 100,
+    height: 110,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
     position: 'relative',
 
-   
   },
   backButton: {
     position: 'absolute',
@@ -27,7 +26,7 @@ export default StyleSheet.create({
     fontSize: 20,
     color: '#FFFF',
     fontFamily: 'Raleway_700Bold', 
-    marginTop: 60,
+    marginTop: 65,
     marginLeft: 48,
    
   },
