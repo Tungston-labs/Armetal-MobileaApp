@@ -30,7 +30,7 @@ export default StyleSheet.create({
   helloText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: 'Raleway_700Bold',
     textAlign: "left",
     marginTop: 8,
   
@@ -46,7 +46,8 @@ export default StyleSheet.create({
 circleWrapper: {
   alignItems: "center",
   justifyContent: "center",
-  marginBottom: -10,
+  marginBottom: 10,
+  marginTop: 30,
   position: "relative",
   width: 160,
   height: 160,
@@ -152,36 +153,31 @@ textContainer: {
   },
   
   attendanceTitle: {
-    color: "#fff",
-    fontSize: 14,
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "500",
   },
   
   timeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 1,
+    marginBottom: 10,
   },
   
   timeLabel: { color: "#fff", fontSize: 13 },
   timeValue: { color: "#fff", fontSize: 13 },
-  
-  
-  
+
   // Align hours + clock in top-right
   totalHoursRow: {
     flexDirection: "row",
     alignItems: "center",
   },
-  
   hours: {
     color: "#5D6687",
     fontSize: 14,
     fontWeight: "500",
     marginLeft: 4,
   },
-  
-
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
@@ -228,11 +224,6 @@ textContainer: {
     borderTopColor: "#D3D3D3",      // light gray
     borderBottomColor: "transparent",
     position: "absolute",
-  },
-  
-  
-  
-  
-  
+  }, 
 });
 

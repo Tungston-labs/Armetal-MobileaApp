@@ -26,11 +26,10 @@ export default StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     color: '#FFFF',
-    // fontWeight: 'bold', // optional, Raleway already has weights
-    fontFamily: 'Raleway_700Bold', // <-- add this
+    fontFamily: 'Raleway_700Bold', 
     marginTop: 60,
     marginLeft: 48,
-    paddingLeft: 100,
+   
   },
   
   searchRow: {

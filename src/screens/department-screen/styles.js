@@ -11,56 +11,54 @@ const styles = StyleSheet.create({
     // paddingHorizontal: wp('4%'),
     // paddingTop: hp('2%'),
   },
- header: {
-  flexDirection: 'row',
-  alignItems: 'flex-end',     // Push items to bottom
-  backgroundColor: '#262D40',
-  paddingHorizontal: 20,
-  paddingBottom: 18,          // Add bottom padding instead of marginTop
-  height: 100,                // Increased height to allow more vertical space
-  borderBottomWidth: 0.2,
-  marginBottom:20,
-},
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',     // Push items to bottom
+    backgroundColor: '#262D40',
+    paddingHorizontal: 20,
+    paddingBottom: 18,          // Add bottom padding instead of marginTop
+    height: 100,                // Increased height to allow more vertical space
+    borderBottomWidth: 0.2,
+    marginBottom: 10,
+  },
 
-headerTitle: {
-  marginLeft: 20,
-  fontSize: 22,
-  color: '#FFFFFF',
-  fontWeight: 'bold',
-  // marginTop removed
-},
-
+  headerTitle: {
+    marginLeft: 10,
+    fontSize: 22,
+    color: '#FFFFFF',
+    fontFamily: 'Raleway_700Bold',
+  },
 
   teamCard: {
     borderRadius: 12,
     padding: wp('4%'),
-   margin:10,
+    margin: 10,
     marginBottom: hp('2%'),
     height: hp('18%'),
     justifyContent: 'space-between',
+    paddingTop: hp('1.0%'),   // ✅ added spacing at bottom for clean look
   },
   teamTitle: {
     color: 'white',
-    fontSize: wp('4.5%'),
-    fontWeight: '600',
-    marginBottom: hp('0.5%'),
-    fontFamily: 'Satoshi',
+    fontSize: wp('4.6%'),
+    fontFamily: 'Montserrat_400Regular',
   },
   teamLeadLabel: {
     color: '#B0B9D4',
-    fontSize: wp('3.2%'),
+    fontSize: wp('2.5%'),
     marginBottom: hp('0.5%'),
-    fontFamily: 'Satoshi',
+    fontFamily: 'Montserrat_400Regular',
+
   },
   teamLeadInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: hp('0.5%'),
-  borderTopWidth: 0.5,
+    borderTopWidth: 0.5,
     borderTopColor: '#B0B9D4',
   },
   leadAvatar: {
-    marginTop:10,
+    marginTop: 14,
     width: wp('9%'),
     height: wp('9%'),
     borderRadius: wp('4.5%'),
@@ -69,7 +67,8 @@ headerTitle: {
   teamLeadName: {
     color: 'white',
     fontSize: wp('4.2%'),
-    fontFamily: 'Satoshi',
+    fontFamily: 'Montserrat_400Regular',
+    marginTop: 14,
   },
   memberRow: {
     flexDirection: 'row',
@@ -80,27 +79,28 @@ headerTitle: {
   memberCount: {
     color: 'white',
     fontSize: wp('4.1%'),
-    fontFamily: 'Satoshi',
+    fontFamily: 'Montserrat_400Regular',
+
   },
   count: {
     color: 'white',
     fontSize: wp('5%'),
     fontWeight: '600',
-    fontFamily: 'Satoshi',
+    fontFamily: 'Montserrat_700Bold',
+
   },
   membersHeader: {
     color: 'white',
     fontSize: wp('4.5%'),
-    fontWeight: '600',
-    // marginBottom: hp('1.2%'),
-    fontFamily: 'Satoshi',
-    marginLeft:15,
+    fontFamily: 'Montserrat_400Regular',
+
+    marginLeft: 15,
   },
   memberList: {
     paddingBottom: hp('2%'),
   },
   memberItem: {
-    margin:10,
+    margin: 10,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#172554',
@@ -117,7 +117,8 @@ headerTitle: {
   memberName: {
     color: 'white',
     fontSize: wp('4.2%'),
-    fontFamily: 'Satoshi',
+    fontFamily: 'Montserrat_400Regular',
+
   },
 });
 

@@ -104,7 +104,7 @@ export default StyleSheet.create({
   headerCell: {
     fontFamily: 'Raleway_700Bold',
     color: '#fff',
-    fontSize: 18,
+    fontSize: 20,
   },
 
   divider: {
@@ -119,7 +119,7 @@ export default StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: 6,
     paddingHorizontal: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#1C2D5B',
@@ -127,7 +127,7 @@ export default StyleSheet.create({
 
   cell: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat_400Regular',
   },
 

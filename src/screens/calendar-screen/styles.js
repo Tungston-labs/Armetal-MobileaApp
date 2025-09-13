@@ -22,10 +22,9 @@ backButton: {
 },
 
 headerTitle: {
-  color: "#fff",
+  color: "#FFFFFF",
   fontSize: 22,
-  fontWeight: "700",
-  fontFamily: "raleway",
+  fontFamily: 'Raleway_700Bold',
 },
 
   tabsContainer: {

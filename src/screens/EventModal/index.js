@@ -104,7 +104,7 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
           <TextInput
             placeholder="Event Title"
             placeholderTextColor="#999"
-            style={styles.input}
+            style={[styles.input1, { height: 60 }]}
             value={title}
             onChangeText={setTitle}
             maxLength={100} 
@@ -113,7 +113,7 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
           <TextInput
             placeholder="Description"
             placeholderTextColor="#999"
-            style={[styles.input, { height: 80 }]}
+            style={[styles.input2, { height: 90 }]}
             multiline
             value={description}
             onChangeText={setDescription}

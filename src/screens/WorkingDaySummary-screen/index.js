@@ -187,7 +187,7 @@ export default function WorkingDaySummary() {
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.subLabel}>Total Work Hours(This Month) </Text>
+              <Text style={styles.subLabel}>Total Work Hours (This Month) </Text>
               <Text style={styles.subValue}>
                 {summary.total_working_hours} Hrs
               </Text>

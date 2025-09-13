@@ -102,9 +102,9 @@ textContainer: {
     fontWeight: '600',
   },
   subLabel: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontFamily: 'Raleway_700', // <-- add this
-
+    fontSize: 13,
   },
   subValue: {
     color: '#fff',

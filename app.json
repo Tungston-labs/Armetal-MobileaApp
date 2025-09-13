@@ -10,7 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.ARMETALMBL"
+      "bundleIdentifier": "com.anonymous.ARMETALMBL",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -35,7 +40,7 @@
       }
     },
     "splash": {
-      "image":"./assets/images/adaptive-iconn.png",
+      "image": "./assets/images/adaptive-iconn.png",
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
     }

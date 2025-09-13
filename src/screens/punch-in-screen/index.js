@@ -494,7 +494,7 @@ const AttendanceScreen = () => {
             </View>
           ) : (
             <SwipeButton
-              title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to Punch In"}
+              title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to punch in"}
               successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
               onSwipeSuccess={handlePunch}
               backgroundColor="#ddd"
