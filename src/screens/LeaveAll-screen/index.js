@@ -31,6 +31,15 @@ export default function LeaveAllScreen({ navigation, route }) {
       setLoading(false);
     }
   };
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
 
   useEffect(() => {
     fetchLeaves();
@@ -99,7 +108,9 @@ export default function LeaveAllScreen({ navigation, route }) {
 
           <View>
             <Text style={styles.label}>Time</Text>
-            <Text style={styles.value}>{item.time}</Text>
+            <Text style={styles.value}>{formatTime(item.created_at)} 
+
+</Text>
           </View>
         </View>
 

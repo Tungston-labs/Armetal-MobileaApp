@@ -44,6 +44,15 @@ export default function LeaveApproveScreen() {
     await fetchApprovedLeaves();
     setRefreshing(false);
   }, []);
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -76,7 +85,9 @@ export default function LeaveApproveScreen() {
 
           <View>
             <Text style={styles.label}>Time</Text>
-            <Text style={styles.value}>{item.time}</Text>
+            <Text style={styles.value}>{formatTime(item.created_at)} 
+
+</Text>
           </View>
         </View>
 

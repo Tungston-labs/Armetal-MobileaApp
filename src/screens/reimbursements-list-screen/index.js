@@ -48,7 +48,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
       const res = await authAxios.get("/reimbursements/my-reimbursements/");
       setReimbursements(res.data.results || res.data);
     } catch (err) {
-      console.error("Failed to fetch reimbursements:", err);
+      // console.error("Failed to fetch reimbursements:", err);
       Alert.alert("Error", "Failed to fetch reimbursements.");
     } finally {
       setLoading(false);

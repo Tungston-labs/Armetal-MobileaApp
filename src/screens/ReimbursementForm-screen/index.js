@@ -19,7 +19,7 @@ import BottomNavbar from "../BottomNavbar";
 
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
-  const [toMail, setToMail] = useState("");
+  // const [toMail, setToMail] = useState("");
   const [note, setNote] = useState("");
   const [date, setDate] = useState(""); // yyyy-mm-dd formatted string
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -160,14 +160,14 @@ const ReimbursementForm = ({ navigation, route }) => {
         </View>
 
         {/* To */}
-        <Text style={styles.label}>To</Text>
+        {/* <Text style={styles.label}>To</Text>
         <TextInput
           placeholder="Enter Mail ID"
           placeholderTextColor="#8A8F9E"
           style={styles.input}
           value={toMail}
           onChangeText={setToMail}
-        />
+        /> */}
 
         {/* Upload Bill */}
         <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
@@ -240,9 +240,12 @@ const ReimbursementForm = ({ navigation, route }) => {
         </TouchableOpacity>
 
       </ScrollView>
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      {!loading && (
+  <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+    <BottomNavbar navigation={navigation} route={route} />
+  </View>
+)}
+
 
 
       
