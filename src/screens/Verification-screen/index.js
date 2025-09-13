@@ -73,7 +73,7 @@ export default function VerificationScreen() {
 
       navigation.navigate('SetNewPasswordScreen', { email });
     } catch (error) {
-      console.error(error.response?.data || error.message);
+      // console.error(error.response?.data || error.message);
        Toast.show({
         type: 'error',
         text1: 'Verification Failed',
