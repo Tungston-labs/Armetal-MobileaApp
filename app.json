@@ -13,10 +13,6 @@
       "bundleIdentifier": "com.anonymous.ARMETALMBL"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.ARMETALMBL",
       "usesCleartextTraffic": true
@@ -28,10 +24,10 @@
     "experiments": {
       "typedRoutes": true
     },
-    "owner": "ansal_m_azeez",
+    "owner": "",
     "extra": {
       "eas": {
-        "projectId": "49f54ba6-de00-44d7-a877-49ef5b834a94"
+        "projectId": "5828a491-0a55-4c70-87d2-a1d4e0330e21"
       }
     }
   }

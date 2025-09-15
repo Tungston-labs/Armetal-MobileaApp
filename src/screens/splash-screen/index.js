@@ -24,7 +24,7 @@ const SplashScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
-          source={require("../../assets/images/armetal_logo.png")}
+          source={require("../../assets/images/splash-icon.png")}
           style={styles.logo}
           resizeMode="contain"
         />

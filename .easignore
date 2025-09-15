@@ -1,0 +1,6 @@
+# Ignore caches and build outputs
+node_modules/.cache
+android/.gradle
+android/build
+ios/Pods
+ios/build
