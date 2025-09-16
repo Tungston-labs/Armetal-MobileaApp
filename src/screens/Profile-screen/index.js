@@ -119,7 +119,6 @@ const ProfileScreen = () => {
                     await AsyncStorage.removeItem("accessToken");
                     await AsyncStorage.removeItem("refreshToken");
                     dispatch(logout());
-                    navigation.replace("LoginScreen");
                   },
                 },
               ],

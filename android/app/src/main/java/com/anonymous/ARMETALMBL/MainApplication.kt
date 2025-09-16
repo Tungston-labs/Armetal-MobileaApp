@@ -1,4 +1,4 @@
-package com.anonymous.ARMETALMBL
+package com.anonymous.REKORY
 
 import android.app.Application
 import android.content.res.Configuration

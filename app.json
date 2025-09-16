@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "ARMETAL-MBL",
-    "slug": "ARMETAL-MBL",
+    "name": "REKORY",
+    "slug": "REKORY",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/ico.png",
-    "scheme": "armetalmbl",
+    "scheme": "REKORY",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.ARMETALMBL",
+      "bundleIdentifier": "com.anonymous.REKORY",
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
@@ -23,7 +23,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.ARMETALMBL",
+      "package": "com.anonymous.REKORY",
       "usesCleartextTraffic": true,
       "splash":{
         "image": "./assets/images/adaptive-iconn.png",

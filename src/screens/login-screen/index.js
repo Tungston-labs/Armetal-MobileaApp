@@ -21,6 +21,8 @@ import styles from './styles';
 import Toast from 'react-native-toast-message'; 
 import { SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { setTokens } from '@/src/redux/features/authSlice';
+import { useDispatch } from 'react-redux';
 
 const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -29,50 +31,41 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 const [showPassword, setShowPassword] = useState(false);
 
+const dispatch=useDispatch();
+
 const handleLogin = async () => {
   if (!username || !password) {
-    Alert.alert('Validation Error', 'Please enter both username and password.');
+    Alert.alert("Validation Error", "Please enter both username and password.");
     return;
   }
 
   try {
-    const response = await axios.post('http://178.248.112.16:8001/api/token/', {
-      username,
-      password,
-    });
+    const response = await axios.post(
+      "http://178.248.112.16:8001/api/token/",
+      { username, password }
+    );
 
-    const { access, refresh, user } = response.data; // <-- destructure user here
+    const { access, refresh, user } = response.data;
 
-    if (!user) {
-      throw new Error("User data missing in login response");
-    }
+    if (!user) throw new Error("User data missing in login response");
 
-    // Store tokens
-    await AsyncStorage.setItem('accessToken', access);
-    await AsyncStorage.setItem('refreshToken', refresh);
+    await AsyncStorage.setItem("accessToken", access);
+    await AsyncStorage.setItem("refreshToken", refresh);
+    await AsyncStorage.setItem("country", user.company.country);
 
-    // Store country from the user object
-    await AsyncStorage.setItem('country', user.company.country);
+    dispatch(setTokens({ access, refresh }));
 
-    // Navigate to PunchinScreen
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'PunchinScreen' }],
-    });
 
   } catch (error) {
-    console.log('API Error:', error.message);
-    console.log('API Error Details:', error);
-
-    if (error.response) {
-      Alert.alert('Login Failed', 'Invalid username or password.');
-    } else if (error.request) {
-      Alert.alert('Network Error', 'No response from server. Check your network.');
-    } else {
-      Alert.alert('Error', error.message);
-    }
+    console.log("API Error:", error.message);
+    Alert.alert(
+      "Login Failed",
+      error.response ? "Invalid username or password." : "Network Error"
+    );
   }
 };
+
+
 
 
 

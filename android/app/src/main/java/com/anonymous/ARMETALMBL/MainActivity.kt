@@ -1,4 +1,4 @@
-package com.anonymous.ARMETALMBL
+package com.anonymous.REKORY
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
