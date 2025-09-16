@@ -52,8 +52,7 @@ export default function LeaveApproveScreen() {
       hour12: true,
     });
   };
-
-
+  
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() =>

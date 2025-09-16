@@ -25,16 +25,16 @@ export default function RequestRejected({ navigation, route }) {
 
   const API_BASE_URL = 'http://178.248.112.16:8001';
 
-const formatTime = (isoString) => {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true, // set to false if you prefer 24-hour format
-  });
-};
+  const formatTime = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true, // set to false if you prefer 24-hour format
+    });
+  };
 
- useEffect(() => {
+  useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await authAxios.get(`${API_BASE_URL}/api/profile/`);
@@ -54,7 +54,7 @@ const formatTime = (isoString) => {
 
 
 
-useEffect(() => {
+  useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
         const response = await authAxios.get(`${API_BASE_URL}/api/leave/emp/${leaveId}/`);
@@ -73,7 +73,7 @@ useEffect(() => {
 
     fetchLeaveDetail();
   }, [leaveId]);
-  
+
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
     Montserrat_500Medium,
@@ -113,7 +113,8 @@ useEffect(() => {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.card}>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>{leave.status}</Text>
+            <Text style={styles.statusText}>{leave.status.charAt(0).toUpperCase() + leave.status.slice(1).toLowerCase()}
+            </Text>
           </View>
 
           <View style={styles.row}>
@@ -127,7 +128,7 @@ useEffect(() => {
             </View>
 
             <View style={styles.column}>
-                <Text style={styles.label}>Time</Text>
+              <Text style={styles.label}>Time</Text>
               <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
 
 

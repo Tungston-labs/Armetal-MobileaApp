@@ -42,14 +42,15 @@ const SalarySlipScreen = () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
+      console.log("API Response:", response.data);   // 👈 Add this
       setSalaryData(response.data || []);
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Could not load salary data');
+      console.log("Salary API error:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchSalaryRecords();
@@ -194,47 +195,57 @@ const SalarySlipScreen = () => {
       </Modal>
 
       {/* Loader while fetching */}
-      {loading ? (
-        <SwipeLoader text="Loading salary data..." />
-      ) : (
-        <>
-          {/* Month List */}
-          <FlatList
-            data={filtered}
-            keyExtractor={(item) => `${item.month}-${item.year}`}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
+      {/* Loader while fetching */}
+{loading ? (
+  <SwipeLoader text="Loading salary data..." />
+) : filtered.length === 0 ? (
+  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <Text style={{ color: "#ccc", fontSize: 16 , fontFamily: 'Montserrat_400Regular'}}>
+      No records found for {selectedYear}.
+    </Text>
+  </View>
+) : (
+  <>
+    {/* Month List */}
+    <FlatList
+      data={filtered}
+      keyExtractor={(item) => `${item.month}-${item.year}`}
+      contentContainerStyle={styles.listContainer}
+      renderItem={({ item }) => (
+        <View style={styles.card}>
+          {/* Month/Year with Note Icon */}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons
+              name="reader"
+              size={25}
+              color="#ccc"
+              style={{ marginRight: 5 }}
+            />
+            <View>
+              <Text style={styles.monthText}>{item.month}</Text>
+              <Text style={styles.yearText}>{item.year}</Text>
+            </View>
+          </View>
 
-              <View style={styles.card}>
-                {/* Month/Year with Note Icon */}
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons
-                    name="reader"       // filled version
-                    size={25}
-                    color="#ccc"        // your desired fill color
-                    style={{ marginRight: 5 }}
-                  />
-                  <View>
-                    <Text style={styles.monthText}>{item.month}</Text>
-                    <Text style={styles.yearText}>{item.year}</Text>
-                  </View>
-                </View>
-
-                {/* Download Button */}
-                <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-                  {downloading[item.monthNumber] ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" />
-                  )}
-                </TouchableOpacity>
-              </View>
-
+          {/* Download Button */}
+          <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
+            {downloading[item.monthNumber] ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <MaterialCommunityIcons
+                name="tray-arrow-down"
+                size={22}
+                color="#fff"
+               
+              />
             )}
-          />
-
-        </>
+          </TouchableOpacity>
+        </View>
       )}
+    />
+  </>
+)}
+
     </SafeAreaView>
   );
 };

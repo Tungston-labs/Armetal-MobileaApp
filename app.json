@@ -25,7 +25,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.REKORY",
       "usesCleartextTraffic": true,
-      "splash":{
+      "splash": {
         "image": "./assets/images/adaptive-iconn.png",
         "resizeMode": "contain",
         "backgroundColor": "#151D34"
@@ -38,10 +38,10 @@
     "experiments": {
       "typedRoutes": true
     },
-    "owner": "ansal_m_azeez",
+    "owner": "ansalt",
     "extra": {
       "eas": {
-        "projectId": "49f54ba6-de00-44d7-a877-49ef5b834a94"
+        "projectId": "9701004c-fd8a-496c-ac62-bea57a9a0d24"
       }
     },
     "splash": {
@@ -49,6 +49,5 @@
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
     }
-
   }
 }

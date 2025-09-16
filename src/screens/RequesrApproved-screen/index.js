@@ -84,7 +84,7 @@ useEffect(() => {
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={24} color="#fff" />
+              <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 38 }}  />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Request detail</Text>
           </View>

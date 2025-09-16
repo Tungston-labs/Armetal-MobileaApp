@@ -12,7 +12,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#262D40',
-    borderBottomWidth: 0.2,
+    borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     position: 'relative',
    
@@ -30,7 +30,8 @@ export default StyleSheet.create({
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'bold',
-      marginTop:40,
+    marginTop:40,
+   
   },
   content: {
     paddingHorizontal: 18,

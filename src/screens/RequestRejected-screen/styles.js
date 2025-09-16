@@ -10,24 +10,32 @@ export default StyleSheet.create({
 
   // Updated header with taller height and spacing
   topHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 20,
-    backgroundColor: '#262D40',
-    justifyContent: 'space-between',
+    paddingVertical: 12,
+    backgroundColor: "#262D40",
+    height:100,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
   },
-
   backButton: {
     padding: 4,
+    marginTop: 25,
+    
+  },
+headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   headerTitle: {
-    color: '#FFFF',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 10,
+    fontSize: 18,
+    color: "#FFFF",
+    fontWeight: "bold",
+    marginRight: 130,
+    marginTop: 25,
   },
 
   avatar: {
@@ -53,18 +61,19 @@ export default StyleSheet.create({
   // Badge for rejected/pending/approved status
   statusBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: '#183259',
     borderWidth: 1,
     borderColor: '#FF2304',
-    marginBottom: 16,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginBottom: 8,
+    backgroundColor: "#183259",
   },
-
   statusText: {
     color: '#FF2304',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    paddingHorizontal:12,
   },
 
   // Row layout for From / To / Time
@@ -92,7 +101,7 @@ export default StyleSheet.create({
     color: '#FFFF',
     fontSize: 14,
     fontWeight: '500',
-  fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_700Bold',
   },
 
   // For Leave Type and Reason sections

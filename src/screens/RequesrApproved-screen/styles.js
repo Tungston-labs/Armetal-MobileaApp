@@ -8,12 +8,16 @@ export default StyleSheet.create({
     backgroundColor: "#0a122a",
   },
   header: {
-  height: 110,
-  paddingTop: 40,
-  paddingHorizontal: 20,
-  backgroundColor: '#262D40',
-  justifyContent: 'center',
-},
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#262D40",
+    height:100,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
+  },
 
   headerRow: {
     flexDirection: "row",
@@ -31,6 +35,7 @@ export default StyleSheet.create({
     color: "#FFFF",
     fontWeight: "bold",
     marginLeft: 12,
+    marginTop:35,
   },
 
   avatar: {
@@ -55,19 +60,20 @@ export default StyleSheet.create({
     borderColor: "#FFFF",
   },
   statusBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: "transparent",
-    borderColor: "#26B887",
+    alignSelf: 'flex-start',
+    backgroundColor: '#183259',
     borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    marginBottom: 12,
+    borderColor: '#26B887',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginBottom: 8,
+    backgroundColor: "#183259",
   },
   statusText: {
-    color: "#26B887",
-    fontSize: 14,
-    fontWeight: "500",
+    color: '#26B887',
+    fontSize: 16,
+    paddingHorizontal:12,
   },
   row: {
     flexDirection: "row",
@@ -88,7 +94,7 @@ export default StyleSheet.create({
   value: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_700Bold',
   },
   section: {
     marginBottom: 16,

@@ -14,7 +14,7 @@ header: {
   paddingHorizontal: 20,
   paddingBottom: 18,          // Add bottom padding instead of marginTop
   height: 100,                // Increased height to allow more vertical space
-  borderBottomWidth: 0.2,
+  borderBottomWidth: 0.5,
   borderBottomColor:"#FFFFFF",
 },
 

@@ -8,17 +8,20 @@ export default StyleSheet.create({
     backgroundColor: '#141d40',
   },
   topHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 50,           // Increased top padding
-    paddingBottom: 20,        // Increased bottom padding for height
-    backgroundColor: '#262D40',
-    justifyContent: 'space-between',
+    paddingVertical: 12,
+    backgroundColor: "#262D40",
+    height:100,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
   },
-
   backButton: {
     padding: 4,
+    marginTop: 25,
+    
   },
 headerLeft: {
     flexDirection: "row",
@@ -29,7 +32,8 @@ headerLeft: {
     fontSize: 18,
     color: "#FFFF",
     fontWeight: "bold",
-    marginLeft: 12,
+    marginRight: 130,
+    marginTop: 25,
   },
 
   avatar: {
@@ -53,20 +57,20 @@ headerLeft: {
 
   statusBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: '#183259',
     borderWidth: 1,
     borderColor: '#FF6A3D',
-    marginBottom: 16,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginBottom: 8,
+    backgroundColor: "#183259",
   },
-
   statusText: {
     color: '#FF6A3D',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    paddingHorizontal:12,
   },
-
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -90,7 +94,7 @@ headerLeft: {
     color: '#FFFF',
     fontSize: 14,
     fontWeight: '500',
-    fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_700Bold',
   },
 
   section: {
