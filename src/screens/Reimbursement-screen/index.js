@@ -13,9 +13,10 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
-import SwipeLoader from "../../components/SwipeLoader"
+import SwipeLoader from "../../components/SwipeLoader";
+
 const STATUS_COLORS = {
-  Approve: "#2ecc71",
+  Approved: "#2ecc71",
   "In Verification": "#facc15",
   "On Hold": "#f97316",
   Default: "#ccc",
@@ -25,7 +26,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
   const { reimbursementId } = route.params;
   const [reimbursement, setReimbursement] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null); // 👈 For modal preview
+  const [previewImage, setPreviewImage] = useState(null); // For modal preview
 
   const fetchReimbursement = async () => {
     setLoading(true);
@@ -33,7 +34,14 @@ const ReimbursementScreen = ({ navigation, route }) => {
       const res = await authAxios.get(
         `/reimbursements/my-reimbursements/${reimbursementId}/`
       );
-      setReimbursement(res.data);
+
+      // Map status "Approve" to "Approved" for display
+      const data = {
+        ...res.data,
+        status: res.data.status === "Approve" ? "Approved" : res.data.status,
+      };
+
+      setReimbursement(data);
     } catch (err) {
       console.error("Failed to fetch reimbursement:", err);
       Alert.alert("Error", "Failed to fetch reimbursement.");
@@ -115,12 +123,6 @@ const ReimbursementScreen = ({ navigation, route }) => {
             <Text style={styles.value}>{reimbursement.date}</Text>
           </View>
 
-          {/* To */}
-          {/* <View style={styles.section}>
-            <Text style={styles.label}>To</Text>
-            <Text style={styles.value}>{reimbursement.to_mail}</Text>
-          </View> */}
-
           {/* Note */}
           <View style={styles.section}>
             <Text style={styles.label}>Note</Text>
@@ -147,14 +149,16 @@ const ReimbursementScreen = ({ navigation, route }) => {
             </View>
           )}
 
-          {/* Cancel Button */}
-          <TouchableOpacity
-            style={styles.cancelButton}
-            activeOpacity={0.8}
-            onPress={deleteReimbursement}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
+          {/* Cancel Button - Only if On Hold */}
+          {reimbursement.status === "On Hold" && (
+            <TouchableOpacity
+              style={styles.cancelButton}
+              activeOpacity={0.8}
+              onPress={deleteReimbursement}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
 

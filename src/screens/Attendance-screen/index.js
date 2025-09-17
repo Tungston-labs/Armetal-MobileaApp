@@ -179,7 +179,7 @@ const AttendanceScreen = () => {
         {/* Scrollable attendance list */}
         <View
           style={{
-            maxHeight: 10 * 37, // Assuming each row ~40px height, adjust if needed
+            maxHeight: 10 * 39, // Assuming each row ~40px height, adjust if needed
           }}
         >
           <FlatList
@@ -201,14 +201,15 @@ const AttendanceScreen = () => {
         </View>
       </View>
 
-      {/* Total working hours (fixed section) */}
-      <View style={styles.totalHoursCard}>
-        <Text style={styles.totalHoursLabel}>Total working hour</Text>
-        <Text style={styles.totalHoursValue}>{totalHours}</Text>
-      </View>
-
       {/* Bottom Navigation */}
       <View style={styles.bottomNavbarContainer}>
+
+        {/* Total working hours (fixed section) */}
+        <View style={styles.totalHoursCard}>
+          <Text style={styles.totalHoursLabel}>Total working hour</Text>
+          <Text style={styles.totalHoursValue}>{totalHours}</Text>
+        </View>
+
         <BottomNavbar navigation={navigation} route={route} />
       </View>
     </SafeAreaView>

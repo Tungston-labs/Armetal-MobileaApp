@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     borderColor: "#253157",
     borderRadius: 12,
     marginBottom: 12,
+   paddingLeft:10,
     backgroundColor: "#101C3A",
 
   },
@@ -105,8 +106,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     color: "#e0e7ff",
-    marginBottom: 6,
-
+    marginBottom: 8,
+    marginLeft:13,
   },
 
 

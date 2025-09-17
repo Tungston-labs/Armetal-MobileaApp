@@ -214,28 +214,47 @@ const AttendanceScreen = () => {
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
   const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });
 
-  const getSegment = (status, index) => {
+  const getSegment = (status, index, hoursMap) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-
-    let color = "#FFFFFF";
-    if (status === "present") color = "#00FF00";
-    else if (status === "absent") color = "#FF0000";
-    else if (status === "holiday") color = "gray";
-
+  
+    let segmentContent;
+  
+    if (status === "present") {
+      const hours = hoursMap?.[index] || 0; // get total hours for that day
+      if (hours > 5 && hours < 8) {
+        // Half-day: split green and red
+        segmentContent = (
+          <View style={{ flexDirection: "row", width: "100%", height: "100%" }}>
+            <View style={{ flex: 1, backgroundColor: "#FF0000" }} />
+            <View style={{ flex: 1, backgroundColor: "#00FF00" }} />
+          </View>
+        );
+      } else {
+        // Full present
+        segmentContent = <View style={{ flex: 1, backgroundColor: "#00FF00" }} />;
+      }
+    } else if (status === "absent") {
+      segmentContent = <View style={{ flex: 1, backgroundColor: "#FF0000" }} />;
+    } else if (status === "holiday") {
+      segmentContent = <View style={{ flex: 1, backgroundColor: "gray" }} />;
+    } else {
+      segmentContent = <View style={{ flex: 1, backgroundColor: "#FFFFFF" }} />;
+    }
+  
     return (
       <View
         key={index}
         style={[
           styles.segment,
-          {
-            backgroundColor: color,
-            transform: [{ rotate: `${angle}deg` }, { translateY: -78 }],
-          },
+          { transform: [{ rotate: `${angle}deg` }, { translateY: -78 }] },
         ]}
-      />
+      >
+        {segmentContent}
+      </View>
     );
   };
+  
 
   const renderRadialCircle = () => (
     <View style={{ alignItems: "center" }}>

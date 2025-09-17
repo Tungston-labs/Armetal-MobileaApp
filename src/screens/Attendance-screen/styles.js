@@ -115,7 +115,7 @@ export default StyleSheet.create({
     opacity: 0.4,
     width: '90%',
     alignSelf: 'center',
-    marginVertical: 8,
+    marginVertical: 2,
   },
 
   row: {
