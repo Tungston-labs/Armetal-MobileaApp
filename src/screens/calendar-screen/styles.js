@@ -41,22 +41,26 @@ headerTitle: {
     paddingVertical: 10,
     alignItems: "center",
     backgroundColor: "transparent",
+    
   },
 activeTab: {
   backgroundColor: "#172554",
   borderRadius:10,  
   borderWidth:0.2,
-  borderColor:"white"        
+  borderColor:"white",
+       
 },
   tabText: {
     color: "#fff",
-    fontWeight: "600",
+    fontFamily: 'Montserrat_400Regular',
+   
   },
     bottomNavbarContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
+    
   },
 });
 

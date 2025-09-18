@@ -45,6 +45,8 @@ export default StyleSheet.create({
     width: width * 0.3,
     height: width * 0.3,
     borderRadius: width * 0.15,
+    marginTop:20,
+    marginBottom: -40,
   },
   optionCard: {
     flexDirection: 'row',
@@ -54,10 +56,12 @@ export default StyleSheet.create({
     borderRadius: 12,
     marginBottom: 15,
   },
+
   optionText: {
     color: '#FFFF',
     marginLeft: 15,
     fontSize: 16,
     fontWeight: '500',
+    
   },
 });

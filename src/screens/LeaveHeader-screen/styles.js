@@ -6,16 +6,15 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 28,
+    paddingTop: 38,
     paddingBottom: 8,
     backgroundColor: '#262D40',
-  
   },
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 25,
     fontFamily: 'Raleway_700Bold',
-    marginTop:20,
+    marginTop: 20,
   },
   counters: {
     flexDirection: 'row',
@@ -25,18 +24,21 @@ export default StyleSheet.create({
     color: '#8F8F8F',
     marginRight: 35,
     fontSize: 14,
-    fontFamily: 'Raleway_700Bold',
+    fontFamily: 'Montserrat_400Regular',
+    marginTop: 10,
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginTop:20,
+    marginHorizontal: -50,
+    marginBottom: 20,
   },
   tabs: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFFFF',
     backgroundColor: '#262D40',
   },
   tabButton: {

@@ -1,260 +1,3 @@
-// import React, { useState, useEffect, useCallback, useRef } from 'react';
-// import {
-//   View,
-//   Text,
-//   FlatList,
-//   TouchableOpacity,
-//   SafeAreaView,
-//   RefreshControl,
-//   Platform,
-// } from 'react-native';
-// import { Ionicons } from '@expo/vector-icons';
-// import { useNavigation, useRoute } from '@react-navigation/native';
-// import styles from './styles';
-// import BottomNavbar from '../BottomNavbar';
-// import TaskModal from '../TaskModal';
-// import moment from 'moment';
-// import authAxios from '../../utils/authAxios';
-// import SwipeLoader from "../../components/SwipeLoader";
-
-// const API_BASE_URL = 'http://178.248.112.16:8000';
-// const DATE_BOX_WIDTH = 70; // width of each date box including margin/padding
-
-// export default function TaskUpdateScreen() {
-//   const navigation = useNavigation();
-//   const route = useRoute();
-
-//   const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
-//   const [dates, setDates] = useState([]);
-//   const [tasks, setTasks] = useState([]);
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [project, setProject] = useState('');
-//   const [task, setTask] = useState('');
-//   const [timeTaken, setTimeTaken] = useState('');
-//   const [loading, setLoading] = useState(true);
-//   const [refreshing, setRefreshing] = useState(false);
-//   const [description, setDescription] = useState('');
-//   const [initialScrollDone, setInitialScrollDone] = useState(false); // ✅ moved inside
-
-//   const flatListRef = useRef(null);
-
-//   // Generate all days for the entire year of selectedDate
-//   // Generate all days for the entire year (once)
-//   const generateYearDates = () => {
-//     const startOfYear = moment().startOf('year');
-//     const endOfYear = moment().endOf('year');
-//     const dayCount = endOfYear.diff(startOfYear, 'days') + 1;
-
-//     return Array.from({ length: dayCount }).map((_, index) => {
-//       const d = startOfYear.clone().add(index, 'days');
-//       return {
-//         day: d.format('ddd'),
-//         date: d.format('D'),
-//         month: d.format('MMM'),
-//         fullDate: d.format('YYYY-MM-DD'),
-//         active: d.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD'),
-//       };
-//     });
-//   };
-
-
-//   const fetchTasks = async (date) => {
-//     try {
-//       if (!refreshing) setLoading(true);
-//       const response = await authAxios.get(`/employee/tasks/?date=${date}`);
-//       const taskList = response.data.results.map(item => ({
-//         id: item.id,
-//         project: item.project,
-//         task: item.task,
-//         description: item.description,
-//         time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
-//         submittedAt: moment(item.updated_at).format('hh:mm A'),
-//       }));
-//       setTasks(taskList);
-//     } catch (error) {
-//       console.error('❌ Error fetching tasks:', error.response?.data || error.message);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Generate year when selectedDate changes
-//   // Load year dates ONCE
-//   useEffect(() => {
-//     setDates(generateYearDates());
-//   }, []);
-
-//   // Scroll to "today" only once (on first render)
-//   useEffect(() => {
-//     if (!initialScrollDone && flatListRef.current && dates.length > 0) {
-//       const index = dates.findIndex(d => d.fullDate === moment().format('YYYY-MM-DD'));
-//       if (index >= 0) {
-//         flatListRef.current.scrollToIndex({ index, animated: false, viewPosition: 0.5 });
-//         setInitialScrollDone(true);
-//       }
-//     }
-//   }, [dates, initialScrollDone]);
-
-//   // ✅ Fetch tasks on mount & whenever selectedDate changes
-//   useEffect(() => {
-//     fetchTasks(selectedDate);
-//   }, [selectedDate]);
-
-
-//   const onRefresh = useCallback(async () => {
-//     setRefreshing(true);
-//     await fetchTasks(selectedDate);
-//     setRefreshing(false);
-//   }, [selectedDate]);
-
-//   const handleSubmit = () => {
-//     setModalVisible(false);
-//     setProject('');
-//     setTask('');
-//     setTimeTaken('');
-//     setDescription('');
-//     fetchTasks(selectedDate);
-//   };
-
-//   const onDateSelect = (dateObj) => {
-//     setSelectedDate(dateObj.fullDate);
-//     setDates(prevDates =>
-//       prevDates.map(d => ({
-//         ...d,
-//         active: d.fullDate === dateObj.fullDate,
-//       }))
-//     );
-//     // ❌ Do NOT auto-scroll here → user taps date, just highlight
-//   };
-
-//   const renderDateItem = ({ item }) => (
-//     <TouchableOpacity
-//       style={[styles.dateBox, item.active && styles.activeDateBox]}
-//       onPress={() => onDateSelect(item)}
-//     >
-//       <Text style={[styles.dayText, item.active && styles.activeDayText]}>{item.day}</Text>
-//       <Text style={[styles.dateText, item.active && styles.activeDateText]}>{item.date}</Text>
-//       <Text style={[styles.monthText, item.active && styles.activeDayText]}>{item.month}</Text>
-//     </TouchableOpacity>
-//   );
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       {/* Header */}
-//       <View style={styles.header}>
-//         <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-//           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
-//             <Ionicons name="arrow-back" size={24} color="#fff" />
-//           </TouchableOpacity>
-//           <Text style={styles.title}>Daily task update</Text>
-//         </View>
-//       </View>
-
-//       {/* Calendar Horizontal FlatList */}
-//       <View style={styles.calendarWrapper}>
-//         <FlatList
-//           ref={flatListRef}
-//           data={dates}
-//           renderItem={renderDateItem}
-//           keyExtractor={(item) => item.fullDate}
-//           horizontal
-//           showsHorizontalScrollIndicator={false}
-//           contentContainerStyle={{ paddingHorizontal: 8 }}
-//           snapToInterval={DATE_BOX_WIDTH}
-//           decelerationRate="fast"
-//           getItemLayout={(data, index) => (
-//             { length: DATE_BOX_WIDTH, offset: DATE_BOX_WIDTH * index, index }
-//           )}
-//           // ✅ Start list at today's index
-//           initialScrollIndex={dates.findIndex(d => d.fullDate === moment().format('YYYY-MM-DD'))}
-//         />
-
-//       </View>
-
-//       {/* Task List */}
-//       <View style={styles.taskHeader}>
-//         <View style={styles.line} />
-//         <Text style={styles.taskTitle}>Task</Text>
-//         <View style={styles.line} />
-//       </View>
-
-//       {loading ? (
-//         <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
-//       ) : (
-//         <FlatList
-//           data={tasks}
-//           renderItem={({ item }) => (
-//             <View style={{ marginBottom: 12 }}>
-//               <View style={styles.taskCard}>
-//                 <View style={styles.taskRow}>
-//                   <View style={{ flex: 1 }}>
-//                     <Text style={styles.projectLabel}>Project</Text>
-//                     <Text style={styles.projectText}>{item.project}</Text>
-//                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-//                       <Text style={styles.taskLabel}>Task</Text>
-//                       <Text style={styles.timeText}>{item.time}</Text>
-//                     </View>
-//                     <Text style={styles.taskText}>{item.task}</Text>
-//                     {item.description && (
-//                       <>
-//                         <Text style={styles.descriptionLabel}>Description</Text>
-//                         <Text style={styles.descriptionText}>{item.description}</Text>
-//                       </>
-//                     )}
-//                   </View>
-//                 </View>
-//               </View>
-//               <Text style={styles.timestamp}>{item.submittedAt}</Text>
-//             </View>
-//           )}
-//           keyExtractor={(item) => item.id?.toString()}
-//           contentContainerStyle={styles.taskList}
-//           showsVerticalScrollIndicator={false}
-//           refreshControl={
-//             <RefreshControl
-//               refreshing={refreshing}
-//               onRefresh={onRefresh}
-//               colors={["#ffffff", "#d3d3d3"]}
-//               tintColor="#ffffff"
-//               progressBackgroundColor={Platform.OS === "android" ? "#2c2c2c" : "transparent"}
-//             />
-//           }
-//           ListEmptyComponent={
-//             <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
-//               No tasks found for this date.
-//             </Text>
-//           }
-//         />
-//       )}
-
-//       {/* Add Task FAB */}
-//       <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
-//         <Ionicons name="add" size={24} color="white" />
-//       </TouchableOpacity>
-
-//       {/* Task Modal */}
-//       <TaskModal
-//         visible={modalVisible}
-//         onClose={() => setModalVisible(false)}
-//         project={project}
-//         setProject={setProject}
-//         task={task}
-//         setTask={setTask}
-//         timeTaken={timeTaken}
-//         setTimeTaken={setTimeTaken}
-//         description={description}
-//         setDescription={setDescription}
-//         onSubmit={handleSubmit}
-//       />
-
-//       {/* Bottom Nav */}
-//       <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-//         <BottomNavbar navigation={navigation} route={route} />
-//       </View>
-//     </SafeAreaView>
-//   );
-// }
-
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -326,7 +69,7 @@ export default function TaskUpdateScreen() {
       setLoading(false);
     }
   };
-  
+
 
   const fetchProfilePicture = async () => {
     try {
@@ -371,27 +114,25 @@ export default function TaskUpdateScreen() {
     setDescription(''); // ✅ reset description
     fetchTasks(selectedDate);
   };
-  
+
   const renderItem = ({ item }) => (
     <View style={{ marginBottom: 12 }}>
       {/* Task Card */}
       <View style={styles.taskCard}>
         <View style={styles.taskRow}>
           <View style={{ flex: 1 }}>
-            {/* Project */}
-            <Text style={styles.projectLabel}>Project</Text>
-            <Text style={styles.projectText}>{item.project}</Text>
-  
-            {/* Task + Time in the same row */}            
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-
-            <Text style={styles.taskLabel}>Task</Text>
+            {/* Project + Time in the same row */}
+            <View style={styles.projectTimeRow}>
+              <Text style={styles.projectLabel}>Project</Text>
               <Text style={styles.timeText}>{item.time}</Text>
             </View>
+            <Text style={styles.projectText}>{item.project}</Text>
+
+            {/* Task */}
+            <Text style={styles.taskLabel}>Task</Text>
             <Text style={styles.taskText}>{item.task}</Text>
 
-  
-            {/* ✅ Description */}
+            {/* Description */}
             {item.description ? (
               <>
                 <Text style={styles.descriptionLabel}>Description</Text>
@@ -401,13 +142,14 @@ export default function TaskUpdateScreen() {
           </View>
         </View>
       </View>
-  
+
+
       {/* Timestamp outside the card */}
       <Text style={styles.timestamp}>{item.submittedAt}</Text>
     </View>
   );
-  
-  
+
+
 
 
   const scrollCalendar = (direction) => {
@@ -432,21 +174,21 @@ export default function TaskUpdateScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-  {/* Back Arrow + Title in one row */}
-  <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-  <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
-    <Ionicons name="arrow-back" size={24} color="#fff" />
-  </TouchableOpacity>
-  <Text style={styles.title}>Daily task update</Text>
-</View>
+        {/* Back Arrow + Title in one row */}
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Daily task update</Text>
+        </View>
 
 
 
-  {/* Profile Pic */}
-  {/* <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+        {/* Profile Pic */}
+        {/* <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
     <Image source={{ uri: profilePic }} style={styles.avatarImage} />
   </TouchableOpacity> */}
-</View>
+      </View>
 
 
 
@@ -514,9 +256,6 @@ export default function TaskUpdateScreen() {
       )}
 
 
-
-
-
       <TouchableOpacity
         style={styles.fab}
         onPress={() => setModalVisible(true)}>
@@ -527,19 +266,18 @@ export default function TaskUpdateScreen() {
 
       {/* Modal */}
       <TaskModal
-  visible={modalVisible}
-  onClose={() => setModalVisible(false)}
-  project={project}
-  setProject={setProject}
-  task={task}
-  setTask={setTask}
-  timeTaken={timeTaken}
-  setTimeTaken={setTimeTaken}
-  description={description}        // ✅ pass description
-  setDescription={setDescription} // ✅ pass setter
-  onSubmit={handleSubmit}
-/>
-
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        project={project}
+        setProject={setProject}
+        task={task}
+        setTask={setTask}
+        timeTaken={timeTaken}
+        setTimeTaken={setTimeTaken}
+        description={description}        // ✅ pass description
+        setDescription={setDescription} // ✅ pass setter
+        onSubmit={handleSubmit}
+      />
 
       {/* Bottom Nav */}
       <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>

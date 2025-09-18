@@ -52,7 +52,7 @@ export default StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: Platform.OS === 'ios' ? 14 : 10,
     fontSize: 14,
-    color: '#B2B2B2',
+    color: '#000',
     marginBottom: 25,
   },
 

@@ -37,7 +37,7 @@ headerTitle: {
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    marginBottom: 14,
   },
   statBox: {
     flex: 1,

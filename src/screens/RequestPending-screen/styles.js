@@ -56,15 +56,14 @@ headerLeft: {
   },
 
   statusBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#183259',
     borderWidth: 1,
     borderColor: '#FF6A3D',
     borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
     marginBottom: 8,
-    backgroundColor: "#183259",
+    backgroundColor: "#4C354F",
   },
   statusText: {
     color: '#FF6A3D',
@@ -123,22 +122,21 @@ headerLeft: {
   },
 
   cancelButton: {
-    marginTop: 30,
-    alignSelf: 'center',
-    borderColor: '#FF2304',
-    borderWidth: 1,
-    borderRadius: 30,
-    paddingVertical: 12,
-    paddingHorizontal: 60, // Increased width
-    backgroundColor: '#2F1E2E', // Optional: subtle background to match your image
+    marginTop: 20,
+    borderColor: "#FF2304",
+    borderWidth: 1.5,
+    borderRadius: 33,
+    paddingVertical: 5,
+    paddingHorizontal: 50,  // ✅ controls width nicely
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#4B322E",
+    alignSelf: "center",    // ✅ centers the button
   },
-
   cancelButtonText: {
-    color: '#FF2304',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    width: '60%',
-    
+    color: "#FF2304",
+    fontSize: 15,
+    fontFamily: 'Montserrat_400Regular',
   },
+    
 });

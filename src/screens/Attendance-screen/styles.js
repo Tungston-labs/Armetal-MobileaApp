@@ -16,7 +16,7 @@ export default StyleSheet.create({
   },
 
   header: {
-    height: 100,  
+    height: 100,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -24,7 +24,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
     borderBottomWidth: 0.2,
-    borderBottomColor:"#FFFFFF",
+    borderBottomColor: "#FFFFFF",
   },
 
   dateText: {
@@ -106,7 +106,7 @@ export default StyleSheet.create({
   headerCell: {
     fontFamily: 'Raleway_700Bold',
     color: '#fff',
-    fontSize: 20,
+    fontSize: 17,
   },
 
   divider: {
@@ -129,7 +129,7 @@ export default StyleSheet.create({
 
   cell: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 15,
     fontFamily: 'Montserrat_400Regular',
   },
 
@@ -160,7 +160,7 @@ export default StyleSheet.create({
   },
 
   selectDateText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
   },
@@ -297,7 +297,7 @@ export default StyleSheet.create({
   },
   totalHoursLabel: {
     fontSize: 15,
-    color: '#fff', 
+    color: '#fff',
     fontFamily: 'Montserrat_700Bold',
   },
   totalHoursValue: {

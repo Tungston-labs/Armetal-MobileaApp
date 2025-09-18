@@ -46,9 +46,9 @@ export default StyleSheet.create({
 
   otpInput: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    width: width * 0.14,
-    height: width * 0.14,
+    borderRadius: 7,
+    width: 8,
+    height: 50,
     textAlign: 'center',
     fontSize: 18,
     color: '#030303',

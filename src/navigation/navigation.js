@@ -117,6 +117,10 @@ export default function Navigation() {
               name="ReimbursementForm"
               component={ReimbursementForm}
             />
+            <Stack.Screen
+              name="CreateNewPasswordScreen"
+              component={CreateNewPasswordScreen}
+            />
           </>
         ) : (
           // Unauthenticated screens
@@ -131,10 +135,7 @@ export default function Navigation() {
               name="SetNewPasswordScreen"
               component={SetNewPasswordScreen}
             />
-            <Stack.Screen
-              name="CreateNewPasswordScreen"
-              component={CreateNewPasswordScreen}
-            />
+            
           </>
         )}
       </Stack.Navigator>

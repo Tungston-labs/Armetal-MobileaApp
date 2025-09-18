@@ -31,7 +31,7 @@ const ReimbursementForm = ({ navigation, route }) => {
 
   const EXPENSE_CATEGORIES = [
     "TRAVEL", "MEALS", "ACCOMMODATION", "SUPPLIES",
-    "TRAINING", "ENTERTAINMENT", "BILLS", "HEALTHCARE", "MISC"
+    "TRAINING", "ENTERTAINMENT", "BILLS", "HEALTHCARE", "MISC","OTHERS"
   ];
 
   const pickImage = async () => {

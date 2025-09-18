@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
 
   cardContent: {
     flex: 1,
+   
   },
   dateText: {
     fontSize: 14,
@@ -34,10 +35,12 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#FFFFFF",
     marginBottom: 4,
+    
   },
   dateRange: {
     fontSize: 12,
     color: "#BBBBBB",
+    
   },
 });
 

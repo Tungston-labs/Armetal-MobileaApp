@@ -50,7 +50,6 @@ const SalarySlipScreen = () => {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchSalaryRecords();
@@ -66,7 +65,6 @@ const SalarySlipScreen = () => {
       hasData: true,
     };
   });
-
 
   const filtered = combinedList.filter((item) =>
     item.month.toLowerCase().includes(searchText.toLowerCase())
@@ -161,7 +159,6 @@ const SalarySlipScreen = () => {
             Year
           </Text>
 
-
           <MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
 
@@ -196,55 +193,55 @@ const SalarySlipScreen = () => {
 
       {/* Loader while fetching */}
       {/* Loader while fetching */}
-{loading ? (
-  <SwipeLoader text="Loading salary data..." />
-) : filtered.length === 0 ? (
-  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-    <Text style={{ color: "#ccc", fontSize: 16 , fontFamily: 'Montserrat_400Regular'}}>
-      No records found for {selectedYear}.
-    </Text>
-  </View>
-) : (
-  <>
-    {/* Month List */}
-    <FlatList
-      data={filtered}
-      keyExtractor={(item) => `${item.month}-${item.year}`}
-      contentContainerStyle={styles.listContainer}
-      renderItem={({ item }) => (
-        <View style={styles.card}>
-          {/* Month/Year with Note Icon */}
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons
-              name="reader"
-              size={25}
-              color="#ccc"
-              style={{ marginRight: 5 }}
-            />
-            <View>
-              <Text style={styles.monthText}>{item.month}</Text>
-              <Text style={styles.yearText}>{item.year}</Text>
-            </View>
-          </View>
-
-          {/* Download Button */}
-          <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-            {downloading[item.monthNumber] ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <MaterialCommunityIcons
-                name="tray-arrow-down"
-                size={22}
-                color="#fff"
-               
-              />
-            )}
-          </TouchableOpacity>
+      {loading ? (
+        <SwipeLoader text="Loading salary data..." />
+      ) : filtered.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ color: "#ccc", fontSize: 16, fontFamily: 'Montserrat_400Regular' }}>
+            No records found for {selectedYear}.
+          </Text>
         </View>
+      ) : (
+        <>
+          {/* Month List */}
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => `${item.month}-${item.year}`}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                {/* Month/Year with Note Icon */}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons
+                    name="reader"
+                    size={25}
+                    color="#ccc"
+                    style={{ marginRight: 5 }}
+                  />
+                  <View>
+                    <Text style={styles.monthText}>{item.month}</Text>
+                    <Text style={styles.yearText}>{item.year}</Text>
+                  </View>
+                </View>
+
+                {/* Download Button */}
+                <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
+                  {downloading[item.monthNumber] ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <MaterialCommunityIcons
+                      name="tray-arrow-down"
+                      size={22}
+                      color="#fff"
+
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </>
       )}
-    />
-  </>
-)}
 
     </SafeAreaView>
   );

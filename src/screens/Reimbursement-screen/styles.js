@@ -51,12 +51,12 @@ export default StyleSheet.create({
 
   // ✅ EXACT like "Approved" button image
   statusBadge: {
-    borderWidth: 0.3,
+    borderWidth: 0.5,
     borderColor: "#26B887",
     paddingVertical: 6,
     paddingHorizontal: 30,
     borderRadius: 8,
-    backgroundColor: "#1E2C27",
+    
   },
   statusText: {
     color: "#26B887",
@@ -92,18 +92,18 @@ export default StyleSheet.create({
     borderColor: "#FF2304",
     borderWidth: 1.5,
     borderRadius: 33,
-    paddingVertical: 15,
-    paddingHorizontal: 90,  // ✅ controls width nicely
+    paddingVertical: 5,
+    paddingHorizontal: 50,  // ✅ controls width nicely
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#371F1B",
+    backgroundColor: "#4B322E",
     alignSelf: "center",    // ✅ centers the button
   },
   
   cancelButtonText: {
     color: "#FF2304",
-    fontSize: 17,
-    fontFamily: 'Montserrat_700Bold',
+    fontSize: 15,
+    fontFamily: 'Montserrat_400Regular',
   },
 
   bottomNavbarContainer: {
