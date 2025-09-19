@@ -38,7 +38,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   label: {
-    color: "#485378",
+    color: "#a5b4c3",
     fontSize: 12,
     marginBottom: 2,
     fontFamily: 'Montserrat_400Regular',

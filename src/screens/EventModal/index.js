@@ -41,59 +41,75 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
         Toast.show({
           type: "error",
           text1: "Validation Error",
-          text2: "Please fill in all fields",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+          text2: "Please fill in all fields",
+          text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
           text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
         });
         return;
       }
-
+  
       // ✅ Title length validation
       if (title.length > 100) {
         Toast.show({
           type: "error",
           text1: "Validation Error",
-          text2: "Title cannot exceed 100 characters",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+          text2: "Title cannot exceed 100 characters",
           text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
-          text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },        });
+          text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
+        });
         return;
       }
-
+  
       // Convert 12-hour to 24-hour
       let hours24 = hour % 12;
       if (ampm === "PM") hours24 += 12;
-
+  
       const datetime = new Date(selectedDate);
       datetime.setHours(hours24, minute, 0, 0);
-
+  
+      // ✅ Validation: prevent past date/time
+      if (datetime <= new Date()) {
+        Toast.show({
+          type: "error",
+          text1: "Invalid Date",
+          text2: "date and time has passed",
+          text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+          text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
+        });
+        return;
+      }
+  
       const isoDatetime = datetime.toISOString();
-
+  
       const res = await authAxios.post("/reminders/", {
         title,
         body: description,
         scheduled_datetime: isoDatetime,
       });
-
+  
       await scheduleNotification(datetime, res.data.title, res.data.body);
-
+  
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Reminder set successfully!",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2: "Reminder set successfully!",
+        text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
-
+  
       onEventAdded(res.data);
       onClose();
     } catch (error) {
-      console.error("❌ Failed to add reminder:", error.response?.data || error.message);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Failed to add reminder",text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
+        text2: "Failed to add reminder",
+        text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
       });
     }
   };
+  
 
   return (
     <Modal visible={visible} animationType="slide" transparent>

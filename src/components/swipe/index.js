@@ -14,7 +14,7 @@ import Animated, {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SwipeButton = ({
-  width = 330,
+  width = 320,
   height = 55,
   title = 'Swipe to punch in',
   successTitle = 'Punched In',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     alignSelf: 'center',
-    marginVertical: 20,
+    marginVertical: -35,
   },
   label: {
     position: 'absolute',

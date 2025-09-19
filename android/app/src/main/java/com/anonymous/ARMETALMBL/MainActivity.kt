@@ -1,4 +1,4 @@
-package com.anonymous.REKORY
+package com.anonymous.Rekory
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

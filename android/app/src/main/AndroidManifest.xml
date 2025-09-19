@@ -27,7 +27,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="ARMETAL"/>
-        <data android:scheme="exp+REKORY"/>
+        <data android:scheme="exp+Rekory"/>
       </intent-filter>
     </activity>
   </application>

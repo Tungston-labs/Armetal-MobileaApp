@@ -17,8 +17,6 @@ import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
 
-
-
 const STATUS_LABELS = {
   Approve: "Approved",
   "In Verification": "In Verification",
@@ -26,8 +24,8 @@ const STATUS_LABELS = {
 };
 const STATUS_STYLES = {
   Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },       // light green bg
-  "In Verification": { color: "#facc15", background: "rgba(250, 204, 21, 0.15)" }, // light yellow bg
-  "On Hold": { color: "#f97316", background: "rgba(249, 115, 22, 0.15)" },     // light orange bg
+  "In Verification": { color: "#FF2304", background: "#2E254C" }, // light yellow bg
+  "On Hold": { color: "#ff9800", background: "rgba(249, 115, 22, 0.15)" },     // light orange bg
   Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
 };
 

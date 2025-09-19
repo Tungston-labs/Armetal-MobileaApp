@@ -17,8 +17,8 @@ import SwipeLoader from "../../components/SwipeLoader";
 
 const STATUS_COLORS = {
   Approved: "#2ecc71",
-  "In Verification": "#facc15",
-  "On Hold": "#f97316",
+  "In Verification": "#FF2304",
+  "On Hold": "#ff9800",
   Default: "#ccc",
 };
 

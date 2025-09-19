@@ -26,7 +26,7 @@ export default function LeaveRequestFormScreen() {
   const [toDate, setToDate] = useState(new Date());
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
-  const [selectedLeaveType, setSelectedLeaveType] = useState('casual');
+  const [selectedLeaveType, setSelectedLeaveType] = useState('Casual');
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
   const [reason, setReason] = useState('');
@@ -44,11 +44,11 @@ export default function LeaveRequestFormScreen() {
 
 
   const leaveTypes = [
-    { id: 1, type: 'casual' },
-    { id: 2, type: 'sick' },
-    { id: 3, type: 'earned' },
-    { id: 4, type: 'maternity' },
-    { id: 5, type: 'others' },
+    { id: 1, type: 'Casual' },
+    { id: 2, type: 'Sick' },
+    { id: 3, type: 'Earned' },
+    { id: 4, type: 'Maternity' },
+    { id: 5, type: 'Others' },
   ];
   // inside your LeaveRequestFormScreen component
 
@@ -56,7 +56,7 @@ export default function LeaveRequestFormScreen() {
   const clearForm = () => {
     setFromDate(new Date());
     setToDate(new Date());
-    setSelectedLeaveType("casual");
+    setSelectedLeaveType("Casual");
     setToEmail("");
     setCcEmail("");
     setReason("");

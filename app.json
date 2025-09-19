@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "REKORY",
-    "slug": "REKORY",
+    "name": "Rekory",
+    "slug": "Rekory",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/ico.png",
-    "scheme": "REKORY",
+    "scheme": "Rekory",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.REKORY",
+      "bundleIdentifier": "com.anonymous.Rekory",
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
@@ -23,7 +23,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.REKORY",
+      "package": "com.anonymous.Rekory",
       "usesCleartextTraffic": true,
       "splash": {
         "image": "./assets/images/adaptive-iconn.png",
@@ -38,10 +38,10 @@
     "experiments": {
       "typedRoutes": true
     },
-    "owner": "",
+    "owner": "ansal_m_azeez",
     "extra": {
       "eas": {
-        "projectId": "1cb03a55-befb-4016-879a-d77be51c6767"
+        "projectId": "e879a427-2a45-414a-b446-aa1d74980fe9"
       }
     },
     "splash": {

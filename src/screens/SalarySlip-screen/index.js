@@ -139,6 +139,7 @@ const SalarySlipScreen = () => {
       </View>
 
       {/* Search & Year Filter */}
+
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
           <Ionicons name="search" size={25} color="#ccc" />
@@ -156,16 +157,16 @@ const SalarySlipScreen = () => {
           onPress={() => setYearDropdownVisible(true)}
         >
           <Text style={styles.dropdownText}>
-            Year
+            {selectedYear ? selectedYear : "Year"}
           </Text>
-
           <MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>
-          <Ionicons name="search" size={22} color="#fff" />
-        </TouchableOpacity>
+        {/* <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>
+        <Ionicons name="search" size={22} color="#fff" />
+       </TouchableOpacity> */}
       </View>
+
 
       {/* Year Modal */}
       <Modal visible={yearDropdownVisible} transparent animationType="fade">

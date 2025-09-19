@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "REKORY.app"
-               BlueprintName = "REKORY"
-               ReferencedContainer = "container:REKORY.xcodeproj">
+               BuildableName = "Rekory.app"
+               BlueprintName = "Rekory"
+               ReferencedContainer = "container:Rekory.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "REKORYTests.xctest"
-               BlueprintName = "REKORYMBLTests"
-               ReferencedContainer = "container:REKORYMBL.xcodeproj">
+               BuildableName = "RekoryTests.xctest"
+               BlueprintName = "RekoryTests"
+               ReferencedContainer = "container:Rekory.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "REKORYMBL.app"
-            BlueprintName = "REKORYMBL"
-            ReferencedContainer = "container:REKORYMBL.xcodeproj">
+            BuildableName = "Rekory.app"
+            BlueprintName = "Rekory"
+            ReferencedContainer = "container:Rekory.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "REKORYMBL.app"
-            BlueprintName = "REKORYMBL"
-            ReferencedContainer = "container:REKORYMBL.xcodeproj">
+            BuildableName = "Rekory.app"
+            BlueprintName = "Rekory"
+            ReferencedContainer = "container:Rekory.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

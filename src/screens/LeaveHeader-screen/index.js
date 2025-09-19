@@ -46,7 +46,7 @@ export default function LeaveHeader() {
         const profileRes = await authAxios.get("/profile/");
         setProfilePic(getProfileUri(profileRes.data?.profile_pic));
       } catch (error) {
-        console.error("Error fetching data:", error.message);
+        //console.error("Error fetching data:", error.message);
       } finally {
         setLoading(false);
       }
@@ -69,13 +69,13 @@ export default function LeaveHeader() {
         <View>
           <Text style={styles.headerTitle}>Leave Request</Text>
           <View style={styles.counters}>
-            <Text style={styles.counterText}>Pending leave    {summary?.pending_count || 0}</Text>
+            <Text style={styles.counterText}>Pending leave    {summary?.remaining_leave || 0}</Text>
             <Text style={styles.counterText}>Leave taken      {summary?.approved_count || 0}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
           <Image source={{ uri: profilePic }} style={styles.avatar} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* Tabs */}

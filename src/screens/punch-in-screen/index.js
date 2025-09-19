@@ -122,8 +122,6 @@ const AttendanceScreen = () => {
     return `${API_BASE_URL}${path}`;
   };
 
-
-
   useEffect(() => {
     fetchDayStatus();
   }, []);
@@ -217,9 +215,9 @@ const AttendanceScreen = () => {
   const getSegment = (status, index, hoursMap) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-  
+
     let segmentContent;
-  
+
     if (status === "present") {
       const hours = hoursMap?.[index] || 0; // get total hours for that day
       if (hours > 5 && hours < 8) {
@@ -241,7 +239,7 @@ const AttendanceScreen = () => {
     } else {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#FFFFFF" }} />;
     }
-  
+
     return (
       <View
         key={index}
@@ -254,7 +252,7 @@ const AttendanceScreen = () => {
       </View>
     );
   };
-  
+
 
   const renderRadialCircle = () => (
     <View style={{ alignItems: "center" }}>
@@ -437,7 +435,45 @@ const AttendanceScreen = () => {
             </TouchableOpacity>
           </View>
 
+
+
+          {/* 🔄 Loader or SwipeButton */}
+          {punching ? (
+            <View style={styles.loaderOverlay}>
+              <View style={styles.logoWrapper}>
+                {/* Static logo in center */}
+                <Image
+                  source={require("../../../assets/images/logo.png")}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+
+                {/* Rotating circle */}
+                <Animated.View
+                  style={[
+                    styles.rotatingCircle,
+                    { transform: [{ rotate: spin }] },
+                  ]}
+                />
+              </View>
+              <Text style={styles.loaderText}>
+                {isCurrentlyPunchedIn() ? "" : ""}
+              </Text>
+            </View>
+          ) : (
+            <SwipeButton
+              title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to punch in"}
+              successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
+              onSwipeSuccess={handlePunch}
+              backgroundColor="#ddd"
+              thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
+              resetAfterSuccess={true}
+            />
+          )}
+
           {/* Attendance Box */}
+          
+          
           <Pressable
             style={styles.attendanceBox}
             onPress={() => navigation.navigate("AttendanceScreen")}
@@ -487,51 +523,19 @@ const AttendanceScreen = () => {
             <View style={styles.line} />
           </Pressable>
 
-
-          {/* 🔄 Loader or SwipeButton */}
-          {punching ? (
-            <View style={styles.loaderOverlay}>
-              <View style={styles.logoWrapper}>
-                {/* Static logo in center */}
-                <Image
-                  source={require("../../../assets/images/logo.png")}
-                  style={styles.logoImage}
-                  resizeMode="contain"
-                />
-
-                {/* Rotating circle */}
-                <Animated.View
-                  style={[
-                    styles.rotatingCircle,
-                    { transform: [{ rotate: spin }] },
-                  ]}
-                />
-              </View>
-              <Text style={styles.loaderText}>
-                {isCurrentlyPunchedIn() ? "" : ""}
-              </Text>
-            </View>
-          ) : (
-            <SwipeButton
-              title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to punch in"}
-              successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
-              onSwipeSuccess={handlePunch}
-              backgroundColor="#ddd"
-              thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
-              resetAfterSuccess={true}
-            />
-          )}
-
-
         </ScrollView>
       </RefreshWrapper>
       {!punching && (
-  <View style={styles.bottomNavbarContainer}>
-    <BottomNavbar navigation={navigation} route={route} />
-  </View>
-)}
 
 
+        <View style={styles.bottomNavbarContainer}>
+
+          <BottomNavbar navigation={navigation} route={route} />
+        </View>
+      )}
+
+      
+      
     </SafeAreaView>
   );
 };

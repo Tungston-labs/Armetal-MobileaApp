@@ -48,7 +48,6 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
 
-
   statusText: {
     fontSize: 14,
     fontFamily: 'Raleway_700',
@@ -116,7 +115,7 @@ export default StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 100,
-    backgroundColor: '#3352BA',
+    backgroundColor: '#7490F3',
     width: 50,
     height: 50,
     borderRadius: 28,

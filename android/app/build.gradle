@@ -92,9 +92,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.REKORY'
+    namespace 'com.anonymous.Rekory'
     defaultConfig {
-        applicationId 'com.anonymous.REKORY'
+        applicationId 'com.anonymous.Rekory'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

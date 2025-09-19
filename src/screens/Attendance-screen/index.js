@@ -59,7 +59,7 @@ const AttendanceScreen = () => {
         : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
       setProfilePic(imageUrl);
     } catch (error) {
-      console.error("Attendance fetch error:", error);
+      //console.error("Attendance fetch error:", error);
       setSessions([]);
       setTotalHours("00:00 Hrs");
       setProfilePic(
@@ -138,7 +138,7 @@ const AttendanceScreen = () => {
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Attendance details</Text>
-        <Image source={{ uri: profilePic }} style={styles.profileImage} />
+        {/* <Image source={{ uri: profilePic }} style={styles.profileImage} /> */}
       </View>
 
       {/* Date dropdown */}
@@ -166,7 +166,6 @@ const AttendanceScreen = () => {
         }}
         onCancel={() => setDatePickerVisible(false)}
       />
-
       {/* Attendance Table */}
       <View style={styles.tableContainer}>
         <View style={styles.tableHeader}>

@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>REKORY</string>
+    <string>Rekory</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,14 +27,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>REKORY</string>
-          <string>com.anonymous.REKORY</string>
+          <string>Rekory</string>
+          <string>com.anonymous.Rekory</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+REKORY</string>
+          <string>exp+Rekory</string>
         </array>
       </dict>
     </array>

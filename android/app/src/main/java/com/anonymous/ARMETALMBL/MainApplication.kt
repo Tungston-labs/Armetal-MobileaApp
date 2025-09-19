@@ -1,4 +1,4 @@
-package com.anonymous.REKORY
+package com.anonymous.Rekory
 
 import android.app.Application
 import android.content.res.Configuration

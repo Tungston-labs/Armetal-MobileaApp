@@ -132,26 +132,31 @@ export default StyleSheet.create({
     color: '#747C98',
     fontSize: 12,
   },
+  
   projectText: {
     color: '#FFFFFF',
     fontSize: 14,
     marginBottom: 10,
   },
+
   taskLabel: {
     color: '#747C98',
     fontSize: 12,
     marginBottom: 4,
   },
+
   taskText: {
     color: '#FFFFFF',
     fontSize: 14,
   },
+
   timeText: {
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
     fontSize: 12,
     // ✅ removed absolute positioning
   },
+
   timestamp: {
     fontSize: 12,
     color: "#bbb",
@@ -172,17 +177,19 @@ export default StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 10,
   },
+
   addText: {
     color: '#FFFFFF',
     fontWeight: '600',
     marginLeft: 6,
     fontSize: 16,
   },
+
   fab: {
     position: 'absolute',
     right: 20,
     bottom: 100,
-    backgroundColor: '#3352BA',
+    backgroundColor: '#7490F3',
     width: 50,
     height: 50,
     borderRadius: 28,
@@ -190,4 +197,5 @@ export default StyleSheet.create({
     justifyContent: 'center',
     elevation: 5,
   },
+
 });

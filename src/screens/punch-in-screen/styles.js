@@ -140,7 +140,7 @@ textContainer: {
   attendanceBox: {
     backgroundColor: "#172555",
     padding: 18,
-    marginTop: -40,
+    marginTop: 40,
     borderRadius: 15,
   },
   

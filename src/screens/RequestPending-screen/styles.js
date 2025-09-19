@@ -57,7 +57,7 @@ headerLeft: {
 
   statusBadge: {
     borderWidth: 1,
-    borderColor: '#FF6A3D',
+    borderColor: '#ff9800',
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -66,7 +66,7 @@ headerLeft: {
     backgroundColor: "#4C354F",
   },
   statusText: {
-    color: '#FF6A3D',
+    color: '#ff9800',
     fontSize: 16,
     paddingHorizontal:12,
   },
