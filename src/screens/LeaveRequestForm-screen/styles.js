@@ -32,7 +32,7 @@ headerTitle: {
   content: {
     paddingHorizontal: 16,
     paddingVertical: 20,
-    paddingBottom: 350, // space for bottom bar
+    paddingBottom: 100, // space for bottom bar
   },
   statsContainer: {
     flexDirection: 'row',
