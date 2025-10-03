@@ -10,7 +10,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 // import { BlurView } from "expo-blur";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 
-
 // Get number of days in a given date's month
 function getDaysInMonth(dateStr) {
   const date = new Date(dateStr);
@@ -89,7 +88,6 @@ export default function WorkingDaySummary() {
       }
     };
 
-
     fetchDayStatus();
   }, []);
 
@@ -157,7 +155,7 @@ export default function WorkingDaySummary() {
                       ry="50%"
                       fx="50%"
                       fy="50%"
-                      
+        
                     >
                       <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
                       <Stop offset="63.46%"  stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
