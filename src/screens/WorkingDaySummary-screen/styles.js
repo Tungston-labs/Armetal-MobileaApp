@@ -161,6 +161,7 @@ textContainer: {
     flex: 1,
     width: 3,
   },
+  
 
   bottomNavbarContainer: {
     position: 'absolute',

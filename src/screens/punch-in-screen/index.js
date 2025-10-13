@@ -28,6 +28,8 @@ import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
+import { startBackgroundUpdate, stopBackgroundUpdate } from './LocationTask';
+
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -128,7 +130,7 @@ const AttendanceScreen = () => {
 
   const fetchTodayAttendance = async () => {
     try {
-      const res = await authAxios.get(`/attendance/today`);
+      const res = await authAxios.get(`/attendance/today/`);
       const data = res.data;
       setSessions(data.sessions || []);
 
@@ -169,44 +171,60 @@ const AttendanceScreen = () => {
     };
   };
 
+
   const handlePunch = async () => {
     setPunching(true);
     startRotation();
     try {
       const location = await getCurrentLocation();
-      if (!location) {
-        setPunching(false);
-        stopRotation();
-        return;
-      }
-
-      await authAxios.post("/attendance/swipe/", {
+      if (!location) return;
+    
+      const res = await authAxios.post("/attendance/swipe/", {
         latitude: location.latitude,
         longitude: location.longitude,
       });
-
-      await fetchTodayAttendance();
+    
+      console.log("Swipe response:", res.data); // <--- check what server returned
+    
+      // Only show alert on actual error
+      if (res.data?.success === false) {
+        Alert.alert("Failed", res.data?.error || "Swipe failed");
+      } else {
+        await fetchTodayAttendance();
+      }
     } catch (error) {
-      Alert.alert("", error.response?.data?.error || "Failed to swipe.");
-    } finally {
+      console.log("Swipe error:", error);
+      Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
+    }
+     finally {
       setPunching(false);
       stopRotation();
     }
   };
-
+  
   useEffect(() => {
     (async () => {
       try {
         const profileRes = await authAxios.get(`/profile/`);
         setEmployee(profileRes.data);
+        
         await fetchTodayAttendance();
+  
+        const punchedIn = isCurrentlyPunchedIn();
+        if (punchedIn) {
+          await startBackgroundUpdate();
+        } else {
+          await stopBackgroundUpdate();
+        }
       } catch (err) {
-        //console.error("Init error:", err.message);
+        console.log(err);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
+  
+  
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });

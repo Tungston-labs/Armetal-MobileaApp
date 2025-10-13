@@ -9,6 +9,10 @@ import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
+import * as TaskManager from 'expo-task-manager';
+import * as Location from 'expo-location';
+import { startBackgroundUpdate } from './src/screens/punch-in-screen/LocationTask';
+
 
 // Fonts
 import {
@@ -37,13 +41,26 @@ Notifications.setNotificationHandler({
 });
 
 // Component to restore session before rendering app
+
 const InitAuth = ({ children }) => {
   const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch(restoreSession());
+    const init = async () => {
+      await dispatch(restoreSession());
+
+      // ✅ Check if user was punched in and resume background location updates
+      const punchedIn = await AsyncStorage.getItem("punchedIn"); // save this flag after punch in/out
+      if (punchedIn === "true") {
+        startBackgroundUpdate();
+      }
+    };
+    init();
   }, [dispatch]);
+
   return children;
 };
+
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
