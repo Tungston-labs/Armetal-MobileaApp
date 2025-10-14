@@ -162,7 +162,25 @@ textContainer: {
     width: 3,
   },
   
-
+  segment: {
+    position: "absolute",
+    width: 10,
+    height: 7,
+    borderRadius: 1,
+  },
+  
+  halfSegmentContainer: {
+    flexDirection: "row", // place children side by side
+    width: "100%",
+    height: "100%",
+  },
+  
+  halfSegment: {
+    flex: 1,           // take half width automatically
+    height: "100%",
+  },
+  
+  
   bottomNavbarContainer: {
     position: 'absolute',
     bottom: 8,

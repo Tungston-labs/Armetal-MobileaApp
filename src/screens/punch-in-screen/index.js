@@ -77,14 +77,14 @@ const AttendanceScreen = () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
       const data = response.data;
-
+  
       const statusMap = {};
-
+  
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
       const month = firstDate.getMonth(); // 0-indexed
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+  
       const allDates = [];
       for (let day = 1; day <= daysInMonth; day++) {
         const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -92,25 +92,30 @@ const AttendanceScreen = () => {
         ).padStart(2, "0")}`;
         allDates.push(iso);
       }
-
+  
+      // Initialize all days: Sundays as holiday, rest working
       allDates.forEach((date) => {
         const day = new Date(date).getDay();
         if (day === 0) statusMap[date] = "holiday";
         else statusMap[date] = "working";
       });
-
+  
+      // Mark present, absent, holiday
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
-
+  
+      // Mark half-days (overrides present)
+      data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
+  
       const orderedStatuses = allDates.map((date) => statusMap[date]);
-
       setDayStatus(orderedStatuses);
     } catch (error) {
-      // console.error("Failed to fetch day status:", error);
+      console.log("Failed to fetch day status:", error);
       setDayStatus([]);
     }
   };
+  
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
@@ -230,34 +235,30 @@ const AttendanceScreen = () => {
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
   const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });
 
-  const getSegment = (status, index, hoursMap) => {
+  const getSegment = (status, index) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-
+  
     let segmentContent;
-
-    if (status === "present") {
-      const hours = hoursMap?.[index] || 0; // get total hours for that day
-      if (hours > 5 && hours < 8) {
-        // Half-day: split green and red
-        segmentContent = (
-          <View style={{ flexDirection: "row", width: "100%", height: "100%" }}>
-            <View style={{ flex: 1, backgroundColor: "#FF0000" }} />
-            <View style={{ flex: 1, backgroundColor: "#00FF00" }} />
-          </View>
-        );
-      } else {
-        // Full present
-        segmentContent = <View style={{ flex: 1, backgroundColor: "#00FF00" }} />;
-      }
+  
+    if (status === "half") {
+      // Half-day: split red (absent) and green (present)
+      segmentContent = (
+        <View style={{ flexDirection: "row", width: "100%", height: "100%" }}>
+          <View style={{ flex: 1, backgroundColor: "#FF0000" }} />
+          <View style={{ flex: 1, backgroundColor: "#00B140" }} />
+        </View>
+      );
+    } else if (status === "present") {
+      segmentContent = <View style={{ flex: 1, backgroundColor: "#00B140" }} />;
     } else if (status === "absent") {
-      segmentContent = <View style={{ flex: 1, backgroundColor: "#FF0000" }} />;
+      segmentContent = <View style={{ flex: 1, backgroundColor: "#FF3B30" }} />;
     } else if (status === "holiday") {
-      segmentContent = <View style={{ flex: 1, backgroundColor: "gray" }} />;
+      segmentContent = <View style={{ flex: 1, backgroundColor: "#4C4C4C" }} />;
     } else {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#FFFFFF" }} />;
     }
-
+  
     return (
       <View
         key={index}
@@ -270,7 +271,7 @@ const AttendanceScreen = () => {
       </View>
     );
   };
-
+  
 
   const renderRadialCircle = () => (
     <View style={{ alignItems: "center" }}>

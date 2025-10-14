@@ -31,7 +31,6 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   }
 });
 
-// 🚀 Start background tracking
 export async function startBackgroundUpdate() {
   const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
   if (fgStatus !== 'granted') {
@@ -47,18 +46,23 @@ export async function startBackgroundUpdate() {
 
   const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
   if (!hasStarted) {
-    console.log("Starting background location updates...");
-    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-      accuracy: Location.Accuracy.High,
-      timeInterval: 300000, // every 5 minutes (300000 ms)
-      distanceInterval: 0,
-      showsBackgroundLocationIndicator: true,
-      pausesUpdatesAutomatically: false,
-      foregroundService: {
-        notificationTitle: 'Tracking your location',
-        notificationBody: 'Your location is being recorded in the background',
-      },
-    });
+    try {
+      console.log("Starting background location updates...");
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.High,
+        timeInterval: 60000,
+        distanceInterval: 0,
+        showsBackgroundLocationIndicator: true,
+        pausesUpdatesAutomatically: false,
+        foregroundService: {
+          notificationTitle: 'Tracking your location',
+          notificationBody: 'Your location is being recorded in the background',
+          notificationColor: '#FF0000'
+        },
+      });
+    } catch (e) {
+      console.error("Error starting location updates:", e);
+    }
   }
 }
 
