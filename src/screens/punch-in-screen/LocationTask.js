@@ -6,30 +6,29 @@ const LOCATION_TASK_NAME = 'background-location-task';
 
 // 🛰 Define background task
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+  console.log("📡 Background task triggered");
   if (error) {
     console.error("Background Task Error:", error);
     return;
   }
 
   if (data) {
-    const { locations } = data;
-    const location = locations[0];
-
+    const location = data.locations[0];
     if (location) {
-      const timestamp = new Date(location.timestamp).toISOString();
-
+      console.log("📍 Location received:", location.coords);
       try {
-        await authAxios.post('/attendance/update-location/', {
+        const res = await authAxios.post('/attendance/update-location/', {
           location: `${location.coords.latitude}, ${location.coords.longitude}`,
-          timestamp: timestamp,
+          timestamp: new Date(location.timestamp).toISOString(),
         });
-        console.log("✅ Location sent:", location.coords);
+        console.log("✅ API hit success:", res.data);
       } catch (err) {
-        console.log("❌ Error sending location:", err.message);
+        console.log("❌ API hit failed:", err.response?.data || err.message);
       }
     }
   }
 });
+
 
 export async function startBackgroundUpdate() {
   const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();

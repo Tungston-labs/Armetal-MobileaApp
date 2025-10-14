@@ -12,6 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
 import { startBackgroundUpdate } from './src/screens/punch-in-screen/LocationTask';
+import './src/screens/punch-in-screen/LocationTask';
 
 
 // Fonts
