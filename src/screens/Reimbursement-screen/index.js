@@ -26,7 +26,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
   const { reimbursementId } = route.params;
   const [reimbursement, setReimbursement] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null); // For modal preview
+  const [previewImage, setPreviewImage] = useState(null); 
 
   const fetchReimbursement = async () => {
     setLoading(true);

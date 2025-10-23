@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 import * as Notifications from "expo-notifications";
-import Toast from "react-native-toast-message"; // ✅ Add this
+import Toast from "react-native-toast-message"; 
 
 const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
   const [title, setTitle] = useState("");
@@ -48,7 +48,6 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
         return;
       }
   
-      // ✅ Title length validation
       if (title.length > 100) {
         Toast.show({
           type: "error",
@@ -67,7 +66,7 @@ const AddEventModal = ({ visible, onClose, selectedDate, onEventAdded }) => {
       const datetime = new Date(selectedDate);
       datetime.setHours(hours24, minute, 0, 0);
   
-      // ✅ Validation: prevent past date/time
+     
       if (datetime <= new Date()) {
         Toast.show({
           type: "error",

@@ -3,16 +3,16 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#151D34", // dark navy background
+    backgroundColor: "#151D34", 
   },
 
   header: {
     height: 100,
-    flexDirection: 'row',       // ensures children are in one line
-    alignItems: 'center',       // vertical alignment
+    flexDirection: 'row',       
+    alignItems: 'center',       
     paddingTop: 50,
     paddingBottom: 18,
-    paddingHorizontal: 16,      // use standard padding, not too wide
+    paddingHorizontal: 16,      
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
@@ -20,13 +20,13 @@ export default StyleSheet.create({
   headerText: {
     color: "#fff",
     fontSize: 20,
-    fontFamily: 'Raleway_700Bold', // <-- add this
+    fontFamily: 'Raleway_700Bold', 
   },
 
   scrollContainer: {
     paddingHorizontal: 15,
-    paddingTop: 15, // ✅ space between header and cards
-    paddingBottom: 120, // space for button + navbar
+    paddingTop: 15, 
+    paddingBottom: 120, 
   },
 
   card: {
@@ -38,10 +38,10 @@ export default StyleSheet.create({
     borderColor: "grey"
   },
 
-  // ✅ Rectangle status badge with border
+  
   statusBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: 40,   // more width
+    paddingHorizontal: 40,   
     paddingVertical: 5,
     borderRadius: 6,
     borderWidth: 0.5,
@@ -88,13 +88,13 @@ export default StyleSheet.create({
 
   fixedButton: {
     position: "absolute",
-    bottom: 100, // above navbar
+    bottom: 100, 
     left: 300,
     right: 20,
     backgroundColor: "#3352BA",
-    width: 60, // set width
-    height: 60, // set height (same as width)
-    borderRadius: 30, // half of width/height
+    width: 60, 
+    height: 60,
+    borderRadius: 30, 
     justifyContent: "center",
     alignItems: "center",
   },

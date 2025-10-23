@@ -25,8 +25,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function DocumentsScreen() {
   const navigation = useNavigation();
   const [employeeId, setEmployeeId] = useState(null);
-  const BASE_URL = "http://178.248.112.16:8001"; // 👈 match backend port
-  const [loading, setLoading] = useState(true); // loader state
+  const BASE_URL = "http://178.248.112.16:8001"; 
+  const [loading, setLoading] = useState(true); 
 
   const [data, setData] = useState({
     healthCardImage: null,
@@ -81,15 +81,15 @@ export default function DocumentsScreen() {
           insuranceNumber: summary.healthcard_number || "",
           iqamaNumber: summary.iqama_number || "",
           visaExpiry: summary.visa_expiry_date || "",
-          aadarNumber: summary.adhar_number || "",        // ✅
-          contractExpiry: summary.contract_expiry_date || "", // ✅
+          aadarNumber: summary.adhar_number || "",       
+          contractExpiry: summary.contract_expiry_date || "", 
         });
         
       } catch (error) {
         console.error("❌ Failed to fetch documents:", error);
         Alert.alert("Error", "Could not load document data");
       } finally {
-        setLoading(false); // stop loader
+        setLoading(false); 
       }
     };
 
@@ -147,7 +147,7 @@ export default function DocumentsScreen() {
   <Text style={styles.label}>Work Permit</Text>
   <View style={styles.inputRow}>
     <TextInput
-      style={styles.inputField} // Use the new inputField style
+      style={styles.inputField} 
       placeholder="Work Permit"
       value={data.workPermitUrls.length > 0 ? "Work Permit" : ""}
       editable={false}
@@ -155,7 +155,7 @@ export default function DocumentsScreen() {
     />
     {data.workPermitUrls.length > 0 && (
       <TouchableOpacity
-        style={styles.iconBox} // Small separate box
+        style={styles.iconBox} 
         onPress={() => handleImagePreview(data.workPermitUrls)}
       >
         <MaterialCommunityIcons name="image-outline" size={28} color="grey" />
@@ -169,7 +169,7 @@ export default function DocumentsScreen() {
   <Text style={styles.label}>Employment Contract</Text>
   <View style={styles.inputRow}>
     <TextInput
-      style={styles.inputField} // Change from inputWithIcon to inputField
+      style={styles.inputField} 
       placeholder="Contract"
       value={data.contractUrls.length > 0 ? "Employment Contract" : ""}
       editable={false}
@@ -177,7 +177,7 @@ export default function DocumentsScreen() {
     />
     {data.contractUrls.length > 0 && (
       <TouchableOpacity
-        style={styles.iconBox} // Small separate box
+        style={styles.iconBox} 
         onPress={() => handleImagePreview(data.contractUrls)}
       >
         <MaterialCommunityIcons name="image-outline" size={28} color="grey" />

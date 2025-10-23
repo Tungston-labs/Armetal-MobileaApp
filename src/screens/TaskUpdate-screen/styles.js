@@ -123,9 +123,9 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
   },
   projectTimeRow: {
-    flexDirection: 'row',         // ✅ horizontal row
-    justifyContent: 'space-between', // ✅ left and right alignment
-    alignItems: 'center',         // ✅ vertically centered
+    flexDirection: 'row',         
+    justifyContent: 'space-between', 
+    alignItems: 'center',        
     marginBottom: 4,
   },
   projectLabel: {
@@ -154,7 +154,6 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
     fontSize: 12,
-    // ✅ removed absolute positioning
   },
 
   timestamp: {

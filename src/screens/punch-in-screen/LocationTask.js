@@ -65,7 +65,7 @@ export async function startBackgroundUpdate() {
   }
 }
 
-// 🛑 Stop background tracking
+
 export async function stopBackgroundUpdate() {
   const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
   if (hasStarted) {

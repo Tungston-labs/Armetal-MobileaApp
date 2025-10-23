@@ -9,7 +9,7 @@ export default StyleSheet.create({
   },
 header: {
   flexDirection: 'row',
-  alignItems: 'flex-end',     // Push items to bottom
+  alignItems: 'flex-end',     
   backgroundColor: '#262D40',
   paddingHorizontal: 20,
   paddingBottom: 18,          // Add bottom padding instead of marginTop

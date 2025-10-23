@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 export default function VerificationScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const email = route.params?.email; // Passed from ForgotPasswordScreen
+  const email = route.params?.email;
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputs = useRef([]);

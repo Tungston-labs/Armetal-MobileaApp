@@ -35,14 +35,14 @@ const SalarySlipScreen = () => {
   const [selectedYear, setSelectedYear] = useState('2025');
   const [salaryData, setSalaryData] = useState([]);
   const [yearDropdownVisible, setYearDropdownVisible] = useState(false);
-  const [loading, setLoading] = useState(false);  // loader for fetch
-  const [downloading, setDownloading] = useState({}); // store per month
+  const [loading, setLoading] = useState(false);  
+  const [downloading, setDownloading] = useState({}); 
 
   const fetchSalaryRecords = async () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
-      console.log("API Response:", response.data);   // 👈 Add this
+      console.log("API Response:", response.data);   
       setSalaryData(response.data || []);
     } catch (error) {
       console.log("Salary API error:", error.response?.data || error.message);
@@ -59,7 +59,7 @@ const SalarySlipScreen = () => {
   const combinedList = salaryData.map((item) => {
     const monthIndex = Number(item.month);
     return {
-      month: allMonths[monthIndex - 1], // convert 1 → January
+      month: allMonths[monthIndex - 1], 
       monthNumber: monthIndex,
       year: selectedYear,
       hasData: true,
@@ -162,9 +162,6 @@ const SalarySlipScreen = () => {
           <MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
 
-        {/* <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>
-        <Ionicons name="search" size={22} color="#fff" />
-       </TouchableOpacity> */}
       </View>
 
 

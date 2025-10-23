@@ -12,12 +12,11 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Toast from "react-native-toast-message";   // ✅ Toast import
-import authAxios from "../../utils/authAxios";
-import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import Toast from "react-native-toast-message";   
+import authAxios from "../../utils/authAxios"; 
+import styles from "./styles"; 
+import BottomNavbar from "../BottomNavbar"; 
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"; 
 
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
@@ -63,7 +62,7 @@ const ReimbursementForm = ({ navigation, route }) => {
   };
 
   const handleSubmit = async () => {
-    // ✅ Required fields (removed toMail)
+   
     if (!expenseCategory || !amount || !date || !bill) {
       return Toast.show({
         type: "error",
@@ -72,7 +71,6 @@ const ReimbursementForm = ({ navigation, route }) => {
       });
     }
   
-    // ✅ Date validation (cannot be future date)
     const today = new Date().toISOString().split("T")[0];
     if (date > today) {
       return Toast.show({
@@ -128,7 +126,6 @@ const ReimbursementForm = ({ navigation, route }) => {
         <Text style={styles.headerTitle}>Reimbursement</Text>
       </View>
 
-
       <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent}>
         {/* Expense Category */}
         <Text style={styles.label}>Expense Category</Text>
@@ -140,9 +137,9 @@ const ReimbursementForm = ({ navigation, route }) => {
               style={{
                 color: "#fff",
                 backgroundColor: "#172554",
-                paddingRight: 40, // space for + icon
+                paddingRight: 40, 
               }}
-              dropdownIconColor="transparent" // hides default arrow
+              dropdownIconColor="transparent" 
             >
               <Picker.Item label="Select category" value="" />
               {EXPENSE_CATEGORIES.map((cat) => (
@@ -150,7 +147,6 @@ const ReimbursementForm = ({ navigation, route }) => {
               ))}
             </Picker>
 
-            {/* + icon positioned on the right */}
             <Ionicons
               name="add"
               size={22}
@@ -163,20 +159,8 @@ const ReimbursementForm = ({ navigation, route }) => {
               }}
             />
           </View>
-
         </View>
 
-        {/* To */}
-        {/* <Text style={styles.label}>To</Text>
-        <TextInput
-          placeholder="Enter Mail ID"
-          placeholderTextColor="#8A8F9E"
-          style={styles.input}
-          value={toMail}
-          onChangeText={setToMail}
-        /> */}
-
-        {/* Upload Bill */}
         <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
           <Ionicons name="add" size={20} color="#fff" />
           <Text style={styles.uploadButtonText}>Upload Image</Text>
@@ -191,7 +175,6 @@ const ReimbursementForm = ({ navigation, route }) => {
           </View>
         )}
 
-        {/* Note */}
         <Text style={styles.label}>Add note</Text>
         <TextInput
           placeholder="Enter note"
@@ -202,7 +185,6 @@ const ReimbursementForm = ({ navigation, route }) => {
           onChangeText={setNote}
         />
 
-        {/* Date & Amount */}
         <View style={styles.row}>
           <View style={styles.halfInputContainer}>
             <Text style={styles.label}>Date</Text>
@@ -234,7 +216,6 @@ const ReimbursementForm = ({ navigation, route }) => {
           </View>
         </View>
 
-        {/* Submit */}
         <TouchableOpacity
           style={[styles.submitButton, loading && { opacity: 0.6 }]}
           activeOpacity={0.8}
@@ -252,8 +233,6 @@ const ReimbursementForm = ({ navigation, route }) => {
     <BottomNavbar navigation={navigation} route={route} />
   </View>
 )}
-
-
 
       
     </View>

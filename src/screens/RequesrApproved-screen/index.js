@@ -22,7 +22,7 @@ export default function RequestApprovedScreen() {
   const { leaveId } = route.params;
 
   const [leave, setLeave] = useState(null);
-  const [profile, setProfile] = useState(null); // 👈 Profile data
+  const [profile, setProfile] = useState(null); 
   const [loading, setLoading] = useState(true);
   const API_BASE_URL = 'http://178.248.112.16:8001';
 
@@ -31,11 +31,11 @@ const formatTime = (isoString) => {
   return date.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true, // set to false if you prefer 24-hour format
+    hour12: true, 
   });
 };
 
-  // Fetch leave details
+  
   
 useEffect(() => {
     const fetchLeaveDetail = async () => {

@@ -9,23 +9,12 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
   },
 
-  // header: {
-  //   height: 0,
-  //   justifyContent: 'center',
-  //   paddingTop: Platform.OS === 'android' ? 10 : 0,
-  //   marginTop:50,
-
-  // },
-
-
  header: {
-  height: 50, // fixed from 0 so arrow is visible
+  height: 50, 
   justifyContent: 'center',
   paddingTop: Platform.OS === 'android' ? 10 : 0,
   marginTop: 50,
 },
-
-
 
   content: {
     paddingTop: height * 0.15,
@@ -39,7 +28,7 @@ export default StyleSheet.create({
     color: '#FFFF',
     textAlign: 'center',
     marginBottom: 6,
-    fontFamily: 'Raleway_700Bold', // <-- add this
+    fontFamily: 'Raleway_700Bold',
 
     
   },
@@ -50,7 +39,7 @@ export default StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 20,
-    fontFamily: 'Raleway_700', // <-- add this
+    fontFamily: 'Raleway_700', 
 
     
   },
@@ -88,7 +77,6 @@ export default StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontFamily: 'Raleway_700Bold', // <-- add this
-
+    fontFamily: 'Raleway_700Bold', 
   },
 });

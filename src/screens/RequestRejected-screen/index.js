@@ -17,7 +17,7 @@ import Toast from 'react-native-toast-message';
 import authAxios from '../../utils/authAxios';
 import { useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 export default function RequestRejected({ navigation, route }) {
-  const { leaveId } = route.params; // 👈 Receive leaveId from navigation
+  const { leaveId } = route.params; 
   const [leave, setLeave] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
@@ -30,7 +30,7 @@ export default function RequestRejected({ navigation, route }) {
     return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true, // set to false if you prefer 24-hour format
+      hour12: true, 
     });
   };
 

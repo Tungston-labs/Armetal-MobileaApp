@@ -32,8 +32,8 @@ export default function TaskUpdateScreen() {
   const [project, setProject] = useState('');
   const [task, setTask] = useState('');
   const [timeTaken, setTimeTaken] = useState('');
-  const [loading, setLoading] = useState(true);   // ✅ new
-  const [refreshing, setRefreshing] = useState(false); // ✅ new
+  const [loading, setLoading] = useState(true);   
+  const [refreshing, setRefreshing] = useState(false); 
   const [description, setDescription] = useState('');
 
 
@@ -58,7 +58,7 @@ export default function TaskUpdateScreen() {
         id: item.id,
         project: item.project,
         task: item.task,
-        description: item.description, // ✅ include description
+        description: item.description,
         time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
         submittedAt: moment(item.updated_at).format('hh:mm A'),
       }));
@@ -111,7 +111,7 @@ export default function TaskUpdateScreen() {
     setProject('');
     setTask('');
     setTimeTaken('');
-    setDescription(''); // ✅ reset description
+    setDescription(''); 
     fetchTasks(selectedDate);
   };
 
@@ -274,8 +274,8 @@ export default function TaskUpdateScreen() {
         setTask={setTask}
         timeTaken={timeTaken}
         setTimeTaken={setTimeTaken}
-        description={description}        // ✅ pass description
-        setDescription={setDescription} // ✅ pass setter
+        description={description}        
+        setDescription={setDescription} 
         onSubmit={handleSubmit}
       />
 

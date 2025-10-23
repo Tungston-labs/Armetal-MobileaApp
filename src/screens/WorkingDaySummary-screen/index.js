@@ -6,8 +6,6 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import { LinearGradient } from "expo-linear-gradient";
-// import { BlurView } from "expo-blur";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 
 function formatHours(decimalHours) {
@@ -140,10 +138,8 @@ export default function WorkingDaySummary() {
     );
   };
   
-
   return (
     <View style={{ flex: 1, backgroundColor: "#151D34" }}>
-
 
       {/* Header */}
       <View style={styles.header}>
@@ -159,7 +155,6 @@ export default function WorkingDaySummary() {
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}
       >
-
 
         {/* Circle */}
           <View style={{ alignItems: "center" }}>

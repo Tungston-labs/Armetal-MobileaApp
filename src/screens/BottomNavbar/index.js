@@ -1,16 +1,15 @@
-// BottomNavbar.js
+
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
-// Import SVGs
 import HomeIcon from '../../../assets/images/home.svg';
 import CalendarIcon from '../../../assets/images/calendar.svg';
-import FileIcon from '../../../assets/images/filr.svg';   // ✅ actual filename is filr.svg
+import FileIcon from '../../../assets/images/filr.svg';  
 import FolderIcon from '../../../assets/images/folder.svg';
 import BillIcon from '../../../assets/images/bill.svg';
 
-const ICON_SIZE = 35; // Increased size for better visibility
+const ICON_SIZE = 35; 
 
 const BottomNavbar = ({ navigation, route }) => {
   return (

@@ -50,8 +50,7 @@ const InitAuth = ({ children }) => {
     const init = async () => {
       await dispatch(restoreSession());
 
-      // ✅ Check if user was punched in and resume background location updates
-      const punchedIn = await AsyncStorage.getItem("punchedIn"); // save this flag after punch in/out
+      const punchedIn = await AsyncStorage.getItem("punchedIn"); 
       if (punchedIn === "true") {
         startBackgroundUpdate();
       }

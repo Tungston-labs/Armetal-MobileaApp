@@ -13,11 +13,11 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-end',     // Push items to bottom
+    alignItems: 'flex-end',     
     backgroundColor: '#262D40',
     paddingHorizontal: 20,
-    paddingBottom: 18,          // Add bottom padding instead of marginTop
-    height: 100,                // Increased height to allow more vertical space
+    paddingBottom: 18,          
+    height: 100,                
     borderBottomWidth: 0.2,
     borderBottomColor: '#FFFFFF',
     marginBottom: 10,
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     marginBottom: hp('2%'),
     height: hp('18%'),
     justifyContent: 'space-between',
-    paddingTop: hp('1.0%'),   // ✅ added spacing at bottom for clean look
+    paddingTop: hp('1.0%'),   
   },
   teamTitle: {
     color: 'white',

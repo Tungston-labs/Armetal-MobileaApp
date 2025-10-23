@@ -12,7 +12,7 @@ export default StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 40, // spacing between logo and form
+    marginBottom: 40, 
   },
 
   logo: {
@@ -92,22 +92,6 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
-
-// inputContainer: {
-//   position: "relative",
-//   width: "100%",
-//   marginBottom: 16,
-// },
-
-// input: {
-//   height: 48,
-//   borderWidth: 1,
-//   borderColor: "#ccc",
-//   borderRadius: 8,
-//   paddingHorizontal: 16,
-//   paddingRight: 40, // space for the eye icon
-//   fontSize: 16,
-// },
 
 eyeIcon: {
   position: "absolute",

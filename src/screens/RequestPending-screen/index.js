@@ -30,7 +30,7 @@ export default function RequestPending({ navigation, route }) {
     return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true, // set to false if you prefer 24-hour format
+      hour12: true, 
     });
   };
 
@@ -187,7 +187,6 @@ export default function RequestPending({ navigation, route }) {
           </View>
         </View>
 
-        {/* Cancel button only if pending */}
         {leave.status === "pending" && (
           <TouchableOpacity
             style={styles.cancelButton}
