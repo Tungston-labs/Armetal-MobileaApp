@@ -4,7 +4,7 @@ export default StyleSheet.create({
   bottomTab: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center', // ✅ keeps icons vertically aligned
+    alignItems: 'center', 
     backgroundColor: '#172554',
     paddingVertical: 10,
     borderTopWidth: 1,
@@ -12,7 +12,7 @@ export default StyleSheet.create({
   },
   tabIconActive: {
     backgroundColor: '#3352BA',
-    padding: 8,          // ✅ more padding for larger icons
+    padding: 8,          
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',

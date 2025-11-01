@@ -108,9 +108,9 @@ export default function LeaveAllScreen({ navigation, route }) {
 
           <View>
             <Text style={styles.label}>Time</Text>
-            <Text style={styles.value}>{formatTime(item.created_at)} 
+            <Text style={styles.value}>{formatTime(item.created_at)}
 
-</Text>
+            </Text>
           </View>
         </View>
 

@@ -4,7 +4,6 @@ import authAxios from '../../utils/authAxios';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
-// 🛰 Define background task
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   console.log("📡 Background task triggered");
   if (error) {
@@ -65,7 +64,6 @@ export async function startBackgroundUpdate() {
   }
 }
 
-// 🛑 Stop background tracking
 export async function stopBackgroundUpdate() {
   const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
   if (hasStarted) {

@@ -57,7 +57,7 @@ export default function LeaveRequestFormScreen() {
         const response = await authAxios.get("/leave/summary/");
         if (response.status === 200) {
           const summary = response.data;
-          setPendingLeaveCount(summary.pending_count || 0);
+          setPendingLeaveCount(summary.total_leave || 0);
           setLopDays(summary.lop_days || 0);
           setLopAmount(summary.lop_amount || 0);
         }

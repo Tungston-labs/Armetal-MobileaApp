@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 999,               // ensure above everything
   },
+  
   logoWrapper: {
     width: 100,
     height: 100,

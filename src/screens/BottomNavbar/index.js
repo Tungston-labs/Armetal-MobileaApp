@@ -86,3 +86,5 @@ const BottomNavbar = ({ navigation, route }) => {
 };
 
 export default BottomNavbar;
+
+
