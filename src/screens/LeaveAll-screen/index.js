@@ -12,7 +12,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
 import SwipeLoader from "../../components/SwipeLoader"
 export default function LeaveAllScreen({ navigation, route }) {
@@ -39,7 +38,6 @@ export default function LeaveAllScreen({ navigation, route }) {
       hour12: true,
     });
   };
-
 
   useEffect(() => {
     fetchLeaves();
@@ -164,7 +162,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      <BottomNavbar navigation={navigation} route={route} />
+     
     </SafeAreaView>
   );
 }

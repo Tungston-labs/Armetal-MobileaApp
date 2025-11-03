@@ -13,7 +13,6 @@ import {
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
-import BottomNavbar from '../BottomNavbar';
 import TaskModal from '../TaskModal';
 import moment from 'moment';
 import authAxios from '../../utils/authAxios';
@@ -279,10 +278,7 @@ export default function TaskUpdateScreen() {
         onSubmit={handleSubmit}
       />
 
-      {/* Bottom Nav */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      
     </SafeAreaView>
   );
 }

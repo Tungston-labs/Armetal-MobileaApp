@@ -21,13 +21,11 @@ function getDaysInMonth(dateStr) {
   if (isNaN(date)) {
     throw new Error("Invalid date format. Use YYYY-MM-DD.");
   }
-
   const year = date.getFullYear();
   const month = date.getMonth(); // 0-indexed: January is 0
 
   return new Date(year, month + 1, 0).getDate();
 }
-
 export default function WorkingDaySummary() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -139,7 +137,7 @@ export default function WorkingDaySummary() {
       />
     );
   };
-  
+
 
   return (
     <View style={{ flex: 1, backgroundColor: "#151D34" }}>

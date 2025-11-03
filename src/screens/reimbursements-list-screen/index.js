@@ -12,7 +12,6 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
@@ -193,10 +192,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      {/* Fixed Bottom Navbar */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      
     </View>
   );
 }

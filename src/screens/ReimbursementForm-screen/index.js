@@ -15,7 +15,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Toast from "react-native-toast-message";   // ✅ Toast import
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 
@@ -246,16 +245,7 @@ const ReimbursementForm = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
 
-      </KeyboardAwareScrollView>
-      {!loading && (
-  <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-    <BottomNavbar navigation={navigation} route={route} />
-  </View>
-)}
-
-
-
-      
+      </KeyboardAwareScrollView>     
     </View>
   );
 };

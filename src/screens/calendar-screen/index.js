@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import HolidayTab from "./holiday-list-screen";
 import ReminderTab from "./schedule-reminder-screen.js";
 import SwipeLoader from "../../components/SwipeLoader"
@@ -75,9 +74,7 @@ const CalendarScreen = () => {
         )}
       </View>
 
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      
     </>
   );
 };

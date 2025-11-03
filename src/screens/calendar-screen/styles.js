@@ -10,11 +10,11 @@ header: {
   borderBottomWidth: 0.5,
   borderBottomColor: '#FFFF',
   backgroundColor: '#262D40',
-  flexDirection: 'row',         // ✅ row layout
-  alignItems: 'center',         // ✅ vertical alignment
-  justifyContent: 'flex-start', // keeps items left
+  flexDirection: 'row',         
+  alignItems: 'center',        
+  justifyContent: 'flex-start', 
   paddingHorizontal: 16,
-  paddingTop: 40,               // adjust for status bar spacing
+  paddingTop: 40,               
 },
 
 backButton: {

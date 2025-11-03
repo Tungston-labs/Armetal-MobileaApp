@@ -22,7 +22,6 @@ export default function RequestRejected({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
 
-
   const API_BASE_URL = 'http://178.248.112.16:8001';
 
   const formatTime = (isoString) => {
@@ -51,8 +50,6 @@ export default function RequestRejected({ navigation, route }) {
 
     fetchProfile();
   }, []);
-
-
 
   useEffect(() => {
     const fetchLeaveDetail = async () => {
@@ -88,7 +85,6 @@ export default function RequestRejected({ navigation, route }) {
       </SafeAreaView>
     );
   }
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -130,7 +126,6 @@ export default function RequestRejected({ navigation, route }) {
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
               <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
-
 
             </View>
           </View>
