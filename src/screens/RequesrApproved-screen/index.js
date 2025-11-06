@@ -120,10 +120,14 @@ useEffect(() => {
             <View style={styles.column}>
               <Text style={styles.label}>From</Text>
               <Text style={styles.value}>{leave.from_date}</Text>
+                          <Text style={styles.value}>{leave.from_date_type}</Text>
+              
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>To</Text>
               <Text style={styles.value}>{leave.to_date}</Text>
+              <Text style={styles.value}>{leave.to_date_type}</Text>
+
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>

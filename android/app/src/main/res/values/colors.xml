@@ -1,11 +1,6 @@
 <resources>
-    <!-- Background color of the splash screen -->
-    <color name="splashscreen_background">#151D34</color>
-
-    <!-- Optional: Icon background if needed -->
-    <color name="iconBackground">#151D34</color>
-
-    <!-- Primary colors -->
-    <color name="colorPrimary">#023c69</color>
-    <color name="colorPrimaryDark">#023c69</color>
+  <color name="splashscreen_background">#151D34</color>
+  <color name="iconBackground">#ffffff</color>
+  <color name="colorPrimary">#023c69</color>
+  <color name="colorPrimaryDark">#151D34</color>
 </resources>

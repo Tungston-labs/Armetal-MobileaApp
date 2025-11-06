@@ -74,11 +74,15 @@ export default function LeavePendingScreen() {
           <View>
             <Text style={styles.label}>From</Text>
             <Text style={styles.value}>{item.from_date}</Text>
+                        <Text style={styles.value}>{item.from_date_type}</Text>
+            
           </View>
 
           <View>
             <Text style={styles.label}>To</Text>
             <Text style={styles.value}>{item.to_date}</Text>
+                        <Text style={styles.value}>{item.to_date_type}</Text>
+            
           </View>
 
           <View>

@@ -22,6 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader";
 import Share from 'react-native-share';
+import handleGeneratePDF from './payslip_pdf'
   
 import FileViewer from 'react-native-file-viewer';
 
@@ -45,6 +46,8 @@ const SalarySlipScreen = () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
+      console.log(response.data);
+      
       setSalaryData(response.data || []);
     } catch (error) {
       console.log("Salary API error:", error.response?.data || error.message);
@@ -59,19 +62,30 @@ const SalarySlipScreen = () => {
 
   // Only show fully verified payslips
   const combinedList = salaryData
-    .filter(item => item.fully_verified)
-    .map((item) => {
-      const monthIndex = Number(item.month);
-      return {
-        month: allMonths[monthIndex - 1],
-        monthNumber: monthIndex,
-        year: selectedYear,
-      };
-    });
+  .filter(item => item.fully_verified)
+  .map((item) => {
+    // Handle both numeric and string month values
+    let monthIndex = parseInt(item.month, 10);
+    let monthName = allMonths[monthIndex - 1];
 
-  const filtered = combinedList.filter((item) =>
-    item.month.toLowerCase().includes(searchText.toLowerCase())
-  );
+    // Fallback: if API already returns month name
+    if (!monthName && typeof item.month === 'string') {
+      monthName = item.month.charAt(0).toUpperCase() + item.month.slice(1);
+    }
+
+    return {
+      ...item,
+      month: monthName || 'Unknown',
+      monthNumber: monthIndex || null,
+      year: selectedYear,
+    };
+  });
+
+
+    const filtered = combinedList.filter((item) =>
+      (item.month || '').toString().toLowerCase().includes(searchText.toLowerCase())
+    );
+    
 
   const requestStoragePermission = async () => {
     if (Platform.OS === 'android' && Platform.Version < 33) {
@@ -90,49 +104,6 @@ const SalarySlipScreen = () => {
       }
     }
     return true;
-  };
-
-
-  
-  const handleDownload = async (monthNumber) => {
-    try {
-      setDownloading((prev) => ({ ...prev, [monthNumber]: true }));
-  
-      const token = await AsyncStorage.getItem('accessToken');
-      const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
-      const url = `${authAxios.defaults.baseURL}/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
-  
-      const fileName = `Payslip_${paddedMonth}_${selectedYear}.pdf`;
-      const filePath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-  
-      // 🔽 Download the PDF file
-      const result = await RNFS.downloadFile({
-        fromUrl: url,
-        toFile: filePath,
-        headers: { Authorization: `Bearer ${token}` },
-      }).promise;
-  
-      if (result.statusCode === 200) {
-        console.log('✅ File saved:', filePath);
-  
-        const exists = await RNFS.exists(filePath);
-        if (!exists) throw new Error('File not found after download');
-  
-        // 🔓 Open the PDF file with default viewer
-        await FileViewer.open(filePath, {
-          showOpenWithDialog: true, // gives user "Open with..." dialog on Android
-          showAppsSuggestions: true,
-        });
-  
-      } else {
-        throw new Error(`Download failed with status ${result.statusCode}`);
-      }
-    } catch (err) {
-      console.error('❌ Download error:', err);
-      Alert.alert('Error', 'Could not download or open payslip');
-    } finally {
-      setDownloading((prev) => ({ ...prev, [monthNumber]: false }));
-    }
   };
   
   
@@ -219,13 +190,11 @@ const SalarySlipScreen = () => {
                 </View>
               </View>
 
-              <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-                {downloading[item.monthNumber] ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" />
-                )}
-              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleGeneratePDF(item)}>
+  <Text><MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" /></Text>
+</TouchableOpacity>
+
+
             </View>
           )}
         />
