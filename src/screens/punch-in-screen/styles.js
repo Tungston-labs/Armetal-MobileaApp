@@ -86,7 +86,6 @@ textContainer: {
   alignItems: "center",
 },
 
-
   // Legend
   legendRow: {
     flexDirection: "row",

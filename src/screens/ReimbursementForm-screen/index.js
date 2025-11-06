@@ -18,7 +18,6 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
   // const [toMail, setToMail] = useState("");
@@ -251,11 +250,7 @@ const ReimbursementForm = ({ navigation, route }) => {
   <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
     <BottomNavbar navigation={navigation} route={route} />
   </View>
-)}
-
-
-
-      
+)}      
     </View>
   );
 };
