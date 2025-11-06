@@ -41,11 +41,17 @@ const SalarySlipScreen = () => {
   const fetchSalaryRecords = async () => {
     try {
       setLoading(true);
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log("Access token:", token);
+      console.log("Axios baseURL:", authAxios.defaults.baseURL);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
       console.log("API Response:", response.data);   // 👈 Add this
       setSalaryData(response.data || []);
     } catch (error) {
       console.log("Salary API error:", error.response?.data || error.message);
+      console.log("❌ Status:", error.response?.status);
+  console.log("❌ Response:", error.response?.data);
+  console.log("❌ Headers:", error.response?.headers);
     } finally {
       setLoading(false);
     }
