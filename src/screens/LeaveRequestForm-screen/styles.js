@@ -17,6 +17,25 @@ header: {
   borderBottomWidth: 0.5,
   borderBottomColor:"#FFFFFF",
 },
+pickerWrapper: {
+  backgroundColor: '#172554',  // same as input box background
+  borderRadius: 10,
+  borderWidth: 0.2,
+  borderColor: '#FFFFFF',
+  marginTop: 14,               // add top padding space
+  marginBottom: 20,
+  paddingHorizontal: 12,
+  paddingVertical: 14,
+  justifyContent: 'center',
+},
+
+picker: {
+  height: 45,
+  color: '#FFFFFF',            // same text color as input
+  fontSize: 15,
+  fontFamily: 'Montserrat_400Regular',
+  width: '100%',
+},
 
 headerTitle: {
   marginLeft: 20,

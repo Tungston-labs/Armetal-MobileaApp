@@ -20,7 +20,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import authAxios from '../../utils/authAxios';
-import SwipeLoader from "../../components/SwipeLoader"
+import SwipeLoader from "../../components/SwipeLoader";
+import Share from 'react-native-share';
+  
+import FileViewer from 'react-native-file-viewer';
 
 const allMonths = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -35,14 +38,13 @@ const SalarySlipScreen = () => {
   const [selectedYear, setSelectedYear] = useState('2025');
   const [salaryData, setSalaryData] = useState([]);
   const [yearDropdownVisible, setYearDropdownVisible] = useState(false);
-  const [loading, setLoading] = useState(false);  // loader for fetch
-  const [downloading, setDownloading] = useState({}); // store per month
+  const [loading, setLoading] = useState(false);  
+  const [downloading, setDownloading] = useState({}); 
 
   const fetchSalaryRecords = async () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
-      console.log("API Response:", response.data);   // 👈 Add this
       setSalaryData(response.data || []);
     } catch (error) {
       console.log("Salary API error:", error.response?.data || error.message);
@@ -55,16 +57,17 @@ const SalarySlipScreen = () => {
     fetchSalaryRecords();
   }, [selectedYear]);
 
-  // Only show months returned from API
-  const combinedList = salaryData.map((item) => {
-    const monthIndex = Number(item.month);
-    return {
-      month: allMonths[monthIndex - 1], // convert 1 → January
-      monthNumber: monthIndex,
-      year: selectedYear,
-      hasData: true,
-    };
-  });
+  // Only show fully verified payslips
+  const combinedList = salaryData
+    .filter(item => item.fully_verified)
+    .map((item) => {
+      const monthIndex = Number(item.month);
+      return {
+        month: allMonths[monthIndex - 1],
+        monthNumber: monthIndex,
+        year: selectedYear,
+      };
+    });
 
   const filtered = combinedList.filter((item) =>
     item.month.toLowerCase().includes(searchText.toLowerCase())
@@ -85,48 +88,56 @@ const SalarySlipScreen = () => {
         console.warn(err);
         return false;
       }
-    } else {
-      return true;
     }
+    return true;
   };
+
+
+  
   const handleDownload = async (monthNumber) => {
     try {
-      setDownloading(prev => ({ ...prev, [monthNumber]: true }));
-
+      setDownloading((prev) => ({ ...prev, [monthNumber]: true }));
+  
       const token = await AsyncStorage.getItem('accessToken');
       const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
-
-      const downloadUrl = `${authAxios.defaults.baseURL}/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
-      const filePath = `${RNFS.DownloadDirectoryPath}/Payslip_${paddedMonth}_${selectedYear}.pdf`;
-
-      const hasPermission = await requestStoragePermission();
-      if (!hasPermission) {
-        Alert.alert('Permission Denied', 'Storage permission is required to download files.');
-        return;
-      }
-
-      const options = {
-        fromUrl: downloadUrl,
+      const url = `${authAxios.defaults.baseURL}/employee/payslip/download/?month=${paddedMonth}&year=${selectedYear}`;
+  
+      const fileName = `Payslip_${paddedMonth}_${selectedYear}.pdf`;
+      const filePath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+  
+      // 🔽 Download the PDF file
+      const result = await RNFS.downloadFile({
+        fromUrl: url,
         toFile: filePath,
         headers: { Authorization: `Bearer ${token}` },
-      };
-
-      const result = await RNFS.downloadFile(options).promise;
-
+      }).promise;
+  
       if (result.statusCode === 200) {
-        Alert.alert('Success', 'Payslip downloaded successfully.');
+        console.log('✅ File saved:', filePath);
+  
+        const exists = await RNFS.exists(filePath);
+        if (!exists) throw new Error('File not found after download');
+  
+        // 🔓 Open the PDF file with default viewer
+        await FileViewer.open(filePath, {
+          showOpenWithDialog: true, // gives user "Open with..." dialog on Android
+          showAppsSuggestions: true,
+        });
+  
       } else {
-        console.log(result);
-        Alert.alert('Error', 'Download failed. Try again.');
+        throw new Error(`Download failed with status ${result.statusCode}`);
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'Could not download payslip');
+      console.error('❌ Download error:', err);
+      Alert.alert('Error', 'Could not download or open payslip');
     } finally {
-      setDownloading(prev => ({ ...prev, [monthNumber]: false }));
+      setDownloading((prev) => ({ ...prev, [monthNumber]: false }));
     }
   };
-
+  
+  
+  
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -135,11 +146,10 @@ const SalarySlipScreen = () => {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Salary slip</Text>
+        <Text style={styles.headerTitle}>Salary Slip</Text>
       </View>
 
       {/* Search & Year Filter */}
-
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
           <Ionicons name="search" size={25} color="#ccc" />
@@ -156,17 +166,10 @@ const SalarySlipScreen = () => {
           style={styles.dropdownBox}
           onPress={() => setYearDropdownVisible(true)}
         >
-          <Text style={styles.dropdownText}>
-            {selectedYear ? selectedYear : "Year"}
-          </Text>
+          <Text style={styles.dropdownText}>{selectedYear}</Text>
           <MaterialIcons name="arrow-drop-down" size={24} color="#fff" />
         </TouchableOpacity>
-
-        {/* <TouchableOpacity style={styles.searchIconBox} onPress={fetchSalaryRecords}>
-        <Ionicons name="search" size={22} color="#fff" />
-       </TouchableOpacity> */}
       </View>
-
 
       {/* Year Modal */}
       <Modal visible={yearDropdownVisible} transparent animationType="fade">
@@ -192,58 +195,41 @@ const SalarySlipScreen = () => {
         </TouchableOpacity>
       </Modal>
 
-      {/* Loader while fetching */}
-      {/* Loader while fetching */}
+      {/* Loader / Empty / List */}
       {loading ? (
         <SwipeLoader text="Loading salary data..." />
       ) : filtered.length === 0 ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <Text style={{ color: "#ccc", fontSize: 16, fontFamily: 'Montserrat_400Regular' }}>
-            No records found for {selectedYear}.
+            No verified payslips available for {selectedYear}.
           </Text>
         </View>
       ) : (
-        <>
-          {/* Month List */}
-          <FlatList
-            data={filtered}
-            keyExtractor={(item) => `${item.month}-${item.year}`}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                {/* Month/Year with Note Icon */}
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons
-                    name="reader"
-                    size={25}
-                    color="#ccc"
-                    style={{ marginRight: 5 }}
-                  />
-                  <View>
-                    <Text style={styles.monthText}>{item.month}</Text>
-                    <Text style={styles.yearText}>{item.year}</Text>
-                  </View>
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => `${item.month}-${item.year}`}
+          contentContainerStyle={styles.listContainer}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="reader" size={25} color="#ccc" style={{ marginRight: 5 }} />
+                <View>
+                  <Text style={styles.monthText}>{item.month}</Text>
+                  <Text style={styles.yearText}>{item.year}</Text>
                 </View>
-
-                {/* Download Button */}
-                <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
-                  {downloading[item.monthNumber] ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <MaterialCommunityIcons
-                      name="tray-arrow-down"
-                      size={22}
-                      color="#fff"
-
-                    />
-                  )}
-                </TouchableOpacity>
               </View>
-            )}
-          />
-        </>
-      )}
 
+              <TouchableOpacity onPress={() => handleDownload(item.monthNumber)}>
+                {downloading[item.monthNumber] ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" />
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };
