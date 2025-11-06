@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -24,7 +25,11 @@ export default function LeaveRequestFormScreen() {
   const [toDate, setToDate] = useState(new Date());
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
+
   const [selectedLeaveType, setSelectedLeaveType] = useState('casual');
+  const [fromType, setFromType] = useState('full'); // ✅ New state
+  const [toType, setToType] = useState('full');     // ✅ New state
+
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
   const [reason, setReason] = useState('');
@@ -42,19 +47,28 @@ export default function LeaveRequestFormScreen() {
     { id: 5, type: 'others' },
   ];
 
+  // ✅ Same choices as backend
+  const halfDayTypes = [
+    { id: 1, label: 'Forenoon', value: 'forenoon' },
+    { id: 2, label: 'Afternoon', value: 'afternoon' },
+    { id: 3, label: 'Full Day', value: 'full' },
+  ];
+
   const clearForm = () => {
     setFromDate(new Date());
     setToDate(new Date());
-    setSelectedLeaveType("casual");
-    setToEmail("");
-    setCcEmail("");
-    setReason("");
+    setSelectedLeaveType('casual');
+    setFromType('full');
+    setToType('full');
+    setToEmail('');
+    setCcEmail('');
+    setReason('');
   };
 
   useEffect(() => {
     const fetchLeaveSummary = async () => {
       try {
-        const response = await authAxios.get("/leave/summary/");
+        const response = await authAxios.get('/leave/summary/');
         if (response.status === 200) {
           const summary = response.data;
           setPendingLeaveCount(summary.total_leave || 0);
@@ -62,7 +76,7 @@ export default function LeaveRequestFormScreen() {
           setLopAmount(summary.lop_amount || 0);
         }
       } catch (err) {
-        console.error("❌ Error fetching summary:", err);
+        console.error('❌ Error fetching summary:', err);
       }
     };
     fetchLeaveSummary();
@@ -71,12 +85,12 @@ export default function LeaveRequestFormScreen() {
   useEffect(() => {
     const fetchDepartmentHeadEmail = async () => {
       try {
-        const response = await authAxios.get("/my-department-head/");
+        const response = await authAxios.get('/my-department-head/');
         if (response.status === 200) {
           setToEmail(response.data.email);
         }
       } catch (err) {
-        console.error("❌ Error fetching department head email:", err);
+        console.error('❌ Error fetching department head email:', err);
       }
     };
     fetchDepartmentHeadEmail();
@@ -84,9 +98,9 @@ export default function LeaveRequestFormScreen() {
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
+    const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
     if (!emailRegex.test(email)) return false;
-    const domain = email.split("@")[1];
+    const domain = email.split('@')[1];
     return allowedDomains.includes(domain);
   };
 
@@ -97,9 +111,9 @@ export default function LeaveRequestFormScreen() {
       today.setHours(0, 0, 0, 0);
       if (selectedDate < today) {
         Toast.show({
-          type: "error",
-          text1: "Invalid Date",
-          text2: "You cannot select a past date.",
+          type: 'error',
+          text1: 'Invalid Date',
+          text2: 'You cannot select a past date.',
         });
         return;
       }
@@ -114,17 +128,17 @@ export default function LeaveRequestFormScreen() {
       today.setHours(0, 0, 0, 0);
       if (selectedDate < today) {
         Toast.show({
-          type: "error",
-          text1: "Invalid Date",
-          text2: "You cannot select a past date.",
+          type: 'error',
+          text1: 'Invalid Date',
+          text2: 'You cannot select a past date.',
         });
         return;
       }
       if (selectedDate < fromDate) {
         Toast.show({
-          type: "error",
-          text1: "Invalid Range",
-          text2: "To date cannot be earlier than From date.",
+          type: 'error',
+          text1: 'Invalid Range',
+          text2: 'To date cannot be earlier than From date.',
         });
         return;
       }
@@ -135,63 +149,68 @@ export default function LeaveRequestFormScreen() {
   const submitLeaveRequest = async () => {
     if (!reason || !toEmail) {
       Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Please fill all required fields.",
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please fill all required fields.',
       });
       return;
     }
+
     if (!isValidEmail(toEmail)) {
       Toast.show({
-        type: "error",
-        text1: "Invalid Email",
-        text2: "Enter a valid Gmail, Yahoo, or Outlook email.",
+        type: 'error',
+        text1: 'Invalid Email',
+        text2: 'Enter a valid Gmail, Yahoo, or Outlook email.',
       });
       return;
     }
+
     if (ccEmail && !isValidEmail(ccEmail)) {
       Toast.show({
-        type: "error",
-        text1: "Invalid CC Email",
-        text2: "Enter a valid Gmail, Yahoo, or Outlook email.",
+        type: 'error',
+        text1: 'Invalid CC Email',
+        text2: 'Enter a valid Gmail, Yahoo, or Outlook email.',
       });
       return;
     }
+
     setLoading(true);
     try {
-      const response = await authAxios.post("/leave/", {
+      const response = await authAxios.post('/leave/', {
         leave_type: selectedLeaveType,
         reason,
-        from_date: fromDate.toISOString().split("T")[0],
-        to_date: toDate.toISOString().split("T")[0],
+        from_date: fromDate.toISOString().split('T')[0],
+        to_date: toDate.toISOString().split('T')[0],
+        from_date_type: fromType, // ✅ Added
+        to_date_type: toType,     // ✅ Added
         to_email: toEmail,
         cc_email: ccEmail,
       });
 
       Toast.show({
-        type: "success",
-        text1: "Leave Request Submitted",
-        text2: "Your request has been sent successfully!",
+        type: 'success',
+        text1: 'Leave Request Submitted',
+        text2: 'Your request has been sent successfully!',
       });
-      navigation.navigate("LeavePendingScreen");
 
+      navigation.navigate('LeavePendingScreen');
     } catch (error) {
       if (error.response) {
         Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.response.data?.detail || "Something went wrong.",
+          type: 'error',
+          text1: 'Error',
+          text2: error.response.data?.detail || 'Something went wrong.',
         });
       } else if (error.request) {
         Toast.show({
-          type: "error",
-          text1: "Network Error",
-          text2: "No response from server.",
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'No response from server.',
         });
       } else {
         Toast.show({
-          type: "error",
-          text1: "Unexpected Error",
+          type: 'error',
+          text1: 'Unexpected Error',
           text2: error.message,
         });
       }
@@ -204,7 +223,7 @@ export default function LeaveRequestFormScreen() {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -229,13 +248,13 @@ export default function LeaveRequestFormScreen() {
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statLabel}>Loss of Pay Taken</Text>
-              <Text style={styles.statValue}>₹ {lopAmount}-{lopDays}</Text>
+              <Text style={styles.statValue}>₹ {lopAmount} - {lopDays}</Text>
             </View>
           </View>
 
           <View style={styles.divider} />
 
-          {/* Date Pickers */}
+          {/* Date Pickers + Half-day pickers */}
           <View style={styles.section}>
             <View style={styles.dateRow}>
               <View style={styles.dateInput}>
@@ -244,13 +263,42 @@ export default function LeaveRequestFormScreen() {
                   <Text style={styles.dateText}>{fromDate.toLocaleDateString()}</Text>
                   <Ionicons name="calendar" size={20} color="#ccc" />
                 </TouchableOpacity>
+
+                {/* ✅ From Type Picker */}
+                <View style={[styles.pickerWrapper, { marginTop: 20 }]}>
+                  <Picker
+                    selectedValue={fromType}
+                    onValueChange={setFromType}
+                    style={styles.picker}
+                    dropdownIconColor="#ccc"
+                  >
+                    {halfDayTypes.map((item) => (
+                      <Picker.Item key={item.id} label={item.label} value={item.value} />
+                    ))}
+                  </Picker>
+                </View>
               </View>
+
               <View style={styles.dateInput}>
                 <Text style={styles.inputLabel}>To</Text>
                 <TouchableOpacity style={styles.dateField} onPress={() => setShowToPicker(true)}>
                   <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
                   <Ionicons name="calendar" size={20} color="#ccc" />
                 </TouchableOpacity>
+
+                {/* ✅ To Type Picker */}
+                <View style={[styles.pickerWrapper, { marginTop: 20 }]}>
+                  <Picker
+                    selectedValue={toType}
+                    onValueChange={setToType}
+                    style={styles.picker}
+                    dropdownIconColor="#ccc"
+                  >
+                    {halfDayTypes.map((item) => (
+                      <Picker.Item key={item.id} label={item.label} value={item.value} />
+                    ))}
+                  </Picker>
+                </View>
               </View>
             </View>
           </View>
@@ -262,7 +310,7 @@ export default function LeaveRequestFormScreen() {
             <DateTimePicker value={toDate} mode="date" display="default" onChange={onToChange} />
           )}
 
-          {/* Leave Type Picker */}
+          {/* Leave Type */}
           <View style={styles.section}>
             <Text style={styles.inputLabel}>Leave Type</Text>
             <View style={styles.pickerWrapper}>
@@ -279,7 +327,7 @@ export default function LeaveRequestFormScreen() {
             </View>
           </View>
 
-          {/* To Email */}
+          {/* To / CC / Reason */}
           <View style={styles.section}>
             <Text style={styles.inputLabel}>To</Text>
             <TextInput
@@ -292,7 +340,6 @@ export default function LeaveRequestFormScreen() {
             />
           </View>
 
-          {/* CC Email */}
           <View style={styles.section}>
             <Text style={styles.inputLabel}>C.C</Text>
             <TextInput
@@ -305,7 +352,6 @@ export default function LeaveRequestFormScreen() {
             />
           </View>
 
-          {/* Reason */}
           <View style={styles.section}>
             <Text style={styles.inputLabel}>Reason</Text>
             <TextInput
@@ -319,6 +365,7 @@ export default function LeaveRequestFormScreen() {
           </View>
         </KeyboardAwareScrollView>
 
+        {/* Footer */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.deleteButton} onPress={clearForm}>
             <Ionicons name="trash" size={24} color="#ff3333" />
@@ -329,7 +376,7 @@ export default function LeaveRequestFormScreen() {
             disabled={loading}
           >
             <Text style={styles.applyButtonText}>
-              {loading ? "Applying..." : "Apply Leave"}
+              {loading ? 'Applying...' : 'Apply Leave'}
             </Text>
           </TouchableOpacity>
         </View>

@@ -76,7 +76,8 @@ const AttendanceScreen = () => {
   const fetchDayStatus = async () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
-      const data = response.data;
+      const data = response.data; // 🔹 access 'data' object
+      console.log({ data });
   
       const statusMap = {};
   
@@ -93,14 +94,16 @@ const AttendanceScreen = () => {
         allDates.push(iso);
       }
   
-      // Initialize all days: Sundays as holiday, rest working
+      // Initialize all days: mark company_off_day_dates as holiday, rest as working
       allDates.forEach((date) => {
-        const day = new Date(date).getDay();
-        if (day === 0) statusMap[date] = "holiday";
-        else statusMap[date] = "working";
+        if (data.company_off_day_dates.includes(date)) {
+          statusMap[date] = "holiday";
+        } else {
+          statusMap[date] = "working";
+        }
       });
   
-      // Mark present, absent, holiday
+      // Mark present, absent, holiday (overrides working/off day)
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
@@ -115,6 +118,7 @@ const AttendanceScreen = () => {
       setDayStatus([]);
     }
   };
+  
   
 
   const getProfileUri = (pic) => {
