@@ -257,6 +257,7 @@ export default function LeaveRequestFormScreen() {
           {/* Date Pickers + Half-day pickers */}
           <View style={styles.section}>
             <View style={styles.dateRow}>
+              {/* From Date */}
               <View style={styles.dateInput}>
                 <Text style={styles.inputLabel}>From</Text>
                 <TouchableOpacity style={styles.dateField} onPress={() => setShowFromPicker(true)}>
@@ -264,14 +265,19 @@ export default function LeaveRequestFormScreen() {
                   <Ionicons name="calendar" size={20} color="#ccc" />
                 </TouchableOpacity>
 
-                {/* ✅ From Type Picker */}
-                <View style={[styles.pickerWrapper, { marginTop: 20 }]}>
+                {/* From Leave Type */}
+                <Text style={[styles.inputLabel, { marginTop: 15 }]}>From Leave Type</Text>
+                <View style={styles.leaveTypeBox}>
                   <Picker
                     selectedValue={fromType}
-                    onValueChange={setFromType}
+                    onValueChange={(value) => {
+                      if (value !== '') setFromType(value); // prevents selecting placeholder
+                    }}
                     style={styles.picker}
                     dropdownIconColor="#ccc"
                   >
+                    {/* Disabled Placeholder */}
+                    <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
                     {halfDayTypes.map((item) => (
                       <Picker.Item key={item.id} label={item.label} value={item.value} />
                     ))}
@@ -279,6 +285,7 @@ export default function LeaveRequestFormScreen() {
                 </View>
               </View>
 
+              {/* To Date */}
               <View style={styles.dateInput}>
                 <Text style={styles.inputLabel}>To</Text>
                 <TouchableOpacity style={styles.dateField} onPress={() => setShowToPicker(true)}>
@@ -286,14 +293,19 @@ export default function LeaveRequestFormScreen() {
                   <Ionicons name="calendar" size={20} color="#ccc" />
                 </TouchableOpacity>
 
-                {/* ✅ To Type Picker */}
-                <View style={[styles.pickerWrapper, { marginTop: 20 }]}>
+                {/* To Leave Type */}
+                <Text style={[styles.inputLabel, { marginTop: 15 }]}>To Leave Type</Text>
+                <View style={styles.leaveTypeBox}>
                   <Picker
                     selectedValue={toType}
-                    onValueChange={setToType}
+                    onValueChange={(value) => {
+                      if (value !== '') setToType(value); // prevents selecting placeholder
+                    }}
                     style={styles.picker}
                     dropdownIconColor="#ccc"
                   >
+                    {/* Disabled Placeholder */}
+                    <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
                     {halfDayTypes.map((item) => (
                       <Picker.Item key={item.id} label={item.label} value={item.value} />
                     ))}

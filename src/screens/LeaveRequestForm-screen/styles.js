@@ -7,42 +7,42 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
-header: {
-  flexDirection: 'row',
-  alignItems: 'flex-end',     // Push items to bottom
-  backgroundColor: '#262D40',
-  paddingHorizontal: 20,
-  paddingBottom: 18,          // Add bottom padding instead of marginTop
-  height: 100,                // Increased height to allow more vertical space
-  borderBottomWidth: 0.5,
-  borderBottomColor:"#FFFFFF",
-},
-pickerWrapper: {
-  backgroundColor: '#172554',  // same as input box background
-  borderRadius: 10,
-  borderWidth: 0.2,
-  borderColor: '#FFFFFF',
-  marginTop: 14,               // add top padding space
-  marginBottom: 20,
-  paddingHorizontal: 12,
-  paddingVertical: 14,
-  justifyContent: 'center',
-},
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',     // Push items to bottom
+    backgroundColor: '#262D40',
+    paddingHorizontal: 20,
+    paddingBottom: 18,          // Add bottom padding instead of marginTop
+    height: 100,                // Increased height to allow more vertical space
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#FFFFFF",
+  },
+  pickerWrapper: {
+    backgroundColor: '#172554',  // same as input box background
+    borderRadius: 10,
+    borderWidth: 0.2,
+    borderColor: '#FFFFFF',
+    marginTop: 14,               // add top padding space
+    marginBottom: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    justifyContent: 'center',
+  },
 
-picker: {
-  height: 45,
-  color: '#FFFFFF',            // same text color as input
-  fontSize: 15,
-  fontFamily: 'Montserrat_400Regular',
-  width: '100%',
-},
+  picker: {
+    height: 45,
+    color: '#FFFFFF',            // same text color as input
+    fontSize: 15,
+    fontFamily: 'Montserrat_400Regular',
+    width: '100%',
+  },
 
-headerTitle: {
-  marginLeft: 20,
-  fontSize: 22,
-  color: '#FFFFFF',
-  fontFamily: 'Raleway_700Bold',
-},
+  headerTitle: {
+    marginLeft: 20,
+    fontSize: 22,
+    color: '#FFFFFF',
+    fontFamily: 'Raleway_700Bold',
+  },
 
   separator: {
     height: 1,
@@ -79,7 +79,6 @@ headerTitle: {
     marginTop: 6,
   },
 
-
   divider: {
     height: 1,
     backgroundColor: '#fff',
@@ -87,65 +86,103 @@ headerTitle: {
     width: '100%',
     alignSelf: 'center',
     marginVertical: 20,
-    marginBottom:40,
-    
+    marginBottom: 40,
+
   },
 
   section: {
-    marginBottom: 20,
-  
-  },
-  dateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  dateInput: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  inputLabel: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontFamily: 'Montserrat_400Regular',
+  marginBottom: 20,
+},
 
-    marginBottom: 6,
-  },
-  dateField: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#172554',
-    borderRadius: 10,
-    paddingVertical: 13,
-    paddingHorizontal: 12,
-    justifyContent: 'space-between',
-    borderWidth: 0.2,
-    borderColor: '#FFFFFF',
-  },
-  dateText: {
-    color: '#485378',
-    fontSize: 15,
-  },
-  input: {
-    backgroundColor: '#172554',
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    color: '#FFFFFF',
-    borderWidth: 0.2,
-    borderColor: '#1d294a',
-    marginBottom:20,
-  },
-  textArea: {
-    backgroundColor: '#172554',
-    padding: 12,
-    borderRadius: 10,
-    color: '#FFFF',
-    height: 120,
-    textAlignVertical: 'top',
-    borderWidth: 0.2,
-    borderColor: '#FFFFFF',
-    marginBottom:20,
-  },
+dateRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+},
+
+dateInput: {
+  flex: 1,
+  marginHorizontal: 4,
+},
+
+inputLabel: {
+  color: '#FFFFFF',
+  fontSize: 13,
+  fontFamily: 'Montserrat_400Regular',
+  marginBottom: 6,
+},
+
+dateField: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#172554',
+  borderRadius: 10,
+  paddingVertical: 13,
+  paddingHorizontal: 12,
+  justifyContent: 'space-between',
+  borderWidth: 0.2,
+  borderColor: '#FFFFFF',
+},
+
+// ✅ Leave Type Box (New)
+leaveTypeBox: {
+  backgroundColor: '#172554',
+  borderRadius: 10,
+  borderWidth: 0.2,
+  borderColor: '#FFFFFF',
+  height: 48,
+  justifyContent: 'center',
+  paddingHorizontal: 10,
+  marginTop: 5,
+},
+
+pickerWrapper: {
+  backgroundColor: '#172554',
+  borderRadius: 8,
+  borderWidth: 0.5,
+  borderColor: '#768F9C',
+  justifyContent: 'center',
+  height: 50,
+  paddingHorizontal: 10,
+},
+
+picker: {
+  color: '#7D8EB5',
+  fontSize: 15,
+  fontFamily: 'Montserrat_400Regular',
+  width: '100%',
+  height: '100%',
+},
+
+dateText: {
+  color: '#7D8EB5',
+  fontSize: 15,
+  fontFamily: 'Montserrat_400Regular',
+},
+
+input: {
+  backgroundColor: '#172554',
+  paddingVertical: 14,
+  paddingHorizontal: 14,
+  borderRadius: 10,
+  color: '#FFFFFF',
+  borderWidth: 0.2,
+  borderColor: '#1d294a',
+  marginBottom: 20,
+},
+
+textArea: {
+  backgroundColor: '#172554',
+  padding: 12,
+  borderRadius: 10,
+  color: '#FFFF',
+  height: 120,
+  textAlignVertical: 'top',
+  borderWidth: 0.2,
+  borderColor: '#FFFFFF',
+  marginBottom: 20,
+},
+
+
   footer: {
     position: 'absolute',
     bottom: 16,
@@ -163,7 +200,7 @@ headerTitle: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2F1E2E',
-    marginBottom:25,
+    marginBottom: 25,
   },
   applyButton: {
     flex: 1,
@@ -172,7 +209,7 @@ headerTitle: {
     marginLeft: 16,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom:25,
+    marginBottom: 25,
   },
   applyButtonText: {
     color: '#fff',
@@ -181,18 +218,18 @@ headerTitle: {
 
   },
   pickerWrapper: {
-  backgroundColor: '#green',
-  borderRadius: 10,
-  borderWidth: 1,
-  borderColor: '#1d294a',
-  marginTop: 6,
-  paddingHorizontal: 8,
-  justifyContent: 'center',
-},
-picker: {
-  height: 50,
-  color: '#ccc', // matches input text color
-  width: '100%',
-},
+    backgroundColor: '#green',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#1d294a',
+    marginTop: 6,
+    paddingHorizontal: 8,
+    justifyContent: 'center',
+  },
+  picker: {
+    height: 50,
+    color: '#ccc', // matches input text color
+    width: '100%',
+  },
 
 });
