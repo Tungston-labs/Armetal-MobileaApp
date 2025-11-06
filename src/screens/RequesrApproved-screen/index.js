@@ -26,18 +26,18 @@ export default function RequestApprovedScreen() {
   const [loading, setLoading] = useState(true);
   const API_BASE_URL = 'http://178.248.112.16:8001';
 
-const formatTime = (isoString) => {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true, // set to false if you prefer 24-hour format
-  });
-};
+  const formatTime = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true, // set to false if you prefer 24-hour format
+    });
+  };
 
   // Fetch leave details
-  
-useEffect(() => {
+
+  useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
         const response = await authAxios.get(`/leave/emp/${leaveId}/`);
@@ -84,24 +84,24 @@ useEffect(() => {
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 38 }}  />
+              <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 38 }} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Request detail</Text>
           </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-  {profile?.profile_pic ? (
-    <Image
-      source={{ uri: `${API_BASE_URL}${profile.profile_pic}` }}
-      style={styles.avatar}
-    />
-  ) : (
-    <Image
-      source={{ uri: "https://i.pravatar.cc/40" }}
-      style={styles.avatar}
-    />
-  )}
-</TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+            {profile?.profile_pic ? (
+              <Image
+                source={{ uri: `${API_BASE_URL}${profile.profile_pic}` }}
+                style={styles.avatar}
+              />
+            ) : (
+              <Image
+                source={{ uri: "https://i.pravatar.cc/40" }}
+                style={styles.avatar}
+              />
+            )}
+          </TouchableOpacity>
 
         </View>
       </View>
@@ -127,7 +127,7 @@ useEffect(() => {
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
-        <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
+              <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
 
             </View>
           </View>
@@ -149,4 +149,5 @@ useEffect(() => {
       <BottomNavbar navigation={navigation} route={route} />
     </View>
   );
-  }
+}
+

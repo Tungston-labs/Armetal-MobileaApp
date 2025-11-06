@@ -89,7 +89,6 @@ export default function RequestRejected({ navigation, route }) {
     );
   }
 
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}

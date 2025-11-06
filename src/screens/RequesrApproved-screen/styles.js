@@ -93,8 +93,8 @@ export default StyleSheet.create({
   },
   value: {
     color: "#FFFFFF",
-    fontSize: 16,
-    fontFamily: 'Montserrat_700Bold',
+    fontSize: 15,
+    fontFamily: 'Montserrat_400Regular',
   },
   section: {
     marginBottom: 16,

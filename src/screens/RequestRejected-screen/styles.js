@@ -16,16 +16,16 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "#262D40",
-    height:100,
+    height: 100,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
   },
   backButton: {
     padding: 4,
     marginTop: 25,
-    
+
   },
-headerLeft: {
+  headerLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
@@ -73,7 +73,7 @@ headerLeft: {
   statusText: {
     color: '#FF2304',
     fontSize: 16,
-    paddingHorizontal:12,
+    paddingHorizontal: 12,
   },
 
   // Row layout for From / To / Time
@@ -94,7 +94,7 @@ headerLeft: {
     color: '#575F7D',
     fontSize: 13,
     // marginBottom: 4,
-      fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   value: {
@@ -120,7 +120,7 @@ headerLeft: {
     color: '#FFFF',
     fontSize: 15,
     fontWeight: '500',
-         fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 
   reasonText: {
@@ -128,6 +128,6 @@ headerLeft: {
     fontSize: 14,
     marginTop: 4,
     lineHeight: 20,
-         fontFamily: 'Montserrat_400Regular',
+    fontFamily: 'Montserrat_400Regular',
   },
 });
