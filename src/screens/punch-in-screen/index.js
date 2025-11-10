@@ -34,7 +34,7 @@ import AttendanceTracker from "../../utils/AttendanceTracker"
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-const API_BASE_URL = "http://192.168.29.193:8001";
+const API_BASE_URL = "http://178.248.112.16:8001";
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -50,7 +50,6 @@ const AttendanceScreen = () => {
 
 
   const [dayStatus, setDayStatus] = useState([]);
-  //  🔄 Rotation setup
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -501,8 +500,10 @@ const AttendanceScreen = () => {
 
           )}
           {isCurrentlyPunchedIn() && sessionId && (
-            <AttendanceTracker sessionId={sessionId} />
-          )}
+          <AttendanceTracker 
+              sessionId={sessionId} 
+              employeeId={employee.id.toString()}
+            />     )}
           {/* Attendance Box */}
 
 

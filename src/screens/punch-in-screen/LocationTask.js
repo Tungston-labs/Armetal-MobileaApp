@@ -20,7 +20,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
           location: `${location.coords.latitude}, ${location.coords.longitude}`,
           timestamp: new Date(location.timestamp).toISOString(),
         });
-        console.log("✅ API hit success:", res.data);
+        console.log(" API hit success:", res.data);
       } catch (err) {
         console.log("❌ API hit failed:", err.response?.data || err.message);
       }
@@ -32,13 +32,13 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 export async function startBackgroundUpdate() {
   const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
   if (fgStatus !== 'granted') {
-    console.log('❌ Foreground location permission denied');
+    console.log(' Foreground location permission denied');
     return;
   }
 
   const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
   if (bgStatus !== 'granted') {
-    console.log('❌ Background location permission denied');
+    console.log('Background location permission denied');
     return;
   }
 

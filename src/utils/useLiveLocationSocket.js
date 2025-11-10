@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
+
 
 async function getAccessToken() {
   try {
@@ -23,28 +25,28 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
     });
   }, []);
 
-  // Setup WebSocket once token + sessionId + employeeId are ready
   useEffect(() => {
     if (!employeeId || !sessionId || !accessToken) return;
 
-    // ✅ Match your Django route with employee_id
-    const baseUrl = "ws://192.168.29.134:8001/ws/live-location";
+    const baseUrl = "ws://192.168.29.193:8001/ws/live-location";
     const url = `${baseUrl}/${employeeId}/?token=${accessToken}`;
 
     socket.current = new WebSocket(url);
 
     socket.current.onopen = () =>
-      console.log("✅ Live location socket connected:", employeeId);
+    console.log(" Live location socket connected:", employeeId);
     socket.current.onclose = () => console.log("🔌 Live location socket closed");
     socket.current.onerror = (e) =>
       console.log("⚠️ Socket error:", e.message);
+    console.log("Trying to show alert");
+    Alert.alert("Location", "Data sent successfully!");
 
-    // ✅ Function to fetch and send current location
-    const sendLocation = async () => {
+  const sendLocation = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
+
         if (status !== "granted") {
-          console.warn("❌ Location permission not granted");
+          console.warn("Location permission not granted");
           return;
         }
 
@@ -59,21 +61,22 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
         if (socket.current?.readyState === WebSocket.OPEN) {
           socket.current.send(JSON.stringify(payload));
           console.log("📍 Sent location:", payload);
+          
+        
         } else {
           console.log("⚠️ WebSocket not ready to send");
+        
         }
       } catch (err) {
-        console.error("❌ Location send failed:", err);
+        console.error(" Location send failed:", err);
+     
       }
     };
 
-    // ✅ Send immediately (on punch-in)
     sendLocation();
 
-    // ✅ Send every 1 hour (3600000 ms)
-    const interval = setInterval(sendLocation, 3600000);
-
-    // ✅ Cleanup on unmount or logout
+    const interval = setInterval(sendLocation, 12000);
+    
     return () => {
       clearInterval(interval);
       if (

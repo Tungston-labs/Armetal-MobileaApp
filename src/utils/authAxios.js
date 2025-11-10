@@ -42,7 +42,6 @@ authAxios.interceptors.response.use(
         // Refresh failed → redirect to login
         await AsyncStorage.removeItem("accessToken");
         await AsyncStorage.removeItem("refreshToken");
-        // Navigation logic here if needed
       }
     }
 
