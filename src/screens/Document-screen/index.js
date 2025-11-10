@@ -72,18 +72,23 @@ export default function DocumentsScreen() {
           `/employees/${summary.employee_id}/documents/`
         );
         const detail = detailResponse.data;
+        console.log("📄 Summary response:", summary);
+console.log("📄 Detail response:", detail);
 
-        setData({
-          idCardImage: normalizeUrl(summary.id_card_image_url),
-          workPermitUrls: detail.work_permit_urls.map(normalizeUrl),
-          contractUrls: detail.contract_urls.map(normalizeUrl),
-          passportNumber: summary.passport_number || "",
-          insuranceNumber: summary.healthcard_number || "",
-          iqamaNumber: summary.iqama_number || "",
-          visaExpiry: summary.visa_expiry_date || "",
-          aadarNumber: summary.adhar_number || "",        // ✅
-          contractExpiry: summary.contract_expiry_date || "", // ✅
-        });
+
+setData({
+  idCardImage: normalizeUrl(summary.id_card_image_url),
+  workPermitUrls: detail.work_permit_urls.map(normalizeUrl),
+  contractUrls: detail.contract_urls.map(normalizeUrl),
+  passportNumber: summary.passport_number || "",
+  insuranceNumber: summary.healthcard_number || "",  // keep blank if backend doesn’t send number
+  insuranceImage: normalizeUrl(summary.insurance_image_url), // ✅ add insurance image
+  iqamaNumber: summary.iqama_number || "",
+  visaExpiry: summary.visa_expiry_date || "",
+  aadarNumber: summary.aadar_number || "", // ✅ correct spelling
+  contractExpiry: summary.contract_expiry_date || "",
+});
+
         
       } catch (error) {
         console.error("❌ Failed to fetch documents:", error);

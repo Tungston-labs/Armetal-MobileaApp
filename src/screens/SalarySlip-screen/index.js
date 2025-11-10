@@ -46,7 +46,7 @@ const SalarySlipScreen = () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
-      console.log(response.data);
+      // console.log(response.data);
       
       setSalaryData(response.data || []);
     } catch (error) {

@@ -55,7 +55,17 @@ const AttendanceScreen = () => {
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
   });
-
+  useEffect(() => {
+    (async () => {
+      const punchedIn = isCurrentlyPunchedIn();
+      if (punchedIn) {
+        await startBackgroundUpdate(); // start hourly updates
+      } else {
+        await stopBackgroundUpdate(); // stop updates
+      }
+    })();
+  }, []);
+  
   const startRotation = () => {
     rotateValue.setValue(0);
     Animated.loop(
@@ -77,7 +87,7 @@ const AttendanceScreen = () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
       const data = response.data; // 🔹 access 'data' object
-      console.log({ data });
+      // console.log({ data });
   
       const statusMap = {};
   
@@ -193,7 +203,7 @@ const AttendanceScreen = () => {
         longitude: location.longitude,
       });
     
-      console.log("Swipe response:", res.data); // <--- check what server returned
+      // console.log("Swipe response:", res.data); // <--- check what server returned
     
       // Only show alert on actual error
       if (res.data?.success === false) {

@@ -27,7 +27,7 @@ const ProfileScreen = () => {
     const fetchProfile = async () => {
       try {
         const response = await authAxios.get("/profile/");
-        console.log("Profile data:", response.data); // 👀 check profile_pic here
+        // console.log("Profile data:", response.data); // 👀 check profile_pic here
         setEmployee(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error.message);
