@@ -145,8 +145,8 @@ export default function LeaveAllScreen({ navigation, route }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]} // ✅ Android spinner colors
-              tintColor="#ffffff"             // ✅ iOS spinner color
+              colors={["#ffffff", "#d3d3d3"]} 
+              tintColor="#ffffff"           
               progressBackgroundColor={
                 Platform.OS === "android" ? "#2c2c2c" : "transparent"
               }

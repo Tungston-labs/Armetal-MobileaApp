@@ -35,7 +35,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
         `/reimbursements/my-reimbursements/${reimbursementId}/`
       );
 
-      // Map status "Approve" to "Approved" for display
+     
       const data = {
         ...res.data,
         status: res.data.status === "Approve" ? "Approved" : res.data.status,

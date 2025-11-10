@@ -11,7 +11,6 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import authAxios from "../../utils/authAxios";
-// import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { logout } from "@/src/redux/features/authSlice";
@@ -27,7 +26,6 @@ const ProfileScreen = () => {
     const fetchProfile = async () => {
       try {
         const response = await authAxios.get("/profile/");
-        // console.log("Profile data:", response.data); // 👀 check profile_pic here
         setEmployee(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error.message);

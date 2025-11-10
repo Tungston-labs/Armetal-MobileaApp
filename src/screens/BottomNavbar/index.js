@@ -1,21 +1,18 @@
-// BottomNavbar.js
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
-// Import SVGs
 import HomeIcon from '../../../assets/images/home.svg';
 import CalendarIcon from '../../../assets/images/calendar.svg';
-import FileIcon from '../../../assets/images/filr.svg';   // ✅ actual filename is filr.svg
+import FileIcon from '../../../assets/images/filr.svg';  
 import FolderIcon from '../../../assets/images/folder.svg';
 import BillIcon from '../../../assets/images/bill.svg';
 
-const ICON_SIZE = 35; // Increased size for better visibility
+const ICON_SIZE = 35; 
 
 const BottomNavbar = ({ navigation, route }) => {
   return (
     <View style={styles.bottomTab}>
-      {/* Punchin */}
       <TouchableOpacity onPress={() => navigation.navigate('PunchinScreen')}>
         <View
           style={
@@ -28,7 +25,6 @@ const BottomNavbar = ({ navigation, route }) => {
         </View>
       </TouchableOpacity>
 
-      {/* Calendar */}
       <TouchableOpacity onPress={() => navigation.navigate('CalendarScreen')}>
         <View
           style={
@@ -41,7 +37,6 @@ const BottomNavbar = ({ navigation, route }) => {
         </View>
       </TouchableOpacity>
 
-      {/* Leave */}
       <TouchableOpacity onPress={() => navigation.navigate('LeaveAllScreen')}>
         <View
           style={
@@ -54,7 +49,6 @@ const BottomNavbar = ({ navigation, route }) => {
         </View>
       </TouchableOpacity>
 
-      {/* Task Update */}
       <TouchableOpacity onPress={() => navigation.navigate('TaskUpdateScreen')}>
         <View
           style={
@@ -67,7 +61,6 @@ const BottomNavbar = ({ navigation, route }) => {
         </View>
       </TouchableOpacity>
 
-      {/* Reimbursement */}
       <TouchableOpacity
         onPress={() => navigation.navigate('ReimbursementlistScreen')}
       >

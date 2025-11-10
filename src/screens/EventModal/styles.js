@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#0C1124", // darker background for modal
+    backgroundColor: "#0C1124", 
     padding: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 30,
     fontSize: 16,
-    color: "#e0e7ff", // light text
-    backgroundColor: "#101C3A", // input background matching screenshot
+    color: "#e0e7ff",
+    backgroundColor: "#101C3A",
   },
 
   input2: {

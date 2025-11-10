@@ -12,7 +12,7 @@ const CalendarScreen = () => {
   const route = useRoute();
 
   const [activeTab, setActiveTab] = useState(route.params?.openTab || "holiday");
-  const [loading, setLoading] = useState(false); // ✅ loader state
+  const [loading, setLoading] = useState(false); 
 
   React.useEffect(() => {
     if (route.params?.openTab) {
@@ -20,7 +20,6 @@ const CalendarScreen = () => {
     }
   }, [route.params?.openTab]);
 
-  // optional: simulate loading when switching tabs
   const handleTabChange = (tab) => {
     setLoading(true);
     setActiveTab(tab);

@@ -46,7 +46,7 @@ const SalarySlipScreen = () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
-      // console.log(response.data);
+      
       
       setSalaryData(response.data || []);
     } catch (error) {
@@ -60,11 +60,11 @@ const SalarySlipScreen = () => {
     fetchSalaryRecords();
   }, [selectedYear]);
 
-  // Only show fully verified payslips
+  
   const combinedList = salaryData
   .filter(item => item.fully_verified)
   .map((item) => {
-    // Handle both numeric and string month values
+    
     let monthIndex = parseInt(item.month, 10);
     let monthName = allMonths[monthIndex - 1];
 
@@ -106,10 +106,6 @@ const SalarySlipScreen = () => {
     return true;
   };
   
-  
-  
-  
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}

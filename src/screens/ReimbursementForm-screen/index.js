@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Toast from "react-native-toast-message";   // ✅ Toast import
+import Toast from "react-native-toast-message"; 
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
@@ -21,9 +21,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
-  // const [toMail, setToMail] = useState("");
+  
   const [note, setNote] = useState("");
-  const [date, setDate] = useState(""); // yyyy-mm-dd formatted string
+  const [date, setDate] = useState(""); 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [amount, setAmount] = useState("");
   const [bill, setBill] = useState(null);
@@ -63,7 +63,7 @@ const ReimbursementForm = ({ navigation, route }) => {
   };
 
   const handleSubmit = async () => {
-    // ✅ Required fields (removed toMail)
+   
     if (!expenseCategory || !amount || !date || !bill) {
       return Toast.show({
         type: "error",
@@ -72,7 +72,7 @@ const ReimbursementForm = ({ navigation, route }) => {
       });
     }
   
-    // ✅ Date validation (cannot be future date)
+    
     const today = new Date().toISOString().split("T")[0];
     if (date > today) {
       return Toast.show({
@@ -166,15 +166,6 @@ const ReimbursementForm = ({ navigation, route }) => {
 
         </View>
 
-        {/* To */}
-        {/* <Text style={styles.label}>To</Text>
-        <TextInput
-          placeholder="Enter Mail ID"
-          placeholderTextColor="#8A8F9E"
-          style={styles.input}
-          value={toMail}
-          onChangeText={setToMail}
-        /> */}
 
         {/* Upload Bill */}
         <TouchableOpacity style={styles.uploadButton} activeOpacity={0.8} onPress={pickImage}>
@@ -253,9 +244,6 @@ const ReimbursementForm = ({ navigation, route }) => {
   </View>
 )}
 
-
-
-      
     </View>
   );
 };

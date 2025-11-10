@@ -154,7 +154,7 @@ export default function TaskModal({
 
           <Text style={styles.inputLabel}>Time Taken (hours)</Text>
           <View style={styles.timeInputRow}>
-            {/* ✅ Separate Box for Icon */}
+           
             <View style={styles.iconBox}>
               <Ionicons name="time" size={20} color="#8a8dad" />
             </View>

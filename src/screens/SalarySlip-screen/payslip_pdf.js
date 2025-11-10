@@ -17,9 +17,6 @@ const handleGeneratePDF = async (payslip) => {
 
     let y = height - 50;
 
-    // ===========================
-    // COMPANY HEADER WITH LOGO
-    // ===========================
     const company = payslip.company || {};
 
     const logoSize = 50;
@@ -64,9 +61,7 @@ const handleGeneratePDF = async (payslip) => {
     page.drawLine({ start: { x: 45, y }, end: { x: width - 45, y }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
     y -= 20;
 
-    // ===========================
-    // PAYSLIP TITLE
-    // ===========================
+  
     page.drawText(`Payslip for ${payslip.month} ${payslip.year}`, {
       x: 50,
       y,
@@ -76,9 +71,6 @@ const handleGeneratePDF = async (payslip) => {
     });
     y -= 30;
 
-    // ===========================
-    // EMPLOYEE DETAILS BOX
-    // ===========================
     const details = [
       `Employee Name: ${payslip.employee_name || "-"}`,
       `Employee ID: ${payslip.employee_id || "-"}`,
@@ -109,9 +101,6 @@ const handleGeneratePDF = async (payslip) => {
 
     y -= boxHeight + 20;
 
-    // ===========================
-    // EARNINGS & DEDUCTIONS BOX (Aligned same as Employee Details box)
-    // ===========================
     const earnings = payslip.earnings || [];
     const deductions = payslip.deductions || [];
     const maxRows = Math.max(earnings.length, deductions.length);
@@ -145,9 +134,6 @@ const handleGeneratePDF = async (payslip) => {
 
     y -= tableBoxHeight + 20;
 
-    // ===========================
-    // SUMMARY SECTION (Aligned with left of boxes)
-    // ===========================
     const summary = [
       `Working Days: ${payslip.working_days ?? "-"}`,
       `Days Present: ${payslip.days_present ?? "-"}`,
@@ -174,9 +160,7 @@ const handleGeneratePDF = async (payslip) => {
       color: rgb(0, 0.4, 0),
     });
 
-    // ===========================
-    // SAVE & SHARE PDF
-    // ===========================
+    
     const pdfBytes = await pdfDoc.save();
     const fileName = `Payslip_${payslip.month}_${payslip.year}.pdf`;
     const fileUri = `${FileSystem.documentDirectory}${fileName}`;

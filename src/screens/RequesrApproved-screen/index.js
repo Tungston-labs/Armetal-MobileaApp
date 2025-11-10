@@ -12,8 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-// import axios from "axios";
+
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
 export default function RequestApprovedScreen() {
@@ -22,7 +21,7 @@ export default function RequestApprovedScreen() {
   const { leaveId } = route.params;
 
   const [leave, setLeave] = useState(null);
-  const [profile, setProfile] = useState(null); // 👈 Profile data
+  const [profile, setProfile] = useState(null); 
   const [loading, setLoading] = useState(true);
   const API_BASE_URL = 'http://178.248.112.16:8001';
 
@@ -31,11 +30,10 @@ export default function RequestApprovedScreen() {
     return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true, // set to false if you prefer 24-hour format
+      hour12: true, 
     });
   };
 
-  // Fetch leave details
 
   useEffect(() => {
     const fetchLeaveDetail = async () => {
@@ -54,7 +52,7 @@ export default function RequestApprovedScreen() {
   }, [leaveId]);
 
 
-  // Fetch employee profile
+ 
   useEffect(() => {
     const fetchProfile = async () => {
       try {

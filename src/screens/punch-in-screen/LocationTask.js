@@ -5,7 +5,7 @@ import authAxios from '../../utils/authAxios';  // your axios wrapper
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
-// 1️⃣ Define the background task
+
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (error) {
     console.error("Background Task Error:", error);
@@ -45,7 +45,6 @@ export async function startBackgroundUpdate() {
   }
 }
 
-// 3️⃣ Stop background fetch
 export async function stopBackgroundUpdate() {
   const hasStarted = await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
   if (hasStarted) {

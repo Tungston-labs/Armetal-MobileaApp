@@ -108,7 +108,7 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // spreads From | To | Time evenly
+    justifyContent: 'space-between', 
     marginVertical: 4,
   },
   label: {
@@ -120,7 +120,7 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontFamily: 'Montserrat_700Bold',
-    marginTop: 2, // ensures value sits just below the label
+    marginTop: 2, 
   },
   fab: {
     position: 'absolute',

@@ -9,15 +9,6 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
   },
 
-  // header: {
-  //   height: 0,
-  //   justifyContent: 'center',
-  //   paddingTop: Platform.OS === 'android' ? 10 : 0,
-  //   marginTop:50,
-
-  // },
-
-
  header: {
   height: 50, // fixed from 0 so arrow is visible
   justifyContent: 'center',

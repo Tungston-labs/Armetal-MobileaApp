@@ -20,8 +20,7 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     marginLeft: 18,
     marginTop: 25,
-    fontFamily: 'Raleway_700Bold', // <-- add this
-
+    fontFamily: 'Raleway_700Bold',
   },
 
 circleWrapper: {
@@ -38,8 +37,8 @@ circleWrapper: {
 circle: {
   width: 140,
   height: 140,
-  borderRadius: 80,   // ✅ half of 140 for a perfect circle
-  overflow: "hidden", // ✅ clip the gradient inside
+  borderRadius: 80,   
+  overflow: "hidden", 
   justifyContent: "center",
   alignItems: "center",
 },
@@ -103,7 +102,7 @@ textContainer: {
   },
   subLabel: {
     color: '#FFFFFF',
-    fontFamily: 'Raleway_700', // <-- add this
+    fontFamily: 'Raleway_700', 
     fontSize: 13,
   },
   subValue: {
@@ -112,10 +111,10 @@ textContainer: {
   },
 
   divider: {
-    height: 1,           // thin line
-    backgroundColor: '#fff', // line color
-    opacity: 5,        // match your theme
-    marginVertical: 10,  // spacing above and below
+    height: 1,           
+    backgroundColor: '#fff', 
+    opacity: 5,        
+    marginVertical: 10, 
   },
 
   centerText: {
@@ -170,13 +169,13 @@ textContainer: {
   },
   
   halfSegmentContainer: {
-    flexDirection: "row", // place children side by side
+    flexDirection: "row", 
     width: "100%",
     height: "100%",
   },
   
   halfSegment: {
-    flex: 1,           // take half width automatically
+    flex: 1,         
     height: "100%",
   },
   

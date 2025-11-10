@@ -14,7 +14,6 @@ import { useNavigation } from "@react-navigation/native";
 import SwipeLoader from "../../components/SwipeLoader"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// ✅ Direct SVG import
 import DownloadIcon from "../../../assets/download.svg";
 
 import styles from "./styles";
@@ -25,8 +24,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function DocumentsScreen() {
   const navigation = useNavigation();
   const [employeeId, setEmployeeId] = useState(null);
-  const BASE_URL = "http://178.248.112.16:8001"; // 👈 match backend port
-  const [loading, setLoading] = useState(true); // loader state
+  const BASE_URL = "http://178.248.112.16:8001"; 
+  const [loading, setLoading] = useState(true); 
 
   const [data, setData] = useState({
     healthCardImage: null,
@@ -82,10 +81,10 @@ setData({
   contractUrls: detail.contract_urls.map(normalizeUrl),
   passportNumber: summary.passport_number || "",
   insuranceNumber: summary.healthcard_number || "",  // keep blank if backend doesn’t send number
-  insuranceImage: normalizeUrl(summary.insurance_image_url), // ✅ add insurance image
+  insuranceImage: normalizeUrl(summary.insurance_image_url), 
   iqamaNumber: summary.iqama_number || "",
   visaExpiry: summary.visa_expiry_date || "",
-  aadarNumber: summary.aadar_number || "", // ✅ correct spelling
+  aadarNumber: summary.aadar_number || "", 
   contractExpiry: summary.contract_expiry_date || "",
 });
 

@@ -59,7 +59,6 @@ const AttendanceScreen = () => {
         : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
       setProfilePic(imageUrl);
     } catch (error) {
-      //console.error("Attendance fetch error:", error);
       setSessions([]);
       setTotalHours("00:00 Hrs");
       setProfilePic(
@@ -175,10 +174,9 @@ const AttendanceScreen = () => {
 
         <View style={styles.divider} />
 
-        {/* Scrollable attendance list */}
         <View
           style={{
-            maxHeight: 10 * 39, // Assuming each row ~40px height, adjust if needed
+            maxHeight: 10 * 39, 
           }}
         >
           <FlatList
@@ -200,10 +198,8 @@ const AttendanceScreen = () => {
         </View>
       </View>
 
-      {/* Bottom Navigation */}
       <View style={styles.bottomNavbarContainer}>
 
-        {/* Total working hours (fixed section) */}
         <View style={styles.totalHoursCard}>
           <Text style={styles.totalHoursLabel}>Total working hour</Text>
           <Text style={styles.totalHoursValue}>{totalHours}</Text>

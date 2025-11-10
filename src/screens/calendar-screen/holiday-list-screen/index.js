@@ -54,8 +54,7 @@ const HolidayTab = () => {
         <Text style={styles.titleText}>{item.title}</Text>
         <Text style={styles.dateRange}>
           {item.type} 
-          {/* |{" "} */}
-          {/* {item.from === item.to ? `On ${item.from}` : `From ${item.from} to ${item.to}`} */}
+          
         </Text>
       </View>
     </View>

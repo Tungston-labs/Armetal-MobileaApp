@@ -21,7 +21,6 @@ export default function LeaveHeader() {
     { label: 'Pending', screen: 'LeavePendingScreen' },
   ];
 
-  // Determine active tab from route
   const tabMap = {
     LeaveAllScreen: 'All',
     LeaveApproveScreen: 'Approved',
@@ -73,9 +72,7 @@ export default function LeaveHeader() {
             <Text style={styles.counterText}>Leave taken      {summary?.approved_count || 0}</Text>
           </View>
         </View>
-        {/* <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <Image source={{ uri: profilePic }} style={styles.avatar} />
-        </TouchableOpacity> */}
+        
       </View>
 
       {/* Tabs */}

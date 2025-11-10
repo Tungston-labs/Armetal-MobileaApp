@@ -23,9 +23,9 @@ const STATUS_LABELS = {
   "On Hold": "On Hold",
 };
 const STATUS_STYLES = {
-  Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },       // light green bg
-  "In Verification": { color: "#FF2304", background: "#2E254C" }, // light yellow bg
-  "On Hold": { color: "#ff9800", background: "rgba(249, 115, 22, 0.15)" },     // light orange bg
+  Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },      
+  "In Verification": { color: "#FF2304", background: "#2E254C" }, 
+  "On Hold": { color: "#ff9800", background: "rgba(249, 115, 22, 0.15)" },     
   Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
 };
 
@@ -34,10 +34,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [bill, setBill] = useState(null); // single image state
-
-
-  
+  const [bill, setBill] = useState(null); 
 
   // fetch reimbursements
   const fetchReimbursements = async () => {
@@ -54,7 +51,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     }
   };
 
-  // refresh on screen focus
+  
   useFocusEffect(
     useCallback(() => {
       fetchReimbursements();
@@ -66,7 +63,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     fetchReimbursements();
   }, []);
 
-  // pick image with single-image restriction
+  
   const pickImage = async () => {
     try {
       if (bill) {
@@ -101,7 +98,6 @@ export default function ReimbursementlistScreen({ navigation, route }) {
         }
       >
 
-
 <View
   style={[
     styles.statusBadge,
@@ -112,8 +108,6 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     {STATUS_LABELS[item.status] || item.status}
   </Text>
 </View>
-
-
 
         <View style={styles.cardRow}>
           <View>

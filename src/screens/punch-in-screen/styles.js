@@ -56,8 +56,8 @@ circleWrapper: {
 circle: {
   width: 140,
   height: 140,
-  borderRadius: 80,   // ✅ half of 140 for a perfect circle
-  overflow: "hidden", // ✅ clip the gradient inside
+  borderRadius: 80,   
+  overflow: "hidden", 
   justifyContent: "center",
   alignItems: "center",
 },

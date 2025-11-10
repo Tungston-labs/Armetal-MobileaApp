@@ -11,8 +11,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
-// import axios from "axios";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import authAxios from "../../utils/authAxios";
 
@@ -30,7 +28,7 @@ export default function RequestPending({ navigation, route }) {
     return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true, // set to false if you prefer 24-hour format
+      hour12: true, 
     });
   };
 

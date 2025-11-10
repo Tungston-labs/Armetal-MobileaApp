@@ -112,7 +112,7 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // spreads From | To | Time evenly
+    justifyContent: 'space-between', 
     marginVertical: 4,
   },
   label: {

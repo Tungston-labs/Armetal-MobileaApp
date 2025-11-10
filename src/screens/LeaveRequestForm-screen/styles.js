@@ -9,20 +9,20 @@ export default StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-end',     // Push items to bottom
+    alignItems: 'flex-end',     
     backgroundColor: '#262D40',
     paddingHorizontal: 20,
-    paddingBottom: 18,          // Add bottom padding instead of marginTop
-    height: 100,                // Increased height to allow more vertical space
+    paddingBottom: 18,          
+    height: 100,                
     borderBottomWidth: 0.5,
     borderBottomColor: "#FFFFFF",
   },
   pickerWrapper: {
-    backgroundColor: '#172554',  // same as input box background
+    backgroundColor: '#172554',  
     borderRadius: 10,
     borderWidth: 0.2,
     borderColor: '#FFFFFF',
-    marginTop: 14,               // add top padding space
+    marginTop: 14,               
     marginBottom: 20,
     paddingHorizontal: 12,
     paddingVertical: 14,
@@ -31,7 +31,7 @@ export default StyleSheet.create({
 
   picker: {
     height: 45,
-    color: '#FFFFFF',            // same text color as input
+    color: '#FFFFFF',            
     fontSize: 15,
     fontFamily: 'Montserrat_400Regular',
     width: '100%',
@@ -123,7 +123,6 @@ dateField: {
   borderColor: '#FFFFFF',
 },
 
-// ✅ Leave Type Box (New)
 leaveTypeBox: {
   backgroundColor: '#172554',
   borderRadius: 10,

@@ -62,7 +62,7 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 0.5,          // 👈 thickness of border
+    borderWidth: 0.5,          
     borderColor: 'grey',
   },
   dropdownText: {
@@ -86,7 +86,6 @@ export default StyleSheet.create({
   borderRadius: 12,
   padding: 16,
   marginBottom: 12,
-  // marginHorizontal: ,
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',

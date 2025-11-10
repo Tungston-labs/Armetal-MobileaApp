@@ -30,7 +30,6 @@ import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
 import { startBackgroundUpdate, stopBackgroundUpdate } from './LocationTask';
 
-
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -49,7 +48,7 @@ const AttendanceScreen = () => {
 
 
   const [dayStatus, setDayStatus] = useState([]);
-  //  🔄 Rotation setup
+  
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -104,7 +103,7 @@ const AttendanceScreen = () => {
         allDates.push(iso);
       }
   
-      // Initialize all days: mark company_off_day_dates as holiday, rest as working
+      
       allDates.forEach((date) => {
         if (data.company_off_day_dates.includes(date)) {
           statusMap[date] = "holiday";
@@ -113,12 +112,11 @@ const AttendanceScreen = () => {
         }
       });
   
-      // Mark present, absent, holiday (overrides working/off day)
+    
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
   
-      // Mark half-days (overrides present)
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
   
       const orderedStatuses = allDates.map((date) => statusMap[date]);
@@ -129,16 +127,15 @@ const AttendanceScreen = () => {
     }
   };
   
-  
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
 
     if (pic.startsWith("http")) {
-      return pic; // already full URL
+      return pic; 
     }
 
-    // Ensure path is correct (add /media/ if only filename is given)
+    
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
     return `${API_BASE_URL}${path}`;
   };
@@ -203,9 +200,6 @@ const AttendanceScreen = () => {
         longitude: location.longitude,
       });
     
-      // console.log("Swipe response:", res.data); // <--- check what server returned
-    
-      // Only show alert on actual error
       if (res.data?.success === false) {
         Alert.alert("Failed", res.data?.error || "Swipe failed");
       } else {
@@ -438,27 +432,23 @@ const AttendanceScreen = () => {
               style={styles.menuBox}
               onPress={() => navigation.navigate("LeaveAllScreen")}
             >
-              {/* ✅ Icon slightly lower */}
+              
               <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />
 
-              {/* Pending leave count moved a little higher */}
               <Text style={{
                 color: "#fff",
                 fontSize: 20,
                 fontWeight: "700",
                 marginTop: 2,
-                marginBottom: -25   // pushes text slightly up
+                marginBottom: -25   
               }}>
                 {pendingLeaves}
               </Text>
 
-              {/* Label (leave status) */}
               <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
             </TouchableOpacity>
 
 
-
-            {/* ✅ Apply Leave Box */}
             <TouchableOpacity
               style={[styles.menuBox, styles.applyLeaveBox]}
               onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -470,7 +460,7 @@ const AttendanceScreen = () => {
 
 
 
-          {/* 🔄 Loader or SwipeButton */}
+          
           {punching ? (
             <View style={styles.loaderOverlay}>
               <View style={styles.logoWrapper}>
@@ -481,7 +471,7 @@ const AttendanceScreen = () => {
                   resizeMode="contain"
                 />
 
-                {/* Rotating circle */}
+                
                 <Animated.View
                   style={[
                     styles.rotatingCircle,
@@ -504,8 +494,6 @@ const AttendanceScreen = () => {
             />
           )}
 
-          {/* Attendance Box */}
-          
           
           <Pressable
             style={styles.attendanceBox}

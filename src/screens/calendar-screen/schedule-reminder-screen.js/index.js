@@ -58,7 +58,7 @@ const ReminderTab = () => {
         "Error fetching reminders:",
         error?.response?.data || error.message || error
       );
-      setReminders([]); // prevent showing stale data
+      setReminders([]); 
     } finally {
       setLoading(false);
     }
@@ -261,20 +261,6 @@ const ReminderTab = () => {
             </View>
           </View>
 
-          {/* <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setShowCalendar(false)}
-            >
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.doneButton}
-              onPress={() => setShowCalendar(false)}
-            >
-              <Text style={styles.doneText}>Done</Text>
-            </TouchableOpacity>
-          </View> */}
         </>
       )}
 
@@ -325,16 +311,6 @@ const ReminderTab = () => {
           }}
         />
       )}
-
-      {/* Add Event Button */}
-      {/* <TouchableOpacity
-        style={styles.addEventBtn}
-        onPress={() => setShowAddModal(true)}
-      >
-        <Ionicons name="add" size={20} color="#fff" />
-        <Text style={styles.addEventText}>Add Event</Text>
-      </TouchableOpacity> */}
-
 
       <TouchableOpacity
         style={styles.fab}

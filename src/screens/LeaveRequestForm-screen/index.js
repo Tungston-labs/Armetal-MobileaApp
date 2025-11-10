@@ -27,9 +27,8 @@ export default function LeaveRequestFormScreen() {
   const [showToPicker, setShowToPicker] = useState(false);
 
   const [selectedLeaveType, setSelectedLeaveType] = useState('casual');
-  const [fromType, setFromType] = useState('full'); // ✅ New state
-  const [toType, setToType] = useState('full');     // ✅ New state
-
+  const [fromType, setFromType] = useState('full'); 
+  const [toType, setToType] = useState('full');     
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
   const [reason, setReason] = useState('');
@@ -47,7 +46,6 @@ export default function LeaveRequestFormScreen() {
     { id: 5, type: 'others' },
   ];
 
-  // ✅ Same choices as backend
   const halfDayTypes = [
     { id: 1, label: 'Forenoon', value: 'forenoon' },
     { id: 2, label: 'Afternoon', value: 'afternoon' },
@@ -181,8 +179,8 @@ export default function LeaveRequestFormScreen() {
         reason,
         from_date: fromDate.toISOString().split('T')[0],
         to_date: toDate.toISOString().split('T')[0],
-        from_date_type: fromType, // ✅ Added
-        to_date_type: toType,     // ✅ Added
+        from_date_type: fromType, 
+        to_date_type: toType,     
         to_email: toEmail,
         cc_email: ccEmail,
       });
