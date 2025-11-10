@@ -1,20 +1,45 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+async function getAccessToken() {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+    return token;
+  } catch (e) {
+    console.error("Failed to retrieve access token for WebSocket:", e);
+    return null;
+  }
+}
 
 export default function useLiveLocationSocket(employeeId, sessionId) {
   const socket = useRef(null);
+  const [accessToken, setAccessToken] = useState(null);
 
+  // Fetch token once
   useEffect(() => {
-    if (!employeeId || !sessionId) return;
+    getAccessToken().then((token) => {
+      setAccessToken(token);
+    });
+  }, []);
 
-    // ✅ Connect to WebSocket with employeeId (as per new backend route)
-    socket.current = new WebSocket(`ws://192.168.29.134:8001/ws/live-location/${employeeId}/`);
+  // Setup WebSocket once token + sessionId + employeeId are ready
+  useEffect(() => {
+    if (!employeeId || !sessionId || !accessToken) return;
 
-    socket.current.onopen = () => console.log("✅ Live location socket connected:", employeeId);
+    // ✅ Match your Django route with employee_id
+    const baseUrl = "ws://192.168.29.134:8001/ws/live-location";
+    const url = `${baseUrl}/${employeeId}/?token=${accessToken}`;
+
+    socket.current = new WebSocket(url);
+
+    socket.current.onopen = () =>
+      console.log("✅ Live location socket connected:", employeeId);
     socket.current.onclose = () => console.log("🔌 Live location socket closed");
-    socket.current.onerror = (e) => console.log("⚠️ Socket error", e.message);
+    socket.current.onerror = (e) =>
+      console.log("⚠️ Socket error:", e.message);
 
-    // ✅ Function to get and send current location
+    // ✅ Function to fetch and send current location
     const sendLocation = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -31,29 +56,34 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
           timestamp: new Date().toISOString(),
         };
 
-        if (socket.current.readyState === WebSocket.OPEN) {
+        if (socket.current?.readyState === WebSocket.OPEN) {
           socket.current.send(JSON.stringify(payload));
           console.log("📍 Sent location:", payload);
         } else {
-          console.log("⚠️ WebSocket not ready, cannot send location yet");
+          console.log("⚠️ WebSocket not ready to send");
         }
       } catch (err) {
         console.error("❌ Location send failed:", err);
       }
     };
 
-    // ✅ Immediately send first location on punch-in
+    // ✅ Send immediately (on punch-in)
     sendLocation();
 
-    // ✅ Send updates every 1 hour (3600000 ms)
+    // ✅ Send every 1 hour (3600000 ms)
     const interval = setInterval(sendLocation, 3600000);
 
-    // Cleanup when leaving or session ends
+    // ✅ Cleanup on unmount or logout
     return () => {
       clearInterval(interval);
-      if (socket.current) socket.current.close();
+      if (
+        socket.current?.readyState === WebSocket.OPEN ||
+        socket.current?.readyState === WebSocket.CONNECTING
+      ) {
+        socket.current.close();
+      }
     };
-  }, [employeeId, sessionId]);
+  }, [employeeId, sessionId, accessToken]);
 
   return null;
 }

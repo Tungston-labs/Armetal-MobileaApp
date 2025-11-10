@@ -34,7 +34,7 @@ import AttendanceTracker from "../../utils/AttendanceTracker"
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-const API_BASE_URL = "http://178.248.112.16:8001";
+const API_BASE_URL = "http://192.168.29.193:8001";
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -46,6 +46,7 @@ const AttendanceScreen = () => {
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
+  const [sessionId, setSessionId] = useState(null);
 
 
   const [dayStatus, setDayStatus] = useState([]);
@@ -177,35 +178,44 @@ const AttendanceScreen = () => {
   };
 
 
-  const handlePunch = async () => {
-    setPunching(true);
-    startRotation();
-    try {
-      const location = await getCurrentLocation();
-      if (!location) return;
+ const handlePunch = async () => {
+  setPunching(true);
+  startRotation();
+  try {
+    const location = await getCurrentLocation();
+    if (!location) return;
 
-      const res = await authAxios.post("/attendance/swipe/", {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
+    const res = await authAxios.post("/attendance/swipe/", {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
 
-      console.log("Swipe response:", res.data); // <--- check what server returned
+    console.log("Swipe response:", res.data);
 
-      // Only show alert on actual error
-      if (res.data?.success === false) {
-        Alert.alert("Failed", res.data?.error || "Swipe failed");
-      } else {
-        await fetchTodayAttendance();
+    if (res.data?.success === false) {
+      Alert.alert("Failed", res.data?.error || "Swipe failed");
+    } else {
+      await fetchTodayAttendance();
+
+      if (res.data?.action === "punch_in" && res.data?.session_id) {
+        setSessionId(res.data.session_id);
+        console.log(" Session started:", res.data.session_id);
       }
-    } catch (error) {
-      console.log("Swipe error:", error);
-      Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
+
+      if (res.data?.action === "punch_out") {
+        setSessionId(null);
+        console.log(" Session ended");
+      }
     }
-    finally {
-      setPunching(false);
-      stopRotation();
-    }
-  };
+  } catch (error) {
+    console.log("Swipe error:", error);
+    Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
+  } finally {
+    setPunching(false);
+    stopRotation();
+  }
+};
+
 
   useEffect(() => {
     (async () => {
