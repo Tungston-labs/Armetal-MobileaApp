@@ -21,54 +21,47 @@ const handleGeneratePDF = async (payslip) => {
     // COMPANY HEADER WITH LOGO
     // ===========================
     const company = payslip.company || {};
+
+    const logoSize = 50;
+    const logoX = 50;
+    let logoY = y - logoSize;
+
     if (company.logo_url) {
       try {
         const logoBytes = await fetch(company.logo_url).then((res) => res.arrayBuffer());
         const logoImage = await pdfDoc.embedPng(logoBytes);
-        const logoDims = logoImage.scale(0.2);
-        page.drawImage(logoImage, {
-          x: 50,
-          y: y - logoDims.height + 20,
-          width: 40,
-          height: 40,
-        });
+        page.drawImage(logoImage, { x: logoX, y: logoY, width: logoSize, height: logoSize });
       } catch (err) {
         console.warn("⚠️ Could not load company logo:", err);
       }
     }
 
+    const textX = logoX + logoSize + 15;
+    let textY = y - 10;
+
     page.drawText(company.name || "Company Name Pvt. Ltd.", {
-      x: 120,
-      y,
+      x: textX,
+      y: textY,
       size: 18,
       font: fontBold,
       color: rgb(0, 0, 0.6),
     });
-    y -= 20;
 
+    textY -= 18;
     if (company.address)
-      page.drawText(company.address, {
-        x: 120,
-        y,
-        size: 9,
-        font,
-        color: rgb(0.3, 0.3, 0.3),
-      });
+      page.drawText(company.address, { x: textX, y: textY, size: 10, font, color: rgb(0.3, 0.3, 0.3) });
 
-    y -= 12;
+    textY -= 14;
     if (company.email || company.contact_number)
       page.drawText(
-        `${company.email || ""}  ${company.contact_number ? "|  " + company.contact_number : ""}`,
-        { x: 120, y, size: 9, font, color: rgb(0.3, 0.3, 0.3) }
+        `${company.email || ""} ${company.contact_number ? "| " + company.contact_number : ""}`,
+        { x: textX, y: textY, size: 10, font, color: rgb(0.3, 0.3, 0.3) }
       );
 
-    y -= 25;
-    page.drawLine({
-      start: { x: 45, y },
-      end: { x: width - 45, y },
-      thickness: 1,
-      color: rgb(0.8, 0.8, 0.8),
-    });
+    y = Math.min(logoY, textY) - 25;
+
+    // Divider line
+    page.drawLine({ start: { x: 45, y }, end: { x: width - 45, y }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
     y -= 20;
 
     // ===========================
@@ -94,53 +87,66 @@ const handleGeneratePDF = async (payslip) => {
       `Email: ${payslip.email || "-"}`,
     ];
 
+    const boxX = 65;
+    const boxWidth = width - 90;
+    const boxHeight = 90;
+
     page.drawRectangle({
-      x: 45,
-      y: y - 80,
-      width: width - 90,
-      height: 75,
+      x: boxX,
+      y: y - boxHeight,
+      width: boxWidth,
+      height: boxHeight,
       borderColor: rgb(0.7, 0.7, 0.7),
       borderWidth: 1,
     });
 
+    const paddingLeft = 15;
     let dy = y - 20;
     details.forEach((line) => {
-      page.drawText(line, { x: 60, y: dy, size: 10.5, font });
+      page.drawText(line, { x: boxX + paddingLeft, y: dy, size: 10.5, font });
       dy -= 13;
     });
 
-    y -= 100;
+    y -= boxHeight + 20;
 
     // ===========================
-    // EARNINGS & DEDUCTIONS TABLE
+    // EARNINGS & DEDUCTIONS BOX (Aligned same as Employee Details box)
     // ===========================
-    page.drawText("Earnings", { x: 60, y, size: 12, font: fontBold });
-    page.drawText("Deductions", { x: width / 2 + 20, y, size: 12, font: fontBold });
-    y -= 15;
-
     const earnings = payslip.earnings || [];
     const deductions = payslip.deductions || [];
     const maxRows = Math.max(earnings.length, deductions.length);
+
+    const tableBoxHeight = maxRows * 15 + 40; // dynamic height
+    page.drawRectangle({
+      x: boxX,
+      y: y - tableBoxHeight,
+      width: boxWidth,
+      height: tableBoxHeight,
+      borderColor: rgb(0.7, 0.7, 0.7),
+      borderWidth: 1,
+      color: rgb(0.97, 0.97, 0.97),
+    });
+
+    // Table headers
+    let tableY = y - 20;
+    page.drawText("Earnings", { x: boxX + paddingLeft, y: tableY, size: 12, font: fontBold });
+    page.drawText("Deductions", { x: boxX + boxWidth / 2 + paddingLeft, y: tableY, size: 12, font: fontBold });
+    tableY -= 20;
 
     for (let i = 0; i < maxRows; i++) {
       const e = earnings[i];
       const d = deductions[i];
       if (e)
-        page.drawText(`${e.label}: ${toRs(e.amount)}`, { x: 70, y, size: 10.5, font });
+        page.drawText(`${e.label}: ${toRs(e.amount)}`, { x: boxX + paddingLeft, y: tableY, size: 10.5, font });
       if (d)
-        page.drawText(`${d.label}: ${toRs(d.value || d.amount)}`, {
-          x: width / 2 + 30,
-          y,
-          size: 10.5,
-          font,
-        });
-      y -= 13;
+        page.drawText(`${d.label}: ${toRs(d.value || d.amount)}`, { x: boxX + boxWidth / 2 + paddingLeft, y: tableY, size: 10.5, font });
+      tableY -= 15;
     }
 
-    y -= 25;
+    y -= tableBoxHeight + 20;
 
     // ===========================
-    // SUMMARY SECTION
+    // SUMMARY SECTION (Aligned with left of boxes)
     // ===========================
     const summary = [
       `Working Days: ${payslip.working_days ?? "-"}`,
@@ -150,24 +156,18 @@ const handleGeneratePDF = async (payslip) => {
       `Total Deductions: ${toRs(payslip.total_deductions)}`,
     ];
 
+    let summaryY = y;
     summary.forEach((line) => {
-      page.drawText(line, { x: 60, y, size: 10.5, font });
-      y -= 13;
+      page.drawText(line, { x: boxX + paddingLeft, y: summaryY, size: 10.5, font });
+      summaryY -= 13;
     });
 
-    // Highlight Net Pay
-    y -= 20;
-    page.drawRectangle({
-      x: 45,
-      y: y - 25,
-      width: width - 90,
-      height: 25,
-      color: rgb(0.95, 0.95, 1),
-      borderColor: rgb(0.7, 0.7, 0.7),
-      borderWidth: 1,
-    });
-    page.drawText(`Net Pay: ${toRs(payslip.net_pay)}`, {
-      x: 60,
+    y = summaryY - 20;
+
+    const netPayText = `Net Pay: ${toRs(payslip.net_pay)}`;
+    const netPayWidth = fontBold.widthOfTextAtSize(netPayText, 12);
+    page.drawText(netPayText, {
+      x: 45 + (width - 90 - netPayWidth) / 2,
       y: y - 10,
       size: 12,
       font: fontBold,
@@ -182,9 +182,7 @@ const handleGeneratePDF = async (payslip) => {
     const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
     const base64Data = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
-    await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+    await FileSystem.writeAsStringAsync(fileUri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
 
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(fileUri);
