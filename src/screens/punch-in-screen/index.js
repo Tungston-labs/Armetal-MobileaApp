@@ -324,8 +324,7 @@ const AttendanceScreen = () => {
       </TouchableOpacity>
     </View>
   );
-
-
+ 
   const menuItems = [
     { label: "Salary Slip", icon: SalarySlipIcon, route: "SalarySlipScreen" },
     { label: "Attendance", icon: AttendanceIcon, route: "AttendanceScreen" },
@@ -451,8 +450,6 @@ const AttendanceScreen = () => {
               <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
             </TouchableOpacity>
 
-
-
             {/* ✅ Apply Leave Box */}
             <TouchableOpacity
               style={[styles.menuBox, styles.applyLeaveBox]}
@@ -462,8 +459,6 @@ const AttendanceScreen = () => {
               <Text style={{ color: "#fff", fontSize: 22, marginTop: 4 }}>+</Text>
             </TouchableOpacity>
           </View>
-
-
 
           {/* 🔄 Loader or SwipeButton */}
           {punching ? (

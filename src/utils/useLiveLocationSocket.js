@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
-
 
 async function getAccessToken() {
   try {
-    const token = await AsyncStorage.getItem("accessToken");
-    return token;
+    return await AsyncStorage.getItem("accessToken");
   } catch (e) {
     console.error("Failed to retrieve access token for WebSocket:", e);
     return null;
@@ -15,14 +12,12 @@ async function getAccessToken() {
 }
 
 export default function useLiveLocationSocket(employeeId, sessionId) {
-  const socket = useRef(null);
+  const socketRef = useRef(null);
   const [accessToken, setAccessToken] = useState(null);
+  const intervalRef = useRef(null);
 
-  // Fetch token once
   useEffect(() => {
-    getAccessToken().then((token) => {
-      setAccessToken(token);
-    });
+    getAccessToken().then((token) => setAccessToken(token));
   }, []);
 
   useEffect(() => {
@@ -31,20 +26,17 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
     const baseUrl = "ws://192.168.29.193:8001/ws/live-location";
     const url = `${baseUrl}/${employeeId}/?token=${accessToken}`;
 
-    socket.current = new WebSocket(url);
+    // Close any old socket before opening new one
+    if (socketRef.current) {
+      socketRef.current.close();
+    }
 
-    socket.current.onopen = () =>
-    console.log(" Live location socket connected:", employeeId);
-    socket.current.onclose = () => console.log("🔌 Live location socket closed");
-    socket.current.onerror = (e) =>
-      console.log("⚠️ Socket error:", e.message);
-    console.log("Trying to show alert");
-    Alert.alert("Location", "Data sent successfully!");
+    const socket = new WebSocket(url);
+    socketRef.current = socket;
 
-  const sendLocation = async () => {
+    const sendLocation = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-
         if (status !== "granted") {
           console.warn("Location permission not granted");
           return;
@@ -58,32 +50,48 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
           timestamp: new Date().toISOString(),
         };
 
-        if (socket.current?.readyState === WebSocket.OPEN) {
-          socket.current.send(JSON.stringify(payload));
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify(payload));
           console.log("📍 Sent location:", payload);
-          
-        
         } else {
           console.log("⚠️ WebSocket not ready to send");
-        
         }
       } catch (err) {
-        console.error(" Location send failed:", err);
-     
+        console.error("❌ Location send failed:", err);
       }
     };
 
-    sendLocation();
+    socket.onopen = () => {
+      console.log("✅ Live location socket connected:", employeeId);
+      // First send after 2s delay, then every 15s
+      sendLocation();
+      intervalRef.current = setInterval(sendLocation, 15000);
+    };
 
-    const interval = setInterval(sendLocation, 12000);
-    
+    socket.onmessage = (event) => {
+      console.log("📬 Message from server:", event.data);
+    };
+
+    socket.onerror = (e) => {
+      console.error("⚠️ Socket error:", e.message);
+    };
+
+    socket.onclose = (e) => {
+      console.warn("🔌 Socket closed:", e.code, e.reason);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      // Optional: try to reconnect after delay
+      setTimeout(() => {
+        console.log("🔁 Reconnecting socket...");
+        if (!socketRef.current || socketRef.current.readyState === WebSocket.CLOSED) {
+          socketRef.current = null; // Reset before next effect runs
+        }
+      }, 5000);
+    };
+
     return () => {
-      clearInterval(interval);
-      if (
-        socket.current?.readyState === WebSocket.OPEN ||
-        socket.current?.readyState === WebSocket.CONNECTING
-      ) {
-        socket.current.close();
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+        socket.close();
       }
     };
   }, [employeeId, sessionId, accessToken]);
