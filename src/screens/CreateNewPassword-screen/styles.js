@@ -59,6 +59,7 @@ export default StyleSheet.create({
     fontSize: 14,
     color: '#FFFFFF',
     marginBottom: 8,
+    marginLeft:20,
   },
 
   inputWrapper: {
@@ -66,7 +67,8 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
+    marginHorizontal:20,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     marginBottom: 25,
   },
@@ -83,6 +85,8 @@ export default StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     marginTop: 10,
+    marginHorizontal:20,
+
   },
 
   buttonText: {

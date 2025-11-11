@@ -171,118 +171,122 @@ export default function TaskUpdateScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        {/* Back Arrow + Title in one row */}
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+    <>
+      {/* Background behind notch */}
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
+
+      {/* Main container (below the notch) */}
+      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        {/* Header */}
+        <View style={styles.header}>
+          {/* Back Arrow + Title in one row */}
+          <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons
+                      name="arrow-back"
+                      size={24}
+                      color="#fff"
+                      style={{ marginBottom: 8 }}
+                    />
+                  </TouchableOpacity>
+            <Text style={styles.title}>Daily task update</Text>
+          </View>
+
+        </View>
+
+        {/* Calendar */}
+        <View style={styles.calendarWrapper}>
+          <TouchableOpacity onPress={() => scrollCalendar(-1)} style={styles.arrowBox}>
+            <AntDesign name="left" size={18} color="gray" />
           </TouchableOpacity>
-          <Text style={styles.title}>Daily task update</Text>
+
+          <View style={styles.calendar}>
+            {dates.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[styles.dateBox, item.active && styles.activeDateBox]}
+                onPress={() => onDateSelect(item)}
+              >
+                <Text style={[styles.dayText, item.active && styles.activeDayText]}>{item.day}</Text>
+                <Text style={[styles.dateText, item.active && styles.activeDateText]}>{item.date}</Text>
+                <Text style={[styles.monthText, item.active && styles.activeDayText]}>{item.month}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity onPress={() => scrollCalendar(1)} style={styles.arrowBox}>
+            <AntDesign name="right" size={18} color="gray" />
+          </TouchableOpacity>
         </View>
 
+        {/* Divider */}
+        <View style={styles.taskHeader}>
+          <View style={styles.line} />
+          <Text style={styles.taskTitle}>Task</Text>
+          <View style={styles.line} />
+        </View>
+
+        {/* Task List */}
+        {loading ? (
+          <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
+        ) : (
+          <View style={{ flex: 1 }}>
+            <FlatList
+              data={tasks}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id?.toString()}
+              contentContainerStyle={styles.taskList}
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={["#ffffff", "#d3d3d3"]}
+                  tintColor="#ffffff"
+                  progressBackgroundColor={
+                    Platform.OS === "android" ? "#2c2c2c" : "transparent"
+                  }
+                />
+              }
+              ListEmptyComponent={
+                <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
+                  No tasks found for this date.
+                </Text>
+              }
+            />
+          </View>
+        )}
 
 
-        {/* Profile Pic */}
-        {/* <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-    <Image source={{ uri: profilePic }} style={styles.avatarImage} />
-  </TouchableOpacity> */}
-      </View>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}>
 
-
-
-      {/* Calendar */}
-      <View style={styles.calendarWrapper}>
-        <TouchableOpacity onPress={() => scrollCalendar(-1)} style={styles.arrowBox}>
-          <AntDesign name="left" size={18} color="gray" />
+          <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
 
-        <View style={styles.calendar}>
-          {dates.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.dateBox, item.active && styles.activeDateBox]}
-              onPress={() => onDateSelect(item)}
-            >
-              <Text style={[styles.dayText, item.active && styles.activeDayText]}>{item.day}</Text>
-              <Text style={[styles.dateText, item.active && styles.activeDateText]}>{item.date}</Text>
-              <Text style={[styles.monthText, item.active && styles.activeDayText]}>{item.month}</Text>
-            </TouchableOpacity>
-          ))}
+
+        {/* Modal */}
+        <TaskModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          project={project}
+          setProject={setProject}
+          task={task}
+          setTask={setTask}
+          timeTaken={timeTaken}
+          setTimeTaken={setTimeTaken}
+          description={description}        // ✅ pass description
+          setDescription={setDescription} // ✅ pass setter
+          onSubmit={handleSubmit}
+        />
+
+        {/* Bottom Nav */}
+        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+          <BottomNavbar navigation={navigation} route={route} />
         </View>
+      </SafeAreaView>
 
-        <TouchableOpacity onPress={() => scrollCalendar(1)} style={styles.arrowBox}>
-          <AntDesign name="right" size={18} color="gray" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Divider */}
-      <View style={styles.taskHeader}>
-        <View style={styles.line} />
-        <Text style={styles.taskTitle}>Task</Text>
-        <View style={styles.line} />
-      </View>
-
-      {/* Task List */}
-      {loading ? (
-        <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
-      ) : (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={tasks}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id?.toString()}
-            contentContainerStyle={styles.taskList}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={["#ffffff", "#d3d3d3"]}
-                tintColor="#ffffff"
-                progressBackgroundColor={
-                  Platform.OS === "android" ? "#2c2c2c" : "transparent"
-                }
-              />
-            }
-            ListEmptyComponent={
-              <Text style={{ color: "#888", textAlign: "center", marginTop: 20 }}>
-                No tasks found for this date.
-              </Text>
-            }
-          />
-        </View>
-      )}
-
-
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}>
-
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
-
-
-      {/* Modal */}
-      <TaskModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        project={project}
-        setProject={setProject}
-        task={task}
-        setTask={setTask}
-        timeTaken={timeTaken}
-        setTimeTaken={setTimeTaken}
-        description={description}        // ✅ pass description
-        setDescription={setDescription} // ✅ pass setter
-        onSubmit={handleSubmit}
-      />
-
-      {/* Bottom Nav */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
-    </SafeAreaView>
+    </>
   );
 }

@@ -22,6 +22,8 @@ export default StyleSheet.create({
     height: 50,
     resizeMode: "contain",
     paddingBottom: 10,
+    marginLeft:20,
+    // paddingHorizontal:20,
   },
   logoRow: {
     flexDirection: "column",
@@ -33,6 +35,7 @@ export default StyleSheet.create({
     fontFamily: 'Raleway_700Bold',
     textAlign: "left",
     marginTop: 8,
+    marginLeft:20,
   
   },
   profilePic: {
@@ -40,6 +43,7 @@ export default StyleSheet.create({
     height: 45,
     borderRadius: 25,
     marginBottom:35,
+    marginRight:20,
   },
 
   // Circle
@@ -93,7 +97,8 @@ textContainer: {
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
-    paddingVertical: 19,
+    paddingVertical: 14,
+    paddingHorizontal:20,
   },
   legendItem: {
     flexDirection: "row",
@@ -115,7 +120,8 @@ textContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginTop: 1,
+    marginTop: 10,
+    paddingHorizontal:30,
   },
   menuBox: {
     width: "22%", // 4 columns
@@ -142,6 +148,8 @@ textContainer: {
     padding: 18,
     marginTop: 40,
     borderRadius: 15,
+    paddingHorizontal:30,
+    marginHorizontal:20,
   },
   
   // New header row (date + hours)

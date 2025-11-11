@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		205B2EC0B5A99D079CD4FDA5 /* libPods-Rekory.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C53C157D32A1278E252B4553 /* libPods-Rekory.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		74BFF092B398E97FD7CF41F7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E761597411BDD203C08EC1 /* ExpoModulesProvider.swift */; };
-		89843D72FE533C012A02E03A /* libPods-Rekory.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEE928497423FCB8444B4152 /* libPods-Rekory.a */; };
-		917332CEA57DFE7CDE7FA352 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 01602AC1F307B7BA7C93E7FF /* PrivacyInfo.xcprivacy */; };
+		A51A5EA5C476A6C32A5AF58D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F692F849CB99BFD3BA7D05E5 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		EC80F2AF92C4DCBA6FE116C5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7ABF4D2A7E2E80E2231397C8 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01602AC1F307B7BA7C93E7FF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Rekory/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Rekory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rekory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Rekory/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Rekory/Info.plist; sourceTree = "<group>"; };
-		4872323534531F569F6A7DC4 /* Pods-Rekory.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rekory.debug.xcconfig"; path = "Target Support Files/Pods-Rekory/Pods-Rekory.debug.xcconfig"; sourceTree = "<group>"; };
-		7BAB05BD1B5BF79C33580658 /* Pods-Rekory.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rekory.release.xcconfig"; path = "Target Support Files/Pods-Rekory/Pods-Rekory.release.xcconfig"; sourceTree = "<group>"; };
-		88E761597411BDD203C08EC1 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Rekory/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		580C4C51CF50BE32E53A294E /* Pods-Rekory.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rekory.debug.xcconfig"; path = "Target Support Files/Pods-Rekory/Pods-Rekory.debug.xcconfig"; sourceTree = "<group>"; };
+		7ABF4D2A7E2E80E2231397C8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Rekory/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Rekory/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		BEE928497423FCB8444B4152 /* libPods-Rekory.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Rekory.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C53C157D32A1278E252B4553 /* libPods-Rekory.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Rekory.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Rekory/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Rekory-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Rekory-Bridging-Header.h"; path = "Rekory/Rekory-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4CD6DC742D58F035C6C5849 /* Pods-Rekory.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rekory.release.xcconfig"; path = "Target Support Files/Pods-Rekory/Pods-Rekory.release.xcconfig"; sourceTree = "<group>"; };
+		F692F849CB99BFD3BA7D05E5 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Rekory/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				89843D72FE533C012A02E03A /* libPods-Rekory.a in Frameworks */,
+				205B2EC0B5A99D079CD4FDA5 /* libPods-Rekory.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				01602AC1F307B7BA7C93E7FF /* PrivacyInfo.xcprivacy */,
+				7ABF4D2A7E2E80E2231397C8 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Rekory;
 			sourceTree = "<group>";
@@ -62,17 +62,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				BEE928497423FCB8444B4152 /* libPods-Rekory.a */,
+				C53C157D32A1278E252B4553 /* libPods-Rekory.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		53B471F22430FCB293543E45 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				894DBE60C81BA8215DFA701F /* Rekory */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -89,8 +81,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				CE824624D38C1D12A8972077 /* Pods */,
-				53B471F22430FCB293543E45 /* ExpoModulesProviders */,
+				9D23AB6F429F081DA198F1CB /* Pods */,
+				C77CC7B17A35E5A97F327E6D /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,12 +97,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		894DBE60C81BA8215DFA701F /* Rekory */ = {
+		9D23AB6F429F081DA198F1CB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				88E761597411BDD203C08EC1 /* ExpoModulesProvider.swift */,
+				580C4C51CF50BE32E53A294E /* Pods-Rekory.debug.xcconfig */,
+				F4CD6DC742D58F035C6C5849 /* Pods-Rekory.release.xcconfig */,
 			);
-			name = Rekory;
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -122,13 +116,20 @@
 			path = Rekory/Supporting;
 			sourceTree = "<group>";
 		};
-		CE824624D38C1D12A8972077 /* Pods */ = {
+		C77CC7B17A35E5A97F327E6D /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				4872323534531F569F6A7DC4 /* Pods-Rekory.debug.xcconfig */,
-				7BAB05BD1B5BF79C33580658 /* Pods-Rekory.release.xcconfig */,
+				E5E5A713D10AEF06121F75DC /* Rekory */,
 			);
-			path = Pods;
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		E5E5A713D10AEF06121F75DC /* Rekory */ = {
+			isa = PBXGroup;
+			children = (
+				F692F849CB99BFD3BA7D05E5 /* ExpoModulesProvider.swift */,
+			);
+			name = Rekory;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Rekory" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				9BD146DEA4F4DDCC8AC672B6 /* [Expo] Configure project */,
+				EA5A805455DEF81D0EBCD803 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				CED66F4B5DCC8982E111E407 /* [CP] Embed Pods Frameworks */,
+				D505228484D4018878A10F16 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -195,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				917332CEA57DFE7CDE7FA352 /* PrivacyInfo.xcprivacy in Resources */,
+				EC80F2AF92C4DCBA6FE116C5 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,7 +328,25 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rekory/Pods-Rekory-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9BD146DEA4F4DDCC8AC672B6 /* [Expo] Configure project */ = {
+		D505228484D4018878A10F16 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rekory/Pods-Rekory-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rekory/Pods-Rekory-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EA5A805455DEF81D0EBCD803 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -346,24 +365,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Rekory/expo-configure-project.sh\"\n";
 		};
-		CED66F4B5DCC8982E111E407 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Rekory/Pods-Rekory-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rekory/Pods-Rekory-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -372,7 +373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				74BFF092B398E97FD7CF41F7 /* ExpoModulesProvider.swift in Sources */,
+				A51A5EA5C476A6C32A5AF58D /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,15 +382,12 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4872323534531F569F6A7DC4 /* Pods-Rekory.debug.xcconfig */;
+			baseConfigurationReference = 580C4C51CF50BE32E53A294E /* Pods-Rekory.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rekory/Rekory.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YDM2K7H6B6;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -409,8 +407,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.Rekory;
-				PRODUCT_NAME = "Rekory";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_NAME = Rekory;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rekory/Rekory-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -421,15 +418,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7BAB05BD1B5BF79C33580658 /* Pods-Rekory.release.xcconfig */;
+			baseConfigurationReference = F4CD6DC742D58F035C6C5849 /* Pods-Rekory.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rekory/Rekory.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YDM2K7H6B6;
 				INFOPLIST_FILE = Rekory/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -444,8 +438,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.Rekory;
-				PRODUCT_NAME = "Rekory";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_NAME = Rekory;
 				SWIFT_OBJC_BRIDGING_HEADER = "Rekory/Rekory-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

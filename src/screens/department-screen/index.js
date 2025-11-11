@@ -65,12 +65,22 @@ const DepartmentScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+     <>
+      {/* Background behind notch */}
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
+    
+      {/* Main container (below the notch) */}
+      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
+                <Ionicons
+                  name="arrow-back"
+                  size={24}
+                  color="#fff"
+                  style={{ marginBottom: 16 }}
+                />
+              </TouchableOpacity>
         <Text style={styles.headerTitle}>Team</Text>
       </View>
 
@@ -112,6 +122,7 @@ const DepartmentScreen = () => {
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
+    </>
   );
 };
 

@@ -53,85 +53,93 @@ const ProfileScreen = () => {
   const profileImage = { uri: getProfileUri(employee?.profile_pic) };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
+    <>
+      {/* Background behind notch */}
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
 
-      {/* Content */}
-      <View style={styles.content}>
-        {/* Profile Image */}
-        <View style={styles.profileSection}>
-          <Image source={profileImage} style={styles.profileImage} />
+      {/* Main container (below the notch) */}
+      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#fff"
+              style={{ marginBottom: 16 }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile</Text>
         </View>
 
-        {/* Options */}
-        <TouchableOpacity
-          style={styles.optionCard}
-          onPress={() => navigation.navigate("SalarySlipScreen")}
-        >
-          <Ionicons
-            name="reader"       // filled version
-            size={25}
-            color="#ccc"        // your desired fill color
-            style={{ marginRight: 5 }}
-          />
-          <Text style={styles.optionText}>Salary slip</Text>
-        </TouchableOpacity>
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Profile Image */}
+          <View style={styles.profileSection}>
+            <Image source={profileImage} style={styles.profileImage} />
+          </View>
 
-        <TouchableOpacity
-          style={styles.optionCard}
-          onPress={() => navigation.navigate("DocumentsScreen")}
-        >
-          <Ionicons name="document-attach-outline" size={22} color="#ccc" />
-          <Text style={styles.optionText}>Documents</Text>
-        </TouchableOpacity>
+          {/* Options */}
+          <TouchableOpacity
+            style={styles.optionCard}
+            onPress={() => navigation.navigate("SalarySlipScreen")}
+          >
+            <Ionicons
+              name="reader"       // filled version
+              size={25}
+              color="#ccc"        // your desired fill color
+              style={{ marginRight: 5 }}
+            />
+            <Text style={styles.optionText}>Salary slip</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.optionCard}
-          onPress={() => navigation.navigate("CreateNewPasswordScreen")}
-        >
-          <Ionicons name="key-outline" size={22} color="#ccc" />
-          <Text style={styles.optionText}>Change Password</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.optionCard}
+            onPress={() => navigation.navigate("DocumentsScreen")}
+          >
+            <Ionicons name="document-attach-outline" size={22} color="#ccc" />
+            <Text style={styles.optionText}>Documents</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.optionCard}
-          onPress={() => {
-            Alert.alert(
-              "Confirm Logout",
-              "Are you sure you want to log out?",
-              [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "Yes",
-                  onPress: async () => {
-                    await AsyncStorage.removeItem("accessToken");
-                    await AsyncStorage.removeItem("refreshToken");
-                    dispatch(logout());
+          <TouchableOpacity
+            style={styles.optionCard}
+            onPress={() => navigation.navigate("CreateNewPasswordScreen")}
+          >
+            <Ionicons name="key-outline" size={22} color="#ccc" />
+            <Text style={styles.optionText}>Change Password</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.optionCard}
+            onPress={() => {
+              Alert.alert(
+                "Confirm Logout",
+                "Are you sure you want to log out?",
+                [
+                  {
+                    text: "Cancel",
+                    style: "cancel",
                   },
-                },
-              ],
-              { cancelable: true }
-            );
-          }}
-        >
-          <Ionicons name="log-out-outline" size={22} color="#ccc" />
-          <Text style={styles.optionText}>Log out</Text>
-        </TouchableOpacity>
+                  {
+                    text: "Yes",
+                    onPress: async () => {
+                      await AsyncStorage.removeItem("accessToken");
+                      await AsyncStorage.removeItem("refreshToken");
+                      dispatch(logout());
+                    },
+                  },
+                ],
+                { cancelable: true }
+              );
+            }}
+          >
+            <Ionicons name="log-out-outline" size={22} color="#ccc" />
+            <Text style={styles.optionText}>Log out</Text>
+          </TouchableOpacity>
 
-      </View>
-    </SafeAreaView>
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 

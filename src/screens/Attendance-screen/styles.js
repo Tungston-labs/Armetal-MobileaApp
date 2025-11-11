@@ -16,15 +16,24 @@ export default StyleSheet.create({
   },
 
   header: {
-    height: 100,
+    height: 70,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 20,
+    paddingTop: 10,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
     borderBottomWidth: 0.2,
     borderBottomColor: "#FFFFFF",
+  },
+
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: 'Raleway_700Bold',
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,
   },
 
   dateText: {
@@ -70,15 +79,7 @@ export default StyleSheet.create({
     textAlignVertical: 'top',
   },
 
-  // Heading / Title updated to Raleway
-  headerTitle: {
-    fontSize: 20,
-    fontFamily: 'Raleway_700Bold',
-    color: '#FFF',
-    flex: 1,
-    marginLeft: 12,
-    marginTop: 6,
-  },
+  
 
   profileImage: {
     width: 40,
@@ -284,7 +285,6 @@ export default StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
   },
-
   totalHoursCard: {
     backgroundColor: '#172554',
     margin: 12,

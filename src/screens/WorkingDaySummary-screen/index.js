@@ -45,13 +45,13 @@ export default function WorkingDaySummary() {
         const response = await authAxios.get("/employee-monthly-summary/");
         const data = response.data;
         setSummary(data); // store full API response for summary section
-  
+
         // Default every working day to 'working'
         const statusMap = {};
         data.total_working_days_dates.forEach((date) => {
           statusMap[date] = "working";
         });
-  
+
         // Mark present, absent, holidays (only if not half-day)
         data.present_days_dates.forEach((date) => {
           if (!statusMap[date]?.includes("half")) statusMap[date] = "present";
@@ -62,18 +62,18 @@ export default function WorkingDaySummary() {
         data.holidays_dates.forEach((date) => {
           if (!statusMap[date]?.includes("half")) statusMap[date] = "holiday";
         });
-  
+
         // Finally, mark half-days (overrides present/absent)
         data.half_days_dates.forEach((date) => {
           statusMap[date] = "half";
         });
-  
+
         // Add Sundays as holiday if not already present
         const month = data.total_working_days_dates[0].slice(0, 7); // "YYYY-MM"
         const year = parseInt(month.split("-")[0], 10);
         const monthIndex = parseInt(month.split("-")[1], 10) - 1;
         const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
-  
+
         for (let day = 1; day <= daysInMonth; day++) {
           const dateStr = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
           const dayOfWeek = new Date(year, monthIndex, day).getDay();
@@ -81,29 +81,29 @@ export default function WorkingDaySummary() {
             statusMap[dateStr] = "holiday";
           }
         }
-  
+
         // Convert to ordered array
         const allDates = [];
         for (let day = 1; day <= daysInMonth; day++) {
           allDates.push(`${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
         }
         const orderedStatuses = allDates.map(date => statusMap[date] || "working");
-  
+
         setDayStatus(orderedStatuses);
       } catch (error) {
         console.error("Failed to fetch day status:", error);
         setDayStatus([]);
       }
     };
-  
+
     fetchDayStatus();
   }, []);
-  
+
 
   const getSegment = (status, index) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-  
+
     if (status === "half") {
       return (
         <View
@@ -120,12 +120,12 @@ export default function WorkingDaySummary() {
         </View>
       );
     }
-  
+
     let color = "#FFFFFF";
     if (status === "present") color = "#00FF00";
     else if (status === "absent") color = "#FF0000";
     else if (status === "holiday") color = "gray";
-  
+
     return (
       <View
         key={index}
@@ -139,16 +139,14 @@ export default function WorkingDaySummary() {
       />
     );
   };
-  
 
   return (
     <View style={{ flex: 1, backgroundColor: "#151D34" }}>
 
-
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 26, marginLeft: 12 }} />
+          <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginTop: 36, marginLeft: 12, }} />
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>Working Day Summary</Text>
@@ -162,46 +160,46 @@ export default function WorkingDaySummary() {
 
 
         {/* Circle */}
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={styles.circleWrapper}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate("WorkingDaySummary")}
-            >
-              {dayStatus.map((status, index) => getSegment(status, index))}
-        
-              {/* Gradient Circle */}
-              <View style={styles.circle}>
-                <Svg height="160" width="160">
-                  <Defs>
-                    <RadialGradient
-                      id="grad"
-                      cx="50%"
-                      cy="50%"
-                      rx="50%"
-                      ry="50%"
-                      fx="50%"
-                      fy="50%"
-                      
-                    >
-                      <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
-                      <Stop offset="63.46%"  stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
-                      <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
-                    </RadialGradient>
-                  </Defs>
-                  {/* Fill full circle */}
-                  <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
-                </Svg>
-        
-                {/* Text on top of gradient */}
-                <View style={styles.textContainer}>
-                  <Text style={styles.dayText}>{todayWeekday}</Text>
-                  <Text style={styles.monthText}>{todayMonth}</Text>
-                  <Text style={styles.dateText}>{today.getDate()}</Text>
-                </View>
+        <View style={{ alignItems: "center" }}>
+          <TouchableOpacity
+            style={styles.circleWrapper}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate("WorkingDaySummary")}
+          >
+            {dayStatus.map((status, index) => getSegment(status, index))}
+
+            {/* Gradient Circle */}
+            <View style={styles.circle}>
+              <Svg height="160" width="160">
+                <Defs>
+                  <RadialGradient
+                    id="grad"
+                    cx="50%"
+                    cy="50%"
+                    rx="50%"
+                    ry="50%"
+                    fx="50%"
+                    fy="50%"
+
+                  >
+                    <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
+                    <Stop offset="63.46%" stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
+                    <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
+                  </RadialGradient>
+                </Defs>
+                {/* Fill full circle */}
+                <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
+              </Svg>
+
+              {/* Text on top of gradient */}
+              <View style={styles.textContainer}>
+                <Text style={styles.dayText}>{todayWeekday}</Text>
+                <Text style={styles.monthText}>{todayMonth}</Text>
+                <Text style={styles.dateText}>{today.getDate()}</Text>
               </View>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
+        </View>
 
         {/* Summary */}
         {summary && (
@@ -214,7 +212,7 @@ export default function WorkingDaySummary() {
             <View style={styles.row}>
               <Text style={styles.subLabel}>Total Work Hours (This Month) </Text>
               <Text style={styles.subValue}>
-              {formatHours(summary.total_working_hours)} Hrs
+                {formatHours(summary.total_working_hours)} Hrs
               </Text>
             </View>
 
@@ -224,7 +222,7 @@ export default function WorkingDaySummary() {
             <View style={styles.centerRow}>
               <Ionicons name="time-outline" size={24} color="#fff" />
               <Text style={styles.centerText}>
-              {formatHours(summary.total_working_hours)} Hrs
+                {formatHours(summary.total_working_hours)} Hrs
               </Text>
             </View>
           </View>

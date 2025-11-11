@@ -12,24 +12,25 @@ const styles = StyleSheet.create({
     // paddingTop: hp('2%'),
   },
   header: {
+    height: 70,
     flexDirection: 'row',
-    alignItems: 'flex-end',     // Push items to bottom
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#262D40',
-    paddingHorizontal: 20,
-    paddingBottom: 18,          // Add bottom padding instead of marginTop
-    height: 100,                // Increased height to allow more vertical space
     borderBottomWidth: 0.2,
-    borderBottomColor: '#FFFFFF',
-    marginBottom: 10,
+    borderBottomColor: "#FFFFFF",
   },
 
   headerTitle: {
-    marginLeft: 10,
-    fontSize: 22,
-    color: '#FFFFFF',
+    fontSize: 20,
     fontFamily: 'Raleway_700Bold',
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,
   },
-
   teamCard: {
     borderRadius: 12,
     padding: wp('4%'),
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: wp('4.1%'),
     fontFamily: 'Montserrat_400Regular',
+    marginBottom:20,
 
   },
   count: {

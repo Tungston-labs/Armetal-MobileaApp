@@ -9,7 +9,7 @@ export default StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 25,
+    paddingVertical: 40,
     borderBottomWidth: 0.3,
     backgroundColor: "#262D40",
     borderBottomColor: '#FFFFFF',
@@ -19,7 +19,7 @@ export default StyleSheet.create({
     fontSize: 20,
     color: '#FFFFFF',
     marginLeft: 18,
-    marginTop: 25,
+    marginTop: 35,
     fontFamily: 'Raleway_700Bold', // <-- add this
 
   },

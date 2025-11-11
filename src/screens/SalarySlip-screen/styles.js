@@ -8,13 +8,17 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 110,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#FFFF',
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#262D40',
-    position: 'relative',
-
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#FFFFFF",
   },
+
   backButton: {
     position: 'absolute',
     left: 16,
@@ -24,11 +28,11 @@ export default StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    color: '#FFFF',
-    fontFamily: 'Raleway_700Bold', 
-    marginTop: 65,
-    marginLeft: 48,
-   
+    fontFamily: 'Raleway_700Bold',
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 15,
+    marginBottom: 19,
   },
   
   searchRow: {

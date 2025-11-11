@@ -126,92 +126,92 @@ const AttendanceScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="#fff"
-            style={{ marginTop: 6 }}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Attendance details</Text>
-        {/* <Image source={{ uri: profilePic }} style={styles.profileImage} /> */}
-      </View>
+    <>
+  {/* Background behind notch */}
+  <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
 
-      {/* Date dropdown */}
-      <TouchableOpacity
-        style={styles.dateCard}
-        onPress={() => setDatePickerVisible(true)}
-      >
-        <Ionicons name="calendar-outline" size={29} color="#fff" />
-        <View style={{ marginLeft: 8, flex: 1 }}>
-          <Text style={styles.selectDateText}>Select a day</Text>
-          <Text style={styles.selectedDate}>
-            {selectedDate.toLocaleDateString("en-GB").replace(/\//g, ".")}
-          </Text>
-        </View>
-        <Ionicons name="chevron-down" size={18} color="#fff" />
+  {/* Main container (below the notch) */}
+  <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+    {/* Header */}
+    <View style={styles.header}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color="#fff"
+          style={{ marginBottom: 16 }}
+        />
       </TouchableOpacity>
+      <Text style={styles.headerTitle}>Attendance details</Text>
+    </View>
 
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        date={selectedDate}
-        onConfirm={(date) => {
-          setSelectedDate(date);
-          setDatePickerVisible(false);
-        }}
-        onCancel={() => setDatePickerVisible(false)}
-      />
-      {/* Attendance Table */}
-      <View style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
-          <Text style={styles.headerCell}>Punch In</Text>
-          <Text style={styles.headerCell}>Punch Out</Text>
-        </View>
+    {/* Date dropdown */}
+    <TouchableOpacity
+      style={styles.dateCard}
+      onPress={() => setDatePickerVisible(true)}
+    >
+      <Ionicons name="calendar-outline" size={29} color="#fff" />
+      <View style={{ marginLeft: 8, flex: 1 }}>
+        <Text style={styles.selectDateText}>Select a day</Text>
+        <Text style={styles.selectedDate}>
+          {selectedDate.toLocaleDateString("en-GB").replace(/\//g, ".")}
+        </Text>
+      </View>
+      <Ionicons name="chevron-down" size={18} color="#fff" />
+    </TouchableOpacity>
 
-        <View style={styles.divider} />
+    {/* Date picker modal */}
+    <DateTimePickerModal
+      isVisible={isDatePickerVisible}
+      mode="date"
+      date={selectedDate}
+      onConfirm={(date) => {
+        setSelectedDate(date);
+        setDatePickerVisible(false);
+      }}
+      onCancel={() => setDatePickerVisible(false)}
+    />
 
-        {/* Scrollable attendance list */}
-        <View
-          style={{
-            maxHeight: 10 * 39, // Assuming each row ~40px height, adjust if needed
-          }}
-        >
-          <FlatList
-            data={sessions}
-            renderItem={renderItem}
-            keyExtractor={(_, index) => index.toString()}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                colors={["#ffffff", "#d3d3d3"]}
-                tintColor="#ffffff"
-                progressBackgroundColor={
-                  Platform.OS === "android" ? "#2c2c2c" : "transparent"
-                }
-              />
-            }
-          />
-        </View>
+    {/* Attendance Table */}
+    <View style={styles.tableContainer}>
+      <View style={styles.tableHeader}>
+        <Text style={styles.headerCell}>Punch In</Text>
+        <Text style={styles.headerCell}>Punch Out</Text>
       </View>
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNavbarContainer}>
+      <View style={styles.divider} />
 
-        {/* Total working hours (fixed section) */}
-        <View style={styles.totalHoursCard}>
-          <Text style={styles.totalHoursLabel}>Total working hour</Text>
-          <Text style={styles.totalHoursValue}>{totalHours}</Text>
-        </View>
-
-        <BottomNavbar navigation={navigation} route={route} />
+      <View style={{ maxHeight: 10 * 39 }}>
+        <FlatList
+          data={sessions}
+          renderItem={renderItem}
+          keyExtractor={(_, index) => index.toString()}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
+              progressBackgroundColor={
+                Platform.OS === "android" ? "#2c2c2c" : "transparent"
+              }
+            />
+          }
+        />
       </View>
-    </SafeAreaView>
+    </View>
+
+    {/* Bottom Navbar */}
+    <View style={styles.bottomNavbarContainer}>
+      <View style={styles.totalHoursCard}>
+        <Text style={styles.totalHoursLabel}>Total working hour</Text>
+        <Text style={styles.totalHoursValue}>{totalHours}</Text>
+      </View>
+      <BottomNavbar navigation={navigation} route={route} />
+    </View>
+  </SafeAreaView>
+</>
+
   );
 };
 
