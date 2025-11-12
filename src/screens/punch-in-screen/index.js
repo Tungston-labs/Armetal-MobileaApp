@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Image,
+  Image, 
   Animated,
   Easing,
 } from "react-native";
@@ -146,7 +146,6 @@ const AttendanceScreen = () => {
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
     } catch (err) {
-      // console.error("Attendance fetch error:", err.message);
     }
   };
 
