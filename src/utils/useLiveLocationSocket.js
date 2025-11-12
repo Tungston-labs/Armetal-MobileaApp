@@ -47,27 +47,33 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
 
     const socket = new WebSocket(url);
     socketRef.current = socket;
+  
+ const sendLocation = async () => {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
 
-    const sendLocation = async () => {
-      try {
-        const loc = await Location.getCurrentPositionAsync({});
-        const payload = {
-          session_id: sessionId,
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-          timestamp: new Date().toISOString(),
-        };
-
-        if (socket.readyState === WebSocket.OPEN) {
-          socket.send(JSON.stringify(payload));
-          console.log("📍 Sent location:", payload);
-        } else {
-          console.log("⚠️ Socket not ready:", socket.readyState);
-        }
-      } catch (err) {
-        console.error("Location send failed:", err);
-      }
+    const loc = await Location.getCurrentPositionAsync({});
+    const payload = {
+      latitude: loc.coords.latitude,
+      longitude: loc.coords.longitude,
+      timestamp: new Date().toISOString(),
     };
+
+    await fetch(`http://192.168.29.193:8001/api/background-location/${employeeId}/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("📤 Sent background location:", payload);
+  } catch (e) {
+    console.error("Failed to send location:", e);
+  }
+};
+
 
     socket.onopen = () => {
       console.log("✅ WebSocket connected for:", employeeId);
