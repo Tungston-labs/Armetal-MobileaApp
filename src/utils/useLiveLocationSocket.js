@@ -6,23 +6,26 @@ async function getAccessToken() {
   try {
     return await AsyncStorage.getItem("accessToken");
   } catch (e) {
-    console.error("Failed to retrieve access token for WebSocket:", e);
+    console.error("Failed to retrieve access token:", e);
     return null;
   }
 }
 
-export default function useLiveLocationSocket(employeeId, sessionId) {
-  const socketRef = useRef(null);
+export default function useLiveLocationHttp(employeeId, sessionId) {
   const intervalRef = useRef(null);
   const [accessToken, setAccessToken] = useState(null);
   const [hasPermission, setHasPermission] = useState(false);
 
-  // Get token once
+  // Load token once
   useEffect(() => {
-    getAccessToken().then((token) => setAccessToken(token));
+    let mounted = true;
+    getAccessToken().then((token) => {
+      if (mounted) setAccessToken(token);
+    });
+    return () => { mounted = false; };
   }, []);
 
-  // Ask permission once
+  // Request permissions once
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -35,76 +38,55 @@ export default function useLiveLocationSocket(employeeId, sessionId) {
   }, []);
 
   useEffect(() => {
+    // Only start if all dependencies are ready
     if (!employeeId || !sessionId || !accessToken || !hasPermission) return;
 
-    const baseUrl = "ws://192.168.29.193:8001/ws/live-location";
-    const url = `${baseUrl}/${employeeId}/?token=${accessToken}`;
+    let isSending = false; // prevent overlapping calls
 
-    // Close previous socket if exists
-    if (socketRef.current) {
-      socketRef.current.close();
-    }
+    const sendLocation = async () => {
+      if (isSending) return; // prevent multiple overlapping requests
+      isSending = true;
+      try {
+        const loc = await Location.getCurrentPositionAsync({});
 
-    const socket = new WebSocket(url);
-    socketRef.current = socket;
-  
- const sendLocation = async () => {
-  try {
-    const token = await AsyncStorage.getItem("accessToken");
+        const currentDate = new Date().toISOString().split("T")[0];
 
-    const loc = await Location.getCurrentPositionAsync({});
-    const payload = {
-      latitude: loc.coords.latitude,
-      longitude: loc.coords.longitude,
-      timestamp: new Date().toISOString(),
-    };
+        const payload = {
+          session_id: sessionId,
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+          date: currentDate,
+          timestamp: new Date().toISOString(),
+        };
 
-    await fetch(`http://192.168.29.193:8001/api/background-location/${employeeId}/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+        await fetch(`http://192.168.29.193:8001/api/background-location/${employeeId}/`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-    console.log("📤 Sent background location:", payload);
-  } catch (e) {
-    console.error("Failed to send location:", e);
-  }
-};
-
-
-    socket.onopen = () => {
-      console.log("✅ WebSocket connected for:", employeeId);
-    };
-
-    socket.onerror = (e) => {
-      console.error("⚠️ Socket error:", e.message);
-    };
-
-    socket.onclose = (e) => {
-      console.warn("🔌 Socket closed:", e.code, e.reason);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+        console.log("📤 Sent background location:", payload);
+      } catch (e) {
+        console.error("Failed to send location:", e);
+      } finally {
+        isSending = false;
       }
     };
 
-    // 🔁 Start periodic location updates
+    // Start periodic updates
     if (!intervalRef.current) {
-      intervalRef.current = setInterval(sendLocation, 15000);
+      intervalRef.current = setInterval(sendLocation, 150000);
+      sendLocation(); // first call
     }
 
-    // 🧹 Cleanup
+    // Cleanup on unmount
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
-      }
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = null;
       }
     };
   }, [employeeId, sessionId, accessToken, hasPermission]);
