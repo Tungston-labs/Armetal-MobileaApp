@@ -1,43 +1,59 @@
 // attendance/backgroundTracking.js
+import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
 import { TASK_NAME } from "./backgroundLocationTask";
 
 export async function startBackgroundTracking() {
-  // Request foreground + background permissions
-  const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
-  if (fgStatus !== "granted") {
-    alert("Foreground location permission not granted");
-    return;
+  console.log("Starting background tracking…");
+
+  const fg = await Location.requestForegroundPermissionsAsync();
+  if (fg.status !== "granted") {
+    console.log("No foreground permission");
+    return false;
   }
 
-  const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
-  if (bgStatus !== "granted") {
-    alert("Background location permission not granted");
-    return;
+  const bg = await Location.requestBackgroundPermissionsAsync();
+  if (bg.status !== "granted") {
+    console.log("No background permission");
+    return false;
   }
 
-  const alreadyRunning = await Location.hasStartedLocationUpdatesAsync(TASK_NAME);
-  if (!alreadyRunning) {
+  // Ensure task is defined
+  const defined = await TaskManager.isTaskDefined(TASK_NAME);
+  if (!defined) {
+    console.log("TASK NOT DEFINED — import backgroundLocationTask.js at app start");
+    return false;
+  }
+
+  const already = await Location.hasStartedLocationUpdatesAsync(TASK_NAME);
+  if (!already) {
     await Location.startLocationUpdatesAsync(TASK_NAME, {
-      accuracy: Location.Accuracy.High,
-      timeInterval: 150000, // 2.5 min
-      distanceInterval: 0,
+      accuracy: Location.Accuracy.Highest,
+      timeInterval: 120000, // 2 min
+      deferredUpdatesInterval: 120000, 
+      distanceInterval: 1,
+
       foregroundService: {
         notificationTitle: "Tracking Location",
         notificationBody: "Sending your live location to the server.",
-        notificationColor: "#0000ff",
       },
+
       pausesUpdatesAutomatically: false,
       showsBackgroundLocationIndicator: true, // iOS only
     });
-    console.log("✅ Background tracking started");
+
+    console.log("Background tracking STARTED");
+  } else {
+    console.log("Already running");
   }
+
+  return true;
 }
 
 export async function stopBackgroundTracking() {
   const isRunning = await Location.hasStartedLocationUpdatesAsync(TASK_NAME);
   if (isRunning) {
     await Location.stopLocationUpdatesAsync(TASK_NAME);
-    console.log("🛑 Background tracking stopped");
+    console.log("Stopped tracking");
   }
 }

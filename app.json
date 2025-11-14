@@ -8,6 +8,16 @@
     "scheme": "Rekory",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Rekory to track your location even in background."
+        }
+      ]
+    ],
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Rekory",
@@ -20,6 +30,7 @@
         "UIBackgroundModes": ["location"]
       }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ico.png",
@@ -32,6 +43,7 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION"
       ],
       "foregroundService": {
@@ -45,13 +57,16 @@
         "backgroundColor": "#151D34"
       }
     },
+
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/icon.png"
     },
+
     "experiments": {
       "typedRoutes": true
     },
+
     "owner": "ansalmazeez",
     "extra": {
       "eas": {
