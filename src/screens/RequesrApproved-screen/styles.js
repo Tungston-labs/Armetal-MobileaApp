@@ -14,7 +14,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "#262D40",
-    height:100,
+    height:120,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
   },

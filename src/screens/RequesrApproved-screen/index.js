@@ -22,7 +22,6 @@ export default function RequestApprovedScreen() {
   const { leaveId } = route.params;
 
   const [leave, setLeave] = useState(null);
-  const [profile, setProfile] = useState(null); // 👈 Profile data
   const [loading, setLoading] = useState(true);
   const API_BASE_URL = 'http://178.248.112.16:8001';
 
@@ -54,21 +53,6 @@ export default function RequestApprovedScreen() {
   }, [leaveId]);
 
 
-  // Fetch employee profile
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await authAxios.get('/profile/');
-        setProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        Alert.alert("Error", "Could not fetch profile.");
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
   if (loading || !leave) {
     return (
       <View style={styles.container}>
@@ -78,6 +62,7 @@ export default function RequestApprovedScreen() {
   }
 
   return (
+    <>
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
@@ -88,24 +73,8 @@ export default function RequestApprovedScreen() {
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Request detail</Text>
           </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-            {profile?.profile_pic ? (
-              <Image
-                source={{ uri: `${API_BASE_URL}${profile.profile_pic}` }}
-                style={styles.avatar}
-              />
-            ) : (
-              <Image
-                source={{ uri: "https://i.pravatar.cc/40" }}
-                style={styles.avatar}
-              />
-            )}
-          </TouchableOpacity>
-
         </View>
       </View>
-
       <View style={styles.separator} />
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -120,28 +89,24 @@ export default function RequestApprovedScreen() {
             <View style={styles.column}>
               <Text style={styles.label}>From</Text>
               <Text style={styles.value}>{leave.from_date}</Text>
-                          <Text style={styles.value}>{leave.from_date_type}</Text>
-              
+              <Text style={styles.value}>{leave.from_date_type}</Text>
+
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>To</Text>
               <Text style={styles.value}>{leave.to_date}</Text>
               <Text style={styles.value}>{leave.to_date_type}</Text>
-
             </View>
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
               <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
-
             </View>
           </View>
-
           {/* Leave Type */}
           <View style={styles.section}>
             <Text style={styles.label}>Leave Type</Text>
             <Text style={styles.value}>{leave.leave_type}</Text>
           </View>
-
           {/* Reason */}
           <View style={styles.section}>
             <Text style={styles.label}>Reason</Text>
@@ -149,9 +114,9 @@ export default function RequestApprovedScreen() {
           </View>
         </View>
       </ScrollView>
-
       <BottomNavbar navigation={navigation} route={route} />
     </View>
+    </>
   );
 }
 

@@ -103,7 +103,9 @@ export default function LeaveApproveScreen() {
     </TouchableOpacity>
   );
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#151D34" }}>
+      
+      {/* Header - now inside the same background as notch */}
       <LeaveHeader navigation={navigation} route={route} />
 
       <Text style={styles.dateHeader}>Approved Leaves</Text>
@@ -148,8 +150,8 @@ export default function LeaveApproveScreen() {
       </TouchableOpacity>
 
       <View style={styles.bottomNavbarContainer}>
-          <BottomNavbar navigation={navigation} route={route} />
-        </View>
+        <BottomNavbar navigation={navigation} route={route} />
+      </View>
     </SafeAreaView>
   );
 }

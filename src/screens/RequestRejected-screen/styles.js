@@ -7,16 +7,14 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#141d40',
   },
-
-  // Updated header with taller height and spacing
-  topHeader: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 2,
     backgroundColor: "#262D40",
-    height: 100,
+    height:70,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
   },
@@ -34,8 +32,8 @@ export default StyleSheet.create({
     fontSize: 18,
     color: "#FFFF",
     fontWeight: "bold",
-    marginRight: 130,
-    marginTop: 25,
+    marginRight: 240,
+    marginBottom: 20,
   },
 
   avatar: {

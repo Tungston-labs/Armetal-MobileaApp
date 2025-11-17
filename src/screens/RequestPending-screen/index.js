@@ -21,7 +21,6 @@ export default function RequestPending({ navigation, route }) {
   const [leave, setLeave] = useState(null);
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);
-  const [profile, setProfile] = useState(null);
 
   const API_BASE_URL = 'http://178.248.112.16:8000';
 
@@ -33,26 +32,6 @@ export default function RequestPending({ navigation, route }) {
       hour12: true, // set to false if you prefer 24-hour format
     });
   };
-
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await authAxios.get(`/profile/`);
-        setProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        Toast.show({
-          type: 'error',
-          text1: 'Profile Error',
-          text2: 'Could not fetch profile.',
-        });
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
 
   useEffect(() => {
     const fetchLeaveDetail = async () => {
@@ -123,23 +102,20 @@ export default function RequestPending({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingTop: 0 }]}>
+      
       {/* Header */}
-      <View style={styles.topHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
+      <View style={[styles.topHeader, { paddingTop: 0 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+                         <Ionicons
+                           name="arrow-back"
+                           size={24}
+                           color="#fff"
+                           style={{ marginTop: 55 }}
+                         />
+                       </TouchableOpacity>
+
         <Text style={styles.headerTitle}>Request Detail</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <Image
-            source={{
-              uri: profile?.profile_pic
-                ? `${API_BASE_URL}${profile.profile_pic}`
-                : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-            }}
-            style={styles.avatar}
-          />
-        </TouchableOpacity>
       </View>
 
       {/* Content */}
@@ -151,11 +127,13 @@ export default function RequestPending({ navigation, route }) {
               leave.status === "approved"
                 ? styles.approvedBadge
                 : leave.status === "rejected"
-                  ? styles.rejectedBadge
-                  : styles.pendingBadge,
+                ? styles.rejectedBadge
+                : styles.pendingBadge,
             ]}
           >
-            <Text style={styles.statusText}>{leave.status.charAt(0).toUpperCase() + leave.status.slice(1).toLowerCase()}
+            <Text style={styles.statusText}>
+              {leave.status.charAt(0).toUpperCase() +
+                leave.status.slice(1).toLowerCase()}
             </Text>
           </View>
 
@@ -163,20 +141,18 @@ export default function RequestPending({ navigation, route }) {
             <View style={styles.column}>
               <Text style={styles.label}>From</Text>
               <Text style={styles.value}>{leave.from_date}</Text>
-                                        <Text style={styles.value}>{leave.from_date_type}</Text>
-              
+              <Text style={styles.value}>{leave.from_date_type}</Text>
             </View>
+
             <View style={styles.column}>
               <Text style={styles.label}>To</Text>
               <Text style={styles.value}>{leave.to_date}</Text>
-                                        <Text style={styles.value}>{leave.to_date_type}</Text>
-              
+              <Text style={styles.value}>{leave.to_date_type}</Text>
             </View>
+
             <View style={styles.column}>
               <Text style={styles.label}>Time</Text>
               <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
-
-
             </View>
           </View>
 
@@ -191,7 +167,6 @@ export default function RequestPending({ navigation, route }) {
           </View>
         </View>
 
-        {/* Cancel button only if pending */}
         {leave.status === "pending" && (
           <TouchableOpacity
             style={styles.cancelButton}
@@ -206,6 +181,6 @@ export default function RequestPending({ navigation, route }) {
       </ScrollView>
 
       <BottomNavbar navigation={navigation} route={route} />
-    </SafeAreaView>
+    </View>
   );
 }
