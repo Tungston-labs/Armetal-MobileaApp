@@ -26,7 +26,37 @@ export default StyleSheet.create({
     marginLeft: 12,
     marginBottom: 19,
   },
+customPickerField: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  backgroundColor: "#172554",
+  borderRadius: 8,
+  borderWidth: 0.2,
+  borderColor: "#fff",
+  paddingVertical: 12,
+  paddingHorizontal: 14,
+},
 
+customPickerText: {
+  fontSize: 14,
+  color: "#FFFFFF",
+  fontFamily: "Montserrat_400Regular",
+},
+
+modalOverlay: {
+  flex: 1,
+  justifyContent: "flex-end",
+  backgroundColor: "rgba(0,0,0,0.35)",
+},
+
+modalContent: {
+  backgroundColor: "#fff",
+  paddingTop: 8,
+  borderTopLeftRadius: 12,
+  borderTopRightRadius: 12,
+  paddingBottom: 20,
+},
 
   scrollContent: {
     padding: 15,

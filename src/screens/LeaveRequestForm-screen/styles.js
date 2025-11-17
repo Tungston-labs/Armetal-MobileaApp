@@ -135,23 +135,24 @@ export default StyleSheet.create({
     marginTop: 5,
   },
 
-  pickerWrapper: {
-    backgroundColor: '#172554',
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: '#768F9C',
-    justifyContent: 'center',
-    height: 50,
-    paddingHorizontal: 10,
-  },
+pickerWrapper: {
+  backgroundColor: '#172554',   // FIXED
+  borderRadius: 10,
+  borderWidth: 0.5,
+  borderColor: '#768F9C',
+  height: 50,
+  justifyContent: 'center',
+  paddingHorizontal: 10,
+  marginTop: 10,
+},
 
-  picker: {
-    color: '#7D8EB5',
-    fontSize: 15,
-    fontFamily: 'Montserrat_400Regular',
-    width: '100%',
-    height: '100%',
-  },
+picker: {
+  color: '#FFFFFF',
+  fontSize: 15,
+  fontFamily: 'Montserrat_400Regular',
+  width: '100%',
+  height: '100%',
+},
 
   dateText: {
     color: '#7D8EB5',
@@ -230,5 +231,31 @@ export default StyleSheet.create({
     color: '#ccc', 
     width: '100%',
   },
+pickerPreview: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingHorizontal: 12,
+  paddingVertical: 10,
+  borderRadius: 8,
+  backgroundColor: 'transparent', // or your field bg
+  borderWidth: 1,
+  borderColor: '#2d3346',
+},
+pickerPreviewText: {
+  fontSize: 14,
+  color: '#fff',
+},
+modalOverlay: {
+  flex: 1,
+  justifyContent: 'flex-end',
+  backgroundColor: 'rgba(0,0,0,0.35)',
+},
+modalContent: {
+  backgroundColor: '#fff',
+  paddingTop: 8,
+  borderTopLeftRadius: 12,
+  borderTopRightRadius: 12,
+}
 
 });

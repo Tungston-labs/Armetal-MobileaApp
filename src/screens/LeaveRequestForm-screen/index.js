@@ -17,7 +17,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import styles from './styles';
 import Toast from 'react-native-toast-message';
 import authAxios from '../../utils/authAxios';
-
+import { Modal } from "react-native";
+import DatePickerModal from "./DatePickerModal";
 export default function LeaveRequestFormScreen() {
   const navigation = useNavigation();
 
@@ -25,10 +26,11 @@ export default function LeaveRequestFormScreen() {
   const [toDate, setToDate] = useState(new Date());
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
+  const [showLeaveTypePicker, setShowLeaveTypePicker] = useState(false);
 
   const [selectedLeaveType, setSelectedLeaveType] = useState('casual');
-  const [fromType, setFromType] = useState('full'); 
-  const [toType, setToType] = useState('full');     
+  const [fromType, setFromType] = useState('full');
+  const [toType, setToType] = useState('full');
 
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
@@ -38,7 +40,12 @@ export default function LeaveRequestFormScreen() {
   const [pendingLeaveCount, setPendingLeaveCount] = useState(0);
   const [lopDays, setLopDays] = useState(0);
   const [lopAmount, setLopAmount] = useState(0);
+  const [showFromTypePicker, setShowFromTypePicker] = useState(false);
+  const [showToTypePicker, setShowToTypePicker] = useState(false);
 
+  // helper to get label
+  const getHalfDayLabel = (value) =>
+    halfDayTypes.find((h) => h.value === value)?.label ?? 'Full Day';
   const leaveTypes = [
     { id: 1, type: 'casual' },
     { id: 2, type: 'sick' },
@@ -181,8 +188,8 @@ export default function LeaveRequestFormScreen() {
         reason,
         from_date: fromDate.toISOString().split('T')[0],
         to_date: toDate.toISOString().split('T')[0],
-        from_date_type: fromType, // ✅ Added
-        to_date_type: toType,     // ✅ Added
+        from_date_type: fromType,
+        to_date_type: toType,
         to_email: toEmail,
         cc_email: ccEmail,
       });
@@ -274,23 +281,54 @@ export default function LeaveRequestFormScreen() {
                     <Ionicons name="calendar" size={20} color="#ccc" />
                   </TouchableOpacity>
 
+                  <DatePickerModal
+                    visible={showFromPicker}
+                    date={fromDate}
+                    onClose={() => setShowFromPicker(false)}
+                    onChange={(date) => setFromDate(date)}
+                  />
+
+                  {showFromPicker && (
+                    <DateTimePicker value={fromDate} mode="date" display="default" onChange={onFromChange} />
+                  )}
                   {/* From Leave Type */}
                   <Text style={[styles.inputLabel, { marginTop: 15 }]}>From Leave Type</Text>
+
                   <View style={styles.leaveTypeBox}>
-                    <Picker
-                      selectedValue={fromType}
-                      onValueChange={(value) => {
-                        if (value !== '') setFromType(value); // prevents selecting placeholder
-                      }}
-                      style={styles.picker}
-                      dropdownIconColor="#ccc"
+                    <TouchableOpacity
+                      style={[styles.pickerPreview]}
+                      onPress={() => setShowFromTypePicker(true)}
                     >
-                      {/* Disabled Placeholder */}
-                      <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
-                      {halfDayTypes.map((item) => (
-                        <Picker.Item key={item.id} label={item.label} value={item.value} />
-                      ))}
-                    </Picker>
+                      <Text style={styles.pickerPreviewText}>{getHalfDayLabel(fromType)}</Text>
+                      <Ionicons name="chevron-down" size={18} color="#ccc" />
+                    </TouchableOpacity>
+
+                    <Modal
+                      visible={showFromTypePicker}
+                      transparent
+                      animationType="slide"
+                      onRequestClose={() => setShowFromTypePicker(false)}
+                    >
+                      <TouchableOpacity
+                        style={styles.modalOverlay}
+                        activeOpacity={1}
+                        onPressOut={() => setShowFromTypePicker(false)}
+                      >
+                        <View style={styles.modalContent}>
+                          <Picker
+                            selectedValue={fromType}
+                            onValueChange={(value) => {
+                              if (value !== '') setFromType(value);
+                              setShowFromTypePicker(false);
+                            }}
+                          >
+                            {halfDayTypes.map((item) => (
+                              <Picker.Item key={item.id} label={item.label} value={item.value} />
+                            ))}
+                          </Picker>
+                        </View>
+                      </TouchableOpacity>
+                    </Modal>
                   </View>
                 </View>
 
@@ -301,52 +339,101 @@ export default function LeaveRequestFormScreen() {
                     <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
                     <Ionicons name="calendar" size={20} color="#ccc" />
                   </TouchableOpacity>
-
+                  <DatePickerModal
+                    visible={showToPicker}
+                    date={toDate}
+                    onClose={() => setShowToPicker(false)}
+                    onChange={(date) => setToDate(date)}
+                  />
                   {/* To Leave Type */}
                   <Text style={[styles.inputLabel, { marginTop: 15 }]}>To Leave Type</Text>
                   <View style={styles.leaveTypeBox}>
-                    <Picker
-                      selectedValue={toType}
-                      onValueChange={(value) => {
-                        if (value !== '') setToType(value); // prevents selecting placeholder
-                      }}
-                      style={styles.picker}
-                      dropdownIconColor="#ccc"
+                    <TouchableOpacity
+                      style={[styles.pickerPreview]}
+                      onPress={() => setShowToTypePicker(true)}
                     >
-                      {/* Disabled Placeholder */}
-                      <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
-                      {halfDayTypes.map((item) => (
-                        <Picker.Item key={item.id} label={item.label} value={item.value} />
-                      ))}
-                    </Picker>
+                      <Text style={styles.pickerPreviewText}>{getHalfDayLabel(toType)}</Text>
+                      <Ionicons name="chevron-down" size={18} color="#ccc" />
+                    </TouchableOpacity>
+
+                    <Modal
+                      visible={showToTypePicker}
+                      transparent
+                      animationType="slide"
+                      onRequestClose={() => setShowToTypePicker(false)}
+                    >
+                      <TouchableOpacity
+                        style={styles.modalOverlay}
+                        activeOpacity={1}
+                        onPressOut={() => setShowToTypePicker(false)}
+                      >
+                        <View style={styles.modalContent}>
+                          <Picker
+                            selectedValue={toType}
+                            onValueChange={(value) => {
+                              if (value !== '') setToType(value);
+                              setShowToTypePicker(false);
+                            }}
+                          >
+                            {halfDayTypes.map((item) => (
+                              <Picker.Item key={item.id} label={item.label} value={item.value} />
+                            ))}
+                          </Picker>
+                        </View>
+                      </TouchableOpacity>
+                    </Modal>
                   </View>
                 </View>
               </View>
             </View>
 
-            {showFromPicker && (
-              <DateTimePicker value={fromDate} mode="date" display="default" onChange={onFromChange} />
-            )}
-            {showToPicker && (
-              <DateTimePicker value={toDate} mode="date" display="default" onChange={onToChange} />
-            )}
 
+
+            {/* Leave Type */}
             {/* Leave Type */}
             <View style={styles.section}>
               <Text style={styles.inputLabel}>Leave Type</Text>
-              <View style={styles.pickerWrapper}>
-                <Picker
-                  selectedValue={selectedLeaveType}
-                  onValueChange={(value) => setSelectedLeaveType(value)}
-                  style={styles.picker}
-                  dropdownIconColor="#ccc"
+
+              <View style={styles.leaveTypeBox}>
+                <TouchableOpacity
+                  style={styles.pickerPreview}
+                  onPress={() => setShowLeaveTypePicker(true)}
                 >
-                  {leaveTypes.map((item) => (
-                    <Picker.Item key={item.id} label={item.type} value={item.type} />
-                  ))}
-                </Picker>
+                  <Text style={styles.pickerPreviewText}>
+                    {selectedLeaveType?.toUpperCase()}
+                  </Text>
+                  <Ionicons name="chevron-down" size={18} color="#ccc" />
+                </TouchableOpacity>
+
+                <Modal
+                  visible={showLeaveTypePicker}
+                  transparent
+                  animationType="slide"
+                  onRequestClose={() => setShowLeaveTypePicker(false)}
+                >
+                  <TouchableOpacity
+                    style={styles.modalOverlay}
+                    activeOpacity={1}
+                    onPressOut={() => setShowLeaveTypePicker(false)}
+                  >
+                    <View style={styles.modalContent}>
+                      <Picker
+                        selectedValue={selectedLeaveType}
+                        onValueChange={(value) => {
+                          if (value !== '') setSelectedLeaveType(value);
+                          setShowLeaveTypePicker(false);
+                        }}
+                      >
+                        {leaveTypes.map((item) => (
+                          <Picker.Item key={item.id} label={item.type} value={item.type} />
+                        ))}
+                      </Picker>
+                    </View>
+                  </TouchableOpacity>
+                </Modal>
               </View>
             </View>
+
 
             {/* To / CC / Reason */}
             <View style={styles.section}>
@@ -406,3 +493,4 @@ export default function LeaveRequestFormScreen() {
     </>
   );
 }
+

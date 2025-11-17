@@ -11,21 +11,23 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import Toast from "react-native-toast-message";   // ✅ Toast import
+import Toast from "react-native-toast-message";   
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { Modal } from "react-native";
+import DatePickerModal from "../LeaveRequestForm-screen/DatePickerModal";
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
   // const [toMail, setToMail] = useState("");
   const [note, setNote] = useState("");
-  const [date, setDate] = useState(""); // yyyy-mm-dd formatted string
+  const [date, setDate] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [amount, setAmount] = useState("");
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+
   const [bill, setBill] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -63,7 +65,6 @@ const ReimbursementForm = ({ navigation, route }) => {
   };
 
   const handleSubmit = async () => {
-    // ✅ Required fields (removed toMail)
     if (!expenseCategory || !amount || !date || !bill) {
       return Toast.show({
         type: "error",
@@ -117,150 +118,158 @@ const ReimbursementForm = ({ navigation, route }) => {
 
   return (
     <>
-  {/* Background behind notch */}
-  <SafeAreaView
-    style={{ flex: 0, backgroundColor: "#262D40" }}
-    edges={["top"]}
-  />
-
-  {/* Main screen (below the notch) */}
-  <SafeAreaView
-    style={styles.container}
-    edges={["left", "right", "bottom"]}
-  >
-    {/* Header */}
-    <View style={styles.header}>
-       <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <Ionicons
-                    name="arrow-back"
-                    size={24}
-                    color="#fff"
-                    style={{ marginBottom: 16 }}
-                  />
-                </TouchableOpacity>
-
-      <Text style={styles.headerTitle}>Reimbursement</Text>
-    </View>
-
-    {/* BODY CONTENT */}
-    <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent}>
-      {/* Expense Category */}
-      <Text style={styles.label}>Expense Category</Text>
-
-      <View style={styles.pickerWrapper}>
-        <View style={{ position: "relative" }}>
-          <Picker
-            selectedValue={expenseCategory}
-            onValueChange={(value) => setExpenseCategory(value)}
-            style={{
-              color: "#fff",
-              backgroundColor: "#172554",
-              paddingRight: 40,
-            }}
-            dropdownIconColor="transparent"
-          >
-            <Picker.Item label="Select category" value="" />
-            {EXPENSE_CATEGORIES.map((cat) => (
-              <Picker.Item key={cat} label={cat} value={cat} />
-            ))}
-          </Picker>
-          {/* Right-side + icon */}
-          <Ionicons
-            name="add"
-            size={22}
-            color="#fff"
-            style={{
-              position: "absolute",
-              right: 10,
-              top: "50%",
-              transform: [{ translateY: -11 }],
-            }}
-          />
-        </View>
-      </View>
-      {/* Upload */}
-      <TouchableOpacity
-        style={styles.uploadButton}
-        activeOpacity={0.8}
-        onPress={pickImage}
-      >
-        <Ionicons name="add" size={20} color="#fff" />
-        <Text style={styles.uploadButtonText}>Upload Image</Text>
-      </TouchableOpacity>
-      {bill && (
-        <View style={styles.imageWrapper}>
-          <Image source={{ uri: bill.uri }} style={styles.billImage} />
-          <TouchableOpacity
-            style={styles.closeIcon}
-            onPress={() => setBill(null)}
-          >
-            <Ionicons name="close-circle" size={22} color="red" />
-          </TouchableOpacity>
-        </View>
-      )}
-      {/* Note */}
-      <Text style={styles.label}>Add note</Text>
-      <TextInput
-        placeholder="Enter note"
-        placeholderTextColor="#8A8F9E"
-        style={styles.textArea}
-        multiline
-        value={note}
-        onChangeText={setNote}
+      {/* Background behind notch */}
+      <SafeAreaView
+        style={{ flex: 0, backgroundColor: "#262D40" }}
+        edges={["top"]}
       />
-      {/* Date + Amount */}
-      <View style={styles.row}>
-        <View style={styles.halfInputContainer}>
-          <Text style={styles.label}>Date</Text>
+
+      {/* Main screen (below the notch) */}
+      <SafeAreaView
+        style={styles.container}
+        edges={["left", "right", "bottom"]}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#fff"
+              style={{ marginBottom: 16 }}
+            />
+          </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>Reimbursement</Text>
+        </View>
+
+        {/* BODY CONTENT */}
+        <KeyboardAwareScrollView contentContainerStyle={styles.scrollContent}>
+          {/* Expense Category */}
+          <Text style={styles.label}>Expense Category</Text>
           <TouchableOpacity
-            onPress={() => setShowDatePicker(true)}
-            style={styles.input}
+            style={styles.customPickerField}
+            onPress={() => setShowCategoryPicker(true)}
           >
-            <Text style={{ color: date ? "#fff" : "#8A8F9E" }}>
-              {date || "Select Date"}
+            <Text style={styles.customPickerText}>
+              {expenseCategory || "Select category"}
+            </Text>
+
+            <Ionicons name="add" size={20} color="#fff" />
+          </TouchableOpacity>
+          <Modal
+            visible={showCategoryPicker}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setShowCategoryPicker(false)}
+          >
+            <TouchableOpacity
+              style={styles.modalOverlay}
+              activeOpacity={1}
+              onPressOut={() => setShowCategoryPicker(false)}
+            >
+              <View style={styles.modalContent}>
+                <Picker
+                  selectedValue={expenseCategory}
+                  onValueChange={(value) => {
+                    if (value) setExpenseCategory(value);
+                    setShowCategoryPicker(false);
+                  }}
+                >
+                  <Picker.Item label="Select category" value="" enabled={false} />
+                  {EXPENSE_CATEGORIES.map((cat) => (
+                    <Picker.Item key={cat} label={cat} value={cat} />
+                  ))}
+                </Picker>
+              </View>
+            </TouchableOpacity>
+          </Modal>
+
+          {/* Upload */}
+          <TouchableOpacity
+            style={styles.uploadButton}
+            activeOpacity={0.8}
+            onPress={pickImage}
+          >
+            <Ionicons name="add" size={20} color="#fff" />
+            <Text style={styles.uploadButtonText}>Upload Image</Text>
+          </TouchableOpacity>
+          {bill && (
+            <View style={styles.imageWrapper}>
+              <Image source={{ uri: bill.uri }} style={styles.billImage} />
+              <TouchableOpacity
+                style={styles.closeIcon}
+                onPress={() => setBill(null)}
+              >
+                <Ionicons name="close-circle" size={22} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
+          {/* Note */}
+          <Text style={styles.label}>Add note</Text>
+          <TextInput
+            placeholder="Enter note"
+            placeholderTextColor="#8A8F9E"
+            style={styles.textArea}
+            multiline
+            value={note}
+            onChangeText={setNote}
+          />
+          {/* Date + Amount */}
+          <View style={styles.row}>
+            <View style={styles.halfInputContainer}>
+              <Text style={styles.label}>Date</Text>
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(true)}
+                style={styles.input}
+              >
+                <Text style={{ color: date ? "#fff" : "#8A8F9E" }}>
+                  {date || "Select Date"}
+                </Text>
+              </TouchableOpacity>
+              <DatePickerModal
+                visible={showDatePicker}
+                date={date ? new Date(date) : new Date()}
+                onChange={(selected) => {
+                  const formatted = selected.toISOString().split("T")[0];
+                  setDate(formatted);
+                  setShowDatePicker(false);
+                }}
+                onClose={() => setShowDatePicker(false)}
+              />
+            </View>
+            <View style={styles.halfInputContainer}>
+              <Text style={styles.label}>Enter Amount (AED)</Text>
+              <TextInput
+                placeholder="0.00"
+                placeholderTextColor="#8A8F9E"
+                style={styles.input}
+                keyboardType="numeric"
+                value={amount}
+                onChangeText={setAmount}
+              />
+            </View>
+          </View>
+          {/* Submit */}
+          <TouchableOpacity
+            style={[styles.submitButton, loading && { opacity: 0.6 }]}
+            disabled={loading}
+            onPress={handleSubmit}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.submitButtonText}>
+              {loading ? "Submitting..." : "Submit"}
             </Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={date ? new Date(date) : new Date()}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={handleDateChange}
-            />
-          )}
-        </View>
-        <View style={styles.halfInputContainer}>
-          <Text style={styles.label}>Enter Amount (AED)</Text>
-          <TextInput
-            placeholder="0.00"
-            placeholderTextColor="#8A8F9E"
-            style={styles.input}
-            keyboardType="numeric"
-            value={amount}
-            onChangeText={setAmount}
-          />
-        </View>
-      </View>
-      {/* Submit */}
-      <TouchableOpacity
-        style={[styles.submitButton, loading && { opacity: 0.6 }]}
-        disabled={loading}
-        onPress={handleSubmit}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.submitButtonText}>
-          {loading ? "Submitting..." : "Submit"}
-        </Text>
-      </TouchableOpacity>
-    </KeyboardAwareScrollView>
-    {/* Bottom Navbar */}
-    {!loading && (
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
-    )}
-  </SafeAreaView>
-</>
+        </KeyboardAwareScrollView>
+        {/* Bottom Navbar */}
+        {!loading && (
+          <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+            <BottomNavbar navigation={navigation} route={route} />
+          </View>
+        )}
+      </SafeAreaView>
+    </>
 
   );
 };
