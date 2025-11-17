@@ -164,4 +164,10 @@ export default StyleSheet.create({
     padding: 8,
     borderRadius: 20,
   },
+  bottomNavbarContainer: {
+    position: "absolute",
+    bottom: 5,
+    left: 3,
+    right: 3,
+  },
 });

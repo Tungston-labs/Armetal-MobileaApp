@@ -65,7 +65,7 @@ export default function VerificationScreen() {
         email,
         otp: enteredOtp,
       });
- Toast.show({
+      Toast.show({
         type: 'success',
         text1: 'OTP Verified',
         text2: 'You can now reset your password.',
@@ -74,7 +74,7 @@ export default function VerificationScreen() {
       navigation.navigate('SetNewPasswordScreen', { email });
     } catch (error) {
       // console.error(error.response?.data || error.message);
-       Toast.show({
+      Toast.show({
         type: 'error',
         text1: 'Verification Failed',
         text2: 'Invalid or expired OTP.',
@@ -85,7 +85,7 @@ export default function VerificationScreen() {
   const handleResend = async () => {
     try {
       await axios.post('http://178.248.112.16:8001/api/forgot-password/send-otp/', { email });
-     Toast.show({
+      Toast.show({
         type: 'success',
         text1: 'OTP Sent',
         text2: 'A new OTP has been sent to your email.',
@@ -103,12 +103,13 @@ export default function VerificationScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
 
+      </View>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={28} color="#fff" style={{ marginBottom: 16 }} />
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+
         <Text style={styles.title}>Verification</Text>
         <Text style={styles.subtitle}>We sent a code to {email || 'your email'}</Text>
 

@@ -14,6 +14,8 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 
 const STATUS_COLORS = {
   Approved: "#2ecc71",
@@ -35,7 +37,6 @@ const ReimbursementScreen = ({ navigation, route }) => {
         `/reimbursements/my-reimbursements/${reimbursementId}/`
       );
 
-      // Map status "Approve" to "Approved" for display
       const data = {
         ...res.data,
         status: res.data.status === "Approve" ? "Approved" : res.data.status,
@@ -93,103 +94,139 @@ const ReimbursementScreen = ({ navigation, route }) => {
   const statusColor = STATUS_COLORS[reimbursement.status] || STATUS_COLORS.Default;
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Reimbursement</Text>
-      </View>
+    <>
+      {/* Background behind the notch */}
+      <SafeAreaView
+        style={{ flex: 0, backgroundColor: "#262D40" }}
+        edges={["top"]}
+      />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.card}>
-          {/* Expense Category + Status */}
-          <View style={styles.rowBetween}>
-            <View>
-              <Text style={styles.label}>Expense Category</Text>
-              <Text style={styles.expenseText}>{reimbursement.expense_category}</Text>
+      {/* Main Screen Container */}
+      <SafeAreaView
+        style={styles.container}
+        edges={["left", "right", "bottom"]}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#fff"
+              style={{ marginBottom: 16 }}
+            />
+          </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>Reimbursement</Text>
+        </View>
+
+        {/* Body Content */}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.card}>
+            <View style={styles.rowBetween}>
+              <View>
+                <Text style={styles.label}>Expense Category</Text>
+                <Text style={styles.expenseText}>
+                  {reimbursement.expense_category}
+                </Text>
+              </View>
+
+              <View
+                style={[styles.statusBadge, { borderColor: statusColor }]}
+              >
+                <Text
+                  style={[styles.statusText, { color: statusColor }]}
+                >
+                  {reimbursement.status}
+                </Text>
+              </View>
             </View>
-            <View style={[styles.statusBadge, { borderColor: statusColor }]}>
-              <Text style={[styles.statusText, { color: statusColor }]}>
-                {reimbursement.status}
+
+            <View style={styles.section}>
+              <Text style={styles.label}>Date</Text>
+              <Text style={styles.value}>{reimbursement.date}</Text>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.label}>Note</Text>
+              <Text style={styles.noteText}>{reimbursement.note}</Text>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.label}>Amount in AED</Text>
+              <Text style={styles.value}>
+                AED {reimbursement.amount}
               </Text>
             </View>
+
+            {/* Bills */}
+            {reimbursement.images &&
+              reimbursement.images.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.label}>Bills</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {reimbursement.images.map((bill, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setPreviewImage(bill.image)}
+                      >
+                        <Image
+                          source={{ uri: bill.image }}
+                          style={styles.billImage}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+
+            {reimbursement.status === "On Hold" && (
+              <TouchableOpacity
+                style={styles.cancelButton}
+                activeOpacity={0.8}
+                onPress={deleteReimbursement}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            )}
           </View>
+        </ScrollView>
 
-          {/* Date */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Date</Text>
-            <Text style={styles.value}>{reimbursement.date}</Text>
-          </View>
-
-          {/* Note */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Note</Text>
-            <Text style={styles.noteText}>{reimbursement.note}</Text>
-          </View>
-
-          {/* Amount */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Amount in AED</Text>
-            <Text style={styles.value}>AED {reimbursement.amount}</Text>
-          </View>
-
-          {/* Bills */}
-          {reimbursement.images && reimbursement.images.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.label}>Bills</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {reimbursement.images.map((bill, index) => (
-                  <TouchableOpacity key={index} onPress={() => setPreviewImage(bill.image)}>
-                    <Image source={{ uri: bill.image }} style={styles.billImage} />
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          )}
-
-          {/* Cancel Button - Only if On Hold */}
-          {reimbursement.status === "On Hold" && (
-            <TouchableOpacity
-              style={styles.cancelButton}
-              activeOpacity={0.8}
-              onPress={deleteReimbursement}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </ScrollView>
-
-      {/* Full-Screen Image Modal */}
-      <Modal visible={!!previewImage} transparent={true}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.9)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            style={{ position: "absolute", top: 40, right: 20 }}
-            onPress={() => setPreviewImage(null)}
+        {/* Full-Screen Image Modal */}
+        <Modal visible={!!previewImage} transparent>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.9)",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            <Ionicons name="close" size={30} color="#fff" />
-          </TouchableOpacity>
-          <Image
-            source={{ uri: previewImage }}
-            style={{ width: "90%", height: "70%", resizeMode: "contain" }}
-          />
-        </View>
-      </Modal>
+            <TouchableOpacity
+              style={{ position: "absolute", top: 40, right: 20 }}
+              onPress={() => setPreviewImage(null)}
+            >
+              <Ionicons name="close" size={30} color="#fff" />
+            </TouchableOpacity>
 
-      {/* Bottom Navbar */}
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
-    </View>
+            <Image
+              source={{ uri: previewImage }}
+              style={{
+                width: "90%",
+                height: "70%",
+                resizeMode: "contain",
+              }}
+            />
+          </View>
+        </Modal>
+
+        {/* Bottom Navbar */}
+        <View style={styles.bottomNavbarContainer}>
+          <BottomNavbar navigation={navigation} route={route} />
+        </View>
+      </SafeAreaView>
+    </>
+
   );
 };
 

@@ -1,117 +1,3 @@
-// // index.js
-// import React, { useState } from 'react';
-// import {
-//   View,
-//   Text,
-//   TextInput,
-//   TouchableOpacity,
-//   SafeAreaView,
-//   StatusBar,
-//   ScrollView,
-//   Alert,
-// } from 'react-native';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import { useNavigation, useRoute } from '@react-navigation/native';
-// import axios from 'axios';
-// import styles from './styles';
-// import Toast from 'react-native-toast-message';
-
-// export default function SetNewPasswordScreen() {
-//   const navigation = useNavigation();
-//   const route = useRoute();
-//   const email = route.params?.email;
-
-//   const [password, setPassword] = useState('');
-//   const [confirmPassword, setConfirmPassword] = useState('');
-
-//   const handleResetPassword = async () => {
-//     if (!password || !confirmPassword) {
-//       Toast.show({
-//         type: 'error',
-//         text1: 'Validation Error',
-//         text2: 'Please fill out all fields.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
-//         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
-//       });
-//       return;
-//     }
-//     if (password !== confirmPassword) {
-//       Toast.show({
-//         type: 'error',
-//         text1: 'Validation Error',
-//         text2: 'Passwords do not match.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
-//         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
-//       });
-//       return;
-//     }
-
-//     try {
-//       const response = await axios.post('http://178.248.112.16:8001/api/forgot-password/reset/', {
-//         email,
-//         new_password: password,
-//         confirm_password: confirmPassword,
-//       });
-
-//        Toast.show({
-//         type: 'success',
-//         text1: 'Success',
-//         text2: 'Password reset successful.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
-//         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
-//       });
-//       navigation.navigate('LoginScreen');
-//     } catch (error) {
-//       console.error('Reset Error:', error.response?.data || error.message);
-//       Toast.show({
-//         type: 'error',
-//         text1: 'Error',
-//         text2: error.response?.data?.detail || 'Failed to reset password.',text1Style: { fontSize: 18, fontFamily: "Montserrat_700Bold" },
-//         text2Style: { fontSize: 15, fontFamily: "Raleway_500Medium" },
-//       });
-//     }
-//   };
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <StatusBar barStyle="light-content" backgroundColor="#0B1437" />
-
-//       <View style={styles.header}>
-//         <TouchableOpacity onPress={() => navigation.goBack()}>
-//           <Ionicons name="arrow-back" size={28} color="#fff" />
-//         </TouchableOpacity>
-//       </View>
-
-//       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-//         <Text style={styles.title}>Set new password</Text>
-//         <Text style={styles.subtitle}>Enter your new password</Text>
-
-//         <Text style={styles.label}>Password</Text>
-//         <TextInput
-//           style={styles.input}
-//           placeholder="******"
-//           placeholderTextColor="#aaa"
-//           secureTextEntry
-//           value={password}
-//           onChangeText={setPassword}
-//         />
-
-//         <Text style={styles.label}>Confirm Password</Text>
-//         <TextInput
-//           style={styles.input}
-//           placeholder="******"
-//           placeholderTextColor="#aaa"
-//           secureTextEntry
-//           value={confirmPassword}
-//           onChangeText={setConfirmPassword}
-//         />
-
-//         <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
-//           <Text style={styles.buttonText}>Reset password</Text>
-//         </TouchableOpacity>
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// }
-
-
 // index.js
 import React, { useState } from 'react';
 import {
@@ -192,13 +78,7 @@ export default function SetNewPasswordScreen() {
 
   return (
 
-
-
-
     <SafeAreaView style={styles.container}>
-
-
-      
 
       <StatusBar barStyle="light-content" backgroundColor="#0B1437" />
 
@@ -207,7 +87,6 @@ export default function SetNewPasswordScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" marginTop="20" />
         </TouchableOpacity>
       </View>
-
 
 
       <KeyboardAvoidingView
@@ -239,7 +118,7 @@ export default function SetNewPasswordScreen() {
               onPress={() => setShowPassword(!showPassword)}
               style={{
                 position: 'absolute',
-                right: 15,
+                right: 40,
                 top: Platform.OS === 'ios' ? 14 : 12,
               }}
             >
@@ -266,7 +145,7 @@ export default function SetNewPasswordScreen() {
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               style={{
                 position: 'absolute',
-                right: 15,
+                right: 40,
                 top: Platform.OS === 'ios' ? 14 : 12,
               }}
             >

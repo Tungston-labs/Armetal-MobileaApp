@@ -7,24 +7,26 @@ export default StyleSheet.create({
   },
 
   header: {
-    height:100,
-    flexDirection: 'row',       // ensures children are in one line
-    alignItems: 'center',       // vertical alignment
-    paddingTop: 50,
-    paddingBottom: 18,
-    paddingHorizontal: 16,      // use standard padding, not too wide
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#FFFF',
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#262D40',
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#FFFFFF",
   },
-  
+
   headerTitle: {
-    color: '#fff',
     fontSize: 20,
     fontFamily: 'Raleway_700Bold',
-    marginLeft: 12,             // space between arrow and text
-    flex: 1,                     // makes title take remaining space
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,
   },
+
 
   scrollContent: {
     padding: 15,

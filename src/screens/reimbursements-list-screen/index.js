@@ -16,6 +16,8 @@ import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 
 const STATUS_LABELS = {
   Approve: "Approved",
@@ -29,15 +31,11 @@ const STATUS_STYLES = {
   Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
 };
 
-
 export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [bill, setBill] = useState(null); // single image state
-
-
-  
 
   // fetch reimbursements
   const fetchReimbursements = async () => {
@@ -102,16 +100,16 @@ export default function ReimbursementlistScreen({ navigation, route }) {
       >
 
 
-<View
-  style={[
-    styles.statusBadge,
-    { borderColor: styleConfig.color, backgroundColor: styleConfig.background },
-  ]}
->
-  <Text style={[styles.statusText, { color: styleConfig.color }]}>
-    {STATUS_LABELS[item.status] || item.status}
-  </Text>
-</View>
+        <View
+          style={[
+            styles.statusBadge,
+            { borderColor: styleConfig.color, backgroundColor: styleConfig.background },
+          ]}
+        >
+          <Text style={[styles.statusText, { color: styleConfig.color }]}>
+            {STATUS_LABELS[item.status] || item.status}
+          </Text>
+        </View>
 
 
 
@@ -132,71 +130,88 @@ export default function ReimbursementlistScreen({ navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Reimbursement</Text>
-      </View>
+    <>
+      {/* Background behind notch */}
+      <SafeAreaView
+        style={{ flex: 0, backgroundColor: "#262D40" }}
+        edges={["top"]}
+      />
 
-      <View style={{ padding: 5 }}>
-      
-
-        {bill && (
-          <View style={styles.imageWrapper}>
-            <Image source={{ uri: bill.uri }} style={styles.billImage} />
-            <TouchableOpacity
-              style={styles.closeIcon}
-              onPress={() => setBill(null)}
-            >
-              <Ionicons name="close-circle" size={22} color="red" />
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-
-      {/* Content */}
-      {loading && !refreshing ? (
-        <SwipeLoader text="Loading reimbursements..." />
-      ) : (
-        <FlatList
-          data={reimbursements}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]}
-              tintColor="#ffffff"
-              progressBackgroundColor={
-                Platform.OS === "android" ? "#f5f5f5" : "transparent"
-              }
-            />
-          }
-          ListEmptyComponent={
-            <Text
-              style={{ color: "#888", textAlign: "center", marginTop: 20 }}
-            >
-              No reimbursements found.
-            </Text>
-          }
-        />
-      )}
-
-      {/* FAB */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate("ReimbursementForm")}
+      {/* Main Content Area */}
+      <SafeAreaView
+        style={[styles.container,]}
+        edges={["left", "right", "bottom"]}
       >
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Reimbursement</Text>
+        </View>
 
-      {/* Fixed Bottom Navbar */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
-    </View>
+        {/* Image Preview */}
+        <View style={{ padding: 5 }}>
+          {bill && (
+            <View style={styles.imageWrapper}>
+              <Image source={{ uri: bill.uri }} style={styles.billImage} />
+
+              <TouchableOpacity
+                style={styles.closeIcon}
+                onPress={() => setBill(null)}
+              >
+                <Ionicons name="close-circle" size={22} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
+        {/* List or Loader */}
+        {loading && !refreshing ? (
+          <SwipeLoader text="Loading reimbursements..." />
+        ) : (
+          <FlatList
+            data={reimbursements}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#ffffff", "#d3d3d3"]}
+                tintColor="#ffffff"
+                progressBackgroundColor={
+                  Platform.OS === "android" ? "#f5f5f5" : "transparent"
+                }
+              />
+            }
+            ListEmptyComponent={
+              <Text
+                style={{
+                  color: "#888",
+                  textAlign: "center",
+                  marginTop: 20,
+                }}
+              >
+                No reimbursements found.
+              </Text>
+            }
+          />
+        )}
+
+        {/* FAB */}
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate("ReimbursementForm")}
+        >
+          <Ionicons name="add" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Fixed Bottom Nav */}
+        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+          <BottomNavbar navigation={navigation} route={route} />
+        </View>
+      </SafeAreaView>
+    </>
+
   );
 }

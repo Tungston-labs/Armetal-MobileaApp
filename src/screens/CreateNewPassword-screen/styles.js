@@ -9,29 +9,18 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
   },
 
-  // header: {
-  //   height: 0,
-  //   justifyContent: 'center',
-  //   paddingTop: Platform.OS === 'android' ? 10 : 0,
-  //   marginTop:50,
-
-  // },
-
-
- header: {
-  height: 50, // fixed from 0 so arrow is visible
-  justifyContent: 'center',
-  paddingTop: Platform.OS === 'android' ? 10 : 0,
-  marginTop: 50,
-},
-
-
+  header: {
+    height: 50, // fixed from 0 so arrow is visible
+    justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
+    marginTop: 50,
+  },
 
   content: {
     paddingTop: height * 0.15,
     paddingBottom: 30,
-    marginTop:-20,
-  
+    marginTop: -20,
+
   },
 
   title: {
@@ -41,7 +30,6 @@ export default StyleSheet.create({
     marginBottom: 6,
     fontFamily: 'Raleway_700Bold', // <-- add this
 
-    
   },
 
   subtitle: {
@@ -52,14 +40,13 @@ export default StyleSheet.create({
     lineHeight: 20,
     fontFamily: 'Raleway_700', // <-- add this
 
-    
   },
 
   label: {
     fontSize: 14,
     color: '#FFFFFF',
     marginBottom: 8,
-    marginLeft:20,
+    marginLeft: 20,
   },
 
   inputWrapper: {
@@ -68,7 +55,7 @@ export default StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     paddingHorizontal: 20,
-    marginHorizontal:20,
+    marginHorizontal: 20,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     marginBottom: 25,
   },
@@ -85,7 +72,7 @@ export default StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     marginTop: 10,
-    marginHorizontal:20,
+    marginHorizontal: 20,
 
   },
 

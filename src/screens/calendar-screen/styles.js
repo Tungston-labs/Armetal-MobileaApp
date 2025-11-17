@@ -5,27 +5,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#0F1A35",
   },
-header: {
-  height: 100,  
-  borderBottomWidth: 0.5,
-  borderBottomColor: '#FFFF',
-  backgroundColor: '#262D40',
-  flexDirection: 'row',         // ✅ row layout
-  alignItems: 'center',         // ✅ vertical alignment
-  justifyContent: 'flex-start', // keeps items left
-  paddingHorizontal: 16,
-  paddingTop: 40,               // adjust for status bar spacing
-},
-
-backButton: {
-  marginRight: 12,
-},
-
-headerTitle: {
-  color: "#FFFFFF",
-  fontSize: 22,
-  fontFamily: 'Raleway_700Bold',
-},
+  header: {
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#262D40',
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#FFFFFF",
+  },
+  
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: 'Raleway_700Bold',
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,
+  },
+  
 
   tabsContainer: {
     flexDirection: "row",

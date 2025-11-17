@@ -7,6 +7,7 @@ import HolidayTab from "./holiday-list-screen";
 import ReminderTab from "./schedule-reminder-screen.js";
 import SwipeLoader from "../../components/SwipeLoader"
 import { Ionicons, AntDesign } from '@expo/vector-icons';
+import { SafeAreaView } from "react-native-safe-area-context";
 const CalendarScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -30,16 +31,24 @@ const CalendarScreen = () => {
 
   return (
     <>
-      <View style={styles.container}>
-        {/* Header */}
-      <View style={styles.header}>
-  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-    <Ionicons name="arrow-back" size={24} color="#fff" />
-  </TouchableOpacity>
-  <Text style={styles.headerTitle}>Calendar</Text>
-  <View style={{ width: 24 }} />
-</View>
+      {/* Top Safe Area for notch */}
+      <SafeAreaView style={{ flex: 0, backgroundColor: "#262D40" }} edges={["top"]} />
 
+      {/* Main Content Area */}
+      <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#fff"
+              style={{ marginBottom: 16 }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Calendar</Text>
+          <View style={{ width: 24 }} />
+        </View>
 
         {/* Tabs */}
         <View style={styles.tabsContainer}>
@@ -52,6 +61,7 @@ const CalendarScreen = () => {
           >
             <Text style={styles.tabText}>Public Holiday</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => handleTabChange("reminder")}
             style={[
@@ -73,11 +83,12 @@ const CalendarScreen = () => {
         ) : (
           <ReminderTab />
         )}
-      </View>
 
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+        {/* Bottom Navbar */}
+        <View style={styles.bottomNavbarContainer}>
+          <BottomNavbar navigation={navigation} route={route} />
+        </View>
+      </SafeAreaView>
     </>
   );
 };

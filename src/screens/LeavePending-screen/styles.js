@@ -134,4 +134,10 @@ export default StyleSheet.create({
     justifyContent: 'center',
     elevation: 5,
   },
+  bottomNavbarContainer: {
+    position: "absolute",
+    bottom: 5,
+    left: 3,
+    right: 3,
+  },
 });

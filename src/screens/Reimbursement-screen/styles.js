@@ -6,23 +6,26 @@ export default StyleSheet.create({
     backgroundColor: "#151D34", // dark background
   },
   header: {
-    height:100,
-    flexDirection: 'row',       // ensures children are in one line
-    alignItems: 'center',       // vertical alignment
-    paddingTop: 50,
-    paddingBottom: 18,
-    paddingHorizontal: 16,      // use standard padding, not too wide
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#FFFF',
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#262D40',
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#FFFFFF",
   },
+
   headerTitle: {
-    color: '#fff',
     fontSize: 20,
     fontFamily: 'Raleway_700Bold',
-    marginLeft: 12,             // space between arrow and text
-    flex: 1,                     // makes title take remaining space
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,   // aligns exactly like your reference
   },
+
   scrollContent: {
     padding: 15,
     paddingBottom: 80,
@@ -56,13 +59,13 @@ export default StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 30,
     borderRadius: 8,
-    
+
   },
   statusText: {
     color: "#26B887",
     fontSize: 14,
     fontWeight: "600",
-    
+
   },
 
   section: {
@@ -99,7 +102,7 @@ export default StyleSheet.create({
     backgroundColor: "#4B322E",
     alignSelf: "center",    // ✅ centers the button
   },
-  
+
   cancelButtonText: {
     color: "#FF2304",
     fontSize: 15,

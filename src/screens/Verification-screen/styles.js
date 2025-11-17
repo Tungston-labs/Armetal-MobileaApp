@@ -42,6 +42,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 30,
+    paddingHorizontal:30,
   },
 
   otpInput: {
@@ -60,6 +61,7 @@ export default StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     marginBottom: 20,
+    marginHorizontal:30,
   },
 
   buttonText: {

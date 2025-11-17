@@ -147,7 +147,9 @@ export default function LeavePendingScreen() {
         <Ionicons name="add" size={20} color="white" />
       </TouchableOpacity>
 
-      <BottomNavbar navigation={navigation} route={route} />
+      <View style={styles.bottomNavbarContainer}>
+          <BottomNavbar navigation={navigation} route={route} />
+        </View>
     </SafeAreaView>
   );
 }

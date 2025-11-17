@@ -27,8 +27,8 @@ export default function LeaveRequestFormScreen() {
   const [showToPicker, setShowToPicker] = useState(false);
 
   const [selectedLeaveType, setSelectedLeaveType] = useState('casual');
-  const [fromType, setFromType] = useState('full'); // ✅ New state
-  const [toType, setToType] = useState('full');     // ✅ New state
+  const [fromType, setFromType] = useState('full'); 
+  const [toType, setToType] = useState('full');     
 
   const [toEmail, setToEmail] = useState('');
   const [ccEmail, setCcEmail] = useState('');
@@ -220,179 +220,189 @@ export default function LeaveRequestFormScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Leave Request</Text>
-        </View>
+    <>
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
 
-        <View style={styles.separator} />
-
-        <KeyboardAwareScrollView
-          contentContainerStyle={styles.content}
-          enableOnAndroid={true}
-          extraScrollHeight={80}
-          keyboardShouldPersistTaps="handled"
+      {/* Main container (below the notch) */}
+      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          {/* Leave Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statBox}>
-              <Text style={styles.statLabel}>Pending Leaves</Text>
-              <Text style={styles.statValue}>{pendingLeaveCount}</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statLabel}>Loss of Pay Taken</Text>
-              <Text style={styles.statValue}>₹ {lopAmount} - {lopDays}</Text>
-            </View>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color="#fff"
+                style={{ marginBottom: 16 }}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Leave Request</Text>
           </View>
 
-          <View style={styles.divider} />
+          <View style={styles.separator} />
 
-          {/* Date Pickers + Half-day pickers */}
-          <View style={styles.section}>
-            <View style={styles.dateRow}>
-              {/* From Date */}
-              <View style={styles.dateInput}>
-                <Text style={styles.inputLabel}>From</Text>
-                <TouchableOpacity style={styles.dateField} onPress={() => setShowFromPicker(true)}>
-                  <Text style={styles.dateText}>{fromDate.toLocaleDateString()}</Text>
-                  <Ionicons name="calendar" size={20} color="#ccc" />
-                </TouchableOpacity>
-
-                {/* From Leave Type */}
-                <Text style={[styles.inputLabel, { marginTop: 15 }]}>From Leave Type</Text>
-                <View style={styles.leaveTypeBox}>
-                  <Picker
-                    selectedValue={fromType}
-                    onValueChange={(value) => {
-                      if (value !== '') setFromType(value); // prevents selecting placeholder
-                    }}
-                    style={styles.picker}
-                    dropdownIconColor="#ccc"
-                  >
-                    {/* Disabled Placeholder */}
-                    <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
-                    {halfDayTypes.map((item) => (
-                      <Picker.Item key={item.id} label={item.label} value={item.value} />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
-
-              {/* To Date */}
-              <View style={styles.dateInput}>
-                <Text style={styles.inputLabel}>To</Text>
-                <TouchableOpacity style={styles.dateField} onPress={() => setShowToPicker(true)}>
-                  <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
-                  <Ionicons name="calendar" size={20} color="#ccc" />
-                </TouchableOpacity>
-
-                {/* To Leave Type */}
-                <Text style={[styles.inputLabel, { marginTop: 15 }]}>To Leave Type</Text>
-                <View style={styles.leaveTypeBox}>
-                  <Picker
-                    selectedValue={toType}
-                    onValueChange={(value) => {
-                      if (value !== '') setToType(value); // prevents selecting placeholder
-                    }}
-                    style={styles.picker}
-                    dropdownIconColor="#ccc"
-                  >
-                    {/* Disabled Placeholder */}
-                    <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
-                    {halfDayTypes.map((item) => (
-                      <Picker.Item key={item.id} label={item.label} value={item.value} />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {showFromPicker && (
-            <DateTimePicker value={fromDate} mode="date" display="default" onChange={onFromChange} />
-          )}
-          {showToPicker && (
-            <DateTimePicker value={toDate} mode="date" display="default" onChange={onToChange} />
-          )}
-
-          {/* Leave Type */}
-          <View style={styles.section}>
-            <Text style={styles.inputLabel}>Leave Type</Text>
-            <View style={styles.pickerWrapper}>
-              <Picker
-                selectedValue={selectedLeaveType}
-                onValueChange={(value) => setSelectedLeaveType(value)}
-                style={styles.picker}
-                dropdownIconColor="#ccc"
-              >
-                {leaveTypes.map((item) => (
-                  <Picker.Item key={item.id} label={item.type} value={item.type} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-
-          {/* To / CC / Reason */}
-          <View style={styles.section}>
-            <Text style={styles.inputLabel}>To</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Department Lead Email"
-              placeholderTextColor="#889"
-              value={toEmail}
-              onChangeText={setToEmail}
-              keyboardType="email-address"
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.inputLabel}>C.C</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Email"
-              placeholderTextColor="#889"
-              value={ccEmail}
-              onChangeText={setCcEmail}
-              keyboardType="email-address"
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.inputLabel}>Reason</Text>
-            <TextInput
-              style={styles.textArea}
-              placeholder="Enter Reason"
-              placeholderTextColor="#889"
-              multiline
-              value={reason}
-              onChangeText={setReason}
-            />
-          </View>
-        </KeyboardAwareScrollView>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.deleteButton} onPress={clearForm}>
-            <Ionicons name="trash" size={24} color="#ff3333" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.applyButton}
-            onPress={submitLeaveRequest}
-            disabled={loading}
+          <KeyboardAwareScrollView
+            contentContainerStyle={styles.content}
+            enableOnAndroid={true}
+            extraScrollHeight={80}
+            keyboardShouldPersistTaps="handled"
           >
-            <Text style={styles.applyButtonText}>
-              {loading ? 'Applying...' : 'Apply Leave'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            {/* Leave Stats */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statBox}>
+                <Text style={styles.statLabel}>Pending Leaves</Text>
+                <Text style={styles.statValue}>{pendingLeaveCount}</Text>
+              </View>
+              <View style={styles.statBox}>
+                <Text style={styles.statLabel}>Loss of Pay Taken</Text>
+                <Text style={styles.statValue}>₹ {lopAmount} - {lopDays}</Text>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Date Pickers + Half-day pickers */}
+            <View style={styles.section}>
+              <View style={styles.dateRow}>
+                {/* From Date */}
+                <View style={styles.dateInput}>
+                  <Text style={styles.inputLabel}>From</Text>
+                  <TouchableOpacity style={styles.dateField} onPress={() => setShowFromPicker(true)}>
+                    <Text style={styles.dateText}>{fromDate.toLocaleDateString()}</Text>
+                    <Ionicons name="calendar" size={20} color="#ccc" />
+                  </TouchableOpacity>
+
+                  {/* From Leave Type */}
+                  <Text style={[styles.inputLabel, { marginTop: 15 }]}>From Leave Type</Text>
+                  <View style={styles.leaveTypeBox}>
+                    <Picker
+                      selectedValue={fromType}
+                      onValueChange={(value) => {
+                        if (value !== '') setFromType(value); // prevents selecting placeholder
+                      }}
+                      style={styles.picker}
+                      dropdownIconColor="#ccc"
+                    >
+                      {/* Disabled Placeholder */}
+                      <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
+                      {halfDayTypes.map((item) => (
+                        <Picker.Item key={item.id} label={item.label} value={item.value} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+
+                {/* To Date */}
+                <View style={styles.dateInput}>
+                  <Text style={styles.inputLabel}>To</Text>
+                  <TouchableOpacity style={styles.dateField} onPress={() => setShowToPicker(true)}>
+                    <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
+                    <Ionicons name="calendar" size={20} color="#ccc" />
+                  </TouchableOpacity>
+
+                  {/* To Leave Type */}
+                  <Text style={[styles.inputLabel, { marginTop: 15 }]}>To Leave Type</Text>
+                  <View style={styles.leaveTypeBox}>
+                    <Picker
+                      selectedValue={toType}
+                      onValueChange={(value) => {
+                        if (value !== '') setToType(value); // prevents selecting placeholder
+                      }}
+                      style={styles.picker}
+                      dropdownIconColor="#ccc"
+                    >
+                      {/* Disabled Placeholder */}
+                      <Picker.Item label="Select Leave Type" value="" color="#7D8EB5" enabled={false} />
+                      {halfDayTypes.map((item) => (
+                        <Picker.Item key={item.id} label={item.label} value={item.value} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {showFromPicker && (
+              <DateTimePicker value={fromDate} mode="date" display="default" onChange={onFromChange} />
+            )}
+            {showToPicker && (
+              <DateTimePicker value={toDate} mode="date" display="default" onChange={onToChange} />
+            )}
+
+            {/* Leave Type */}
+            <View style={styles.section}>
+              <Text style={styles.inputLabel}>Leave Type</Text>
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  selectedValue={selectedLeaveType}
+                  onValueChange={(value) => setSelectedLeaveType(value)}
+                  style={styles.picker}
+                  dropdownIconColor="#ccc"
+                >
+                  {leaveTypes.map((item) => (
+                    <Picker.Item key={item.id} label={item.type} value={item.type} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+
+            {/* To / CC / Reason */}
+            <View style={styles.section}>
+              <Text style={styles.inputLabel}>To</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Department Lead Email"
+                placeholderTextColor="#889"
+                value={toEmail}
+                onChangeText={setToEmail}
+                keyboardType="email-address"
+              />
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.inputLabel}>C.C</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Email"
+                placeholderTextColor="#889"
+                value={ccEmail}
+                onChangeText={setCcEmail}
+                keyboardType="email-address"
+              />
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.inputLabel}>Reason</Text>
+              <TextInput
+                style={styles.textArea}
+                placeholder="Enter Reason"
+                placeholderTextColor="#889"
+                multiline
+                value={reason}
+                onChangeText={setReason}
+              />
+            </View>
+          </KeyboardAwareScrollView>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.deleteButton} onPress={clearForm}>
+              <Ionicons name="trash" size={24} color="#ff3333" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.applyButton}
+              onPress={submitLeaveRequest}
+              disabled={loading}
+            >
+              <Text style={styles.applyButtonText}>
+                {loading ? 'Applying...' : 'Apply Leave'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </>
   );
 }

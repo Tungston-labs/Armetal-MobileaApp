@@ -6,27 +6,25 @@ export default StyleSheet.create({
     backgroundColor: '#111a2e',
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 110,
+    height: 70,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 10,
     paddingHorizontal: 16,
-    backgroundColor: '#262D40',
+    backgroundColor: "#262D40",
     borderBottomWidth: 0.2,
-    borderBottomColor: '#FFFFFF',
-  },
-  backButton: {
-    padding: 8,
-    marginTop: 35,
+    borderBottomColor: "#FFFFFF",
   },
   headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 22,
-    fontWeight: '600',
-    marginLeft: 14,
-    marginTop: 30,
-    fontFamily: 'Raleway_700Bold',
-
+    fontSize: 20,
+    fontFamily: "Raleway_700Bold",
+    color: "#FFF",
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,
   },
+  
   content: {
     padding: 16,
   },
@@ -48,7 +46,7 @@ export default StyleSheet.create({
     fontSize: 15,
     marginBottom: 8,
     paddingHorizontal: 16,
-    
+
   },
   inputRow: {
     position: 'relative', // To position icon inside
@@ -99,7 +97,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0,
   },
-  
+
   inputField: {
     flex: 1,
     paddingHorizontal: 16,
@@ -111,7 +109,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: '#0C132A',
   },
-  
+
   iconBox: {
     width: 40,
     height: 40,
@@ -122,5 +120,5 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#172554'
   },
-  
+
 });

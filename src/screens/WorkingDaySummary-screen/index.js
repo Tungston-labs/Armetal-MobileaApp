@@ -233,7 +233,7 @@ export default function WorkingDaySummary() {
           <View style={styles.statusCard}>
             {[
               {
-                label: "Present Days",
+                label: "Full Days",
                 value: summary.present_days_count,
                 borderColor: "#15B03E",
               },
@@ -248,7 +248,7 @@ export default function WorkingDaySummary() {
                 borderColor: "#FF2304",
               },
               {
-                label: "Absent Half day",
+                label: "Half day",
                 value: summary.half_days_count,
                 borderColor: "half",
               },

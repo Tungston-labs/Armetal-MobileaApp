@@ -7,8 +7,6 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
-
-
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -71,7 +69,7 @@ export default StyleSheet.create({
   statusText: {
     color: '#26B887',
     fontSize: 16,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
   },
   cardContent: {
     marginTop: 4,
@@ -92,7 +90,6 @@ export default StyleSheet.create({
     fontFamily: 'Montserrat_700Bold',
     marginTop: 2, // ensures value sits just below the label
   },
-
   fab: {
     position: 'absolute',
     right: 20,
@@ -104,5 +101,11 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5,
+  },
+  bottomNavbarContainer: {
+    position: "absolute",
+    bottom: 5,
+    left: 3,
+    right: 3,
   },
 });
