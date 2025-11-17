@@ -6,10 +6,11 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 38,
+    paddingTop: 0,        // 👈 FIXED
     paddingBottom: 8,
     backgroundColor: '#262D40',
   },
+
   headerTitle: {
     color: '#FFFFFF',
     fontSize: 25,

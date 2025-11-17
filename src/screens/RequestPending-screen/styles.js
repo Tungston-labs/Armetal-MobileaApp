@@ -14,7 +14,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "#262D40",
-    height:100,
+    height:130,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
   },
@@ -32,8 +32,8 @@ headerLeft: {
     fontSize: 18,
     color: "#FFFF",
     fontWeight: "bold",
-    marginRight: 130,
-    marginTop: 25,
+    marginRight: 230,
+    marginTop: 55,
   },
 
   avatar: {
