@@ -13,7 +13,7 @@ const CalendarScreen = () => {
   const route = useRoute();
 
   const [activeTab, setActiveTab] = useState(route.params?.openTab || "holiday");
-  const [loading, setLoading] = useState(false); // ✅ loader state
+  const [loading, setLoading] = useState(false); 
 
   React.useEffect(() => {
     if (route.params?.openTab) {
@@ -21,22 +21,17 @@ const CalendarScreen = () => {
     }
   }, [route.params?.openTab]);
 
-  // optional: simulate loading when switching tabs
   const handleTabChange = (tab) => {
     setLoading(true);
     setActiveTab(tab);
-    // simulate async fetch
     setTimeout(() => setLoading(false), 500);
   };
 
   return (
     <>
-      {/* Top Safe Area for notch */}
       <SafeAreaView style={{ flex: 0, backgroundColor: "#262D40" }} edges={["top"]} />
 
-      {/* Main Content Area */}
       <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
-        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons
