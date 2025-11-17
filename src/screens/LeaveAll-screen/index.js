@@ -168,9 +168,9 @@ export default function LeaveAllScreen({ navigation, route }) {
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      <View style={styles.bottomNavbarContainer}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+          <BottomNavbar navigation={navigation} route={route} />
+        </View>
     </SafeAreaView>
   );
 }

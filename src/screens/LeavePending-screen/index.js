@@ -74,21 +74,21 @@ export default function LeavePendingScreen() {
           <View>
             <Text style={styles.label}>From</Text>
             <Text style={styles.value}>{item.from_date}</Text>
-                        <Text style={styles.value}>{item.from_date_type}</Text>
-            
+            <Text style={styles.value}>{item.from_date_type}</Text>
+
           </View>
 
           <View>
             <Text style={styles.label}>To</Text>
             <Text style={styles.value}>{item.to_date}</Text>
-                        <Text style={styles.value}>{item.to_date_type}</Text>
-            
+            <Text style={styles.value}>{item.to_date_type}</Text>
+
           </View>
 
           <View>
             <Text style={styles.label}>Time</Text>
             <Text style={styles.value}>
-              {formatTime(item.created_at)} 
+              {formatTime(item.created_at)}
             </Text>
           </View>
 
@@ -147,9 +147,9 @@ export default function LeavePendingScreen() {
         <Ionicons name="add" size={20} color="white" />
       </TouchableOpacity>
 
-      <View style={styles.bottomNavbarContainer}>
-          <BottomNavbar navigation={navigation} route={route} />
-        </View>
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+        <BottomNavbar navigation={navigation} route={route} />
+      </View>
     </SafeAreaView>
   );
 }

@@ -65,7 +65,7 @@ const AttendanceScreen = () => {
       }
     })();
   }, []);
-  
+
   const startRotation = () => {
     rotateValue.setValue(0);
     Animated.loop(
@@ -88,14 +88,14 @@ const AttendanceScreen = () => {
       const response = await authAxios.get("/employee-monthly-summary/");
       const data = response.data; // 🔹 access 'data' object
       // console.log({ data });
-  
+
       const statusMap = {};
-  
+
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
       const month = firstDate.getMonth(); // 0-indexed
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
+
       const allDates = [];
       for (let day = 1; day <= daysInMonth; day++) {
         const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -103,7 +103,7 @@ const AttendanceScreen = () => {
         ).padStart(2, "0")}`;
         allDates.push(iso);
       }
-  
+
       // Initialize all days: mark company_off_day_dates as holiday, rest as working
       allDates.forEach((date) => {
         if (data.company_off_day_dates.includes(date)) {
@@ -112,15 +112,15 @@ const AttendanceScreen = () => {
           statusMap[date] = "working";
         }
       });
-  
+
       // Mark present, absent, holiday (overrides working/off day)
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
-  
+
       // Mark half-days (overrides present)
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
-  
+
       const orderedStatuses = allDates.map((date) => statusMap[date]);
       setDayStatus(orderedStatuses);
     } catch (error) {
@@ -128,8 +128,8 @@ const AttendanceScreen = () => {
       setDayStatus([]);
     }
   };
-  
-  
+
+
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
@@ -197,14 +197,14 @@ const AttendanceScreen = () => {
     try {
       const location = await getCurrentLocation();
       if (!location) return;
-    
+
       const res = await authAxios.post("/attendance/swipe/", {
         latitude: location.latitude,
         longitude: location.longitude,
       });
-    
+
       // console.log("Swipe response:", res.data); // <--- check what server returned
-    
+
       // Only show alert on actual error
       if (res.data?.success === false) {
         Alert.alert("Failed", res.data?.error || "Swipe failed");
@@ -215,20 +215,20 @@ const AttendanceScreen = () => {
       console.log("Swipe error:", error);
       Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
     }
-     finally {
+    finally {
       setPunching(false);
       stopRotation();
     }
   };
-  
+
   useEffect(() => {
     (async () => {
       try {
         const profileRes = await authAxios.get(`/profile/`);
         setEmployee(profileRes.data);
-        
+
         await fetchTodayAttendance();
-  
+
         const punchedIn = isCurrentlyPunchedIn();
         if (punchedIn) {
           await startBackgroundUpdate();
@@ -242,8 +242,8 @@ const AttendanceScreen = () => {
       }
     })();
   }, []);
-  
-  
+
+
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -252,9 +252,9 @@ const AttendanceScreen = () => {
   const getSegment = (status, index) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-  
+
     let segmentContent;
-  
+
     if (status === "half") {
       // Half-day: split red (absent) and green (present)
       segmentContent = (
@@ -272,7 +272,7 @@ const AttendanceScreen = () => {
     } else {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#FFFFFF" }} />;
     }
-  
+
     return (
       <View
         key={index}
@@ -285,7 +285,7 @@ const AttendanceScreen = () => {
       </View>
     );
   };
-  
+
 
   const renderRadialCircle = () => (
     <View style={{ alignItems: "center" }}>
@@ -505,8 +505,8 @@ const AttendanceScreen = () => {
           )}
 
           {/* Attendance Box */}
-          
-          
+
+
           <Pressable
             style={styles.attendanceBox}
             onPress={() => navigation.navigate("AttendanceScreen")}
@@ -560,15 +560,11 @@ const AttendanceScreen = () => {
       </RefreshWrapper>
       {!punching && (
 
-
-        <View style={styles.bottomNavbarContainer}>
-
+        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       )}
 
-      
-      
     </SafeAreaView>
   );
 };

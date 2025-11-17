@@ -46,7 +46,7 @@ export default function LeaveHeader() {
 
   return (
     <>
-      {/* 🔥 This SafeAreaView will ALWAYS cover the notch */}
+     
       <SafeAreaView 
         edges={['top']}
         style={{
