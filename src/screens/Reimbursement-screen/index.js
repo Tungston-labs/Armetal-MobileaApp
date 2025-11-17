@@ -221,7 +221,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
         </Modal>
 
         {/* Bottom Navbar */}
-        <View style={styles.bottomNavbarContainer}>
+        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       </SafeAreaView>
