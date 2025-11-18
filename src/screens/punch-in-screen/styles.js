@@ -181,9 +181,9 @@ textContainer: {
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
-    bottom: 8,
-    left: 5,
-    right: 5,
+    bottom: 2,
+    left: 3,
+    right: 2,
   },
   loaderOverlay: {
     position: "absolute",
