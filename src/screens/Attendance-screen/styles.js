@@ -23,8 +23,8 @@ export default StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 16,
     backgroundColor: '#262D40',
-    borderBottomWidth: 0.2,
-    borderBottomColor: "#FFFFFF",
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
   },
 
   dateText: {
