@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     alignSelf: 'center',
-    marginVertical: -35,
+    marginVertical: -50,
   },
   label: {
     position: 'absolute',

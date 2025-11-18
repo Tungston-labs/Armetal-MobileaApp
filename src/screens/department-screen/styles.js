@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     marginBottom: hp('2%'),
     height: hp('18%'),
     justifyContent: 'space-between',
-    paddingTop: hp('1.0%'),   // ✅ added spacing at bottom for clean look
+    paddingTop: hp('1.0%'), 
   },
   teamTitle: {
     color: 'white',

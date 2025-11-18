@@ -180,10 +180,9 @@ textContainer: {
     height: "100%",
   },
   
-  
   bottomNavbarContainer: {
     position: 'absolute',
-    bottom: 8,
+    bottom: 5,
     left: 0,
     right: 0,
   },

@@ -182,8 +182,6 @@ picker: {
     borderColor: '#FFFFFF',
     marginBottom: 20,
   },
-
-
   footer: {
     position: 'absolute',
     bottom: 16,
