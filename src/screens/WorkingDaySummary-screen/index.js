@@ -6,16 +6,14 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import { LinearGradient } from "expo-linear-gradient";
-// import { BlurView } from "expo-blur";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 
 function formatHours(decimalHours) {
-  const h = Math.floor(decimalHours);           // integer hours
-  const m = Math.round((decimalHours - h) * 60); // minutes
+  const h = Math.floor(decimalHours);
+  const m = Math.round((decimalHours - h) * 60);
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
 }
-// Get number of days in a given date's month
+
 function getDaysInMonth(dateStr) {
   const date = new Date(dateStr);
   if (isNaN(date)) {
@@ -23,7 +21,7 @@ function getDaysInMonth(dateStr) {
   }
 
   const year = date.getFullYear();
-  const month = date.getMonth(); // 0-indexed: January is 0
+  const month = date.getMonth();
 
   return new Date(year, month + 1, 0).getDate();
 }
@@ -44,15 +42,13 @@ export default function WorkingDaySummary() {
       try {
         const response = await authAxios.get("/employee-monthly-summary/");
         const data = response.data;
-        setSummary(data); // store full API response for summary section
+        setSummary(data);
 
-        // Default every working day to 'working'
         const statusMap = {};
         data.total_working_days_dates.forEach((date) => {
           statusMap[date] = "working";
         });
 
-        // Mark present, absent, holidays (only if not half-day)
         data.present_days_dates.forEach((date) => {
           if (!statusMap[date]?.includes("half")) statusMap[date] = "present";
         });
@@ -63,13 +59,11 @@ export default function WorkingDaySummary() {
           if (!statusMap[date]?.includes("half")) statusMap[date] = "holiday";
         });
 
-        // Finally, mark half-days (overrides present/absent)
         data.half_days_dates.forEach((date) => {
           statusMap[date] = "half";
         });
 
-        // Add Sundays as holiday if not already present
-        const month = data.total_working_days_dates[0].slice(0, 7); // "YYYY-MM"
+        const month = data.total_working_days_dates[0].slice(0, 7);
         const year = parseInt(month.split("-")[0], 10);
         const monthIndex = parseInt(month.split("-")[1], 10) - 1;
         const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
@@ -77,7 +71,7 @@ export default function WorkingDaySummary() {
         for (let day = 1; day <= daysInMonth; day++) {
           const dateStr = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
           const dayOfWeek = new Date(year, monthIndex, day).getDay();
-          if (dayOfWeek === 0 && !statusMap[dateStr]) { // Sunday
+          if (dayOfWeek === 0 && !statusMap[dateStr]) {
             statusMap[dateStr] = "holiday";
           }
         }
@@ -180,18 +174,16 @@ export default function WorkingDaySummary() {
                     ry="50%"
                     fx="50%"
                     fy="50%"
-
                   >
                     <Stop offset="41.35%" stopColor="#172554" stopOpacity="1" />
                     <Stop offset="63.46%" stopColor="rgba(25,41,92,0.918269)" stopOpacity="1" />
                     <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
                   </RadialGradient>
                 </Defs>
-                {/* Fill full circle */}
+                
                 <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
               </Svg>
 
-              {/* Text on top of gradient */}
               <View style={styles.textContainer}>
                 <Text style={styles.dayText}>{todayWeekday}</Text>
                 <Text style={styles.monthText}>{todayMonth}</Text>

@@ -65,63 +65,63 @@ const DepartmentScreen = () => {
   }
 
   return (
-     <>
+    <>
       {/* Background behind notch */}
       <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
-    
+
       {/* Main container (below the notch) */}
       <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons
-                  name="arrow-back"
-                  size={24}
-                  color="#fff"
-                  style={{ marginBottom: 16 }}
-                />
-              </TouchableOpacity>
-        <Text style={styles.headerTitle}>Team</Text>
-      </View>
-
-      {/* Team Card */}
-      <LinearGradient
-        colors={['#172554', '#3352BA']}
-        start={{ x: 0.8, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.teamCard}
-      >
-        <Text style={styles.teamTitle}>{departmentName}</Text>
-        <Text style={styles.teamLeadLabel}>Team Lead</Text>
-        <View style={styles.teamLeadInfo}>
-          <Image
-            source={
-              departmentHead?.profile_pic
-                ? { uri: getFullImageUrl(departmentHead.profile_pic) }
-                : defaultAvatar
-            }
-            style={styles.leadAvatar}
-          />
-          <Text style={styles.teamLeadName}>
-            {departmentHead?.name || 'Not Assigned'}
-          </Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#fff"
+              style={{ marginBottom: 16 }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Team</Text>
         </View>
-        <View style={styles.memberRow}>
-          <Text style={styles.memberCount}>Members Count</Text>
-          <Text style={styles.count}>{members.length}</Text>
-        </View>
-      </LinearGradient>
 
-      {/* Members List */}
-      <Text style={styles.membersHeader}>Team Members</Text>
-      <FlatList
-        data={members}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderMember}
-        contentContainerStyle={styles.memberList}
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+        {/* Team Card */}
+        <LinearGradient
+          colors={['#172554', '#3352BA']}
+          start={{ x: 0.8, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.teamCard}
+        >
+          <Text style={styles.teamTitle}>{departmentName}</Text>
+          <Text style={styles.teamLeadLabel}>Team Lead</Text>
+          <View style={styles.teamLeadInfo}>
+            <Image
+              source={
+                departmentHead?.profile_pic
+                  ? { uri: getFullImageUrl(departmentHead.profile_pic) }
+                  : defaultAvatar
+              }
+              style={styles.leadAvatar}
+            />
+            <Text style={styles.teamLeadName}>
+              {departmentHead?.name || 'Not Assigned'}
+            </Text>
+          </View>
+          <View style={styles.memberRow}>
+            <Text style={styles.memberCount}>Members Count</Text>
+            <Text style={styles.count}>{members.length}</Text>
+          </View>
+        </LinearGradient>
+
+        {/* Members List */}
+        <Text style={styles.membersHeader}>Team Members</Text>
+        <FlatList
+          data={members}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderMember}
+          contentContainerStyle={styles.memberList}
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
     </>
   );
 };

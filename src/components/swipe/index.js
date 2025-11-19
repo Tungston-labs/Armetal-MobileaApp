@@ -14,8 +14,8 @@ import Animated, {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SwipeButton = ({
-  width = 320,
-  height = 55,
+  width = 360,
+  height = 57,
   title = 'Swipe to punch in',
   successTitle = 'Punched In',
   onSwipeSuccess,
@@ -28,7 +28,7 @@ const SwipeButton = ({
   resetAfterSuccess = true,
   leftSpacing = 5,
 }) => {
-  const swipeThreshold = width - height - leftSpacing; 
+  const swipeThreshold = width - height - leftSpacing;
   const translateX = useSharedValue(0);
   const [swiped, setSwiped] = useState(false);
 

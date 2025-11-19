@@ -33,16 +33,20 @@ const styles = StyleSheet.create({
   },
   teamCard: {
     borderRadius: 12,
-    padding: wp('4%'),
+    padding: wp('3%'),
     margin: 10,
-    marginBottom: hp('2%'),
-    height: hp('18%'),
+    marginBottom: hp('1%'),
+    marginTop: hp('2%'),
+    height: hp('19%'),
     justifyContent: 'space-between',
     paddingTop: hp('1.0%'), 
+    marginHorizontal: 20,
+    paddingHorizontal:5,
+
   },
   teamTitle: {
     color: 'white',
-    fontSize: wp('4.6%'),
+    fontSize: wp('3.6%'),
     fontFamily: 'Montserrat_400Regular',
   },
   teamLeadLabel: {
@@ -80,24 +84,25 @@ const styles = StyleSheet.create({
   },
   memberCount: {
     color: 'white',
-    fontSize: wp('4.1%'),
+    fontSize: wp('3.5%'),
     fontFamily: 'Montserrat_400Regular',
     marginBottom:20,
 
   },
   count: {
     color: 'white',
-    fontSize: wp('5%'),
+    fontSize: wp('4%'),
     fontWeight: '600',
     fontFamily: 'Montserrat_700Bold',
+    marginRight:20,
+    marginBottom:17,
 
   },
   membersHeader: {
     color: 'white',
     fontSize: wp('4.5%'),
     fontFamily: 'Montserrat_400Regular',
-
-    marginLeft: 15,
+    marginLeft: 28,
   },
   memberList: {
     paddingBottom: hp('2%'),
@@ -108,6 +113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#172554',
     borderRadius: 10,
+    marginHorizontal:20,
     padding: wp('1.5%'),
     marginBottom: hp('.1%'),
   },

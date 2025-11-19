@@ -38,7 +38,6 @@ export default StyleSheet.create({
     paddingVertical: 14,
     justifyContent: 'center',
   },
-
   picker: {
     height: 45,
     color: '#FFFFFF',           
@@ -57,7 +56,8 @@ export default StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 10,
+    marginTop: 10,
   },
   statBox: {
     flex: 1,
@@ -87,8 +87,7 @@ export default StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     marginVertical: 20,
-    marginBottom: 40,
-
+    marginBottom: 25,
   },
 
   section: {
