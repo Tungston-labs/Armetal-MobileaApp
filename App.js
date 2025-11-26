@@ -62,7 +62,6 @@ const InitAuth = ({ children }) => {
   return children;
 };
 
-
 const App = () => {
   const [appReady, setAppReady] = useState(false);
 

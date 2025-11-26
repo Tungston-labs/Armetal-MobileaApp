@@ -8,6 +8,7 @@
     "scheme": "Rekory",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Rekory",
@@ -19,6 +20,7 @@
         "NSLocationWhenInUseUsageDescription": "We need your location to track attendance."
       }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ico.png",
@@ -36,32 +38,29 @@
         "notificationTitle": "Rekory Attendance Tracking",
         "notificationBody": "Your location is being recorded in the background",
         "notificationColor": "#FF0000"
-      },
-      "splash": {
-        "image": "./assets/images/adaptive-iconn.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#151D34"
       }
     },
+
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#151D34"
+    },
+
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/icon.png"
     },
+
     "experiments": {
       "typedRoutes": true
     },
+
     "owner": "ansalmazeez",
     "extra": {
       "eas": {
         "projectId": "51276e4a-a789-4827-a76f-c28159bfc02b"
       }
-    },
-    "splash": {
-      "image": "./assets/images/adaptive-iconn.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#151D34"
     }
   }
 }
-
-

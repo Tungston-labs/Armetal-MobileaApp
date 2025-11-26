@@ -40,13 +40,13 @@ const HolidayTab = () => {
   useEffect(() => {
     fetchHolidays();
   }, []);
-
+   
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchHolidays();
     setRefreshing(false);
   }, []);
-
+  
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.cardContent}>
