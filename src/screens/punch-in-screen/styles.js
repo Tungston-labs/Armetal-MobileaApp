@@ -5,7 +5,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#151D34",
     paddingHorizontal: 16,
-    paddingTop: 40,
+    paddingTop: 20,
     // paddingBottom: 40,
   },
   scrollView: { paddingBottom: 0 },
@@ -15,14 +15,14 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: -9,
+    marginBottom: -3,
   },
   logo: {
     width: 90,
     height: 50,
     resizeMode: "contain",
-    paddingBottom: 10,
-    marginLeft:20,
+    paddingBottom: -10,
+    marginLeft:23,
     // paddingHorizontal:20,
   },
   logoRow: {
@@ -34,7 +34,7 @@ export default StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Raleway_700Bold',
     textAlign: "left",
-    marginTop: 8,
+    marginTop: 25,
     marginLeft:20,
   
   },
@@ -60,8 +60,8 @@ circleWrapper: {
 circle: {
   width: 140,
   height: 140,
-  borderRadius: 80,   // ✅ half of 140 for a perfect circle
-  overflow: "hidden", // ✅ clip the gradient inside
+  borderRadius: 80,   
+  overflow: "hidden",
   justifyContent: "center",
   alignItems: "center",
 },
@@ -90,15 +90,14 @@ textContainer: {
   alignItems: "center",
 },
 
-
   // Legend
   legendRow: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
-    paddingVertical: 14,
-    paddingHorizontal:20,
+    paddingVertical: 15,
+    paddingHorizontal:25,
   },
   legendItem: {
     flexDirection: "row",
@@ -121,7 +120,7 @@ textContainer: {
     flexWrap: "wrap",
     justifyContent: "space-between",
     marginTop: 10,
-    paddingHorizontal:30,
+    paddingHorizontal:28,
   },
   menuBox: {
     width: "22%", // 4 columns
@@ -146,10 +145,11 @@ textContainer: {
   attendanceBox: {
     backgroundColor: "#172555",
     padding: 18,
-    marginTop: 40,
+    // marginBottom:20,
+    marginTop: 30,
     borderRadius: 15,
-    paddingHorizontal:30,
-    marginHorizontal:20,
+    paddingHorizontal:20,
+    marginHorizontal:25,
   },
   
   // New header row (date + hours)

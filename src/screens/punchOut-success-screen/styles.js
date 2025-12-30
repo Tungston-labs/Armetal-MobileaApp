@@ -7,51 +7,48 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
 
-  innerWrapper: {
-    flex: 1,
-  },
-
   scrollView: {
     padding: 16,
-    paddingBottom: 30,
-  }, 
+    paddingBottom: 100,
+  },
 
   homeBox: {
     backgroundColor: '#262D40',
     borderRadius: 14,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    marginBottom: 20,
+    padding: 14,
+    marginBottom: 16,
+    height: 120,
   },
 
-  homeContent: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
 
   homeTitle: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 8,
   },
 
   welcomeText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
     lineHeight: 26,
   },
 
   profilePic: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginLeft: 16,
   },
 
   sectionTitle: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     marginBottom: 8,
     fontWeight: '500',
@@ -70,6 +67,7 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 6,
   },
 
   teamLeadLabel: {
@@ -81,7 +79,6 @@ export default StyleSheet.create({
   leadContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#FFFFFF',
     paddingTop: 8,
@@ -109,9 +106,8 @@ export default StyleSheet.create({
     width: width / 7.5,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#1D2A5C',
+    backgroundColor: '#172554',
     alignItems: 'center',
-    height: 98,
   },
 
   activeDay: {
@@ -130,6 +126,12 @@ export default StyleSheet.create({
     fontWeight: '600',
   },
 
+  monthText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '400',
+  },
+
   activeDayText: {
     color: '#172554',
   },
@@ -139,27 +141,42 @@ export default StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  activeMonthText: {
+    color: '#172554',
+  },
+
   attendanceBox: {
     backgroundColor: '#172554',
     borderRadius: 10,
     padding: 16,
     marginBottom: 20,
     borderWidth: 0.5,
-    borderColor: '#3a4ca0',
   },
 
   attendanceTitle: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 16,
     textTransform: 'capitalize',
+  },
+
+  label: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    marginTop: 8,
+  },
+
+  labelDisabled: {
+    color: '#666F8E',
+    fontSize: 15,
+    marginTop: 12,
   },
 
   timeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 4,
+    marginTop: 6,
   },
 
   timeLabel: {
@@ -172,27 +189,36 @@ export default StyleSheet.create({
     fontSize: 14,
   },
 
+  timeLabelDisabled: {
+    color: '#666',
+    fontSize: 14,
+  },
+
+  timeValueDisabled: {
+    color: '#666',
+    fontSize: 14,
+  },
+
   line: {
     height: 1,
     backgroundColor: '#FFFFFF',
-    marginVertical: 10,
+    marginVertical: 14,
   },
 
   totalHoursRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
   },
 
   totalHoursText: {
     color: '#FFFFFF',
-    fontSize: 19,
+    fontSize: 14,
     marginLeft: 6,
   },
 
   hours: {
     marginLeft: 'auto',
-    color: '#ccc',
+    color: '#FFFFFF',
     fontSize: 14,
   },
 
@@ -200,11 +226,10 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E1E8EC',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    padding: 10,
     borderRadius: 30,
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 40,
   },
 
   swipeText: {
@@ -214,17 +239,5 @@ export default StyleSheet.create({
     marginLeft: 8,
   },
 
-  bottomTab: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    backgroundColor: '#172554',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    borderTopWidth: 0.5,
-    borderTopColor: '#3a4ca0',
-  },
+  
 });
