@@ -19,9 +19,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const STATUS_COLORS = {
   Approved: "#2ecc71",
-  "In Verification": "#FF2304",
+  "In Verification": "#e2cd0eff",
   "On Hold": "#ff9800",
-  Default: "#ccc",
+  Default: "#f00505ff",
 };
 
 const ReimbursementScreen = ({ navigation, route }) => {

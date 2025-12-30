@@ -40,7 +40,6 @@ export default function LeaveAllScreen({ navigation, route }) {
     });
   };
 
-
   useEffect(() => {
     fetchLeaves();
   }, []);
@@ -169,8 +168,8 @@ export default function LeaveAllScreen({ navigation, route }) {
       </TouchableOpacity>
 
       <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-          <BottomNavbar navigation={navigation} route={route} />
-        </View>
+        <BottomNavbar navigation={navigation} route={route} />
+      </View>
     </SafeAreaView>
   );
 }

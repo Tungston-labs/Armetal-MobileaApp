@@ -180,7 +180,7 @@ export default function WorkingDaySummary() {
                     <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
                   </RadialGradient>
                 </Defs>
-                
+
                 <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
               </Svg>
 

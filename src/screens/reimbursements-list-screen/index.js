@@ -26,9 +26,9 @@ const STATUS_LABELS = {
 };
 const STATUS_STYLES = {
   Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },       // light green bg
-  "In Verification": { color: "#FF2304", background: "#2E254C" }, // light yellow bg
+  "In Verification": { color: "#e2cd0eff", background: "#e1d54fff" }, // light yellow bg
   "On Hold": { color: "#ff9800", background: "rgba(249, 115, 22, 0.15)" },     // light orange bg
-  Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
+  Default: { color: "#FF2304", background: "rgba(230, 14, 14, 0.15)" },
 };
 
 export default function ReimbursementlistScreen({ navigation, route }) {
