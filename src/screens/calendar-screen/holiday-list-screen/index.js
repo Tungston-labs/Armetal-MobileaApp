@@ -11,7 +11,7 @@ const HolidayTab = () => {
 
   const fetchHolidays = async () => {
     try {
-      const res = await authAxios.get("/holidays/");
+      const res = await authAxios.get("/holidays/employee/");
       const formatted = res.data.results.map((holiday) => {
         const dateString = new Date(holiday.date).toLocaleDateString("en-GB", {
           day: "2-digit",
