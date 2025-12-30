@@ -69,69 +69,70 @@ export default function RequestRejected({ navigation, route }) {
 
   return (
     <>
-  {/* TOP SAFE AREA – covers the notch with header background */}
-  <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
+      {/* TOP SAFE AREA – covers the notch with header background */}
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
 
-  {/* MAIN SAFE AREA */}
-  <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+      {/* MAIN SAFE AREA */}
+      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
 
-    {/* Header */}
-    <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <Ionicons
-                    name="arrow-back"
-                    size={24}
-                    color="#fff"
-                    style={{ marginBottom: 20 }}
-                  />
-                </TouchableOpacity>
-      <Text style={styles.headerTitle}>Request detail</Text>
-    </View>
+        {/* Header */}
+        <View style={[styles.topHeader, { paddingTop: 0 }]}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#fff"
+              style={{ marginTop: 55 }}
+            />
+          </TouchableOpacity>
 
-    {/* Content */}
-    <ScrollView contentContainerStyle={styles.content}>
-      <View style={styles.card}>
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusText}>
-            {leave.status.charAt(0).toUpperCase() + leave.status.slice(1).toLowerCase()}
-          </Text>
+          <Text style={styles.headerTitle}>Request Detail</Text>
         </View>
 
-        <View style={styles.row}>
-          <View style={styles.column}>
-            <Text style={styles.label}>From</Text>
-            <Text style={styles.value}>{leave.from_date}</Text>
-            <Text style={styles.value}>{leave.from_date_type}</Text>
+        {/* Content */}
+        <ScrollView contentContainerStyle={styles.content}>
+          <View style={styles.card}>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>
+                {leave.status.charAt(0).toUpperCase() + leave.status.slice(1).toLowerCase()}
+              </Text>
+            </View>
+
+            <View style={styles.row}>
+              <View style={styles.column}>
+                <Text style={styles.label}>From</Text>
+                <Text style={styles.value}>{leave.from_date}</Text>
+                <Text style={styles.value}>{leave.from_date_type}</Text>
+              </View>
+
+              <View style={styles.column}>
+                <Text style={styles.label}>To</Text>
+                <Text style={styles.value}>{leave.to_date}</Text>
+                <Text style={styles.value}>{leave.to_date_type}</Text>
+              </View>
+
+              <View style={styles.column}>
+                <Text style={styles.label}>Time</Text>
+                <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
+              </View>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>Leave Type</Text>
+              <Text style={styles.sectionValue}>{leave.leave_type}</Text>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>Reason</Text>
+              <Text style={styles.reasonText}>{leave.reason}</Text>
+            </View>
           </View>
+        </ScrollView>
 
-          <View style={styles.column}>
-            <Text style={styles.label}>To</Text>
-            <Text style={styles.value}>{leave.to_date}</Text>
-            <Text style={styles.value}>{leave.to_date_type}</Text>
-          </View>
+        <BottomNavbar navigation={navigation} route={route} />
 
-          <View style={styles.column}>
-            <Text style={styles.label}>Time</Text>
-            <Text style={styles.value}>{formatTime(leave.created_at)}</Text>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Leave Type</Text>
-          <Text style={styles.sectionValue}>{leave.leave_type}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Reason</Text>
-          <Text style={styles.reasonText}>{leave.reason}</Text>
-        </View>
-      </View>
-    </ScrollView>
-
-    <BottomNavbar navigation={navigation} route={route} />
-
-  </SafeAreaView>
-</>
+      </SafeAreaView>
+    </>
 
   );
 }

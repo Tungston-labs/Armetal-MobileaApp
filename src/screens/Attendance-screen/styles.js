@@ -79,8 +79,6 @@ export default StyleSheet.create({
     textAlignVertical: 'top',
   },
 
-  
-
   profileImage: {
     width: 40,
     height: 40,

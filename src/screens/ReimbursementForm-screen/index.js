@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   Platform,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -17,17 +18,15 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Modal } from "react-native";
 import DatePickerModal from "../LeaveRequestForm-screen/DatePickerModal";
+
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
-  // const [toMail, setToMail] = useState("");
   const [note, setNote] = useState("");
   const [date, setDate] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [amount, setAmount] = useState("");
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
-
   const [bill, setBill] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -45,23 +44,6 @@ const ReimbursementForm = ({ navigation, route }) => {
       const file = result.assets[0];
       setBill({ uri: file.uri, name: "bill.jpg", type: "image/jpeg" });
     }
-  };
-
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      const formatted = selectedDate.toISOString().split("T")[0];
-      setDate(formatted);
-    }
-  };
-
-  const validateEmail = (email) => {
-    const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"];
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!regex.test(email)) return false;
-
-    const domain = email.split("@")[1];
-    return allowedDomains.includes(domain);
   };
 
   const handleSubmit = async () => {
@@ -154,9 +136,9 @@ const ReimbursementForm = ({ navigation, route }) => {
             <Text style={styles.customPickerText}>
               {expenseCategory || "Select category"}
             </Text>
-
             <Ionicons name="add" size={20} color="#fff" />
           </TouchableOpacity>
+
           <Modal
             visible={showCategoryPicker}
             transparent
@@ -168,17 +150,20 @@ const ReimbursementForm = ({ navigation, route }) => {
               activeOpacity={1}
               onPressOut={() => setShowCategoryPicker(false)}
             >
-              <View style={styles.modalContent}>
+              <View style={[styles.modalContent, { backgroundColor: "#172554" }]}>
                 <Picker
                   selectedValue={expenseCategory}
+                  dropdownIconColor="#fff"
+                  itemStyle={{ color: "#fff", fontFamily: "Montserrat_400Regular" }}
+                  style={{ color: "#fff", backgroundColor: "#172554" }}
                   onValueChange={(value) => {
                     if (value) setExpenseCategory(value);
                     setShowCategoryPicker(false);
                   }}
                 >
-                  <Picker.Item label="Select category" value="" enabled={false} />
+                  <Picker.Item label="Select category" value="" enabled={false} color="#8A8F9E" />
                   {EXPENSE_CATEGORIES.map((cat) => (
-                    <Picker.Item key={cat} label={cat} value={cat} />
+                    <Picker.Item key={cat} label={cat} value={cat} color="#fff" />
                   ))}
                 </Picker>
               </View>
@@ -205,6 +190,7 @@ const ReimbursementForm = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           )}
+
           {/* Note */}
           <Text style={styles.label}>Add note</Text>
           <TextInput
@@ -215,6 +201,7 @@ const ReimbursementForm = ({ navigation, route }) => {
             value={note}
             onChangeText={setNote}
           />
+
           {/* Date + Amount */}
           <View style={styles.row}>
             <View style={styles.halfInputContainer}>
@@ -250,6 +237,7 @@ const ReimbursementForm = ({ navigation, route }) => {
               />
             </View>
           </View>
+
           {/* Submit */}
           <TouchableOpacity
             style={[styles.submitButton, loading && { opacity: 0.6 }]}
@@ -262,6 +250,7 @@ const ReimbursementForm = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
         </KeyboardAwareScrollView>
+
         {/* Bottom Navbar */}
         {!loading && (
           <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
@@ -270,7 +259,7 @@ const ReimbursementForm = ({ navigation, route }) => {
         )}
       </SafeAreaView>
     </>
-
   );
 };
+
 export default ReimbursementForm;

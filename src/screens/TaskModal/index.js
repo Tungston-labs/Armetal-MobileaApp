@@ -5,6 +5,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
@@ -120,64 +125,79 @@ export default function TaskModal({
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.modalBackground}>
-        <View style={styles.modalCard}>
-          <Text style={styles.modalTitle}>Task Update</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.modalBackground}>
+            <ScrollView
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={[styles.modalCard, { maxHeight: '90%' }]}>
+                <Text style={styles.modalTitle}>Task Update</Text>
 
-          <Text style={styles.inputLabel}>Project</Text>
-          <TextInput
-            placeholder="Project Name"
-            value={project}
-            onChangeText={setProject}
-            style={styles.input}
-            placeholderTextColor="#8a8dad"
-          />
+                <Text style={styles.inputLabel}>Project</Text>
+                <TextInput
+                  placeholder="Project Name"
+                  value={project}
+                  onChangeText={setProject}
+                  style={styles.input}
+                  placeholderTextColor="#8a8dad"
+                />
 
-          <Text style={styles.inputLabel}>Task</Text>
-          <TextInput
-            placeholder="Task Details"
-            value={task}
-            onChangeText={setTask}
-            style={styles.input}
-            placeholderTextColor="#8a8dad"
-          />
+                <Text style={styles.inputLabel}>Task</Text>
+                <TextInput
+                  placeholder="Task Details"
+                  value={task}
+                  onChangeText={setTask}
+                  style={styles.input}
+                  placeholderTextColor="#8a8dad"
+                />
 
-          <Text style={styles.inputLabel}>Description</Text>
-          <TextInput
-            placeholder="Task Description"
-            value={description}
-            onChangeText={setDescription}
-            style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
-            placeholderTextColor="#8a8dad"
-            multiline={true}
-          />
+                <Text style={styles.inputLabel}>Description</Text>
+                <TextInput
+                  placeholder="Task Description"
+                  value={description}
+                  onChangeText={setDescription}
+                  style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+                  placeholderTextColor="#8a8dad"
+                  multiline={true}
+                />
 
-          <Text style={styles.inputLabel}>Time Taken (hours)</Text>
-          <View style={styles.timeInputRow}>
-            {/* ✅ Separate Box for Icon */}
-            <View style={styles.iconBox}>
-              <Ionicons name="time" size={20} color="#8a8dad" />
-            </View>
-            <TextInput
-              value={timeTaken}
-              onChangeText={setTimeTaken}
-              style={styles.timeInput}
-              placeholderTextColor="#8a8dad"
-              keyboardType="numeric"
-            />
+                <Text style={styles.inputLabel}>Time Taken (hours)</Text>
+                <View style={styles.timeInputRow}>
+                  <View style={styles.iconBox}>
+                    <Ionicons name="time" size={20} color="#8a8dad" />
+                  </View>
+                  <TextInput
+                    value={timeTaken}
+                    onChangeText={setTimeTaken}
+                    style={styles.timeInput}
+                    placeholderTextColor="#8a8dad"
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <View style={styles.modalActions}>
+                  <TouchableOpacity onPress={onClose} style={styles.cancelBtn}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
+                    <Text style={styles.submitText}>Submit</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
           </View>
-
-          <View style={styles.modalActions}>
-            <TouchableOpacity onPress={onClose} style={styles.cancelBtn}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
-              <Text style={styles.submitText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

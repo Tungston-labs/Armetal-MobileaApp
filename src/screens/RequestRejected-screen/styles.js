@@ -7,23 +7,23 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#141d40',
   },
-  header: {
+  topHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 2,
+    paddingVertical: 12,
     backgroundColor: "#262D40",
-    height:70,
+    height:90,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
   },
   backButton: {
     padding: 4,
     marginTop: 25,
-
+    
   },
-  headerLeft: {
+headerLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
@@ -32,8 +32,8 @@ export default StyleSheet.create({
     fontSize: 18,
     color: "#FFFF",
     fontWeight: "bold",
-    marginRight: 240,
-    marginBottom: 20,
+    marginRight: 230,
+    marginTop: 55,
   },
 
   avatar: {
@@ -44,7 +44,7 @@ export default StyleSheet.create({
 
   content: {
     padding: 16,
-    paddingBottom: 80, // space for bottom navbar
+    paddingBottom: 100, // space for bottom navbar
   },
 
   // Updated card layout with rounded corners and clean border

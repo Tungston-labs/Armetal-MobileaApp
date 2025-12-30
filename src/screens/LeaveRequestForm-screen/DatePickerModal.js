@@ -1,8 +1,11 @@
 import React from "react";
-import { Modal, TouchableOpacity, View, Text, Platform } from "react-native";
+import { Modal, TouchableOpacity, View, Text, Platform, useColorScheme } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function DatePickerModal({ visible, date, onClose, onChange }) {
+  const colorScheme = useColorScheme(); // Detect device theme
+  const isDarkMode = colorScheme === "dark";
+
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
       <TouchableOpacity
@@ -17,7 +20,7 @@ export default function DatePickerModal({ visible, date, onClose, onChange }) {
       >
         <View
           style={{
-            backgroundColor: "#fff",
+            backgroundColor: isDarkMode ? "#1C1C1C" : "#fff",
             padding: 15,
             borderRadius: 12,
             width: "90%",
@@ -27,9 +30,10 @@ export default function DatePickerModal({ visible, date, onClose, onChange }) {
             value={date}
             mode="date"
             display={Platform.OS === "ios" ? "inline" : "default"}
+            themeVariant={isDarkMode ? "dark" : "light"} // Apply dark/light theme
+            textColor={isDarkMode ? "#fff" : "#000"}     // For iOS inline mode
             onChange={(event, selectedDate) => {
               if (selectedDate) onChange(selectedDate);
-
               if (Platform.OS !== "ios") onClose(); // auto-close for Android
             }}
           />
