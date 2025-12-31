@@ -33,7 +33,7 @@ export default StyleSheet.create({
     color: '#FFF',
     flex: 1,
     marginLeft: 12,
-    marginBottom: 19,
+    marginBottom: 0,
   },
 
   dateText: {
