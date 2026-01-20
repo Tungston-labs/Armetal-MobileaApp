@@ -33,7 +33,7 @@ async function syncOfflineLogs(employeeId, token) {
 
   try {
     const res = await fetch(
-      `http://192.168.29.193:8001/api/background-bulk-sync/${employeeId}/`,
+      `http://178.248.112.16:8001/api/background-bulk-sync/${employeeId}/`,
       {
         method: "POST",
         headers: {
@@ -48,7 +48,7 @@ async function syncOfflineLogs(employeeId, token) {
       console.log("📤 Synced offline logs");
       await AsyncStorage.removeItem(OFFLINE_KEY);
     } else {
-      console.log(" Sync failed, will retry later");
+      console.log(" Sync failed, will retry later")
     }
   } catch (err) {
     console.log(" Sync error:", err);
@@ -91,7 +91,7 @@ TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
   // Try direct send
   try {
     const resp = await fetch(
-      `http://192.168.29.193:8001/api/background-location/${employeeId}/`,
+      `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
       {
         method: "POST",
         headers: {

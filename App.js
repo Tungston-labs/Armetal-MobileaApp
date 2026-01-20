@@ -1,4 +1,4 @@
-import "./src/utils/backgroundLocationTask"; // MUST be very first import
+import "./src/utils/backgroundLocationTask";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Provider, useDispatch } from "react-redux";

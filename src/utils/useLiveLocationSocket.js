@@ -59,7 +59,7 @@ export default function useLiveLocationHttp(employeeId, sessionId) {
           timestamp: new Date().toISOString(),
         };
 
-        await fetch(`http://192.168.29.193:8001/api/background-location/${employeeId}/`, {
+        await fetch(`http://178.248.112.16:8001/api/background-location/${employeeId}/`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -76,13 +76,11 @@ export default function useLiveLocationHttp(employeeId, sessionId) {
       }
     };
 
-    // Start periodic updates
     if (!intervalRef.current) {
       intervalRef.current = setInterval(sendLocation, 150000);
-      sendLocation(); // first call
+      sendLocation(); 
     }
 
-    // Cleanup on unmount
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
