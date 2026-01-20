@@ -238,7 +238,6 @@ const AttendanceScreen = () => {
   }, []);
   
   
-
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
   const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });

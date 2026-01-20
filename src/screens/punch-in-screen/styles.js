@@ -5,8 +5,8 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#151D34",
     paddingHorizontal: 16,
-    paddingTop: 40,
-    // paddingBottom: 40,
+    paddingTop: 50,
+    paddingBottom: 60,
   },
   scrollView: { paddingBottom: 0 },
 
@@ -85,7 +85,6 @@ textContainer: {
   justifyContent: "center",
   alignItems: "center",
 },
-
 
   // Legend
   legendRow: {
