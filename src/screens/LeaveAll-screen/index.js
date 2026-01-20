@@ -15,10 +15,14 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
 import SwipeLoader from "../../components/SwipeLoader"
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+
 export default function LeaveAllScreen({ navigation, route }) {
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const fetchLeaves = async () => {
     try {
@@ -145,8 +149,8 @@ export default function LeaveAllScreen({ navigation, route }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]} 
-              tintColor="#ffffff"           
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
               progressBackgroundColor={
                 Platform.OS === "android" ? "#2c2c2c" : "transparent"
               }
@@ -161,7 +165,7 @@ export default function LeaveAllScreen({ navigation, route }) {
       )}
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
       >
         <Ionicons name="add" size={24} color="white" />

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 4,
   },
-  
+
   selectedDate: {
     fontSize: 16,
     color: "#fff",
@@ -90,14 +90,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:"center",
-    marginBottom:6,
+    justifyContent: "center",
+    marginBottom: 6,
   },
   addEventText: {
     color: "#fff",
-    justifyContent:"center",
+    justifyContent: "center",
     fontSize: 16,
-    
+
   },
 
   calendarWrapper: {
@@ -124,44 +124,44 @@ const styles = StyleSheet.create({
   monthWithArrow: {
     flexDirection: "row",
     width: "50%",
-  
+
   },
 
   monthText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
-     marginHorizontal: 12,
+    marginHorizontal: 12,
   },
   yearText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "500",
-    marginLeft: 12, 
+    marginLeft: 12,
   },
-modalOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(0, 0, 0, 0.6)",
-  justifyContent: "center",
-  alignItems: "center", 
-},
-yearPickerContainer: {
-  backgroundColor: "#172554",
-  borderRadius: 12,
-  padding: 10,
-  width: 120,        // fixed width for nice shape
-  maxHeight: 200,
-},
-yearItem: {
-  fontSize: 16,
-  color: "#fff",
-  textAlign: "center",
-  paddingVertical: 10,
-},
-backButton: {
-  alignSelf: "flex-start", // back icon on top-left
-  marginBottom: 8,
-},
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  yearPickerContainer: {
+    backgroundColor: "#172554",
+    borderRadius: 12,
+    padding: 10,
+    width: 120,        // fixed width for nice shape
+    maxHeight: 200,
+  },
+  yearItem: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: "center",
+    paddingVertical: 10,
+  },
+  backButton: {
+    alignSelf: "flex-start", // back icon on top-left
+    marginBottom: 8,
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -179,32 +179,33 @@ backButton: {
     fontWeight: "600",
   },
   calendar: {
-  height: 320,
-  width: '95%',
-  alignSelf: 'center',
-},
+    height: 320,
+    width: '95%',
+    alignSelf: 'center',
+  },
   doneButton: {
     backgroundColor: "#1d478bff",
     paddingVertical: 12,
     paddingHorizontal: 44,
     borderRadius: 20,
   },
-  doneText:{
-    color:'#fff',
+  doneText: {
+    color: '#fff',
     fontWeight: '600',
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
-    bottom: 100,
-    backgroundColor: '#3352BA',
+    bottom: 100, 
+    backgroundColor: "#7490F3",
     width: 50,
     height: 50,
     borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 5,
   },
+
 });
 
 export default styles;

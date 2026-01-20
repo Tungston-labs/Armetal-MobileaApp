@@ -13,6 +13,8 @@ import { Calendar } from "react-native-calendars";
 import styles from "./styles";
 import AddEventModal from "../../../screens/EventModal";
 import authAxios from "../../../utils/authAxios";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 
 const ReminderTab = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -23,6 +25,7 @@ const ReminderTab = () => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+   const insets = useSafeAreaInsets();
 
   const monthNames = [
     "January",
@@ -313,7 +316,7 @@ const ReminderTab = () => {
       )}
 
       <TouchableOpacity
-        style={styles.fab}
+  style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
         onPress={() => setShowAddModal(true)}
       >
         <Ionicons name="add" size={24} color="white" />

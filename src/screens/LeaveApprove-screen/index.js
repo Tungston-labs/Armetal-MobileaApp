@@ -16,9 +16,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+
+
 export default function LeaveApproveScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+  const insets = useSafeAreaInsets();
 
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,8 +126,8 @@ export default function LeaveApproveScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]} 
-              tintColor="#ffffff"          
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
               progressBackgroundColor={
                 Platform.OS === "android" ? "#2c2c2c" : "transparent"
               }
@@ -141,7 +146,7 @@ export default function LeaveApproveScreen() {
       )}
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
       >
         <Ionicons name="add" size={20} color="white" />

@@ -185,17 +185,18 @@ export default StyleSheet.create({
     fontSize: 16,
   },
 
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 100,
-    backgroundColor: '#7490F3',
-    width: 50,
-    height: 50,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5,
-  },
+   fab: {
+  position: "absolute",
+  right: 20,
+  bottom: 100, 
+  backgroundColor: "#7490F3",
+  width: 50,
+  height: 50,
+  borderRadius: 28,
+  alignItems: "center",
+  justifyContent: "center",
+  elevation: 5,
+},
+
 
 });

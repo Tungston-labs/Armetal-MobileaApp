@@ -16,10 +16,14 @@ import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native"
 import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+
 export default function LeavePendingScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
 
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +31,7 @@ export default function LeavePendingScreen() {
 
   const fetchPendingLeaves = async () => {
     try {
-      setLoading(true); 
+      setLoading(true);
       const response = await authAxios.get("leave/by-status/?status=pending");
       setLeaveData(response.data);
     } catch (error) {
@@ -74,21 +78,21 @@ export default function LeavePendingScreen() {
           <View>
             <Text style={styles.label}>From</Text>
             <Text style={styles.value}>{item.from_date}</Text>
-                        <Text style={styles.value}>{item.from_date_type}</Text>
-            
+            <Text style={styles.value}>{item.from_date_type}</Text>
+
           </View>
 
           <View>
             <Text style={styles.label}>To</Text>
             <Text style={styles.value}>{item.to_date}</Text>
-                        <Text style={styles.value}>{item.to_date_type}</Text>
-            
+            <Text style={styles.value}>{item.to_date_type}</Text>
+
           </View>
 
           <View>
             <Text style={styles.label}>Time</Text>
             <Text style={styles.value}>
-              {formatTime(item.created_at)} 
+              {formatTime(item.created_at)}
             </Text>
           </View>
 
@@ -123,8 +127,8 @@ export default function LeavePendingScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]} 
-              tintColor="#ffffff"             
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
               progressBackgroundColor={
                 Platform.OS === "android" ? "#2c2c2c" : "transparent"
               }
@@ -141,7 +145,7 @@ export default function LeavePendingScreen() {
       )}
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
       >
         <Ionicons name="add" size={20} color="white" />

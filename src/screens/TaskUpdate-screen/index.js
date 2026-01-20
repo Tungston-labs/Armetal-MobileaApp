@@ -18,6 +18,8 @@ import TaskModal from '../TaskModal';
 import moment from 'moment';
 import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
 export default function TaskUpdateScreen() {
@@ -35,6 +37,8 @@ export default function TaskUpdateScreen() {
   const [loading, setLoading] = useState(true);   // ✅ new
   const [refreshing, setRefreshing] = useState(false); // ✅ new
   const [description, setDescription] = useState('');
+  const insets = useSafeAreaInsets();
+
 
 
   const getDateRange = (startDate, selected) => {
@@ -257,7 +261,7 @@ export default function TaskUpdateScreen() {
 
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
         onPress={() => setModalVisible(true)}>
 
         <Ionicons name="add" size={24} color="white" />

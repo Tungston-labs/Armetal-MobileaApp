@@ -16,6 +16,9 @@ import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+
 
 const STATUS_LABELS = {
   Approve: "Approved",
@@ -23,9 +26,9 @@ const STATUS_LABELS = {
   "On Hold": "On Hold",
 };
 const STATUS_STYLES = {
-  Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },      
-  "In Verification": { color: "#FF2304", background: "#2E254C" }, 
-  "On Hold": { color: "#ff9800", background: "rgba(249, 115, 22, 0.15)" },     
+  Approve: { color: "#2ecc71", background: "rgba(46, 204, 113, 0.15)" },
+  "In Verification": { color: "#FF2304", background: "#2E254C" },
+  "On Hold": { color: "#ff9800", background: "rgba(249, 115, 22, 0.15)" },
   Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
 };
 
@@ -34,7 +37,9 @@ export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [bill, setBill] = useState(null); 
+  const [bill, setBill] = useState(null);
+  const insets = useSafeAreaInsets();
+
 
   // fetch reimbursements
   const fetchReimbursements = async () => {
@@ -51,7 +56,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     }
   };
 
-  
+
   useFocusEffect(
     useCallback(() => {
       fetchReimbursements();
@@ -63,7 +68,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     fetchReimbursements();
   }, []);
 
-  
+
   const pickImage = async () => {
     try {
       if (bill) {
@@ -98,16 +103,16 @@ export default function ReimbursementlistScreen({ navigation, route }) {
         }
       >
 
-<View
-  style={[
-    styles.statusBadge,
-    { borderColor: styleConfig.color, backgroundColor: styleConfig.background },
-  ]}
->
-  <Text style={[styles.statusText, { color: styleConfig.color }]}>
-    {STATUS_LABELS[item.status] || item.status}
-  </Text>
-</View>
+        <View
+          style={[
+            styles.statusBadge,
+            { borderColor: styleConfig.color, backgroundColor: styleConfig.background },
+          ]}
+        >
+          <Text style={[styles.statusText, { color: styleConfig.color }]}>
+            {STATUS_LABELS[item.status] || item.status}
+          </Text>
+        </View>
 
         <View style={styles.cardRow}>
           <View>
@@ -133,7 +138,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
       </View>
 
       <View style={{ padding: 5 }}>
-      
+
 
         {bill && (
           <View style={styles.imageWrapper}>
@@ -181,9 +186,10 @@ export default function ReimbursementlistScreen({ navigation, route }) {
 
       {/* FAB */}
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
         onPress={() => navigation.navigate("ReimbursementForm")}
       >
+
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 

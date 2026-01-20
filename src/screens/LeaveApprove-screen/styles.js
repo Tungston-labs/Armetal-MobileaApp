@@ -105,14 +105,14 @@ export default StyleSheet.create({
   statusText: {
     color: '#26B887',
     fontSize: 16,
-    paddingHorizontal:12,
+    paddingHorizontal: 12,
   },
   cardContent: {
     marginTop: 4,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     marginVertical: 4,
   },
   label: {
@@ -127,17 +127,18 @@ export default StyleSheet.create({
     fontFamily: 'Montserrat_700Bold',
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
-    bottom: 100,
-    backgroundColor: '#7490F3',
+    bottom: 100, 
+    backgroundColor: "#7490F3",
     width: 50,
     height: 50,
     borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 5,
   },
+
 
   bottomNav: {
     position: 'absolute',
