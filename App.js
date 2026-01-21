@@ -1,3 +1,5 @@
+import "./src/utils/backgroundLocationTask";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -7,21 +9,21 @@ import Toast from "react-native-toast-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
+
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
-import * as TaskManager from 'expo-task-manager';
-import * as Location from 'expo-location';
-import { startBackgroundUpdate } from './src/screens/punch-in-screen/LocationTask';
-import './src/screens/punch-in-screen/LocationTask';
+import * as TaskManager from "expo-task-manager"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { startBackgroundTracking } from "./src/utils/backgroundLocationTracking";
 
-// Fonts
 import {
   useFonts,
   Raleway_400Regular,
   Raleway_500Medium,
   Raleway_700Bold,
 } from "@expo-google-fonts/raleway";
+
 import {
   Montserrat_400Regular,
   Montserrat_500Medium,
@@ -29,7 +31,7 @@ import {
   Montserrat_800ExtraBold,
 } from "@expo-google-fonts/montserrat";
 
-// Keep splash screen visible until app is ready
+// ---------------- Permissions Setup ----------------
 
 enableScreens();
 
@@ -41,7 +43,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Component to restore session before rendering app
+// ---------------- Session Restore Logic ----------------
 
 const InitAuth = ({ children }) => {
   const dispatch = useDispatch();
@@ -50,18 +52,24 @@ const InitAuth = ({ children }) => {
     const init = async () => {
       await dispatch(restoreSession());
 
-      // ✅ Check if user was punched in and resume background location updates
-      const punchedIn = await AsyncStorage.getItem("punchedIn"); // save this flag after punch in/out
-      if (punchedIn === "true") {
-        startBackgroundUpdate();
+      const punchedIn = await AsyncStorage.getItem("punchedIn");
+      const employeeId = await AsyncStorage.getItem("employeeId");
+      const sessionId = await AsyncStorage.getItem("sessionId");
+
+      if (punchedIn === "true" && employeeId && sessionId) {
+        console.log("🔄 Restoring background tracking after restart…");
+        const ok = await startBackgroundTracking();
+        if (!ok) console.warn("⚠ Background tracking failed to start");
       }
     };
+
     init();
   }, [dispatch]);
 
   return children;
 };
 
+// ---------------- Main App Component ----------------
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
@@ -76,35 +84,25 @@ const App = () => {
     Montserrat_800ExtraBold,
   });
 
-  // Prepare app: notifications + fonts + any setup
   useEffect(() => {
-    const prepareApp = async () => {
+    const prepare = async () => {
       try {
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== "granted") {
-          console.warn("Notification permission not granted");
-        }
+        await Notifications.requestPermissionsAsync();
       } catch (e) {
         console.warn("Notification permission error:", e);
       } finally {
-        if (fontsLoaded) {
-          setAppReady(true);
-        }
+        if (fontsLoaded) setAppReady(true);
       }
     };
-    prepareApp();
+
+    prepare();
   }, [fontsLoaded]);
 
-  // Hide splash screen when root view is ready
   const onLayoutRootView = useCallback(async () => {
-    if (appReady) {
-      await SplashScreen.hideAsync();
-    }
+    if (appReady) await SplashScreen.hideAsync();
   }, [appReady]);
 
-  if (!appReady) {
-    return null; // Keep splash screen visible
-  }
+  if (!appReady) return null;
 
   return (
     <Provider store={store}>

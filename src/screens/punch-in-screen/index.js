@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Image,
+  Image, 
   Animated,
   Easing,
 } from "react-native";
@@ -29,6 +29,7 @@ import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
 import { startBackgroundUpdate, stopBackgroundUpdate } from './LocationTask';
+import AttendanceTracker from "../../utils/AttendanceTracker"
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -45,10 +46,10 @@ const AttendanceScreen = () => {
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
+  const [sessionId, setSessionId] = useState(null);
 
 
   const [dayStatus, setDayStatus] = useState([]);
-  
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -85,16 +86,15 @@ const AttendanceScreen = () => {
   const fetchDayStatus = async () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
-      const data = response.data; // 🔹 access 'data' object
-      // console.log({ data });
-  
+      const data = response.data;
+
       const statusMap = {};
-  
+
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
       const month = firstDate.getMonth(); // 0-indexed
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
+
       const allDates = [];
       for (let day = 1; day <= daysInMonth; day++) {
         const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -102,8 +102,8 @@ const AttendanceScreen = () => {
         ).padStart(2, "0")}`;
         allDates.push(iso);
       }
-  
-      
+
+      // Initialize all days: Sundays as holiday, rest working
       allDates.forEach((date) => {
         if (data.company_off_day_dates.includes(date)) {
           statusMap[date] = "holiday";
@@ -111,14 +111,15 @@ const AttendanceScreen = () => {
           statusMap[date] = "working";
         }
       });
-  
-    
+
+      // Mark present, absent, holiday
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
-  
+
+      // Mark half-days (overrides present)
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
-  
+
       const orderedStatuses = allDates.map((date) => statusMap[date]);
       setDayStatus(orderedStatuses);
     } catch (error) {
@@ -126,7 +127,7 @@ const AttendanceScreen = () => {
       setDayStatus([]);
     }
   };
-  
+
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
@@ -157,7 +158,6 @@ const AttendanceScreen = () => {
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
     } catch (err) {
-      // console.error("Attendance fetch error:", err.message);
     }
   };
 
@@ -188,41 +188,53 @@ const AttendanceScreen = () => {
   };
 
 
-  const handlePunch = async () => {
-    setPunching(true);
-    startRotation();
-    try {
-      const location = await getCurrentLocation();
-      if (!location) return;
-    
-      const res = await authAxios.post("/attendance/swipe/", {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
-    
-      if (res.data?.success === false) {
-        Alert.alert("Failed", res.data?.error || "Swipe failed");
-      } else {
-        await fetchTodayAttendance();
+ const handlePunch = async () => {
+  setPunching(true);
+  startRotation();
+  try {
+    const location = await getCurrentLocation();
+    if (!location) return;
+
+    const res = await authAxios.post("/attendance/swipe/", {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+
+    console.log("Swipe response:", res.data);
+
+    if (res.data?.success === false) {
+      Alert.alert("Failed", res.data?.error || "Swipe failed");
+    } else {
+      await fetchTodayAttendance();
+
+      if (res.data?.action === "punch_in" && res.data?.session_id) {
+        setSessionId(res.data.session_id);
+        console.log(" Session started:", res.data.session_id);
       }
-    } catch (error) {
-      console.log("Swipe error:", error);
-      Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
+
+      if (res.data?.action === "punch_out") {
+        setSessionId(null);
+        console.log(" Session ended");
+      }
     }
-     finally {
-      setPunching(false);
-      stopRotation();
-    }
-  };
-  
+  } catch (error) {
+    console.log("Swipe error:", error);
+    Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
+  } finally {
+    setPunching(false);
+    stopRotation();
+  }
+};
+
+
   useEffect(() => {
     (async () => {
       try {
         const profileRes = await authAxios.get(`/profile/`);
         setEmployee(profileRes.data);
-        
+
         await fetchTodayAttendance();
-  
+
         const punchedIn = isCurrentlyPunchedIn();
         if (punchedIn) {
           await startBackgroundUpdate();
@@ -236,8 +248,9 @@ const AttendanceScreen = () => {
       }
     })();
   }, []);
-  
-  
+
+
+
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
   const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });
@@ -245,9 +258,9 @@ const AttendanceScreen = () => {
   const getSegment = (status, index) => {
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-  
+
     let segmentContent;
-  
+
     if (status === "half") {
       // Half-day: split red (absent) and green (present)
       segmentContent = (
@@ -265,7 +278,7 @@ const AttendanceScreen = () => {
     } else {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#FFFFFF" }} />;
     }
-  
+
     return (
       <View
         key={index}
@@ -278,7 +291,7 @@ const AttendanceScreen = () => {
       </View>
     );
   };
-  
+
 
   const renderRadialCircle = () => (
     <View style={{ alignItems: "center" }}>
@@ -322,8 +335,7 @@ const AttendanceScreen = () => {
       </TouchableOpacity>
     </View>
   );
-
-
+ 
   const menuItems = [
     { label: "Salary Slip", icon: SalarySlipIcon, route: "SalarySlipScreen" },
     { label: "Attendance", icon: AttendanceIcon, route: "AttendanceScreen" },
@@ -447,7 +459,7 @@ const AttendanceScreen = () => {
               <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
             </TouchableOpacity>
 
-
+            {/* ✅ Apply Leave Box */}
             <TouchableOpacity
               style={[styles.menuBox, styles.applyLeaveBox]}
               onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -457,9 +469,7 @@ const AttendanceScreen = () => {
             </TouchableOpacity>
           </View>
 
-
-
-          
+          {/* 🔄 Loader or SwipeButton */}
           {punching ? (
             <View style={styles.loaderOverlay}>
               <View style={styles.logoWrapper}>
@@ -491,9 +501,16 @@ const AttendanceScreen = () => {
               thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
               resetAfterSuccess={true}
             />
-          )}
 
-          
+          )}
+          {isCurrentlyPunchedIn() && sessionId && (
+          <AttendanceTracker 
+              sessionId={sessionId} 
+              employeeId={employee.id.toString()}
+            />     )}
+          {/* Attendance Box */}
+
+
           <Pressable
             style={styles.attendanceBox}
             onPress={() => navigation.navigate("AttendanceScreen")}
@@ -554,8 +571,8 @@ const AttendanceScreen = () => {
         </View>
       )}
 
-      
-      
+
+
     </SafeAreaView>
   );
 };

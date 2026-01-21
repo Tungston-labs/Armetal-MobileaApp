@@ -12,29 +12,38 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     return;
   }
 
-  console.log("📡 Background task triggered");
-
-  try {
-    const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
-    if (fgStatus !== 'granted') return;
-
-    const location = await Location.getCurrentPositionAsync({});
-    console.log("📍 Location received:", location.coords);
-
-    await authAxios.post('/attendance/update-location/', {
-      location: `${location.coords.latitude}, ${location.coords.longitude}`,
-      timestamp: new Date().toISOString(),
-    });
-
-    console.log("✅ Location sent successfully");
-  } catch (err) {
-    console.log("❌ Failed to send location:", err.message);
+  if (data) {
+    const location = data.locations[0];
+    if (location) {
+      console.log("📍 Location received:", location.coords);
+      try {
+        const res = await authAxios.post('/attendance/update-location/', {
+          location: `${location.coords.latitude}, ${location.coords.longitude}`,
+          timestamp: new Date(location.timestamp).toISOString(),
+        });
+        console.log(" API hit success:", res.data);
+      } catch (err) {
+        console.log("❌ API hit failed:", err.response?.data || err.message);
+      }
+    }
   }
 });
 
 // 2️⃣ Start background fetch
 export async function startBackgroundUpdate() {
-  const hasStarted = await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
+  const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
+  if (fgStatus !== 'granted') {
+    console.log(' Foreground location permission denied');
+    return;
+  }
+
+  const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
+  if (bgStatus !== 'granted') {
+    console.log('Background location permission denied');
+    return;
+  }
+
+  const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
   if (!hasStarted) {
     await BackgroundFetch.registerTaskAsync(LOCATION_TASK_NAME, {
       minimumInterval: 120, // 1 hour

@@ -18,7 +18,6 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-
 const ReimbursementForm = ({ navigation, route }) => {
   const [expenseCategory, setExpenseCategory] = useState("");
   

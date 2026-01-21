@@ -32,7 +32,6 @@ const STATUS_STYLES = {
   Default: { color: "#ccc", background: "rgba(204, 204, 204, 0.15)" },
 };
 
-
 export default function ReimbursementlistScreen({ navigation, route }) {
   const [reimbursements, setReimbursements] = useState([]);
   const [loading, setLoading] = useState(false);
