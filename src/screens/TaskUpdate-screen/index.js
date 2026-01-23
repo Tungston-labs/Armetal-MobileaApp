@@ -20,7 +20,7 @@ import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const API_BASE_URL = 'http://178.248.112.16:8000';
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export default function TaskUpdateScreen() {
   const navigation = useNavigation();
@@ -80,7 +80,7 @@ export default function TaskUpdateScreen() {
       const response = await authAxios.get('/profile/');
       const profilePicPath = response?.data?.profile_pic;
       const picUrl = profilePicPath
-        ? `${API_BASE_URL}${profilePicPath}`
+        ? `$${BASE_URL}${profilePicPath}`
         : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
       setProfilePic(picUrl);
     } catch (error) {

@@ -21,7 +21,7 @@ export default function RequestPending({ navigation, route }) {
   const [canceling, setCanceling] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  const API_BASE_URL = 'http://178.248.112.16:8000';
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -132,7 +132,7 @@ export default function RequestPending({ navigation, route }) {
           <Image
             source={{
               uri: profile?.profile_pic
-                ? `${API_BASE_URL}${profile.profile_pic}`
+                ? `${BASE_URL}${profile.profile_pic}`
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
             }}
             style={styles.avatar}

@@ -6,8 +6,8 @@ import NetInfo from "@react-native-community/netinfo";
 
 export const TASK_NAME = "SEND_LOCATION_BACKGROUND";
 
-// ---- OFFLINE STORAGE HELPERS ----
 const OFFLINE_KEY = "OFFLINE_LOCATION_LOGS";
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 async function saveOffline(log) {
   try {
@@ -23,7 +23,7 @@ async function saveOffline(log) {
 
 async function syncOfflineLogs(employeeId, token) {
   const state = await NetInfo.fetch();
-  if (!state.isConnected) return; // No internet
+  if (!state.isConnected) return; 
 
   const pending = await AsyncStorage.getItem(OFFLINE_KEY);
   if (!pending) return;
@@ -33,7 +33,7 @@ async function syncOfflineLogs(employeeId, token) {
 
   try {
     const res = await fetch(
-      `http://178.248.112.16:8001/api/background-bulk-sync/${employeeId}/`,
+      `${BASE_URL}/api/background-bulk-sync/${employeeId}/`,
       {
         method: "POST",
         headers: {
@@ -55,7 +55,6 @@ async function syncOfflineLogs(employeeId, token) {
   }
 }
 
-// ---- BACKGROUND TASK ----
 TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
   if (error) {
     console.error("Background task error:", error);
@@ -64,11 +63,11 @@ TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
 
   if (!data?.locations?.length) return;
 
-  const loc = data.locations[0];
+  const loc = data.locations[data.locations.length - 1];
   if (!loc?.coords) return;
 
   const { latitude, longitude } = loc.coords;
-  const timestamp = new Date().toISOString();
+  const timestamp = new Date(loc.timestamp).toISOString();
 
   console.log("[BG TASK] Location:", latitude, longitude, timestamp);
 
@@ -88,10 +87,9 @@ TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
     timestamp,
   };
 
-  // Try direct send
   try {
     const resp = await fetch(
-      `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
+      `${BASE_URL}/api/background-location/${employeeId}/`,
       {
         method: "POST",
         headers: {
@@ -102,13 +100,12 @@ TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
       }
     );
 
-    if (!resp.ok) throw new Error("Server/Network error");
+    if (!resp.ok) throw new Error("Server error");
 
-    console.log(" Background location SENT");
   } catch (err) {
-    console.log(" Direct send failed — saving offline");
     await saveOffline(payload);
   }
 
   await syncOfflineLogs(employeeId, token);
 });
+

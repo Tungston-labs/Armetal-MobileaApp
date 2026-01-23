@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { startBackgroundTracking, stopBackgroundTracking } from "../utils/backgroundLocationTracking";
+import {
+  startBackgroundTracking,
+  stopBackgroundTracking,
+} from "../utils/backgroundLocationTracking";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import useLiveLocationSocket from "../utils/useLiveLocationSocket";
 
 export default function AttendanceTracker({ employeeId, sessionId }) {
   useEffect(() => {
@@ -12,7 +14,9 @@ export default function AttendanceTracker({ employeeId, sessionId }) {
         await AsyncStorage.setItem("punchedIn", "true");
 
         const ok = await startBackgroundTracking();
-        if (!ok) console.warn("Background tracking did not start");
+        if (!ok) {
+          console.warn("Background tracking did not start");
+        }
       } catch (err) {
         console.error("AttendanceTracker setup error:", err);
       }
@@ -21,11 +25,11 @@ export default function AttendanceTracker({ employeeId, sessionId }) {
     return () => {
       stopBackgroundTracking()
         .then(() => AsyncStorage.setItem("punchedIn", "false"))
-        .catch(e => console.error("stopBackgroundTracking error:", e));
+        .catch((e) =>
+          console.error("stopBackgroundTracking error:", e)
+        );
     };
   }, [employeeId, sessionId]);
-
-  useLiveLocationSocket(employeeId, sessionId);
 
   return null;
 }

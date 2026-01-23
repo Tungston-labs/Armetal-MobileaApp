@@ -28,13 +28,16 @@ import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
-import { startBackgroundUpdate, stopBackgroundUpdate } from './LocationTask';
+import {
+  startBackgroundTracking,
+  stopBackgroundTracking
+} from '../../utils/backgroundLocationTracking';
 import AttendanceTracker from "../../utils/AttendanceTracker"
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-const API_BASE_URL = "http://178.248.112.16:8001";
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -59,9 +62,9 @@ const AttendanceScreen = () => {
     (async () => {
       const punchedIn = isCurrentlyPunchedIn();
       if (punchedIn) {
-        await startBackgroundUpdate(); // start hourly updates
+        await startBackgroundTracking(); // start hourly updates
       } else {
-        await stopBackgroundUpdate(); // stop updates
+        await stopBackgroundTracking(); // stop updates
       }
     })();
   }, []);
@@ -138,7 +141,7 @@ const AttendanceScreen = () => {
 
     
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
-    return `${API_BASE_URL}${path}`;
+    return `${BASE_URL}${path}`;
   };
 
   useEffect(() => {
@@ -237,9 +240,9 @@ const AttendanceScreen = () => {
 
         const punchedIn = isCurrentlyPunchedIn();
         if (punchedIn) {
-          await startBackgroundUpdate();
+          await startBackgroundTracking();
         } else {
-          await stopBackgroundUpdate();
+          await stopBackgroundTracking();
         }
       } catch (err) {
         console.log(err);

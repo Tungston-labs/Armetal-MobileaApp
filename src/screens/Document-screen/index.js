@@ -24,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function DocumentsScreen() {
   const navigation = useNavigation();
   const [employeeId, setEmployeeId] = useState(null);
-  const BASE_URL = "http://178.248.112.16:8001"; 
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
   const [loading, setLoading] = useState(true); 
 
   const [data, setData] = useState({

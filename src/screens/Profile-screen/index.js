@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/src/redux/features/authSlice";
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-const API_BASE_URL = "http://178.248.112.16:8001";
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -45,7 +45,7 @@ const ProfileScreen = () => {
     }
 
     // Ensure slash between BASE and path
-    return `${API_BASE_URL}${pic.startsWith("/") ? "" : "/"}${pic}`;
+    return `${BASE_URL}}${pic.startsWith("/") ? "" : "/"}${pic}`;
   };
 
   const profileImage = { uri: getProfileUri(employee?.profile_pic) };

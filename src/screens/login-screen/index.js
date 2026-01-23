@@ -30,18 +30,20 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 const [showPassword, setShowPassword] = useState(false);
+      const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const dispatch=useDispatch();
 
 const handleLogin = async () => {
   if (!username || !password) {
+
     Alert.alert("Validation Error", "Please enter both username and password.");
     return;
   }
 
   try {
     const response = await axios.post(
-      "http://178.248.112.16:8001/api/token/",
+      `${BASE_URL}/api/token/`,
       { username, password }
     );
 

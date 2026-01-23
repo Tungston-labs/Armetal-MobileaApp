@@ -17,11 +17,11 @@ import authAxios from "../../utils/authAxios";
 import BottomNavbar from "../BottomNavbar";
 import SwipeLoader from "../../components/SwipeLoader";
 
-const API_BASE_URL = "http://178.248.112.16:8001";
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
@@ -55,7 +55,7 @@ const AttendanceScreen = () => {
 
       const profileRes = await authAxios.get("/profile/");
       const imageUrl = profileRes.data?.profile_pic
-        ? `${API_BASE_URL}${profileRes.data.profile_pic}`
+        ? `${BASE_URL}${profileRes.data.profile_pic}`
         : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
       setProfilePic(imageUrl);
     } catch (error) {

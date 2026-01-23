@@ -53,8 +53,9 @@
 // export default authAxios;
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
-const baseURL = 'http://178.248.112.16:8001/api';
+const baseURL = `${BASE_URL}/api`;
 const authAxios = axios.create({ baseURL });
 
 // Shared promise to prevent multiple refresh attempts at once

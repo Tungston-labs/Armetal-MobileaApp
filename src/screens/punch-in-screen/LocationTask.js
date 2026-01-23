@@ -15,7 +15,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (data) {
     const location = data.locations[0];
     if (location) {
-      console.log("📍 Location received:", location.coords);
+      console.log(" Location received:", location.coords);
       try {
         const res = await authAxios.post('/attendance/update-location/', {
           location: `${location.coords.latitude}, ${location.coords.longitude}`,
@@ -23,13 +23,12 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
         });
         console.log(" API hit success:", res.data);
       } catch (err) {
-        console.log("❌ API hit failed:", err.response?.data || err.message);
+        console.log(" API hit failed:", err.response?.data || err.message);
       }
     }
   }
 });
 
-// 2️⃣ Start background fetch
 export async function startBackgroundUpdate() {
   const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
   if (fgStatus !== 'granted') {
@@ -45,12 +44,8 @@ export async function startBackgroundUpdate() {
 
   const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
   if (!hasStarted) {
-    await BackgroundFetch.registerTaskAsync(LOCATION_TASK_NAME, {
-      minimumInterval: 120, // 1 hour
-      stopOnTerminate: false,
-      startOnBoot: true,
-    });
-    console.log("Background fetch started ✅");
+ 
+    console.log("Background fetch started ");
   }
 }
 

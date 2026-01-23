@@ -22,6 +22,7 @@ const DepartmentScreen = () => {
   const [departmentName, setDepartmentName] = useState('');
   const [departmentHead, setDepartmentHead] = useState(null);
   const [loading, setLoading] = useState(true);
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const fetchDepartmentMembers = async () => {
     try {
@@ -43,7 +44,7 @@ const DepartmentScreen = () => {
 
   const getFullImageUrl = (url) => {
     if (!url) return null;
-    return url.startsWith('http') ? url : `http://178.248.112.16:8001${url}`;
+    return url.startsWith('http') ? url : `${BASE_URL}${url}`;
   };
 
   const renderMember = ({ item }) => (

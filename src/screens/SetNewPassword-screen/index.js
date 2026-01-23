@@ -28,6 +28,7 @@ export default function SetNewPasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const handleResetPassword = async () => {
     if (!password || !confirmPassword) {
@@ -52,7 +53,7 @@ export default function SetNewPasswordScreen() {
     }
 
     try {
-      const response = await axios.post('http://178.248.112.16:8001/api/forgot-password/reset/', {
+      const response = await axios.post(`${BASE_URL}/api/forgot-password/reset/`, {
         email,
         new_password: password,
         confirm_password: confirmPassword,

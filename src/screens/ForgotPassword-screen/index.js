@@ -20,6 +20,7 @@ import styles from './styles';
 const ForgotPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const handleResetPassword = async () => {
     if (!email) {
@@ -31,7 +32,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
       setLoading(true);
 
       const response = await axios.post(
-        'http://178.248.112.16:8001/api/forgot-password/send-otp/',
+        `${BASE_URL}/api/forgot-password/send-otp/`,
         { email }
       );
 

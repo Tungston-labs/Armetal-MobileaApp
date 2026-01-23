@@ -20,7 +20,7 @@ export default function RequestRejected({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
 
-  const API_BASE_URL = 'http://178.248.112.16:8001';
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -34,7 +34,7 @@ export default function RequestRejected({ navigation, route }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await authAxios.get(`${API_BASE_URL}/api/profile/`);
+        const response = await authAxios.get(`${BASE_URL}/api/profile/`);
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -52,7 +52,7 @@ export default function RequestRejected({ navigation, route }) {
   useEffect(() => {
     const fetchLeaveDetail = async () => {
       try {
-        const response = await authAxios.get(`${API_BASE_URL}/api/leave/emp/${leaveId}/`);
+        const response = await authAxios.get(`${BASE_URL}/api/leave/emp/${leaveId}/`);
         setLeave(response.data);
       } catch (error) {
         console.error('Failed to fetch rejected leave details:', error);

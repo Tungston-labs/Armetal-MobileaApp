@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import authAxios from '../../utils/authAxios';
 
-const API_BASE_URL = 'http://178.248.112.16:8000';
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 export default function LeaveHeader() {
@@ -33,7 +33,7 @@ export default function LeaveHeader() {
     if (!pic) return defaultAvatar;
     if (pic.startsWith("http")) return pic;
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
-    return `${API_BASE_URL}${path}`;
+    return `${BASE_URL}${path}`;
   };
 
   useEffect(() => {

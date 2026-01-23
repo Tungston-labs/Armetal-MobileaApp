@@ -38,6 +38,7 @@ export default function CreateNewPasswordScreen() {
       text2Style: { fontSize: 15, fontFamily: 'Raleway_500Medium' },
     });
   };
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const handleSetPassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -57,7 +58,7 @@ export default function CreateNewPasswordScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       await axios.post(
-        'http://178.248.112.16:8001/api/change-password/',
+        `${BASE_URL}/api/change-password/`,
         {
           old_password: currentPassword,
           new_password: newPassword,
