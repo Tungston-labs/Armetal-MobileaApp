@@ -1,4 +1,3 @@
-import "./src/utils/backgroundLocationTask";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Provider, useDispatch } from "react-redux";
@@ -9,13 +8,10 @@ import Toast from "react-native-toast-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
-
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
-import * as TaskManager from "expo-task-manager"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { startBackgroundTracking } from "./src/utils/backgroundLocationTracking";
 
 import {
   useFonts,

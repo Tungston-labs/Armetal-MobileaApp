@@ -6,11 +6,13 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Image, 
+  Image,
   Animated,
   Easing,
 } from "react-native";
 import * as Location from "expo-location";
+import * as IntentLauncher from "expo-intent-launcher";
+
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -28,16 +30,15 @@ import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
-import {
-  startBackgroundTracking,
-  stopBackgroundTracking
-} from '../../utils/backgroundLocationTracking';
-import AttendanceTracker from "../../utils/AttendanceTracker"
+import { NativeModules } from "react-native";
+
+const { LocationModule } = NativeModules;
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -58,17 +59,8 @@ const AttendanceScreen = () => {
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
   });
-  useEffect(() => {
-    (async () => {
-      const punchedIn = isCurrentlyPunchedIn();
-      if (punchedIn) {
-        await startBackgroundTracking(); // start hourly updates
-      } else {
-        await stopBackgroundTracking(); // stop updates
-      }
-    })();
-  }, []);
   
+
   const startRotation = () => {
     rotateValue.setValue(0);
     Animated.loop(
@@ -136,10 +128,10 @@ const AttendanceScreen = () => {
     if (!pic) return defaultAvatar;
 
     if (pic.startsWith("http")) {
-      return pic; 
+      return pic;
     }
 
-    
+
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
     return `${BASE_URL}${path}`;
   };
@@ -190,11 +182,35 @@ const AttendanceScreen = () => {
     };
   };
 
+const requestLocationPermissions = async () => {
+  const fg = await Location.requestForegroundPermissionsAsync();
+  if (fg.status !== "granted") {
+    Alert.alert("Permission required", "Location access is required");
+    return false;
+  }
 
- const handlePunch = async () => {
+  if (Platform.OS === "android") {
+    const bg = await Location.requestBackgroundPermissionsAsync();
+
+    if (bg.status !== "granted") {
+      Alert.alert(
+        "Background Location Required",
+        "Please allow background location for attendance tracking"
+      );
+      return false;
+    }
+  }
+
+  return true;
+};
+const handlePunch = async () => {
   setPunching(true);
   startRotation();
+
   try {
+    const permissionGranted = await requestLocationPermissions();
+    if (!permissionGranted) return;
+
     const location = await getCurrentLocation();
     if (!location) return;
 
@@ -203,31 +219,55 @@ const AttendanceScreen = () => {
       longitude: location.longitude,
     });
 
-    console.log("Swipe response:", res.data);
+    await fetchTodayAttendance();
 
-    if (res.data?.success === false) {
-      Alert.alert("Failed", res.data?.error || "Swipe failed");
-    } else {
-      await fetchTodayAttendance();
+    if (res.data?.action === "punch_in" && res.data?.session_id) {
+      await AsyncStorage.multiSet([
+        ["employeeId", employee.id.toString()],
+        ["sessionId", res.data.session_id.toString()],
+        ["punchedIn", "true"],
+      ]);
 
-      if (res.data?.action === "punch_in" && res.data?.session_id) {
-        setSessionId(res.data.session_id);
-        console.log(" Session started:", res.data.session_id);
-      }
+      const token = await AsyncStorage.getItem("accessToken");
 
-      if (res.data?.action === "punch_out") {
-        setSessionId(null);
-        console.log(" Session ended");
+      if (LocationModule?.startService && token) {
+        LocationModule.startService(
+          employee.id.toString(),
+          res.data.session_id.toString(),
+          token
+        );
       }
     }
+
+    if (res.data?.action === "punch_out") {
+      if (LocationModule?.stopService) {
+        LocationModule.stopService();
+      }
+
+      await AsyncStorage.multiRemove([
+        "employeeId",
+        "sessionId",
+        "punchedIn",
+      ]);
+    }
+
   } catch (error) {
-    console.log("Swipe error:", error);
-    Alert.alert("Failed", error.response?.data?.error || error.message || "Swipe failed");
+    Alert.alert(
+      "Failed",
+      error.response?.data?.error || error.message || "Swipe failed"
+    );
   } finally {
     setPunching(false);
     stopRotation();
   }
 };
+
+
+
+IntentLauncher.startActivityAsync(
+  IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+);
+
 
 
   useEffect(() => {
@@ -238,12 +278,7 @@ const AttendanceScreen = () => {
 
         await fetchTodayAttendance();
 
-        const punchedIn = isCurrentlyPunchedIn();
-        if (punchedIn) {
-          await startBackgroundTracking();
-        } else {
-          await stopBackgroundTracking();
-        }
+
       } catch (err) {
         console.log(err);
       } finally {
@@ -338,7 +373,7 @@ const AttendanceScreen = () => {
       </TouchableOpacity>
     </View>
   );
- 
+
   const menuItems = [
     { label: "Salary Slip", icon: SalarySlipIcon, route: "SalarySlipScreen" },
     { label: "Attendance", icon: AttendanceIcon, route: "AttendanceScreen" },
@@ -446,7 +481,7 @@ const AttendanceScreen = () => {
               style={styles.menuBox}
               onPress={() => navigation.navigate("LeaveAllScreen")}
             >
-              
+
               <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />
 
               <Text style={{
@@ -454,7 +489,7 @@ const AttendanceScreen = () => {
                 fontSize: 20,
                 fontWeight: "700",
                 marginTop: 2,
-                marginBottom: -25   
+                marginBottom: -25
               }}>
                 {pendingLeaves}
               </Text>
@@ -483,7 +518,7 @@ const AttendanceScreen = () => {
                   resizeMode="contain"
                 />
 
-                
+
                 <Animated.View
                   style={[
                     styles.rotatingCircle,
@@ -506,11 +541,7 @@ const AttendanceScreen = () => {
             />
 
           )}
-          {isCurrentlyPunchedIn() && sessionId && (
-          <AttendanceTracker 
-              sessionId={sessionId} 
-              employeeId={employee.id.toString()}
-            />     )}
+        
           {/* Attendance Box */}
 
 
