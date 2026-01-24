@@ -15,7 +15,7 @@ async function saveOffline(log) {
     const arr = existing ? JSON.parse(existing) : [];
     arr.push(log);
     await AsyncStorage.setItem(OFFLINE_KEY, JSON.stringify(arr));
-    console.log("📥 Saved offline log");
+    console.log(" Saved offline log");
   } catch (err) {
     console.log("Error saving offline log:", err);
   }

@@ -6,24 +6,28 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "node": "20.19.4"
     },
     "preview": {
-      "android": {
-        "buildType": "apk"
-      },
-      "distribution": "internal"
-    },
-    "apk": {
+      "distribution": "internal",
+      "node": "20.19.4",
       "android": {
         "buildType": "apk"
       }
     },
-    "production": { 
+    "apk": {
+      "node": "20.19.4",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "node": "20.19.4",
+      "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
-      },
-      "autoIncrement": true
+      }
     }
   },
   "submit": {
