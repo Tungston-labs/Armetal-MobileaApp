@@ -2,8 +2,7 @@ package com.anonymous.Rekory
 
 import android.app.*
 import android.content.Intent
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import okhttp3.*
@@ -16,10 +15,16 @@ class LocationService : Service() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private lateinit var wakeLock: PowerManager.WakeLock
     private val client = OkHttpClient()
 
     override fun onCreate() {
         super.onCreate()
+
+        // Acquire partial WakeLock to keep CPU alive
+        val pm = getSystemService(POWER_SERVICE) as PowerManager
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Rekory::LocationWakeLock")
+        wakeLock.acquire()
 
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -30,17 +35,16 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // If killed, system will restart service
         return START_STICKY
     }
 
     private fun startLocationUpdates() {
         val request = LocationRequest.Builder(
-            Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+            Priority.PRIORITY_HIGH_ACCURACY,
             2 * 60 * 1000L // every 2 minutes
         )
-            .setMinUpdateIntervalMillis(60_000) // 1 min min
-            .build()
+        .setMinUpdateIntervalMillis(60_000)
+        .build()
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
@@ -49,16 +53,11 @@ class LocationService : Service() {
             }
         }
 
-        fusedClient.requestLocationUpdates(
-            request,
-            locationCallback,
-            mainLooper
-        )
+        fusedClient.requestLocationUpdates(request, locationCallback, mainLooper)
     }
 
     private fun uploadLocation(lat: Double, lng: Double) {
         val prefs = getSharedPreferences("rekory", MODE_PRIVATE)
-
         val employeeId = prefs.getString("employeeId", null) ?: return
         val sessionId = prefs.getString("sessionId", null) ?: return
         val token = prefs.getString("token", null) ?: return
@@ -87,6 +86,7 @@ class LocationService : Service() {
 
     override fun onDestroy() {
         fusedClient.removeLocationUpdates(locationCallback)
+        wakeLock.release()
         super.onDestroy()
     }
 
@@ -95,7 +95,7 @@ class LocationService : Service() {
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this, "location_channel")
             .setContentTitle("Rekory Attendance")
-            .setContentText("Tracking work location in background")
+            .setContentText("Tracking location in background")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
