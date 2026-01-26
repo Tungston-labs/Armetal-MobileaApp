@@ -23,13 +23,13 @@ class LocationService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        // WakeLock
+        // WakeLock with timeout (SAFE)
         val pm = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
             "Rekory::LocationWakeLock"
         )
-        wakeLock.acquire()
+        wakeLock.acquire(10 * 60 * 1000L) // 10 minutes, system renews while service runs
 
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -38,8 +38,8 @@ class LocationService : Service() {
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let {
-                    sendLocationToBackend(it)
+                result.lastLocation?.let { location ->
+                    sendLocationToBackend(location)
                 }
             }
         }
@@ -47,12 +47,18 @@ class LocationService : Service() {
         startLocationUpdates()
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Restart service if system kills it
+        return START_STICKY
+    }
+
     private fun startLocationUpdates() {
         val request = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            2 * 60 * 1000
+            2 * 60 * 1000L
         )
-            .setMinUpdateIntervalMillis(60_000)
+            .setMinUpdateIntervalMillis(60_000L)
+            .setMaxUpdateDelayMillis(2 * 60 * 1000L)
             .setWaitForAccurateLocation(false)
             .build()
 
@@ -90,7 +96,10 @@ class LocationService : Service() {
             .build()
             .newCall(request)
             .enqueue(object : Callback {
-                override fun onFailure(call: Call, e: java.io.IOException) {}
+                override fun onFailure(call: Call, e: java.io.IOException) {
+                    // log if needed
+                }
+
                 override fun onResponse(call: Call, response: Response) {
                     response.close()
                 }
@@ -99,7 +108,11 @@ class LocationService : Service() {
 
     override fun onDestroy() {
         fusedClient.removeLocationUpdates(locationCallback)
-        if (wakeLock.isHeld) wakeLock.release()
+
+        if (wakeLock.isHeld) {
+            wakeLock.release()
+        }
+
         super.onDestroy()
     }
 
@@ -111,6 +124,7 @@ class LocationService : Service() {
             .setContentText("Tracking work location")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }

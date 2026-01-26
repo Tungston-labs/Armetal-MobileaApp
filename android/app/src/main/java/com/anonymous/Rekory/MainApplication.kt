@@ -22,10 +22,11 @@ class MainApplication : Application(), ReactApplication {
         this,
         object : DefaultReactNativeHost(this) {
 
-            // ✅ Add your custom packages here
             override fun getPackages(): List<ReactPackage> {
                 val packages = PackageList(this).packages.toMutableList()
-                packages.add(MyAppPackage()) // <-- LocationModule package
+                packages.add(MyAppPackage())
+                BatteryOptimizationPackage(),
+
                 return packages
             }
 
@@ -54,4 +55,11 @@ class MainApplication : Application(), ReactApplication {
         super.onConfigurationChanged(newConfig)
         ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig)
     }
+    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+intent.data = Uri.parse("package:${context.packageName}")
+context.startActivity(intent)
+val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+intent.data = Uri.parse("package:${context.packageName}")
+context.startActivity(intent)
+
 }

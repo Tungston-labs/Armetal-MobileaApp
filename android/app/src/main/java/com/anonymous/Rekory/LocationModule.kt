@@ -18,7 +18,12 @@ class LocationModule(private val context: ReactApplicationContext)
             .apply()
 
         val intent = Intent(context, LocationService::class.java)
-        context.startForegroundService(intent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
     }
 
     @ReactMethod
@@ -27,3 +32,4 @@ class LocationModule(private val context: ReactApplicationContext)
         context.stopService(intent)
     }
 }
+

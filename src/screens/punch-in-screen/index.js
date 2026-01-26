@@ -9,6 +9,7 @@ import {
   Image,
   Animated,
   Easing,
+  Platform,
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
@@ -300,7 +301,6 @@ IntentLauncher.startActivityAsync(
     let segmentContent;
 
     if (status === "half") {
-      // Half-day: split red (absent) and green (present)
       segmentContent = (
         <View style={{ flexDirection: "row", width: "100%", height: "100%" }}>
           <View style={{ flex: 1, backgroundColor: "#FF0000" }} />
