@@ -23,7 +23,6 @@ import { SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { setTokens } from '@/src/redux/features/authSlice';
 import { useDispatch } from 'react-redux';
-import { maybeAskBatteryPermission } from '../../utils/Batteryoptimization';
 
 const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -37,6 +36,7 @@ const dispatch=useDispatch();
 
 const handleLogin = async () => {
   if (!username || !password) {
+
     Alert.alert("Validation Error", "Please enter both username and password.");
     return;
   }
@@ -57,9 +57,6 @@ const handleLogin = async () => {
 
     dispatch(setTokens({ access, refresh }));
 
-    maybeAskBatteryPermission();
-
-    navigation.replace('HomeScreen');
 
   } catch (error) {
     console.log("API Error:", error.message);
@@ -69,7 +66,6 @@ const handleLogin = async () => {
     );
   }
 };
-
 
 
 

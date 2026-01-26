@@ -17,38 +17,27 @@ import java.util.concurrent.TimeUnit
 class LocationService : Service() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
     private lateinit var wakeLock: PowerManager.WakeLock
 
     override fun onCreate() {
         super.onCreate()
 
-        // WakeLock with timeout (SAFE)
         val pm = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
             "Rekory::LocationWakeLock"
         )
-        wakeLock.acquire(10 * 60 * 1000L) // 10 minutes, system renews while service runs
+        wakeLock.acquire()
 
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
 
         createNotificationChannel()
         startForeground(1, buildNotification())
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let { location ->
-                    sendLocationToBackend(location)
-                }
-            }
-        }
-
         startLocationUpdates()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Restart service if system kills it
         return START_STICKY
     }
 
@@ -57,62 +46,23 @@ class LocationService : Service() {
             Priority.PRIORITY_HIGH_ACCURACY,
             2 * 60 * 1000L
         )
-            .setMinUpdateIntervalMillis(60_000L)
-            .setMaxUpdateDelayMillis(2 * 60 * 1000L)
+            .setMinUpdateIntervalMillis(60_000)
             .setWaitForAccurateLocation(false)
             .build()
 
-        fusedClient.requestLocationUpdates(
-            request,
-            locationCallback,
-            mainLooper
+        val intent = Intent(this, LocationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-    }
 
-    private fun sendLocationToBackend(location: Location) {
-        val prefs = getSharedPreferences("rekory", MODE_PRIVATE)
-
-        val employeeId = prefs.getString("employeeId", null) ?: return
-        val sessionId = prefs.getString("sessionId", null) ?: return
-        val token = prefs.getString("token", null) ?: return
-
-        val json = JSONObject().apply {
-            put("session_id", sessionId)
-            put("latitude", location.latitude)
-            put("longitude", location.longitude)
-        }.toString()
-
-        val body = json.toRequestBody("application/json".toMediaType())
-
-        val request = Request.Builder()
-            .url("https://api.rekory.com/api/background-location/$employeeId/")
-            .addHeader("Authorization", "Bearer $token")
-            .post(body)
-            .build()
-
-        OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .build()
-            .newCall(request)
-            .enqueue(object : Callback {
-                override fun onFailure(call: Call, e: java.io.IOException) {
-                    // log if needed
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    response.close()
-                }
-            })
+        fusedClient.requestLocationUpdates(request, pendingIntent)
     }
 
     override fun onDestroy() {
-        fusedClient.removeLocationUpdates(locationCallback)
-
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-        }
-
+        wakeLock.release()
         super.onDestroy()
     }
 
@@ -121,11 +71,11 @@ class LocationService : Service() {
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this, "location_channel")
             .setContentTitle("Rekory Attendance")
-            .setContentText("Tracking work location")
+            .setContentText("Tracking work location in background")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
     }
 
@@ -134,7 +84,7 @@ class LocationService : Service() {
             val channel = NotificationChannel(
                 "location_channel",
                 "Location Tracking",
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             )
             getSystemService(NotificationManager::class.java)
                 .createNotificationChannel(channel)

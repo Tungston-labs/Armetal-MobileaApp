@@ -1,26 +1,31 @@
-import { Alert, NativeModules, Platform } from 'react-native';
-
-const { BatteryOptimization } = NativeModules;
+import { Alert, Platform } from "react-native";
+import * as IntentLauncher from "expo-intent-launcher";
+import * as Application from "expo-application";
 
 export const maybeAskBatteryPermission = () => {
-  // iOS safe-guard
-  if (Platform.OS !== 'android') return;
-
-  // Native module safe-guard
-  if (!BatteryOptimization?.requestIgnoreBatteryOptimizations) {
-    console.warn('BatteryOptimization native module not available');
-    return;
-  }
+  if (Platform.OS !== "android") return;
 
   Alert.alert(
-    'Allow background activity',
-    'To track attendance during work hours, Rekory needs permission to run without battery restrictions.',
+    "Allow background activity",
+    "To track attendance during work hours, Rekory needs permission to run without battery restrictions.",
     [
-      { text: 'Cancel', style: 'cancel' },
+      { text: "Cancel", style: "cancel" },
       {
-        text: 'Allow',
-        onPress: () =>
-          BatteryOptimization.requestIgnoreBatteryOptimizations(),
+        text: "Allow",
+        onPress: async () => {
+          try {
+            const packageName = Application.applicationId;
+
+            await IntentLauncher.startActivityAsync(
+              IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+              {
+                data: `package:${packageName}`,
+              }
+            );
+          } catch (e) {
+            console.log("Battery optimization intent failed", e);
+          }
+        },
       },
     ]
   );

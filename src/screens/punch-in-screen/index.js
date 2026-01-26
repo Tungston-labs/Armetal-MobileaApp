@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
+import * as Application from 'expo-application';
 
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -37,6 +38,7 @@ const { LocationModule } = NativeModules;
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -204,6 +206,8 @@ const requestLocationPermissions = async () => {
 
   return true;
 };
+
+
 const handlePunch = async () => {
   setPunching(true);
   startRotation();
@@ -223,13 +227,16 @@ const handlePunch = async () => {
     await fetchTodayAttendance();
 
     if (res.data?.action === "punch_in" && res.data?.session_id) {
+      await maybeAskBatteryPermission(); // Show once per session
+
+      const token = await AsyncStorage.getItem("accessToken");
+
       await AsyncStorage.multiSet([
         ["employeeId", employee.id.toString()],
         ["sessionId", res.data.session_id.toString()],
         ["punchedIn", "true"],
+        ["token", token || ""], // important
       ]);
-
-      const token = await AsyncStorage.getItem("accessToken");
 
       if (LocationModule?.startService && token) {
         LocationModule.startService(
@@ -249,9 +256,9 @@ const handlePunch = async () => {
         "employeeId",
         "sessionId",
         "punchedIn",
+        "token",
       ]);
     }
-
   } catch (error) {
     Alert.alert(
       "Failed",
@@ -265,9 +272,7 @@ const handlePunch = async () => {
 
 
 
-IntentLauncher.startActivityAsync(
-  IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-);
+
 
 
 
