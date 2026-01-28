@@ -4,7 +4,7 @@
     "slug": "Rekory",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/ico.png",
+    "icon": "./assets/images/favicon.png",
     "scheme": "Rekory",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -32,7 +32,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/ico.png",
+        "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -53,14 +53,14 @@
         "notificationColor": "#FF0000"
       },
       "splash": {
-        "image": "./assets/images/adaptive-iconn.png",
+        "image": "./assets/images/splash-icon.png",
         "resizeMode": "contain",
         "backgroundColor": "#151D34"
       }
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/images/icon.png"
+      "favicon": "./assets/images/favicon.png"
     },
     "experiments": {
       "typedRoutes": true
@@ -72,7 +72,7 @@
       }
     },
     "splash": {
-      "image": "./assets/images/adaptive-iconn.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
     }
