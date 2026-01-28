@@ -7,7 +7,7 @@ export const maybeAskBatteryPermission = () => {
 
   Alert.alert(
     "Allow background activity",
-    "To track attendance during work hours, Rekory needs permission to run without battery restrictions.",
+    "To track attendance reliably, Rekory must be allowed to run in the background without battery restrictions.\n\nOn Samsung: set Battery to Unrestricted and add Rekory to Never sleeping apps.",
     [
       { text: "Cancel", style: "cancel" },
       {
@@ -23,7 +23,16 @@ export const maybeAskBatteryPermission = () => {
               }
             );
           } catch (e) {
-            console.log("Battery optimization intent failed", e);
+            // Fallback: open app details so the user can set "Battery" to Unrestricted.
+            try {
+              const packageName = Application.applicationId;
+              await IntentLauncher.startActivityAsync(
+                IntentLauncher.ActivityAction.APPLICATION_DETAILS_SETTINGS,
+                { data: `package:${packageName}` }
+              );
+            } catch (e2) {
+              console.log("Battery optimization intent failed", e, e2);
+            }
           }
         },
       },

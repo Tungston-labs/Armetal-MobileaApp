@@ -57,13 +57,18 @@ module.exports = function withLocationNative(config) {
     const app = config.modResults.manifest.application[0];
 
     app.service = app.service || [];
-    app.service.push({
-      $: {
-        'android:name': `.LocationService`,
-        'android:exported': 'false',
-        'android:foregroundServiceType': 'location',
-      },
-    });
+    const serviceName = `.LocationService`;
+    const alreadyAdded = app.service.some((s) => s?.$?.['android:name'] === serviceName);
+    if (!alreadyAdded) {
+      app.service.push({
+        $: {
+          'android:name': serviceName,
+          'android:exported': 'false',
+          'android:foregroundServiceType': 'location',
+          'android:stopWithTask': 'false',
+        },
+      });
+    }
 
     return config;
   });

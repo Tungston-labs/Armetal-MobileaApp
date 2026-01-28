@@ -10,6 +10,7 @@ import {
   Animated,
   Easing,
   Platform,
+  PermissionsAndroid,
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
@@ -229,6 +230,19 @@ const handlePunch = async () => {
     if (res.data?.action === "punch_in" && res.data?.session_id) {
       await maybeAskBatteryPermission(); // Show once per session
 
+      // Android 13+ requires runtime permission to post notifications.
+      // If denied, the foreground service notification may not appear and the service can be killed.
+      if (Platform.OS === "android" && Platform.Version >= 33) {
+        try {
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+          );
+        } catch (e) {
+          // Non-fatal; service start will still be attempted.
+          console.log("POST_NOTIFICATIONS request failed", e);
+        }
+      }
+
       const token = await AsyncStorage.getItem("accessToken");
 
       await AsyncStorage.multiSet([
@@ -244,6 +258,8 @@ const handlePunch = async () => {
           res.data.session_id.toString(),
           token
         );
+      } else {
+        console.log("LocationModule is not available; service not started");
       }
     }
 
