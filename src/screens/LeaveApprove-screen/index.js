@@ -5,7 +5,7 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
-  RefreshControl,
+  RefreshControl, 
   ActivityIndicator,
   Platform,
 } from "react-native";
@@ -17,8 +17,6 @@ import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-
 
 export default function LeaveApproveScreen() {
   const navigation = useNavigation();
