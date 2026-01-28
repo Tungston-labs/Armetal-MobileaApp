@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import okhttp3.*
@@ -17,6 +18,7 @@ class LocationService : Service() {
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private val client = OkHttpClient()
+    private var updatesStarted = false
 
     override fun onCreate() {
         super.onCreate()
@@ -30,16 +32,25 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // If killed, system will restart service
+        // If killed, system will restart service.
+        // If restarted and updates got dropped, start them again.
+        if (!updatesStarted) {
+            startLocationUpdates()
+        }
         return START_STICKY
     }
 
     private fun startLocationUpdates() {
+        if (updatesStarted) return
+
+        // Samsung/Doze can heavily throttle "balanced" background updates.
+        // A foreground service should request a higher priority to remain reliable.
         val request = LocationRequest.Builder(
-            Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-            2 * 60 * 1000L // every 2 minutes
+            Priority.PRIORITY_HIGH_ACCURACY,
+            60_000L // target: 1 minute
         )
-            .setMinUpdateIntervalMillis(60_000) // 1 min min
+            .setMinUpdateIntervalMillis(30_000L)
+            .setMaxUpdateDelayMillis(0L) // avoid batching delays in background
             .build()
 
         locationCallback = object : LocationCallback() {
@@ -49,11 +60,17 @@ class LocationService : Service() {
             }
         }
 
-        fusedClient.requestLocationUpdates(
-            request,
-            locationCallback,
-            mainLooper
-        )
+        try {
+            fusedClient.requestLocationUpdates(
+                request,
+                locationCallback,
+                mainLooper
+            )
+            updatesStarted = true
+            Log.i("LocationService", "Location updates started")
+        } catch (t: Throwable) {
+            Log.e("LocationService", "requestLocationUpdates failed", t)
+        }
     }
 
     private fun uploadLocation(lat: Double, lng: Double) {
@@ -78,15 +95,28 @@ class LocationService : Service() {
             .build()
 
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("LocationService", "Upload failed: ${e.message}", e)
+            }
             override fun onResponse(call: Call, response: Response) {
+                if (!response.isSuccessful) {
+                    Log.w("LocationService", "Upload non-2xx: ${response.code}")
+                }
                 response.close()
             }
         })
     }
 
     override fun onDestroy() {
-        fusedClient.removeLocationUpdates(locationCallback)
+        try {
+            if (::locationCallback.isInitialized) {
+                fusedClient.removeLocationUpdates(locationCallback)
+            }
+        } catch (t: Throwable) {
+            Log.e("LocationService", "removeLocationUpdates failed", t)
+        } finally {
+            updatesStarted = false
+        }
         super.onDestroy()
     }
 
