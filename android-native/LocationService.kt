@@ -129,19 +129,20 @@ class LocationService : Service() {
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+.setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "location_channel",
-                "Location Tracking",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            getSystemService(NotificationManager::class.java)
-                .createNotificationChannel(channel)
-        }
+private fun createNotificationChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            "location_channel",
+            "Location Tracking",
+            NotificationManager.IMPORTANCE_DEFAULT 
+        )
+        getSystemService(NotificationManager::class.java)
+            .createNotificationChannel(channel)
     }
+}
+
 }
