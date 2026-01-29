@@ -56,7 +56,7 @@ class LocationService : Service() {
 
     val request = LocationRequest.Builder(
       Priority.PRIORITY_HIGH_ACCURACY,
-      90_0000L // target: 1 min
+      180_0000L 
     )
       .setMinUpdateIntervalMillis(30_000L)
       .setMaxUpdateDelayMillis(0L) // avoid batching delays
