@@ -33,5 +33,14 @@ class LocationModule(private val context: ReactApplicationContext) :
     val intent = Intent(context, LocationService::class.java)
     context.stopService(intent)
   }
+  @ReactMethod
+  fun startHourlyNotification() {
+    HourlyAlarmScheduler.start(context)
+}
+
+@ReactMethod
+fun stopHourlyNotification() {
+    HourlyAlarmScheduler.stop(context)
+}
 }
 

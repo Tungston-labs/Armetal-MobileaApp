@@ -62,4 +62,18 @@ class MainActivity : ReactActivity() {
       // because it's doing more than [Activity.moveTaskToBack] in fact.
       super.invokeDefaultOnBackPressed()
   }
+  override fun onResume() {
+    super.onResume()
+
+    val intent = Intent(this, LocationService::class.java).apply {
+        action = "REFRESH_LOCATION"
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startForegroundService(intent)
+    } else {
+        startService(intent)
+    }
+}
+
 }

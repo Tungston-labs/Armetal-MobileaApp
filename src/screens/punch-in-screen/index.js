@@ -63,7 +63,7 @@ const AttendanceScreen = () => {
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
   });
-  
+
 
   const startRotation = () => {
     rotateValue.setValue(0);
@@ -186,110 +186,114 @@ const AttendanceScreen = () => {
     };
   };
 
-const requestLocationPermissions = async () => {
-  const fg = await Location.requestForegroundPermissionsAsync();
-  if (fg.status !== "granted") {
-    Alert.alert("Permission required", "Location access is required");
-    return false;
-  }
+  const requestLocationPermissions = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
 
-  if (Platform.OS === "android") {
-    const bg = await Location.requestBackgroundPermissionsAsync();
-
-    if (bg.status !== "granted") {
+    if (status !== "granted") {
       Alert.alert(
-        "Background Location Required",
-        "Please allow background location for attendance tracking"
+        "Permission required",
+        "Location access is required to punch in"
       );
       return false;
     }
-  }
 
-  return true;
-};
+    return true;
+  };
 
+  useEffect(() => {
+    const fetchAndSend = async () => {
+      const punchedIn = await AsyncStorage.getItem("punchedIn");
+      const employeeId = await AsyncStorage.getItem("employeeId");
+      const sessionId = await AsyncStorage.getItem("sessionId");
 
-const handlePunch = async () => {
-  setPunching(true);
-  startRotation();
+      if (punchedIn !== "true" || !employeeId || !sessionId) return;
 
-  try {
-    const permissionGranted = await requestLocationPermissions();
-    if (!permissionGranted) return;
+      const loc = await getCurrentLocation();
+      if (!loc) return;
 
-    const location = await getCurrentLocation();
-    if (!location) return;
+      try {
+        await authAxios.post(`/background-location/${employeeId}/`, {
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          session_id: sessionId,
+        });
+      } catch (e) {
+        console.log("Foreground location send failed", e);
+      }
+    };
 
-    const res = await authAxios.post("/attendance/swipe/", {
-      latitude: location.latitude,
-      longitude: location.longitude,
-    });
+    fetchAndSend();
+  }, []);
 
-    await fetchTodayAttendance();
+  const handlePunch = async () => {
+    setPunching(true);
+    startRotation();
 
-    if (res.data?.action === "punch_in" && res.data?.session_id) {
-      await maybeAskBatteryPermission(); // Show once per session
+    try {
+      const permissionGranted = await requestLocationPermissions();
+      if (!permissionGranted) return;
 
-      // Android 13+ requires runtime permission to post notifications.
-      // If denied, the foreground service notification may not appear and the service can be killed.
-      if (Platform.OS === "android" && Platform.Version >= 33) {
-        try {
+      const location = await getCurrentLocation();
+      if (!location) return;
+
+      const res = await authAxios.post("/attendance/swipe/", {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+
+      await fetchTodayAttendance();
+      if (res.data?.action === "punch_in" && res.data?.session_id) {
+        await maybeAskBatteryPermission();
+
+        if (Platform.OS === "android" && Platform.Version >= 33) {
           await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
           );
-        } catch (e) {
-          // Non-fatal; service start will still be attempted.
-          console.log("POST_NOTIFICATIONS request failed", e);
+        }
+
+        const token = await AsyncStorage.getItem("accessToken");
+
+        await AsyncStorage.multiSet([
+          ["employeeId", employee.id.toString()],
+          ["sessionId", res.data.session_id.toString()],
+          ["punchedIn", "true"],
+          ["token", token || ""],
+        ]);
+
+        LocationModule.startHourlyNotification();
+
+        if (LocationModule?.startService && token) {
+          LocationModule.startService(
+            employee.id.toString(),
+            res.data.session_id.toString(),
+            token
+          );
         }
       }
 
-      const token = await AsyncStorage.getItem("accessToken");
+      if (res.data?.action === "punch_out") {
+        if (LocationModule?.stopService) {
+          LocationModule.stopService();
+        }
+        LocationModule.stopHourlyNotification();
 
-      await AsyncStorage.multiSet([
-        ["employeeId", employee.id.toString()],
-        ["sessionId", res.data.session_id.toString()],
-        ["punchedIn", "true"],
-        ["token", token || ""], // important
-      ]);
-
-      if (LocationModule?.startService && token) {
-        LocationModule.startService(
-          employee.id.toString(),
-          res.data.session_id.toString(),
-          token
-        );
-      } else {
-        console.log("LocationModule is not available; service not started");
+        await AsyncStorage.multiRemove([
+          "employeeId",
+          "sessionId",
+          "punchedIn",
+          "token",
+        ]);
       }
+    } catch (error) {
+      Alert.alert(
+        "Failed",
+        error.response?.data?.error || error.message || "Swipe failed"
+      );
+    } finally {
+      setPunching(false);
+      stopRotation();
     }
-
-    if (res.data?.action === "punch_out") {
-      if (LocationModule?.stopService) {
-        LocationModule.stopService();
-      }
-
-      await AsyncStorage.multiRemove([
-        "employeeId",
-        "sessionId",
-        "punchedIn",
-        "token",
-      ]);
-    }
-  } catch (error) {
-    Alert.alert(
-      "Failed",
-      error.response?.data?.error || error.message || "Swipe failed"
-    );
-  } finally {
-    setPunching(false);
-    stopRotation();
-  }
-};
-
-
-
-
-
+  };
 
 
   useEffect(() => {
@@ -562,7 +566,7 @@ const handlePunch = async () => {
             />
 
           )}
-        
+
           {/* Attendance Box */}
 
 
