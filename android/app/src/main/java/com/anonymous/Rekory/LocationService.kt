@@ -53,13 +53,13 @@ class LocationService : Service() {
     private fun startLocationUpdates() {
         if (updatesStarted) return
 
-        val request = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            60 * 60 * 1000L // 1 hour
-        )
-            .setMinUpdateIntervalMillis(5 * 60 * 1000L)
-            .setMaxUpdateDelayMillis(0)
-            .build()
+      val request = LocationRequest.Builder(
+    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+    15 * 60 * 1000L 
+)
+.setMinUpdateIntervalMillis(5 * 60 * 1000L)
+.setWaitForAccurateLocation(false)
+.build()
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
@@ -78,16 +78,32 @@ class LocationService : Service() {
         updatesStarted = true
     }
 
-    private fun fetchImmediateLocation() {
-        fusedClient.getCurrentLocation(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            null
-        ).addOnSuccessListener { location ->
-            location?.let {
-                uploadLocation(it.latitude, it.longitude)
-            }
+  private fun fetchImmediateLocation() {
+
+    // 1️⃣ Try cached location first
+    fusedClient.lastLocation.addOnSuccessListener { location ->
+        if (location != null) {
+            uploadLocation(location.latitude, location.longitude)
         }
     }
+
+    // 2️⃣ Force fresh GPS fix
+    fusedClient.getCurrentLocation(
+        Priority.PRIORITY_HIGH_ACCURACY,
+        null
+    ).addOnSuccessListener { location ->
+        location?.let {
+            uploadLocation(it.latitude, it.longitude)
+        }
+    }
+
+    if (::locationCallback.isInitialized) {
+        fusedClient.removeLocationUpdates(locationCallback)
+        updatesStarted = false
+        startLocationUpdates()
+    }
+}
+
 
     private fun uploadLocation(lat: Double, lng: Double) {
         val prefs = getSharedPreferences("rekory", MODE_PRIVATE)

@@ -10,13 +10,22 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-
 class HourlyReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i("HourlyReminderReceiver", "🔥 Hourly alarm fired")
+        Log.i("HourlyReminderReceiver", " Hourly alarm fired")
 
-        // Create channel safely
+        val refreshIntent = Intent(context, LocationService::class.java).apply {
+            action = LocationService.ACTION_REFRESH
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(refreshIntent)
+        } else {
+            context.startService(refreshIntent)
+        }
+
+        //  Notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "rekory_hourly",
@@ -30,6 +39,7 @@ class HourlyReminderReceiver : BroadcastReceiver() {
             manager.createNotificationChannel(channel)
         }
 
+        //  Open app intent (NO CLEAR_TASK)
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -44,7 +54,7 @@ class HourlyReminderReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, "rekory_hourly")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("Attendance Tracking")
-            .setContentText("Open the app to keep location tracking active")
+            .setContentText("Tap to open app")
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -55,3 +65,4 @@ class HourlyReminderReceiver : BroadcastReceiver() {
         HourlyAlarmScheduler.start(context)
     }
 }
+
