@@ -9,7 +9,9 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -19,9 +21,7 @@ import java.io.IOException
 class LocationService : Service() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
     private val client = OkHttpClient()
-    private var updatesStarted = false
 
     companion object {
         const val CHANNEL_ID = "location_service"
@@ -30,7 +30,6 @@ class LocationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
         createNotificationChannel()
         startForeground(101, buildNotification())
@@ -38,72 +37,30 @@ class LocationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        // 🔥 IMMEDIATE REFRESH WHEN APP OPENS
         if (intent?.action == ACTION_REFRESH) {
+            Log.i("LocationService", "🔄 Refresh requested")
             fetchImmediateLocation()
-        }
-
-        if (!updatesStarted) {
-            startLocationUpdates()
         }
 
         return START_STICKY
     }
 
-    private fun startLocationUpdates() {
-        if (updatesStarted) return
-
-      val request = LocationRequest.Builder(
-    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-    15 * 60 * 1000L 
-)
-.setMinUpdateIntervalMillis(5 * 60 * 1000L)
-.setWaitForAccurateLocation(false)
-.build()
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let {
-                    uploadLocation(it.latitude, it.longitude)
-                }
+    private fun fetchImmediateLocation() {
+        fusedClient.getCurrentLocation(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            null
+        ).addOnSuccessListener { location ->
+            location?.let {
+                Log.i(
+                    "LocationService",
+                    "📍 Location fetched: ${it.latitude}, ${it.longitude}"
+                )
+                uploadLocation(it.latitude, it.longitude)
             }
-        }
-
-        fusedClient.requestLocationUpdates(
-            request,
-            locationCallback,
-            mainLooper
-        )
-
-        updatesStarted = true
-    }
-
-  private fun fetchImmediateLocation() {
-
-    // 1️⃣ Try cached location first
-    fusedClient.lastLocation.addOnSuccessListener { location ->
-        if (location != null) {
-            uploadLocation(location.latitude, location.longitude)
+        }.addOnFailureListener {
+            Log.e("LocationService", "❌ Failed to get location", it)
         }
     }
-
-    // 2️⃣ Force fresh GPS fix
-    fusedClient.getCurrentLocation(
-        Priority.PRIORITY_HIGH_ACCURACY,
-        null
-    ).addOnSuccessListener { location ->
-        location?.let {
-            uploadLocation(it.latitude, it.longitude)
-        }
-    }
-
-    if (::locationCallback.isInitialized) {
-        fusedClient.removeLocationUpdates(locationCallback)
-        updatesStarted = false
-        startLocationUpdates()
-    }
-}
-
 
     private fun uploadLocation(lat: Double, lng: Double) {
         val prefs = getSharedPreferences("rekory", MODE_PRIVATE)
@@ -127,18 +84,19 @@ class LocationService : Service() {
             .build()
 
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("LocationService", "❌ Upload failed", e)
+            }
+
             override fun onResponse(call: Call, response: Response) {
                 response.close()
+                Log.i("LocationService", "✅ Location uploaded")
             }
         })
     }
 
     override fun onDestroy() {
-        if (::locationCallback.isInitialized) {
-            fusedClient.removeLocationUpdates(locationCallback)
-        }
-        updatesStarted = false
+        Log.i("LocationService", "🛑 Service destroyed")
         super.onDestroy()
     }
 
@@ -147,7 +105,7 @@ class LocationService : Service() {
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Rekory Attendance")
-            .setContentText("Tracking work location in background")
+            .setContentText("Tracking work location")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
@@ -167,4 +125,3 @@ class LocationService : Service() {
         }
     }
 }
-
