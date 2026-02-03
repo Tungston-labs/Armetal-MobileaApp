@@ -24,7 +24,7 @@ object HourlyAlarmScheduler {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val triggerTime = SystemClock.elapsedRealtime() + 60 * 60 * 1000 // 1 hour
+        val triggerTime = SystemClock.elapsedRealtime() + 15 * 60 * 1000 // 1 hour
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
