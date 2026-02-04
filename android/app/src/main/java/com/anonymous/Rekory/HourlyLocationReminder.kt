@@ -40,9 +40,10 @@ class HourlyReminderReceiver : BroadcastReceiver() {
         }
 
         //  Open app intent (NO CLEAR_TASK)
-        val openAppIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
+       val openAppIntent = Intent(context, MainActivity::class.java).apply {
+    action = "ACTION_NOTIFICATION_CLICK" // Add this custom action
+    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+}
 
         val pendingIntent = PendingIntent.getActivity(
             context,

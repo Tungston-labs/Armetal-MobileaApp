@@ -41,19 +41,31 @@ class MainActivity : ReactActivity() {
     }
     super.invokeDefaultOnBackPressed()
   }
+// Inside MainActivity.kt
+
+override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent) // Important to update the activity intent
+    handleNotificationClick(intent)
+}
+
+private fun handleNotificationClick(intent: Intent?) {
+    if (intent?.action == "ACTION_NOTIFICATION_CLICK") {
+        val refreshIntent = Intent(this, LocationService::class.java).apply {
+            action = LocationService.ACTION_REFRESH
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(refreshIntent)
+        } else {
+            startService(refreshIntent)
+        }
+    }
+}
 
 override fun onResume() {
     super.onResume()
-
-    val intent = Intent(this, LocationService::class.java).apply {
-        action = LocationService.ACTION_REFRESH
-    }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        startForegroundService(intent)
-    } else {
-        startService(intent)
-    }
+    handleNotificationClick(intent)
 }
 
 }
