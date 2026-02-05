@@ -51,15 +51,34 @@ class HourlyReminderReceiver : BroadcastReceiver() {
             openAppIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+val actionIntent = Intent(context, MainActivity::class.java).apply {
+    action = MainActivity.ACTION_VERIFY_LOCATION
+    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+}
 
-        val notification = NotificationCompat.Builder(context, "rekory_hourly")
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Attendance Tracking")
-            .setContentText("Tap to open app")
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
+
+val actionPendingIntent = PendingIntent.getActivity(
+    context,
+    1,
+    actionIntent,
+    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+)
+
+      val notification = NotificationCompat.Builder(context, "rekory_hourly")
+    .setSmallIcon(R.mipmap.ic_launcher)
+    .setContentTitle("Attendance Tracking")
+    .setContentText("Tap to open app")
+    .setContentIntent(pendingIntent) // main click
+    .setAutoCancel(true)
+    .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+    .addAction(
+        R.mipmap.ic_launcher,   // icon (can be 0 if not needed)
+        "Verify Location",      // button text
+        actionPendingIntent
+    )
+    .build()
+
 
         NotificationManagerCompat.from(context).notify(1001, notification)
 
