@@ -67,14 +67,14 @@ val actionPendingIntent = PendingIntent.getActivity(
       val notification = NotificationCompat.Builder(context, "rekory_hourly")
     .setSmallIcon(R.mipmap.ic_launcher)
     .setContentTitle("Attendance Tracking")
-    .setContentText("Tap to open app")
-    .setContentIntent(pendingIntent) // main click
+    .setContentText("Tap the button with this notification to track location")
+    .setContentIntent(pendingIntent) 
     .setAutoCancel(true)
     .setPriority(NotificationCompat.PRIORITY_HIGH)
 
     .addAction(
-        R.mipmap.ic_launcher,   // icon (can be 0 if not needed)
-        "Verify Location",      // button text
+        R.mipmap.ic_launcher,   
+        "Verify Location",      
         actionPendingIntent
     )
     .build()
@@ -82,7 +82,6 @@ val actionPendingIntent = PendingIntent.getActivity(
 
         NotificationManagerCompat.from(context).notify(1001, notification)
 
-        HourlyAlarmScheduler.start(context)
     }
 }
 

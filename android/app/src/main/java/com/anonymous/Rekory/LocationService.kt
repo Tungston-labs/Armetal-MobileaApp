@@ -38,7 +38,7 @@ class LocationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         if (intent?.action == ACTION_REFRESH) {
-            Log.i("LocationService", "🔄 Refresh requested")
+            Log.i("LocationService", " Refresh requested")
             fetchImmediateLocation()
         }
 
@@ -53,12 +53,12 @@ class LocationService : Service() {
             location?.let {
                 Log.i(
                     "LocationService",
-                    "📍 Location fetched: ${it.latitude}, ${it.longitude}"
+                    " Location fetched: ${it.latitude}, ${it.longitude}"
                 )
                 uploadLocation(it.latitude, it.longitude)
             }
         }.addOnFailureListener {
-            Log.e("LocationService", "❌ Failed to get location", it)
+            Log.e("LocationService", " Failed to get location", it)
         }
     }
 
@@ -85,18 +85,18 @@ class LocationService : Service() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("LocationService", "❌ Upload failed", e)
+                Log.e("LocationService", " Upload failed", e)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.close()
-                Log.i("LocationService", "✅ Location uploaded")
+                Log.i("LocationService", " Location uploaded")
             }
         })
     }
 
     override fun onDestroy() {
-        Log.i("LocationService", "🛑 Service destroyed")
+        Log.i("LocationService", " Service destroyed")
         super.onDestroy()
     }
 
