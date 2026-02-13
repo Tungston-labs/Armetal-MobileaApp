@@ -23,8 +23,8 @@ const RefreshWrapper = ({ children, onRefresh, style, contentContainerStyle }) =
         <RefreshControl
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          colors={["#ffffff", "#d3d3d3"]}  // ✅ Android spinner (white & light gray)
-          tintColor="#ffffff"              // ✅ iOS spinner (white)
+          colors={["#ffffff", "#d3d3d3"]}  
+          tintColor="#ffffff"             
           progressBackgroundColor={Platform.OS === "android" ? "#2c2c2c" : "transparent"} 
         />
       }

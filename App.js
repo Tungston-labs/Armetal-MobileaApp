@@ -11,6 +11,7 @@ import { restoreSession } from "./src/redux/features/authSlice";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DeviceEventEmitter, DevSettings, Platform } from "react-native";
 
 
 import {
@@ -27,7 +28,6 @@ import {
   Montserrat_800ExtraBold,
 } from "@expo-google-fonts/montserrat";
 
-// ---------------- Permissions Setup ----------------
 
 enableScreens();
 
@@ -39,7 +39,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// ---------------- Session Restore Logic ----------------
 
 const InitAuth = ({ children }) => {
   const dispatch = useDispatch();
@@ -65,7 +64,6 @@ const InitAuth = ({ children }) => {
   return children;
 };
 
-// ---------------- Main App Component ----------------
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
@@ -79,6 +77,20 @@ const App = () => {
     Montserrat_700Bold,
     Montserrat_800ExtraBold,
   });
+useEffect(() => {
+  if (Platform.OS !== "android") return;
+
+  const subscription = DeviceEventEmitter.addListener(
+    "FORCE_APP_RELOAD",
+    () => {
+      console.log("🔄 Native event received → Reloading app");
+      DevSettings.reload();
+    }
+  );
+
+  return () => subscription.remove();
+}, []);
+
 
   useEffect(() => {
     const prepare = async () => {
