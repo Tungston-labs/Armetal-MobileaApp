@@ -40,7 +40,6 @@ const { LocationModule } = NativeModules;
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -245,7 +244,6 @@ const AttendanceScreen = () => {
 
       await fetchTodayAttendance();
       if (res.data?.action === "punch_in" && res.data?.session_id) {
-        await maybeAskBatteryPermission();
 
         if (Platform.OS === "android" && Platform.Version >= 33) {
           await PermissionsAndroid.request(
@@ -575,8 +573,11 @@ const AttendanceScreen = () => {
               title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to punch in"}
               successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
               onSwipeSuccess={() => {
-                setPendingPunch(true);
-                setShowDisclosure(true);
+                if (!isCurrentlyPunchedIn()) {
+                  setShowDisclosure(true);
+                } else {
+                  handlePunch();
+                }
               }}
               backgroundColor="#ddd"
               thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
@@ -650,9 +651,13 @@ const AttendanceScreen = () => {
 
       <LocationDisclosure
         visible={showDisclosure}
-        onAgree={onDisclosureAgree}
-        onCancel={onDisclosureCancel}
+        onAgree={() => {
+          setShowDisclosure(false);
+          handlePunch();
+        }}
+        onCancel={() => setShowDisclosure(false)}
       />
+
 
 
     </SafeAreaView>
