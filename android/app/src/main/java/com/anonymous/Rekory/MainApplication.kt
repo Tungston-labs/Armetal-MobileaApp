@@ -22,10 +22,8 @@ class MainApplication : Application(), ReactApplication {
         this,
         object : DefaultReactNativeHost(this) {
 
-            // ✅ Add your custom packages here
             override fun getPackages(): List<ReactPackage> {
                 val packages = PackageList(this).packages.toMutableList()
-                packages.add(MyAppPackage()) // <-- LocationModule package
                 return packages
             }
 
