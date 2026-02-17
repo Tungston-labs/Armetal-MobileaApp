@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter, DevSettings, Platform } from "react-native";
 
 
+
 import {
   useFonts,
   Raleway_400Regular,
@@ -111,6 +112,7 @@ useEffect(() => {
   }, [appReady]);
 
   if (!appReady) return null;
+
 
   return (
     <Provider store={store}>

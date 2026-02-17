@@ -10,12 +10,12 @@ import {
   Animated,
   Easing,
   Platform,
-  PermissionsAndroid,
 } from "react-native";
 import * as Location from "expo-location";
+import * as IntentLauncher from "expo-intent-launcher";
+import BackgroundGeolocation from "react-native-background-geolocation";
 
-import { NativeEventEmitter, NativeModules, } from "react-native";
-const { LocationManager, LocationEventEmitter } = NativeModules;
+import { NativeEventEmitter,  } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -33,7 +33,13 @@ import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
-
+import { NativeModules } from "react-native";
+import LocationDisclosure from "@/src/utils/LocationDisclosure"
+const { LocationModule } = NativeModules;
+import {
+  startBackgroundTracking,
+  stopBackgroundTracking,
+} from "../../services/locationService.js";
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -53,7 +59,7 @@ const AttendanceScreen = () => {
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
   const [sessionId, setSessionId] = useState(null);
-   const { LocationModule } = NativeModules;
+  const [showDisclosure, setShowDisclosure] = useState(false);
 
 
   const [dayStatus, setDayStatus] = useState([]);
@@ -90,7 +96,7 @@ const AttendanceScreen = () => {
 
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
-      const month = firstDate.getMonth(); // 0-indexed
+      const month = firstDate.getMonth(); 
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const allDates = [];
@@ -101,7 +107,6 @@ const AttendanceScreen = () => {
         allDates.push(iso);
       }
 
-      // Initialize all days: Sundays as holiday, rest working
       allDates.forEach((date) => {
         if (data.company_off_day_dates.includes(date)) {
           statusMap[date] = "holiday";
@@ -110,12 +115,10 @@ const AttendanceScreen = () => {
         }
       });
 
-      // Mark present, absent, holiday
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
 
-      // Mark half-days (overrides present)
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
 
       const orderedStatuses = allDates.map((date) => statusMap[date]);
@@ -186,150 +189,101 @@ const AttendanceScreen = () => {
   };
 
   const requestLocationPermissions = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission required",
-        "Location access is required to punch in"
-      );
+    const fg = await Location.requestForegroundPermissionsAsync();
+    if (fg.status !== "granted") {
+      Alert.alert("Permission required", "Location access is required");
       return false;
+    }
+
+    if (Platform.OS === "android") {
+      const bg = await Location.requestBackgroundPermissionsAsync();
+
+      if (bg.status !== "granted") {
+        Alert.alert(
+          "Background Location Required",
+          "Please allow background location for attendance tracking"
+        );
+        return false;
+      }
     }
 
     return true;
   };
+  const handlePunch = async () => {
+    setPunching(true);
+    startRotation();
 
-  useEffect(() => {
-    const fetchAndSend = async () => {
-      const punchedIn = await AsyncStorage.getItem("punchedIn");
-      const employeeId = await AsyncStorage.getItem("employeeId");
-      const sessionId = await AsyncStorage.getItem("sessionId");
-
-      if (punchedIn !== "true" || !employeeId || !sessionId) return;
-
-      const loc = await getCurrentLocation();
-      if (!loc) return;
-
-      try {
-        await authAxios.post(`/background-location/${employeeId}/`, {
-          latitude: loc.latitude,
-          longitude: loc.longitude,
-          session_id: sessionId,
-        });
-      } catch (e) {
-        console.log("Foreground location send failed", e);
+    try {
+      const permissionGranted = await requestLocationPermissions();
+      if (!permissionGranted) {
+        setPunching(false);
+        stopRotation();
+        return;
       }
-    };
 
-    fetchAndSend();
-  }, []);
+      const location = await getCurrentLocation();
+      if (!location) {
+        setPunching(false);
+        stopRotation();
+        return;
+      }
 
+      const res = await authAxios.post("/attendance/swipe/", {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
 
-useEffect(() => {
-  if (Platform.OS !== "ios") return;
-  if (!LocationEventEmitter) {
-    console.warn(" LocationEventEmitter native module not found");
-    return;
-  }
+      await fetchTodayAttendance();
+if (res.data?.action === "punch_in" && res.data?.session_id) {
+  const employeeId = employee.id.toString();
+  const sessionId = res.data.session_id.toString();
+  const token = await AsyncStorage.getItem("accessToken");
 
-  const emitter = new NativeEventEmitter(LocationEventEmitter);
-
-  const subscription = emitter.addListener(
-    "LOCATION_UPDATE",
-    async (location) => {
-      console.log("📍 iOS BG Location:", location);
-    }
-  );
-
-  return () => subscription.remove();
-}, []);
-
-const handlePunch = async () => {
-  setPunching(true);
-  startRotation();
+  await AsyncStorage.multiSet([
+    ["employeeId", employeeId],
+    ["sessionId", sessionId],
+    ["punchedIn", "true"],
+  ]);
 
   try {
-    const permissionGranted = await requestLocationPermissions();
-    if (!permissionGranted) return;
-
-    const location = await getCurrentLocation();
-    if (!location) return;
-
-    const res = await authAxios.post("/attendance/swipe/", {
-      latitude: location.latitude,
-      longitude: location.longitude,
-    });
-
-    await fetchTodayAttendance();
-
-    // -------------------- PUNCH IN --------------------
-    if (res.data?.action === "punch_in" && res.data?.session_id) {
-      await maybeAskBatteryPermission();
-
-      if (Platform.OS === "android" && Platform.Version >= 33) {
-        await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-        );
-      }
-
-      const token = await AsyncStorage.getItem("accessToken");
-
-      await AsyncStorage.multiSet([
-        ["employeeId", employee.id.toString()],
-        ["sessionId", res.data.session_id.toString()],
-        ["punchedIn", "true"],
-        ["token", token || ""],
-      ]);
-
-      // 🔹 ANDROID ONLY
-      if (Platform.OS === "android") {
-        LocationModule?.startHourlyNotification?.();
-
-        if (LocationModule?.startService && token) {
-          LocationModule.startService(
-            employee.id.toString(),
-            res.data.session_id.toString(),
-            token
-          );
-        }
-      }
-
-      // 🔹 IOS ONLY
-      if (Platform.OS === "ios" && LocationManager?.startTracking) {
-        LocationManager.startTracking();
-      }
-    }
-
-    // -------------------- PUNCH OUT --------------------
-    if (res.data?.action === "punch_out") {
-      if (Platform.OS === "android") {
-        LocationModule?.stopService?.();
-        LocationModule?.stopHourlyNotification?.();
-      }
-
-      if (Platform.OS === "ios" && LocationManager?.stopTracking) {
-        LocationManager.stopTracking();
-      }
-
-      await AsyncStorage.multiRemove([
-        "employeeId",
-        "sessionId",
-        "punchedIn",
-        "token",
-      ]);
-    }
-  } catch (error) {
-    Alert.alert(
-      "Failed",
-      error.response?.data?.error || error.message || "Swipe failed"
+    await IntentLauncher.startActivityAsync(
+      IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
     );
-  } finally {
-    setPunching(false);
-    stopRotation();
+  } catch (e) {
+    console.log("Battery optimization intent failed");
   }
-};
+
+  await startBackgroundTracking({
+    employeeId,
+    sessionId,
+    token,
+  });
+}
 
 
+      if (res.data?.action === "punch_out") {
+
+await stopBackgroundTracking();
+
+        await AsyncStorage.multiRemove([
+          "employeeId",
+          "sessionId",
+          "punchedIn",
+        ]);
+
+        console.log(" Background tracking stopped");
+      }
+
+    } catch (error) {
+      Alert.alert(
+        "Failed",
+        error.response?.data?.error || error.message || "Swipe failed"
+      );
+    } finally {
+      setPunching(false);
+      stopRotation();
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -400,7 +354,6 @@ const handlePunch = async () => {
       >
         {dayStatus.map((status, index) => getSegment(status, index))}
 
-        {/* Gradient Circle */}
         <View style={styles.circle}>
           <Svg height="160" width="160">
             <Defs>
@@ -419,11 +372,9 @@ const handlePunch = async () => {
                 <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
               </RadialGradient>
             </Defs>
-            {/* Fill full circle */}
             <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
           </Svg>
 
-          {/* Text on top of gradient */}
           <View style={styles.textContainer}>
             <Text style={styles.dayText}>{todayWeekday}</Text>
             <Text style={styles.monthText}>{todayMonth}</Text>
@@ -557,7 +508,6 @@ const handlePunch = async () => {
               <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
             </TouchableOpacity>
 
-            {/* ✅ Apply Leave Box */}
             <TouchableOpacity
               style={[styles.menuBox, styles.applyLeaveBox]}
               onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -567,11 +517,9 @@ const handlePunch = async () => {
             </TouchableOpacity>
           </View>
 
-          {/* 🔄 Loader or SwipeButton */}
           {punching ? (
             <View style={styles.loaderOverlay}>
               <View style={styles.logoWrapper}>
-                {/* Static logo in center */}
                 <Image
                   source={require("../../../assets/images/logo.png")}
                   style={styles.logoImage}
@@ -594,22 +542,25 @@ const handlePunch = async () => {
             <SwipeButton
               title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to punch in"}
               successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
-              onSwipeSuccess={handlePunch}
-              backgroundColor="#ddd"
+              onSwipeSuccess={() => {
+                if (!isCurrentlyPunchedIn()) {
+                  setShowDisclosure(true);
+                } else {
+                  handlePunch();
+                }
+              }} backgroundColor="#ddd"
               thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
               resetAfterSuccess={true}
             />
 
           )}
 
-          {/* Attendance Box */}
 
 
           <Pressable
             style={styles.attendanceBox}
             onPress={() => navigation.navigate("AttendanceScreen")}
           >
-            {/* Date (left) + Hours with Clock (right) in same row */}
             <View style={styles.headerRow}>
               <Text style={styles.attendanceTitle}>
                 {today.toLocaleDateString("en-US", {
@@ -664,6 +615,14 @@ const handlePunch = async () => {
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       )}
+     <LocationDisclosure
+        visible={showDisclosure}
+        onAgree={() => {
+          setShowDisclosure(false);
+          handlePunch();
+        }}
+        onCancel={() => setShowDisclosure(false)}
+      />
 
 
 
@@ -672,5 +631,4 @@ const handlePunch = async () => {
 };
 
 export default AttendanceScreen;
-
 
