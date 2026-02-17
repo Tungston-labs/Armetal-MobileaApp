@@ -53,19 +53,19 @@
 	<string>Allow Rekory to track your location even in background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to access your location</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>BackgroundLocation</key>
+		<string>Location required for attendance tracking.</string>
+	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to track attendance.</string>
 	<key>UIBackgroundModes</key>
-<array>
-  <string>location</string>
-  <string>processing</string>
-</array>
-
-	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
-<dict>
-  <key>BackgroundLocation</key>
-  <string>Location required for attendance tracking.</string>
-</dict>
+	<array>
+		<string>location</string>
+	</array>
+	<key>NSMotionUsageDescription</key>
+<string>This app uses motion data to improve background tracking and provide accurate location updates.</string>
 
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
