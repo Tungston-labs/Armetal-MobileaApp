@@ -56,9 +56,17 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to track attendance.</string>
 	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
+<array>
+  <string>location</string>
+  <string>processing</string>
+</array>
+
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+<dict>
+  <key>BackgroundLocation</key>
+  <string>Location required for attendance tracking.</string>
+</dict>
+
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

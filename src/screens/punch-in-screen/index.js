@@ -15,7 +15,7 @@ import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
 import BackgroundGeolocation from "react-native-background-geolocation";
 
-import { NativeEventEmitter,  } from "react-native";
+import { NativeEventEmitter, } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -96,7 +96,7 @@ const AttendanceScreen = () => {
 
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
-      const month = firstDate.getMonth(); 
+      const month = firstDate.getMonth();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const allDates = [];
@@ -234,36 +234,43 @@ const AttendanceScreen = () => {
       });
 
       await fetchTodayAttendance();
-if (res.data?.action === "punch_in" && res.data?.session_id) {
-  const employeeId = employee.id.toString();
-  const sessionId = res.data.session_id.toString();
-  const token = await AsyncStorage.getItem("accessToken");
+      if (res.data?.action === "punch_in" && res.data?.session_id) {
+        const employeeId = employee.id.toString();
+        const sessionId = res.data.session_id.toString();
+        const token = await AsyncStorage.getItem("accessToken");
 
-  await AsyncStorage.multiSet([
-    ["employeeId", employeeId],
-    ["sessionId", sessionId],
-    ["punchedIn", "true"],
-  ]);
+        await AsyncStorage.multiSet([
+          ["employeeId", employeeId],
+          ["sessionId", sessionId],
+          ["punchedIn", "true"],
+        ]);
 
-  try {
-    await IntentLauncher.startActivityAsync(
-      IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-    );
-  } catch (e) {
-    console.log("Battery optimization intent failed");
-  }
+        try {
+          if (Platform.OS === "android") {
+            try {
+              await IntentLauncher.startActivityAsync(
+                IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+              );
+            } catch (e) {
+              console.log("Battery optimization intent failed");
+            }
+          }
 
-  await startBackgroundTracking({
-    employeeId,
-    sessionId,
-    token,
-  });
-}
+        } catch (e) {
+          console.log("Battery optimization intent failed");
+        }
+
+        await startBackgroundTracking({
+          employeeId,
+          sessionId,
+          token,
+        });
+      }
 
 
       if (res.data?.action === "punch_out") {
 
-await stopBackgroundTracking();
+        await stopBackgroundTracking();
 
         await AsyncStorage.multiRemove([
           "employeeId",
@@ -615,7 +622,7 @@ await stopBackgroundTracking();
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       )}
-     <LocationDisclosure
+      <LocationDisclosure
         visible={showDisclosure}
         onAgree={() => {
           setShowDisclosure(false);

@@ -97,15 +97,21 @@ export const startBackgroundTracking = async ({
 
   if (!isInitialized) {
 await BackgroundGeolocation.ready({
-  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_LOW,
-  distanceFilter: 1000,
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
+
+  distanceFilter: 0,          
+  stationaryRadius: 25,
+
   stopOnTerminate: false,
   startOnBoot: true,
   enableHeadless: true,
   preventSuspend: true,
   foregroundService: true,
 
-  heartbeatInterval: 1800, 
+  heartbeatInterval: 1800,    
+
+  allowIdenticalLocations: true, 
+  pausesLocationUpdatesAutomatically: false,
 
   autoSync: false,
   batchSync: false,
@@ -115,9 +121,10 @@ await BackgroundGeolocation.ready({
 
   notification: {
     title: "Rekory Attendance",
-    text: "Location updates every 30 minutes",
+    text: "Tracking active (every 30 mins)",
   },
 });
+
 
 
     BackgroundGeolocation.onLocation(async (location) => {

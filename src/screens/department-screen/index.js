@@ -28,6 +28,8 @@ const DepartmentScreen = () => {
     try {
       setLoading(true);
       const res = await authAxios.get('/employees/my-department/');
+      console.log("Department API:", res.data);
+
       setMembers(res.data.members || []);
       setDepartmentName(res.data.department || 'Department');
       setDepartmentHead(res.data.head || null);
