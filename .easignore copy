@@ -1,0 +1,35 @@
+# EAS Build upload ignore file.
+# Reduces archive size and avoids uploading build/cache artifacts.
+
+# Expo / Metro
+.expo/
+.expo-shared/
+**/.metro-cache/**
+**/.cache/**
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Android build artifacts / caches
+android/.gradle/
+android/build/
+android/app/build/
+**/*.iml
+
+# iOS build artifacts / caches (if present)
+ios/Pods/
+ios/build/
+
+# IDE / OS
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini
+
+# Local inspection outputs
+inspect-preview/
+inspect-production/
+

@@ -13,9 +13,9 @@ import {
   PermissionsAndroid,
 } from "react-native";
 import * as Location from "expo-location";
-import * as IntentLauncher from "expo-intent-launcher";
-import * as Application from 'expo-application';
 
+import { NativeEventEmitter, NativeModules, } from "react-native";
+const { LocationManager, LocationEventEmitter } = NativeModules;
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -33,9 +33,7 @@ import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
-import { NativeModules } from "react-native";
 
-const { LocationModule } = NativeModules;
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -55,6 +53,7 @@ const AttendanceScreen = () => {
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
   const [sessionId, setSessionId] = useState(null);
+   const { LocationModule } = NativeModules;
 
 
   const [dayStatus, setDayStatus] = useState([]);
@@ -225,42 +224,66 @@ const AttendanceScreen = () => {
     fetchAndSend();
   }, []);
 
-  const handlePunch = async () => {
-    setPunching(true);
-    startRotation();
 
-    try {
-      const permissionGranted = await requestLocationPermissions();
-      if (!permissionGranted) return;
+useEffect(() => {
+  if (Platform.OS !== "ios") return;
+  if (!LocationEventEmitter) {
+    console.warn(" LocationEventEmitter native module not found");
+    return;
+  }
 
-      const location = await getCurrentLocation();
-      if (!location) return;
+  const emitter = new NativeEventEmitter(LocationEventEmitter);
 
-      const res = await authAxios.post("/attendance/swipe/", {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
+  const subscription = emitter.addListener(
+    "LOCATION_UPDATE",
+    async (location) => {
+      console.log("📍 iOS BG Location:", location);
+    }
+  );
 
-      await fetchTodayAttendance();
-      if (res.data?.action === "punch_in" && res.data?.session_id) {
-        await maybeAskBatteryPermission();
+  return () => subscription.remove();
+}, []);
 
-        if (Platform.OS === "android" && Platform.Version >= 33) {
-          await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-          );
-        }
+const handlePunch = async () => {
+  setPunching(true);
+  startRotation();
 
-        const token = await AsyncStorage.getItem("accessToken");
+  try {
+    const permissionGranted = await requestLocationPermissions();
+    if (!permissionGranted) return;
 
-        await AsyncStorage.multiSet([
-          ["employeeId", employee.id.toString()],
-          ["sessionId", res.data.session_id.toString()],
-          ["punchedIn", "true"],
-          ["token", token || ""],
-        ]);
+    const location = await getCurrentLocation();
+    if (!location) return;
 
-        LocationModule.startHourlyNotification();
+    const res = await authAxios.post("/attendance/swipe/", {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+
+    await fetchTodayAttendance();
+
+    // -------------------- PUNCH IN --------------------
+    if (res.data?.action === "punch_in" && res.data?.session_id) {
+      await maybeAskBatteryPermission();
+
+      if (Platform.OS === "android" && Platform.Version >= 33) {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        );
+      }
+
+      const token = await AsyncStorage.getItem("accessToken");
+
+      await AsyncStorage.multiSet([
+        ["employeeId", employee.id.toString()],
+        ["sessionId", res.data.session_id.toString()],
+        ["punchedIn", "true"],
+        ["token", token || ""],
+      ]);
+
+      // 🔹 ANDROID ONLY
+      if (Platform.OS === "android") {
+        LocationModule?.startHourlyNotification?.();
 
         if (LocationModule?.startService && token) {
           LocationModule.startService(
@@ -271,29 +294,41 @@ const AttendanceScreen = () => {
         }
       }
 
-      if (res.data?.action === "punch_out") {
-        if (LocationModule?.stopService) {
-          LocationModule.stopService();
-        }
-        LocationModule.stopHourlyNotification();
-
-        await AsyncStorage.multiRemove([
-          "employeeId",
-          "sessionId",
-          "punchedIn",
-          "token",
-        ]);
+      // 🔹 IOS ONLY
+      if (Platform.OS === "ios" && LocationManager?.startTracking) {
+        LocationManager.startTracking();
       }
-    } catch (error) {
-      Alert.alert(
-        "Failed",
-        error.response?.data?.error || error.message || "Swipe failed"
-      );
-    } finally {
-      setPunching(false);
-      stopRotation();
     }
-  };
+
+    // -------------------- PUNCH OUT --------------------
+    if (res.data?.action === "punch_out") {
+      if (Platform.OS === "android") {
+        LocationModule?.stopService?.();
+        LocationModule?.stopHourlyNotification?.();
+      }
+
+      if (Platform.OS === "ios" && LocationManager?.stopTracking) {
+        LocationManager.stopTracking();
+      }
+
+      await AsyncStorage.multiRemove([
+        "employeeId",
+        "sessionId",
+        "punchedIn",
+        "token",
+      ]);
+    }
+  } catch (error) {
+    Alert.alert(
+      "Failed",
+      error.response?.data?.error || error.message || "Swipe failed"
+    );
+  } finally {
+    setPunching(false);
+    stopRotation();
+  }
+};
+
 
 
   useEffect(() => {
