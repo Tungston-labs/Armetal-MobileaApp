@@ -29,54 +29,50 @@ const uploadLocation = async ({
       }
     );
 
-    if (response.status === 401) {
-      console.log(" Access token expired. Refreshing...");
+   if (response.status === 401) {
+  console.log("Access token expired. Refreshing...");
 
-      const refreshToken = await AsyncStorage.getItem("refreshToken");
+  const refreshToken = await AsyncStorage.getItem("refreshToken");
 
-      const refreshResponse = await fetch(
-        "https://api.rekory.com/api/token/refresh/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            refresh: refreshToken,
-          }),
-        }
-      );
+  if (!refreshToken) {
+    console.log("No refresh token found. Stopping tracking.");
+    return;
+  }
 
-      if (!refreshResponse.ok) {
-        console.log(" Refresh failed");
-        return;
-      }
-
-      const refreshData = await refreshResponse.json();
-      const newAccessToken = refreshData.access;
-
-      await AsyncStorage.setItem("accessToken", newAccessToken);
-
-      console.log(" Token refreshed. Retrying upload...");
-
-      await fetch(
-        `https://api.rekory.com/api/background-location/${employeeId}/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            latitude,
-            longitude,
-            session_id: sessionId,
-          }),
-        }
-      );
-
-      return;
+  const refreshResponse = await fetch(
+    "https://api.rekory.com/api/token/refresh/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        refresh: refreshToken,
+      }),
     }
+  );
+
+  if (!refreshResponse.ok) {
+    console.log("Refresh failed:", refreshResponse.status);
+    return;
+  }
+
+  const refreshData = await refreshResponse.json();
+  const newAccessToken = refreshData.access;
+
+  await AsyncStorage.setItem("accessToken", newAccessToken);
+
+  console.log("Token refreshed successfully");
+
+  return await uploadLocation({
+    employeeId,
+    sessionId,
+    token: newAccessToken,
+    latitude,
+    longitude,
+  });
+}
+
 
     const result = await response.text();
     console.log(" Manual Upload:", response.status, result);
@@ -100,24 +96,29 @@ export const startBackgroundTracking = async ({
   }
 
   if (!isInitialized) {
-    await BackgroundGeolocation.ready({
-      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_LOW,
-      distanceFilter: 10,
-      stopOnTerminate: false,
-      startOnBoot: true,
-      enableHeadless: true,
-      preventSuspend: true,
-      foregroundService: true,
-      heartbeatInterval: 3600, 
-      autoSync: false,
-      batchSync: false,
-      debug: false,
-      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      notification: {
-        title: "Rekory Attendance",
-        text: "Location updates every 1 hour",
-      },
-    });
+await BackgroundGeolocation.ready({
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_LOW,
+  distanceFilter: 1000,
+  stopOnTerminate: false,
+  startOnBoot: true,
+  enableHeadless: true,
+  preventSuspend: true,
+  foregroundService: true,
+
+  heartbeatInterval: 1800, 
+
+  autoSync: false,
+  batchSync: false,
+
+  debug: false,
+  logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+
+  notification: {
+    title: "Rekory Attendance",
+    text: "Location updates every 30 minutes",
+  },
+});
+
 
     BackgroundGeolocation.onLocation(async (location) => {
       console.log(" Location received");
