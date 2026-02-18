@@ -10,11 +10,10 @@ import {
   Animated,
   Easing,
   Platform,
-  PermissionsAndroid,
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
-import * as Application from 'expo-application';
+import BackgroundGeolocation from "react-native-background-geolocation";
 
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -34,9 +33,12 @@ import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
 import { NativeModules } from "react-native";
-import LocationDisclosure from "@/src/utils/LocationDisclosure";
-
+import LocationDisclosure from "@/src/utils/LocationDisclosure"
 const { LocationModule } = NativeModules;
+import {
+  startBackgroundTracking,
+  stopBackgroundTracking,
+} from "../../services/locationService.js";
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -56,7 +58,6 @@ const AttendanceScreen = () => {
   const [pendingLeaves, setPendingLeaves] = useState();
   const [sessionId, setSessionId] = useState(null);
   const [showDisclosure, setShowDisclosure] = useState(false);
-  const [pendingPunch, setPendingPunch] = useState(false);
 
   const [dayStatus, setDayStatus] = useState([]);
   const rotateValue = useRef(new Animated.Value(0)).current;
@@ -92,7 +93,7 @@ const AttendanceScreen = () => {
 
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
-      const month = firstDate.getMonth(); // 0-indexed
+      const month = firstDate.getMonth(); 
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const allDates = [];
@@ -103,7 +104,6 @@ const AttendanceScreen = () => {
         allDates.push(iso);
       }
 
-      // Initialize all days: Sundays as holiday, rest working
       allDates.forEach((date) => {
         if (data.company_off_day_dates.includes(date)) {
           statusMap[date] = "holiday";
@@ -112,12 +112,10 @@ const AttendanceScreen = () => {
         }
       });
 
-      // Mark present, absent, holiday
       data.present_days_dates.forEach((date) => (statusMap[date] = "present"));
       data.absent_days_dates.forEach((date) => (statusMap[date] = "absent"));
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
 
-      // Mark half-days (overrides present)
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
 
       const orderedStatuses = allDates.map((date) => statusMap[date]);
@@ -188,54 +186,44 @@ const AttendanceScreen = () => {
   };
 
   const requestLocationPermissions = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission required",
-        "Location access is required to punch in"
-      );
+    const fg = await Location.requestForegroundPermissionsAsync();
+    if (fg.status !== "granted") {
+      Alert.alert("Permission required", "Location access is required");
       return false;
+    }
+
+    if (Platform.OS === "android") {
+      const bg = await Location.requestBackgroundPermissionsAsync();
+
+      if (bg.status !== "granted") {
+        Alert.alert(
+          "Background Location Required",
+          "Please allow background location for attendance tracking"
+        );
+        return false;
+      }
     }
 
     return true;
   };
-
-  useEffect(() => {
-    const fetchAndSend = async () => {
-      const punchedIn = await AsyncStorage.getItem("punchedIn");
-      const employeeId = await AsyncStorage.getItem("employeeId");
-      const sessionId = await AsyncStorage.getItem("sessionId");
-
-      if (punchedIn !== "true" || !employeeId || !sessionId) return;
-
-      const loc = await getCurrentLocation();
-      if (!loc) return;
-
-      try {
-        await authAxios.post(`/background-location/${employeeId}/`, {
-          latitude: loc.latitude,
-          longitude: loc.longitude,
-          session_id: sessionId,
-        });
-      } catch (e) {
-        console.log("Foreground location send failed", e);
-      }
-    };
-
-    fetchAndSend();
-  }, []);
-
   const handlePunch = async () => {
     setPunching(true);
     startRotation();
 
     try {
       const permissionGranted = await requestLocationPermissions();
-      if (!permissionGranted) return;
+      if (!permissionGranted) {
+        setPunching(false);
+        stopRotation();
+        return;
+      }
 
       const location = await getCurrentLocation();
-      if (!location) return;
+      if (!location) {
+        setPunching(false);
+        stopRotation();
+        return;
+      }
 
       const res = await authAxios.post("/attendance/swipe/", {
         latitude: location.latitude,
@@ -243,47 +231,46 @@ const AttendanceScreen = () => {
       });
 
       await fetchTodayAttendance();
-      if (res.data?.action === "punch_in" && res.data?.session_id) {
+if (res.data?.action === "punch_in" && res.data?.session_id) {
+  const employeeId = employee.id.toString();
+  const sessionId = res.data.session_id.toString();
+  const token = await AsyncStorage.getItem("accessToken");
 
-        if (Platform.OS === "android" && Platform.Version >= 33) {
-          await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-          );
-        }
+  await AsyncStorage.multiSet([
+    ["employeeId", employeeId],
+    ["sessionId", sessionId],
+    ["punchedIn", "true"],
+  ]);
 
-        const token = await AsyncStorage.getItem("accessToken");
+  try {
+    await IntentLauncher.startActivityAsync(
+      IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+    );
+  } catch (e) {
+    console.log("Battery optimization intent failed");
+  }
 
-        await AsyncStorage.multiSet([
-          ["employeeId", employee.id.toString()],
-          ["sessionId", res.data.session_id.toString()],
-          ["punchedIn", "true"],
-          ["token", token || ""],
-        ]);
+  await startBackgroundTracking({
+    employeeId,
+    sessionId,
+    token,
+  });
+}
 
-        LocationModule.startHourlyNotification();
-
-        if (LocationModule?.startService && token) {
-          LocationModule.startService(
-            employee.id.toString(),
-            res.data.session_id.toString(),
-            token
-          );
-        }
-      }
 
       if (res.data?.action === "punch_out") {
-        if (LocationModule?.stopService) {
-          LocationModule.stopService();
-        }
-        LocationModule.stopHourlyNotification();
+
+await stopBackgroundTracking();
 
         await AsyncStorage.multiRemove([
           "employeeId",
           "sessionId",
           "punchedIn",
-          "token",
         ]);
+
+        console.log(" Background tracking stopped");
       }
+
     } catch (error) {
       Alert.alert(
         "Failed",
@@ -294,7 +281,6 @@ const AttendanceScreen = () => {
       stopRotation();
     }
   };
-
 
   useEffect(() => {
     (async () => {
@@ -378,7 +364,6 @@ const AttendanceScreen = () => {
       >
         {dayStatus.map((status, index) => getSegment(status, index))}
 
-        {/* Gradient Circle */}
         <View style={styles.circle}>
           <Svg height="160" width="160">
             <Defs>
@@ -397,11 +382,9 @@ const AttendanceScreen = () => {
                 <Stop offset="100%" stopColor="rgba(51,82,186,0)" stopOpacity="0" />
               </RadialGradient>
             </Defs>
-            {/* Fill full circle */}
             <Circle cx="80" cy="80" r="80" fill="url(#grad)" />
           </Svg>
 
-          {/* Text on top of gradient */}
           <View style={styles.textContainer}>
             <Text style={styles.dayText}>{todayWeekday}</Text>
             <Text style={styles.monthText}>{todayMonth}</Text>
@@ -535,7 +518,6 @@ const AttendanceScreen = () => {
               <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
             </TouchableOpacity>
 
-            {/* ✅ Apply Leave Box */}
             <TouchableOpacity
               style={[styles.menuBox, styles.applyLeaveBox]}
               onPress={() => navigation.navigate("LeaveRequestFormScreen")}
@@ -545,11 +527,9 @@ const AttendanceScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* 🔄 Loader or SwipeButton */}
           {punching ? (
             <View style={styles.loaderOverlay}>
               <View style={styles.logoWrapper}>
-                {/* Static logo in center */}
                 <Image
                   source={require("../../../assets/images/logo.png")}
                   style={styles.logoImage}
@@ -578,22 +558,19 @@ const AttendanceScreen = () => {
                 } else {
                   handlePunch();
                 }
-              }}
-              backgroundColor="#ddd"
+              }} backgroundColor="#ddd"
               thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
               resetAfterSuccess={true}
             />
 
           )}
 
-          {/* Attendance Box */}
 
 
           <Pressable
             style={styles.attendanceBox}
             onPress={() => navigation.navigate("AttendanceScreen")}
           >
-            {/* Date (left) + Hours with Clock (right) in same row */}
             <View style={styles.headerRow}>
               <Text style={styles.attendanceTitle}>
                 {today.toLocaleDateString("en-US", {
@@ -648,6 +625,14 @@ const AttendanceScreen = () => {
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       )}
+     <LocationDisclosure
+        visible={showDisclosure}
+        onAgree={() => {
+          setShowDisclosure(false);
+          handlePunch();
+        }}
+        onCancel={() => setShowDisclosure(false)}
+      />
 
       <LocationDisclosure
         visible={showDisclosure}
@@ -665,5 +650,4 @@ const AttendanceScreen = () => {
 };
 
 export default AttendanceScreen;
-
 

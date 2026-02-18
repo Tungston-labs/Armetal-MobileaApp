@@ -29,7 +29,10 @@ class MainApplication : Application(), ReactApplication {
             return packages
           }
 
-          override fun getJSMainModuleName(): String = ".expo/.virtual-metro-entry"
+            override fun getPackages(): List<ReactPackage> {
+                val packages = PackageList(this).packages.toMutableList()
+                return packages
+            }
 
           override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
