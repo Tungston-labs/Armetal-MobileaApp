@@ -15,6 +15,7 @@ import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
 import BackgroundGeolocation from "react-native-background-geolocation";
 
+import { NativeEventEmitter, } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -93,7 +94,7 @@ const AttendanceScreen = () => {
 
       const firstDate = new Date(data.total_working_days_dates[0]);
       const year = firstDate.getFullYear();
-      const month = firstDate.getMonth(); 
+      const month = firstDate.getMonth();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const allDates = [];
@@ -216,15 +217,22 @@ const handlePunch = async () => {
       return;
     }
 
+    // ✅ Location permission
     const permissionGranted = await requestLocationPermissions();
-    if (!permissionGranted) return;
 
+    if (!permissionGranted) {
+      Alert.alert("Location permission required");
+      return;
+    }
+
+    // ✅ Get Location
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
     });
 
     console.log("LOCATION:", location);
 
+    // ✅ API CALL
     const res = await authAxios.post("/attendance/swipe/", {
       latitude: Number(location.coords.latitude),
       longitude: Number(location.coords.longitude),
@@ -234,30 +242,43 @@ const handlePunch = async () => {
 
     await fetchTodayAttendance();
 
- if (res.data?.action === "punch_in" && res.data?.session_id) {
+    /**
+     * =========================
+     * ✅ PUNCH IN
+     * =========================
+     */
+    if (res.data?.action === "punch_in" && res.data?.session_id) {
 
-  const employeeId = employee.id.toString();
-  const sessionId = res.data.session_id.toString(); // ✅ FIXED
-  const token = await AsyncStorage.getItem("accessToken");
+      const employeeId = employee.id.toString();
+      const sessionId = res.data.session_id.toString();
+      const token = await AsyncStorage.getItem("accessToken");
 
-  await AsyncStorage.multiSet([
-    ["employeeId", employeeId],
-    ["sessionId", sessionId],
-    ["punchedIn", "true"],
-  ]);
+      await AsyncStorage.multiSet([
+        ["employeeId", employeeId],
+        ["sessionId", sessionId],
+        ["punchedIn", "true"],
+      ]);
 
-  setPunchedIn(true); // ⭐ REQUIRED FOR UI
+      setPunchedIn(true);
 
-  maybeAskBatteryPermission();
+      // Ask battery optimization permission
+      maybeAskBatteryPermission();
 
-  await startBackgroundTracking({
-    employeeId,
-    sessionId,
-    token,
-  });
-}
+      // ✅ START BACKGROUND TRACKING ONLY HERE
+      await startBackgroundTracking({
+        employeeId,
+        sessionId,
+        token,
+      });
+    }
 
+    /**
+     * =========================
+     * ✅ PUNCH OUT
+     * =========================
+     */
     if (res.data?.action === "punch_out") {
+
       await stopBackgroundTracking();
 
       await AsyncStorage.multiRemove([
@@ -265,7 +286,8 @@ const handlePunch = async () => {
         "sessionId",
         "punchedIn",
       ]);
-        setPunchedIn(false);
+
+      setPunchedIn(false);
     }
 
   } catch (error) {
@@ -277,31 +299,35 @@ const handlePunch = async () => {
       JSON.stringify(error?.response?.data || error.message)
     );
   } finally {
+    // ✅ ALWAYS STOP LOADER
     setPunching(false);
     stopRotation();
   }
 };
-
 useEffect(() => {
-  (async () => {
+  const initialize = async () => {
     try {
-      const profileRes = await authAxios.get(`/profile/`);
+      // Fetch employee
+      const profileRes = await authAxios.get("/profile/");
       setEmployee(profileRes.data);
 
+      // Attendance refresh
       await fetchTodayAttendance();
 
+      // Restore punch state
       const storedPunch = await AsyncStorage.getItem("punchedIn");
+
       setPunchedIn(storedPunch === "true");
 
     } catch (err) {
-      console.log(err);
+      console.log("INIT ERROR:", err);
     } finally {
       setLoading(false);
     }
-  })();
+  };
+
+  initialize();
 }, []);
-
-
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -628,7 +654,7 @@ useEffect(() => {
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       )}
-     <LocationDisclosure
+      <LocationDisclosure
         visible={showDisclosure}
         onAgree={() => {
           setShowDisclosure(false);
