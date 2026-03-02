@@ -34,7 +34,7 @@ import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
 import { NativeModules } from "react-native";
 import LocationDisclosure from "@/src/utils/LocationDisclosure"
-const { LocationModule } = NativeModules;
+import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
   startBackgroundTracking,
   stopBackgroundTracking,
@@ -58,7 +58,7 @@ const AttendanceScreen = () => {
   const [pendingLeaves, setPendingLeaves] = useState();
   const [sessionId, setSessionId] = useState(null);
   const [showDisclosure, setShowDisclosure] = useState(false);
-
+  const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
@@ -206,34 +206,38 @@ const AttendanceScreen = () => {
 
     return true;
   };
-  const handlePunch = async () => {
-    setPunching(true);
-    startRotation();
+const handlePunch = async () => {
+  setPunching(true);
+  startRotation();
 
-    try {
-      const permissionGranted = await requestLocationPermissions();
-      if (!permissionGranted) {
-        setPunching(false);
-        stopRotation();
-        return;
-      }
+  try {
+    if (!employee?.id) {
+      Alert.alert("Employee not ready");
+      return;
+    }
 
-      const location = await getCurrentLocation();
-      if (!location) {
-        setPunching(false);
-        stopRotation();
-        return;
-      }
+    const permissionGranted = await requestLocationPermissions();
+    if (!permissionGranted) return;
 
-      const res = await authAxios.post("/attendance/swipe/", {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
 
-      await fetchTodayAttendance();
-if (res.data?.action === "punch_in" && res.data?.session_id) {
+    console.log("LOCATION:", location);
+
+    const res = await authAxios.post("/attendance/swipe/", {
+      latitude: Number(location.coords.latitude),
+      longitude: Number(location.coords.longitude),
+    });
+
+    console.log("SWIPE RESPONSE:", res.data);
+
+    await fetchTodayAttendance();
+
+ if (res.data?.action === "punch_in" && res.data?.session_id) {
+
   const employeeId = employee.id.toString();
-  const sessionId = res.data.session_id.toString();
+  const sessionId = res.data.session_id.toString(); // ✅ FIXED
   const token = await AsyncStorage.getItem("accessToken");
 
   await AsyncStorage.multiSet([
@@ -242,13 +246,9 @@ if (res.data?.action === "punch_in" && res.data?.session_id) {
     ["punchedIn", "true"],
   ]);
 
-  try {
-    await IntentLauncher.startActivityAsync(
-      IntentLauncher.ActivityAction.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-    );
-  } catch (e) {
-    console.log("Battery optimization intent failed");
-  }
+  setPunchedIn(true); // ⭐ REQUIRED FOR UI
+
+  maybeAskBatteryPermission();
 
   await startBackgroundTracking({
     employeeId,
@@ -257,47 +257,49 @@ if (res.data?.action === "punch_in" && res.data?.session_id) {
   });
 }
 
+    if (res.data?.action === "punch_out") {
+      await stopBackgroundTracking();
 
-      if (res.data?.action === "punch_out") {
-
-await stopBackgroundTracking();
-
-        await AsyncStorage.multiRemove([
-          "employeeId",
-          "sessionId",
-          "punchedIn",
-        ]);
-
-        console.log(" Background tracking stopped");
-      }
-
-    } catch (error) {
-      Alert.alert(
-        "Failed",
-        error.response?.data?.error || error.message || "Swipe failed"
-      );
-    } finally {
-      setPunching(false);
-      stopRotation();
+      await AsyncStorage.multiRemove([
+        "employeeId",
+        "sessionId",
+        "punchedIn",
+      ]);
+        setPunchedIn(false);
     }
-  };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const profileRes = await authAxios.get(`/profile/`);
-        setEmployee(profileRes.data);
+  } catch (error) {
+    console.log("PUNCH ERROR:", error);
+    console.log("SERVER:", error?.response?.data);
 
-        await fetchTodayAttendance();
+    Alert.alert(
+      "Punch Failed",
+      JSON.stringify(error?.response?.data || error.message)
+    );
+  } finally {
+    setPunching(false);
+    stopRotation();
+  }
+};
 
+useEffect(() => {
+  (async () => {
+    try {
+      const profileRes = await authAxios.get(`/profile/`);
+      setEmployee(profileRes.data);
 
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+      await fetchTodayAttendance();
+
+      const storedPunch = await AsyncStorage.getItem("punchedIn");
+      setPunchedIn(storedPunch === "true");
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
 
 
 
@@ -549,19 +551,20 @@ await stopBackgroundTracking();
               </Text>
             </View>
           ) : (
-            <SwipeButton
-              title={isCurrentlyPunchedIn() ? "Swipe to Punch Out" : "Swipe to punch in"}
-              successTitle={isCurrentlyPunchedIn() ? "Punched Out!" : "Punched In!"}
-              onSwipeSuccess={() => {
-                if (!isCurrentlyPunchedIn()) {
-                  setShowDisclosure(true);
-                } else {
-                  handlePunch();
-                }
-              }} backgroundColor="#ddd"
-              thumbColor={isCurrentlyPunchedIn() ? "#ED2B2B" : "#2F822F"}
-              resetAfterSuccess={true}
-            />
+        <SwipeButton
+  title={punchedIn ? "Swipe to Punch Out" : "Swipe to Punch In"}
+  successTitle={punchedIn ? "Punched Out!" : "Punched In!"}
+  onSwipeSuccess={() => {
+    if (!punchedIn) {
+      setShowDisclosure(true);
+    } else {
+      handlePunch();
+    }
+  }}
+  backgroundColor="#ddd"
+  thumbColor={punchedIn ? "#ED2B2B" : "#2F822F"}
+  resetAfterSuccess={true}
+/>
 
           )}
 

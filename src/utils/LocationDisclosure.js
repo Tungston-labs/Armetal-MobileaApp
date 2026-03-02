@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function LocationDisclosure({
   visible,
@@ -21,31 +15,16 @@ export default function LocationDisclosure({
           </Text>
 
           <Text style={styles.text}>
-            Rekory collects location data in the background during
-            active work sessions to verify employee presence at
-            assigned project sites using geo-fencing.
-            {"\n\n"}
-            Location tracking continues even when the app is
-            minimized or closed to ensure accurate attendance
-            and work activity records.
-            {"\n\n"}
-            Data is used only for workforce management and not
-            for advertising purposes.
+            Location will be tracked every 30 minutes during
+            active work sessions for attendance verification.
           </Text>
 
-          <TouchableOpacity
-            style={styles.allowBtn}
-            onPress={onAgree}
-          >
-            <Text style={styles.btnText}>
-              Agree & Continue
-            </Text>
+          <TouchableOpacity style={styles.allowBtn} onPress={onAgree}>
+            <Text style={styles.btnText}>Agree & Continue</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onCancel}>
-            <Text style={styles.cancel}>
-              Cancel
-            </Text>
+            <Text style={styles.cancel}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -54,40 +33,11 @@ export default function LocationDisclosure({
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "#00000088",
-    justifyContent: "center",
-    padding: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 20,
-  },
-  allowBtn: {
-    backgroundColor: "#007bff",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  btnText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  cancel: {
-    textAlign: "center",
-    marginTop: 10,
-    color: "red",
-  },
+  overlay:{flex:1,backgroundColor:"#00000088",justifyContent:"center",padding:20},
+  card:{backgroundColor:"#fff",padding:20,borderRadius:12},
+  title:{fontSize:18,fontWeight:"bold",marginBottom:10},
+  text:{fontSize:14,marginBottom:20},
+  allowBtn:{backgroundColor:"#007bff",padding:12,borderRadius:8,alignItems:"center"},
+  btnText:{color:"#fff",fontWeight:"bold"},
+  cancel:{textAlign:"center",marginTop:10,color:"red"},
 });
