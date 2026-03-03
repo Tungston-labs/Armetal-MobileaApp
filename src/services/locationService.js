@@ -1,8 +1,45 @@
 import BackgroundGeolocation from "react-native-background-geolocation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-let isInitialized = false;
-let heartbeatSubscription = null;
+let locationSubscription = null;
+
+const refreshAccessToken = async () => {
+  console.log(" Attempting token refresh...");
+
+  const refreshToken = await AsyncStorage.getItem("refreshToken");
+
+  if (!refreshToken) {
+    console.log(" No refresh token found.");
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      "http://178.248.112.16:8001/api/token/refresh/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: refreshToken }),
+      }
+    );
+
+    if (!response.ok) {
+      console.log(" Refresh failed:", response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    const newAccessToken = data.access;
+
+    await AsyncStorage.setItem("accessToken", newAccessToken);
+
+    console.log(" Token refreshed successfully");
+    return newAccessToken;
+  } catch (error) {
+    console.log(" Refresh error:", error);
+    return null;
+  }
+};
 
 
 const uploadLocation = async ({
@@ -13,8 +50,11 @@ const uploadLocation = async ({
   longitude,
 }) => {
   try {
+    console.log(" Uploading location...");
+    console.log(" Lat:", latitude, "Lon:", longitude);
+
     const response = await fetch(
-      `https://api.rekory.com/api/background-location/${employeeId}/`,
+      `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
       {
         method: "POST",
         headers: {
@@ -29,54 +69,33 @@ const uploadLocation = async ({
       }
     );
 
-   if (response.status === 401) {
-  console.log("Access token expired. Refreshing...");
+    if (response.status === 401) {
+      console.log(" Access token expired (401)");
 
-  const refreshToken = await AsyncStorage.getItem("refreshToken");
+      const newToken = await refreshAccessToken();
 
-  if (!refreshToken) {
-    console.log("No refresh token found. Stopping tracking.");
-    return;
-  }
+      if (!newToken) {
+        console.log("Token refresh failed. Location not uploaded.");
+        return;
+      }
 
-  const refreshResponse = await fetch(
-    "https://api.rekory.com/api/token/refresh/",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh: refreshToken,
-      }),
+      console.log(" Retrying upload with new token...");
+
+      return await uploadLocation({
+        employeeId,
+        sessionId,
+        token: newToken,
+        latitude,
+        longitude,
+      });
     }
-  );
 
-  if (!refreshResponse.ok) {
-    console.log("Refresh failed:", refreshResponse.status);
-    return;
-  }
+    if (!response.ok) {
+      console.log(" Upload failed:", response.status);
+      return;
+    }
 
-  const refreshData = await refreshResponse.json();
-  const newAccessToken = refreshData.access;
-
-  await AsyncStorage.setItem("accessToken", newAccessToken);
-
-  console.log("Token refreshed successfully");
-
-  return await uploadLocation({
-    employeeId,
-    sessionId,
-    token: newAccessToken,
-    latitude,
-    longitude,
-  });
-}
-
-
-    const result = await response.text();
-    console.log(" Manual Upload:", response.status, result);
-
+    console.log(" Location uploaded successfully");
   } catch (error) {
     console.log(" Upload error:", error);
   }
@@ -87,102 +106,108 @@ export const startBackgroundTracking = async ({
   employeeId,
   sessionId,
   token,
+  intervalMinutes = 30, 
 }) => {
-  const state = await BackgroundGeolocation.getState();
+  console.log(` Starting tracking every ${intervalMinutes} minutes`);
 
+  const intervalMs = intervalMinutes * 60 * 1000;
+
+  const state = await BackgroundGeolocation.getState();
   if (state.enabled) {
-    console.log("Already running — skipping");
+    console.log(" Tracking already running.");
     return true;
   }
 
-  if (!isInitialized) {
 await BackgroundGeolocation.ready({
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-
-  distanceFilter: 0,          
-  stationaryRadius: 25,
+  distanceFilter: 50,
 
   stopOnTerminate: false,
   startOnBoot: true,
   enableHeadless: true,
-  preventSuspend: true,
+
   foregroundService: true,
+  preventSuspend: true,
 
-  heartbeatInterval: 1800,    
+  disableStopDetection: true,
 
-  allowIdenticalLocations: true, 
-  pausesLocationUpdatesAutomatically: false,
-
-  autoSync: false,
-  batchSync: false,
-
-  debug: false,
-  logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+  heartbeatInterval: intervalMinutes * 60, // seconds
 
   notification: {
     title: "Rekory Attendance",
-    text: "Tracking active (every 30 mins)",
+    text: "Location tracking active",
+    priority: BackgroundGeolocation.NOTIFICATION_PRIORITY_HIGH,
   },
+
+  debug: false,
 });
+BackgroundGeolocation.onHeartbeat(async () => {
+  console.log("Heartbeat Triggered");
 
+  const location = await BackgroundGeolocation.getCurrentPosition({
+    samples: 1,
+    persist: false,
+  });
 
+  const latestToken =
+    (await AsyncStorage.getItem("accessToken")) || token;
 
-    BackgroundGeolocation.onLocation(async (location) => {
-      console.log(" Location received");
-
-      const latestToken =
-        (await AsyncStorage.getItem("accessToken")) || token;
-
-      await uploadLocation({
-        employeeId,
-        sessionId,
-        token: latestToken,
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-    });
-
-    isInitialized = true;
+  await uploadLocation({
+    employeeId,
+    sessionId,
+    token: latestToken,
+    latitude: location.coords.latitude,
+    longitude: location.coords.longitude,
+  });
+});
+  if (locationSubscription) {
+    locationSubscription.remove();
+    locationSubscription = null;
   }
+
+  locationSubscription = BackgroundGeolocation.onLocation(
+    async (location) => {
+      console.log("Interval Triggered");
+      console.log(
+        " Location:",
+        location.coords.latitude,
+        location.coords.longitude
+      );
+      console.log(" Trigger Time:", new Date().toLocaleTimeString());
+
+      try {
+        const latestToken =
+          (await AsyncStorage.getItem("accessToken")) || token;
+
+        await uploadLocation({
+          employeeId,
+          sessionId,
+          token: latestToken,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+      } catch (err) {
+        console.log(" Interval error:", err);
+      }
+    }
+  );
 
   await BackgroundGeolocation.start();
+
   console.log(" Background tracking started");
-
-  setTimeout(async () => {
-    console.log(" Initial location fetch");
-
-    await BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 30,
-      persist: false,
-    });
-  }, 3000);
-
-  if (!heartbeatSubscription) {
-    heartbeatSubscription =
-      BackgroundGeolocation.onHeartbeat(async () => {
-        console.log(" 1 Hour Location Triggered");
-
-        await BackgroundGeolocation.getCurrentPosition({
-          samples: 1,
-          timeout: 30,
-          persist: false,
-        });
-      });
-  }
 
   return true;
 };
 
-
 export const stopBackgroundTracking = async () => {
-  if (heartbeatSubscription) {
-    heartbeatSubscription.remove();
-    heartbeatSubscription = null;
+  console.log("🛑 Stopping background tracking...");
+
+  if (locationSubscription) {
+    locationSubscription.remove();
+    locationSubscription = null;
   }
 
   await BackgroundGeolocation.stop();
-  BackgroundGeolocation.removeListeners();
 
   console.log(" Background tracking stopped");
 };
