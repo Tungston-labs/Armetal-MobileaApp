@@ -1,17 +1,15 @@
-import BackgroundGeolocation from "react-native-background-geolocation";
+import * as TaskManager from "expo-task-manager";
+import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-let locationSubscription = null;
+const LOCATION_TASK_NAME = "attendance-background-task";
 
+/* ==============================
+   TOKEN REFRESH
+============================== */
 const refreshAccessToken = async () => {
-  console.log(" Attempting token refresh...");
-
   const refreshToken = await AsyncStorage.getItem("refreshToken");
-
-  if (!refreshToken) {
-    console.log(" No refresh token found.");
-    return null;
-  }
+  if (!refreshToken) return null;
 
   try {
     const response = await fetch(
@@ -23,36 +21,26 @@ const refreshAccessToken = async () => {
       }
     );
 
-    if (!response.ok) {
-      console.log(" Refresh failed:", response.status);
-      return null;
-    }
+    if (!response.ok) return null;
 
     const data = await response.json();
-    const newAccessToken = data.access;
-
-    await AsyncStorage.setItem("accessToken", newAccessToken);
-
-    console.log(" Token refreshed successfully");
-    return newAccessToken;
-  } catch (error) {
-    console.log(" Refresh error:", error);
+    await AsyncStorage.setItem("accessToken", data.access);
+    return data.access;
+  } catch {
     return null;
   }
 };
 
 
-const uploadLocation = async ({
-  employeeId,
-  sessionId,
-  token,
-  latitude,
-  longitude,
-}) => {
-  try {
-    console.log(" Uploading location...");
-    console.log(" Lat:", latitude, "Lon:", longitude);
+const uploadLocation = async (latitude, longitude) => {
+  const employeeId = await AsyncStorage.getItem("employeeId");
+  const sessionId = await AsyncStorage.getItem("sessionId");
 
+  let token = await AsyncStorage.getItem("accessToken");
+
+  if (!employeeId || !sessionId || !token) return;
+
+  try {
     const response = await fetch(
       `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
       {
@@ -70,144 +58,107 @@ const uploadLocation = async ({
     );
 
     if (response.status === 401) {
-      console.log(" Access token expired (401)");
-
       const newToken = await refreshAccessToken();
+      if (!newToken) return;
 
-      if (!newToken) {
-        console.log("Token refresh failed. Location not uploaded.");
-        return;
-      }
-
-      console.log(" Retrying upload with new token...");
-
-      return await uploadLocation({
-        employeeId,
-        sessionId,
-        token: newToken,
-        latitude,
-        longitude,
-      });
+      await fetch(
+        `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${newToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            latitude,
+            longitude,
+            session_id: sessionId,
+          }),
+        }
+      );
     }
 
-    if (!response.ok) {
-      console.log(" Upload failed:", response.status);
-      return;
-    }
-
-    console.log(" Location uploaded successfully");
-  } catch (error) {
-    console.log(" Upload error:", error);
+    console.log("Location uploaded");
+  } catch (err) {
+    console.log("Upload error:", err);
   }
 };
 
+/* ==============================
+   BACKGROUND TASK
+============================== */
+TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+  if (error) {
+    console.log("Task error:", error);
+    return;
+  }
 
+  if (data) {
+    const { locations } = data;
+    const location = locations[0];
+
+    console.log("Background triggered at:", new Date().toLocaleTimeString());
+
+    await uploadLocation(
+      location.coords.latitude,
+      location.coords.longitude
+    );
+  }
+});
+
+/* ==============================
+   START TRACKING
+============================== */
 export const startBackgroundTracking = async ({
   employeeId,
   sessionId,
-  token,
-  intervalMinutes = 30, 
+  intervalMinutes = 30,
 }) => {
-  console.log(` Starting tracking every ${intervalMinutes} minutes`);
-
-  const intervalMs = intervalMinutes * 60 * 1000;
-
-  const state = await BackgroundGeolocation.getState();
-  if (state.enabled) {
-    console.log(" Tracking already running.");
-    return true;
-  }
-
-await BackgroundGeolocation.ready({
-  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-  distanceFilter: 50,
-
-  stopOnTerminate: false,
-  startOnBoot: true,
-  enableHeadless: true,
-
-  foregroundService: true,
-  preventSuspend: true,
-
-  disableStopDetection: true,
-
-  heartbeatInterval: intervalMinutes * 60, // seconds
-
-  notification: {
-    title: "Rekory Attendance",
-    text: "Location tracking active",
-    priority: BackgroundGeolocation.NOTIFICATION_PRIORITY_HIGH,
-  },
-
-  debug: false,
-});
-BackgroundGeolocation.onHeartbeat(async () => {
-  console.log("Heartbeat Triggered");
-
-  const location = await BackgroundGeolocation.getCurrentPosition({
-    samples: 1,
-    persist: false,
-  });
-
-  const latestToken =
-    (await AsyncStorage.getItem("accessToken")) || token;
-
-  await uploadLocation({
-    employeeId,
-    sessionId,
-    token: latestToken,
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-  });
-});
-  if (locationSubscription) {
-    locationSubscription.remove();
-    locationSubscription = null;
-  }
-
-  locationSubscription = BackgroundGeolocation.onLocation(
-    async (location) => {
-      console.log("Interval Triggered");
-      console.log(
-        " Location:",
-        location.coords.latitude,
-        location.coords.longitude
-      );
-      console.log(" Trigger Time:", new Date().toLocaleTimeString());
-
-      try {
-        const latestToken =
-          (await AsyncStorage.getItem("accessToken")) || token;
-
-        await uploadLocation({
-          employeeId,
-          sessionId,
-          token: latestToken,
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        });
-      } catch (err) {
-        console.log(" Interval error:", err);
-      }
-    }
+  const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+    LOCATION_TASK_NAME
   );
 
-  await BackgroundGeolocation.start();
-
-  console.log(" Background tracking started");
-
-  return true;
-};
-
-export const stopBackgroundTracking = async () => {
-  console.log("🛑 Stopping background tracking...");
-
-  if (locationSubscription) {
-    locationSubscription.remove();
-    locationSubscription = null;
+  if (hasStarted) {
+    console.log("Tracking already running");
+    return;
   }
 
-  await BackgroundGeolocation.stop();
+  await AsyncStorage.multiSet([
+    ["employeeId", employeeId.toString()],
+    ["sessionId", sessionId.toString()],
+  ]);
 
-  console.log(" Background tracking stopped");
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") return;
+
+  await Location.requestBackgroundPermissionsAsync();
+
+  await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+    accuracy: Location.Accuracy.High,
+    timeInterval: intervalMinutes * 60 * 1000,
+    distanceInterval: 0,
+    foregroundService: {
+      notificationTitle: "Rekory Attendance",
+      notificationBody: "Tracking location every 30 minutes",
+    },
+  });
+
+  console.log("Background tracking started");
+};
+
+/* ==============================
+   STOP TRACKING
+============================== */
+export const stopBackgroundTracking = async () => {
+  const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+    LOCATION_TASK_NAME
+  );
+
+  if (hasStarted) {
+    await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+  }
+
+  await AsyncStorage.multiRemove(["employeeId", "sessionId"]);
+
+  console.log("Background tracking stopped");
 };

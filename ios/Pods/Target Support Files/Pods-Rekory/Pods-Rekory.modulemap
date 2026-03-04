@@ -1,6 +1,0 @@
-module Pods_Rekory {
-  umbrella header "Pods-Rekory-umbrella.h"
-
-  export *
-  module * { export * }
-}

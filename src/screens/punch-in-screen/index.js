@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
-import BackgroundGeolocation from "react-native-background-geolocation";
 
 import { NativeEventEmitter, } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
@@ -33,7 +32,6 @@ import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
 import { SvgUri } from "react-native-svg";
-import { NativeModules } from "react-native";
 import LocationDisclosure from "@/src/utils/LocationDisclosure"
 import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
@@ -217,7 +215,6 @@ const handlePunch = async () => {
       return;
     }
 
-    // ✅ Location permission
     const permissionGranted = await requestLocationPermissions();
 
     if (!permissionGranted) {
@@ -225,7 +222,6 @@ const handlePunch = async () => {
       return;
     }
 
-    // ✅ Get Location
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
     });
@@ -265,11 +261,11 @@ const handlePunch = async () => {
       maybeAskBatteryPermission();
 
       // ✅ START BACKGROUND TRACKING ONLY HERE
-      await startBackgroundTracking({
-        employeeId,
-        sessionId,
-        token,
-      });
+    await startBackgroundTracking({
+  employeeId: employee.id,
+  sessionId: res.data.session_id,
+  intervalMinutes: 30,
+});
     }
 
     /**
@@ -299,7 +295,6 @@ const handlePunch = async () => {
       JSON.stringify(error?.response?.data || error.message)
     );
   } finally {
-    // ✅ ALWAYS STOP LOADER
     setPunching(false);
     stopRotation();
   }
