@@ -3,6 +3,7 @@ import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LOCATION_TASK_NAME = "attendance-background-task";
+const UPLOAD_INTERVAL = 30 * 60 * 1000; // 30 minutes
 
 /* ==============================
    TOKEN REFRESH
@@ -31,17 +32,18 @@ const refreshAccessToken = async () => {
   }
 };
 
-
+/* ==============================
+   UPLOAD LOCATION
+============================== */
 const uploadLocation = async (latitude, longitude) => {
   const employeeId = await AsyncStorage.getItem("employeeId");
   const sessionId = await AsyncStorage.getItem("sessionId");
-
   let token = await AsyncStorage.getItem("accessToken");
 
   if (!employeeId || !sessionId || !token) return;
 
   try {
-    const response = await fetch(
+    let response = await fetch(
       `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
       {
         method: "POST",
@@ -57,11 +59,12 @@ const uploadLocation = async (latitude, longitude) => {
       }
     );
 
+    // If token expired
     if (response.status === 401) {
       const newToken = await refreshAccessToken();
       if (!newToken) return;
 
-      await fetch(
+      response = await fetch(
         `http://178.248.112.16:8001/api/background-location/${employeeId}/`,
         {
           method: "POST",
@@ -78,7 +81,10 @@ const uploadLocation = async (latitude, longitude) => {
       );
     }
 
-    console.log("Location uploaded");
+    if (response.ok) {
+      await AsyncStorage.setItem("lastUploadTime", Date.now().toString());
+      console.log("Location uploaded successfully");
+    }
   } catch (err) {
     console.log("Upload error:", err);
   }
@@ -93,21 +99,32 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     return;
   }
 
-  if (data) {
-    const { locations } = data;
-    const location = locations[0];
+  if (!data) return;
 
-    console.log("Background triggered at:", new Date().toLocaleTimeString());
+  const { locations } = data;
 
-    await uploadLocation(
-      location.coords.latitude,
-      location.coords.longitude
-    );
+  if (!locations || locations.length === 0) return;
+
+  // Always take the latest location only
+  const latestLocation = locations[locations.length - 1];
+
+  const lastUpload = await AsyncStorage.getItem("lastUploadTime");
+  const now = Date.now();
+
+  // Strict 30 minute interval control
+  if (lastUpload && now - parseInt(lastUpload) < UPLOAD_INTERVAL) {
+    console.log("Skipped - waiting for 30 minute interval");
+    return;
   }
+
+  await uploadLocation(
+    latestLocation.coords.latitude,
+    latestLocation.coords.longitude
+  );
 });
 
 /* ==============================
-   START TRACKING
+   START TRACKING (INTERVAL BASED ONLY)
 ============================== */
 export const startBackgroundTracking = async ({
   employeeId,
@@ -129,14 +146,22 @@ export const startBackgroundTracking = async ({
   ]);
 
   const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== "granted") return;
+  if (status !== "granted") {
+    console.log("Foreground permission not granted");
+    return;
+  }
 
-  await Location.requestBackgroundPermissionsAsync();
+  const bgStatus = await Location.requestBackgroundPermissionsAsync();
+  if (bgStatus.status !== "granted") {
+    console.log("Background permission not granted");
+    return;
+  }
 
   await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-    accuracy: Location.Accuracy.High,
-    timeInterval: intervalMinutes * 60 * 1000,
-    distanceInterval: 0,
+    accuracy: Location.Accuracy.Balanced,
+    timeInterval: intervalMinutes * 60 * 1000, // System trigger hint
+    distanceInterval: null, // No movement based trigger
+    pausesUpdatesAutomatically: false,
     foregroundService: {
       notificationTitle: "Rekory Attendance",
       notificationBody: "Tracking location every 30 minutes",
@@ -146,9 +171,6 @@ export const startBackgroundTracking = async ({
   console.log("Background tracking started");
 };
 
-/* ==============================
-   STOP TRACKING
-============================== */
 export const stopBackgroundTracking = async () => {
   const hasStarted = await Location.hasStartedLocationUpdatesAsync(
     LOCATION_TASK_NAME
@@ -158,7 +180,11 @@ export const stopBackgroundTracking = async () => {
     await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
   }
 
-  await AsyncStorage.multiRemove(["employeeId", "sessionId"]);
+  await AsyncStorage.multiRemove([
+    "employeeId",
+    "sessionId",
+    "lastUploadTime",
+  ]);
 
   console.log("Background tracking stopped");
 };
