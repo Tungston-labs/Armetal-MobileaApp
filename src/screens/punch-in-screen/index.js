@@ -264,7 +264,7 @@ const handlePunch = async () => {
     await startBackgroundTracking({
   employeeId: employee.id,
   sessionId: res.data.session_id,
-  intervalMinutes: 30,
+  intervalMinutes: 20,
 });
     }
 

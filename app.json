@@ -26,14 +26,12 @@
       "package": "com.anonymous.Rekory",
       "usesCleartextTraffic": true,
      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
-        "FOREGROUND_SERVICE",
-        "FOREGROUND_SERVICE_LOCATION",
-        "RECEIVE_BOOT_COMPLETED",
-        "WAKE_LOCK"
-      ],
+  "ACCESS_FINE_LOCATION",
+  "ACCESS_COARSE_LOCATION",
+  "ACCESS_BACKGROUND_LOCATION",
+  "FOREGROUND_SERVICE",
+  "FOREGROUND_SERVICE_LOCATION"
+],
       "foregroundService": {
         "notificationTitle": "Rekory Attendance Tracking",
         "notificationBody": "Your location is being recorded in the background",
