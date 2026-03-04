@@ -1,7 +1,33 @@
 {
   "expo": {
+    "name": "Rekory",
+    "slug": "Rekory",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/splash-icon.png",
+    "scheme": "Rekory",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.Rekory",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to track attendance in the background.",
+        "NSLocationWhenInUseUsageDescription": "We need your location to track attendance."
+      }
+    },
     "android": {
-      "permissions": [
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/splash-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.Rekory",
+      "usesCleartextTraffic": true,
+     "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
@@ -10,12 +36,35 @@
         "RECEIVE_BOOT_COMPLETED",
         "WAKE_LOCK"
       ],
-      "package": "com.ansalmazeez.rekory"
+      "foregroundService": {
+        "notificationTitle": "Rekory Attendance Tracking",
+        "notificationBody": "Your location is being recorded in the background",
+        "notificationColor": "#FF0000"
+      },
+      "splash": {
+        "image": "./assets/images/adaptive-iconn.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#151D34"
+      }
     },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/splash-icon.png"
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "owner": "ansalmazeez",
     "extra": {
       "eas": {
-        "projectId": ""
+        "projectId": "51276e4a-a789-4827-a76f-c28159bfc02b"
       }
+    },
+    "splash": {
+      "image": "./assets/images/adaptive-iconn.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#151D34"
     }
   }
 }
+
