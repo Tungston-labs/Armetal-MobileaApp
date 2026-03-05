@@ -1,4 +1,3 @@
-// src/services/locationService.js
 import BackgroundFetch from "react-native-background-fetch";
 import Geolocation from "react-native-geolocation-service";
 import ReactNativeForegroundService from "@supersami/rn-foreground-service";
@@ -11,9 +10,6 @@ const DEFAULT_INTERVAL_MINUTES = 20;
 let _intervalId = null;
 let _isServiceRunning = false;
 
-/* -----------------------------
-   Permissions
-   --------------------------- */
 const requestPermissions = async () => {
   if (Platform.OS !== "android") return true;
 
@@ -24,7 +20,6 @@ const requestPermissions = async () => {
     PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
   ]);
 
-  // If you want to be strict: require background permission for interval tracking
   return (
     granted["android.permission.ACCESS_FINE_LOCATION"] === "granted" &&
     granted["android.permission.ACCESS_COARSE_LOCATION"] === "granted" &&
@@ -32,9 +27,6 @@ const requestPermissions = async () => {
   );
 };
 
-/* -----------------------------
-   Token refresh + retry helper
-   --------------------------- */
 const refreshAccessToken = async () => {
   const refreshToken = await AsyncStorage.getItem("refreshToken");
   if (!refreshToken) return null;
@@ -57,9 +49,6 @@ const refreshAccessToken = async () => {
   }
 };
 
-/* -----------------------------
-   Get location (single shot)
-   --------------------------- */
 const getCurrentLocation = () =>
   new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
@@ -74,9 +63,6 @@ const getCurrentLocation = () =>
     );
   });
 
-/* -----------------------------
-   Upload with retry on 401
-   --------------------------- */
 export const uploadLocation = async () => {
   const employeeId = await AsyncStorage.getItem("employeeId");
   const sessionId = await AsyncStorage.getItem("sessionId");
@@ -100,7 +86,6 @@ export const uploadLocation = async () => {
       session_id: sessionId,
     };
 
-    // Try once
     let res = await fetch(`${API_URL}${employeeId}/`, {
       method: "POST",
       headers: {
@@ -110,7 +95,6 @@ export const uploadLocation = async () => {
       body: JSON.stringify(body),
     });
 
-    // If token expired (401), refresh and retry once
     if (res.status === 401) {
       console.log("uploadLocation: got 401, trying refresh token...");
       token = await refreshAccessToken();
@@ -132,7 +116,7 @@ export const uploadLocation = async () => {
       const txt = await res.text();
       console.log("uploadLocation: server error -", res.status, txt);
     } else {
-      console.log("✅ Location uploaded:", new Date().toISOString());
+      console.log("Location uploaded:", new Date().toISOString());
     }
   } catch (err) {
     console.log("uploadLocation error:", err);
@@ -169,37 +153,29 @@ const stopForeground = async () => {
   }
 };
 
-/* -----------------------------
-   Public: start tracking
-   --------------------------- */
+
 export const startBackgroundTracking = async ({ employeeId, sessionId, intervalMinutes = DEFAULT_INTERVAL_MINUTES } = {}) => {
-  // ensure permissions
   const ok = await requestPermissions();
   if (!ok) {
     console.log("Permissions not granted - abort startBackgroundTracking");
     return;
   }
 
-  // persist session info
   await AsyncStorage.multiSet([
     ["employeeId", String(employeeId)],
     ["sessionId", String(sessionId)],
     ["punchedIn", "true"],
   ]);
 
-  // start persistent foreground service
   await startForeground({ title: "Rekory Attendance", message: "Location tracking active for your shift" });
 
-  // immediate upload
   await uploadLocation();
 
-  // start JS interval only if not already running
   if (_intervalId) clearInterval(_intervalId);
   _intervalId = setInterval(() => {
     uploadLocation().catch((e) => console.log("interval upload err", e));
   }, Math.max(1, intervalMinutes) * 60 * 1000);
 
-  // register a native task as backup if library supports it
   try {
     ReactNativeForegroundService.register({
       id: "rekory_location_tick",
@@ -212,11 +188,10 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
     console.log("register native task failed (non-fatal):", e);
   }
 
-  // configure BackgroundFetch as a backup (headless)
   try {
     await BackgroundFetch.configure(
       {
-        minimumFetchInterval: Math.max(15, intervalMinutes), // Background fetch min is typically 15+
+        minimumFetchInterval: Math.max(15, intervalMinutes), 
         stopOnTerminate: false,
         startOnBoot: true,
         enableHeadless: true,
@@ -237,12 +212,9 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
     console.log("BackgroundFetch setup failed:", e);
   }
 
-  console.log("✅ startBackgroundTracking done");
+  console.log(" startBackgroundTracking done");
 };
 
-/* -----------------------------
-   Public: stop tracking
-   --------------------------- */
 export const stopBackgroundTracking = async () => {
   if (_intervalId) {
     clearInterval(_intervalId);
@@ -258,19 +230,16 @@ export const stopBackgroundTracking = async () => {
   }
 
   await AsyncStorage.multiRemove(["employeeId", "sessionId", "punchedIn"]);
-  console.log("🛑 stopBackgroundTracking done");
+  console.log("stopBackgroundTracking done");
 };
 
-/* -----------------------------
-   Headless background fetch task (export/register)
-   --------------------------- */
+
 export const backgroundFetchHeadless = async (taskId) => {
   console.log("Headless background fetch:", taskId);
   await uploadLocation();
   BackgroundFetch.finish(taskId);
 };
 
-// register headless handler for BackgroundFetch
 try {
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadless);
 } catch (e) {
