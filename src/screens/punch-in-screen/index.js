@@ -59,6 +59,7 @@ const AttendanceScreen = () => {
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
+  const [punchType, setPunchType] = useState(null);
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -82,7 +83,28 @@ const AttendanceScreen = () => {
     rotateValue.stopAnimation();
     rotateValue.setValue(0);
   };
+const initialize = async () => {
+  try {
 
+    const profileRes = await authAxios.get("/profile/");
+    setEmployee(profileRes.data);
+
+    // ✅ GET PROJECT
+    const projectRes = await authAxios.get("/employee-project/");
+
+    setPunchType(projectRes.data?.punch_type);
+
+    await fetchTodayAttendance();
+
+    const storedPunch = await AsyncStorage.getItem("punchedIn");
+    setPunchedIn(storedPunch === "true");
+
+  } catch (err) {
+    console.log("INIT ERROR:", err);
+  } finally {
+    setLoading(false);
+  }
+};
   const fetchDayStatus = async () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
@@ -657,17 +679,6 @@ useEffect(() => {
         }}
         onCancel={() => setShowDisclosure(false)}
       />
-
-      <LocationDisclosure
-        visible={showDisclosure}
-        onAgree={() => {
-          setShowDisclosure(false);
-          handlePunch();
-        }}
-        onCancel={() => setShowDisclosure(false)}
-      />
-
-
 
     </SafeAreaView>
   );

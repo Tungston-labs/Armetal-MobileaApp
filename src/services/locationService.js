@@ -127,14 +127,14 @@ export const uploadLocation = async () => {
 const startForeground = async ({ title = "Tracking active", message = "Tracking location..." } = {}) => {
   if (_isServiceRunning) return;
   try {
-    await ReactNativeForegroundService.start({
-      id: 1001,
-      title,
-      message,
-      icon: "ic_launcher",
-      serviceType: "location",
-      setPriority: "max",
-    });
+   await ReactNativeForegroundService.start({
+  id: 1001,
+  title,
+  message,
+  icon: "ic_launcher",
+  ServiceType: "location",
+  setPriority: "max",
+});
     _isServiceRunning = true;
     console.log("Foreground service started");
   } catch (err) {
@@ -175,18 +175,6 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
   _intervalId = setInterval(() => {
     uploadLocation().catch((e) => console.log("interval upload err", e));
   }, Math.max(1, intervalMinutes) * 60 * 1000);
-
-  try {
-    ReactNativeForegroundService.register({
-      id: "rekory_location_tick",
-      task: async (taskData) => {
-        console.log("Native service tick -> uploadLocation");
-        await uploadLocation();
-      },
-    });
-  } catch (e) {
-    console.log("register native task failed (non-fatal):", e);
-  }
 
   try {
     await BackgroundFetch.configure(
@@ -239,9 +227,3 @@ export const backgroundFetchHeadless = async (taskId) => {
   await uploadLocation();
   BackgroundFetch.finish(taskId);
 };
-
-try {
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadless);
-} catch (e) {
-  console.log("registerHeadlessTask err:", e);
-}
