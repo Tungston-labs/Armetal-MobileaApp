@@ -1,30 +1,49 @@
 import BackgroundFetch from "react-native-background-fetch";
 import Geolocation from "react-native-geolocation-service";
-import ReactNativeForegroundService from "@supersami/rn-foreground-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PermissionsAndroid, Platform } from "react-native";
+
 
 const API_URL = "http://178.248.112.16:8001/api/background-location/";
 const DEFAULT_INTERVAL_MINUTES = 20;
 
 let _intervalId = null;
 let _isServiceRunning = false;
-
+const ReactNativeForegroundService =
+  Platform.OS === "android"
+    ? require("@supersami/rn-foreground-service").default
+    : null;
 const requestPermissions = async () => {
-  if (Platform.OS !== "android") return true;
+  if (Platform.OS === "ios") {
+    const fgStatus = await Location.requestForegroundPermissionsAsync();
+    if (fgStatus.status !== "granted") {
+      console.log("Foreground location permission denied");
+      return false;
+    }
 
-  const granted = await PermissionsAndroid.requestMultiple([
-    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-  ]);
+    const bgStatus = await Geolocation.requestAuthorization("always");
+    if (bgStatus !== "granted") {
+      console.log("Background location permission denied");
+      return false;
+    }
 
-  return (
-    granted["android.permission.ACCESS_FINE_LOCATION"] === "granted" &&
-    granted["android.permission.ACCESS_COARSE_LOCATION"] === "granted" &&
-    granted["android.permission.ACCESS_BACKGROUND_LOCATION"] === "granted"
-  );
+    return true;
+  }
+
+  if (Platform.OS === "android") {
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    ]);
+
+    return (
+      granted["android.permission.ACCESS_FINE_LOCATION"] === "granted" &&
+      granted["android.permission.ACCESS_COARSE_LOCATION"] === "granted" &&
+      granted["android.permission.ACCESS_BACKGROUND_LOCATION"] === "granted"
+    );
+  }
 };
 
 const refreshAccessToken = async () => {
@@ -124,32 +143,33 @@ export const uploadLocation = async () => {
 };
 
 
-const startForeground = async ({ title = "Tracking active", message = "Tracking location..." } = {}) => {
+const startForeground = async ({ title = "Rekory Attendance", message = "Tracking location..." }={}) => {
+  if (Platform.OS === "ios") return; // skip for iOS
+
   if (_isServiceRunning) return;
+
   try {
     await ReactNativeForegroundService.start({
       id: 1001,
-      title,
-      message,
+      title: "Rekory Attendance",
+      message: "Location tracking active",
       icon: "ic_launcher",
       serviceType: "location",
-      setPriority: "max",
     });
+
     _isServiceRunning = true;
-    console.log("Foreground service started");
   } catch (err) {
     console.log("startForeground error:", err);
   }
 };
 
 const stopForeground = async () => {
+  if (Platform.OS === "ios") return;
+
   try {
     await ReactNativeForegroundService.stop();
   } catch (err) {
     console.log("stopForeground error:", err);
-  } finally {
-    _isServiceRunning = false;
-    console.log("Foreground service stopped");
   }
 };
 
@@ -177,6 +197,7 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
   }, Math.max(1, intervalMinutes) * 60 * 1000);
 
   try {
+    if (Platform.OS === "android" && ReactNativeForegroundService) {
     ReactNativeForegroundService.register({
       id: "rekory_location_tick",
       task: async (taskData) => {
@@ -184,6 +205,7 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
         await uploadLocation();
       },
     });
+  }
   } catch (e) {
     console.log("register native task failed (non-fatal):", e);
   }
@@ -240,8 +262,3 @@ export const backgroundFetchHeadless = async (taskId) => {
   BackgroundFetch.finish(taskId);
 };
 
-try {
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadless);
-} catch (e) {
-  console.log("registerHeadlessTask err:", e);
-}

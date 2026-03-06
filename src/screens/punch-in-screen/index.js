@@ -14,7 +14,6 @@ import {
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
 
-import { NativeEventEmitter, } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";

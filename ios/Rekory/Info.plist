@@ -47,19 +47,18 @@
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>
-      <false/>
+      <true/>
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow Rekory to access your camera</string>
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Your location is used to record work attendance during your shift.</string>
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Your location is used to record work attendance even when the app is in the background or closed. This data is only used for attendance and not shared.</string>
+    <string>Allow $(PRODUCT_NAME) to access your camera</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>This app needs background location access to track attendance even when the app is closed.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Allow Rekory to access your location</string>
-   
+    <string>Allow $(PRODUCT_NAME) to access your location</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app tracks employee location for attendance purposes.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSPhotoLibraryUsageDescription</key>
