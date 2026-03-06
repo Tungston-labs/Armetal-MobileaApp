@@ -3,7 +3,6 @@ import Geolocation from "react-native-geolocation-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PermissionsAndroid, Platform } from "react-native";
 
-
 const API_URL = "http://178.248.112.16:8001/api/background-location/";
 const DEFAULT_INTERVAL_MINUTES = 20;
 
@@ -14,22 +13,7 @@ const ReactNativeForegroundService =
     ? require("@supersami/rn-foreground-service").default
     : null;
 const requestPermissions = async () => {
-  if (Platform.OS === "ios") {
-    const fgStatus = await Location.requestForegroundPermissionsAsync();
-    if (fgStatus.status !== "granted") {
-      console.log("Foreground location permission denied");
-      return false;
-    }
-
-    const bgStatus = await Geolocation.requestAuthorization("always");
-    if (bgStatus !== "granted") {
-      console.log("Background location permission denied");
-      return false;
-    }
-
-    return true;
-  }
-
+ 
   if (Platform.OS === "android") {
     const granted = await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -70,6 +54,11 @@ const refreshAccessToken = async () => {
 
 const getCurrentLocation = () =>
   new Promise((resolve, reject) => {
+    if (Platform.OS !== "android") {
+      reject("Not supported on iOS");
+      return;
+    }
+
     Geolocation.getCurrentPosition(
       (pos) => resolve(pos),
       (err) => reject(err),
@@ -149,7 +138,7 @@ const startForeground = async ({ title = "Rekory Attendance", message = "Trackin
   if (_isServiceRunning) return;
 
   try {
-    await ReactNativeForegroundService.start({
+    await ReactNativeForegroundService?.start({
       id: 1001,
       title: "Rekory Attendance",
       message: "Location tracking active",
@@ -167,7 +156,7 @@ const stopForeground = async () => {
   if (Platform.OS === "ios") return;
 
   try {
-    await ReactNativeForegroundService.stop();
+    await ReactNativeForegroundService?.stop();
   } catch (err) {
     console.log("stopForeground error:", err);
   }
@@ -175,6 +164,7 @@ const stopForeground = async () => {
 
 
 export const startBackgroundTracking = async ({ employeeId, sessionId, intervalMinutes = DEFAULT_INTERVAL_MINUTES } = {}) => {
+  if (Platform.OS === "ios") return;
   const ok = await requestPermissions();
   if (!ok) {
     console.log("Permissions not granted - abort startBackgroundTracking");
@@ -238,13 +228,14 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
 };
 
 export const stopBackgroundTracking = async () => {
+  if (Platform.OS === "ios") return;
   if (_intervalId) {
     clearInterval(_intervalId);
     _intervalId = null;
   }
 
   await stopForeground();
-
+ _isServiceRunning = false;
   try {
     await BackgroundFetch.stop();
   } catch (e) {

@@ -57,11 +57,14 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const baseURL = `${BASE_URL}/api`;
 const authAxios = axios.create({ baseURL });
-
+console.log("BASE_URL:", baseURL);
 // Shared promise to prevent multiple refresh attempts at once
 let isRefreshing = false;
 let refreshSubscribers = [];
-
+authAxios.interceptors.request.use((config) => {
+  console.log("Axios request:", config.method, config.url, config.headers);
+  return config;
+});
 const subscribeTokenRefresh = (callback) => {
   refreshSubscribers.push(callback);
 };

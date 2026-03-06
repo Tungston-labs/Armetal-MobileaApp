@@ -11,11 +11,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Rekory",
-     "infoPlist": {
-        "UIBackgroundModes": ["location"],
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location"
+        ],
         "NSLocationWhenInUseUsageDescription": "This app tracks employee location for attendance purposes.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs background location access to track attendance even when the app is closed."
-      }
+      },
+      "appleTeamId": "8V477R5F9D"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,13 +28,13 @@
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.Rekory",
       "usesCleartextTraffic": true,
-     "permissions": [
-  "ACCESS_FINE_LOCATION",
-  "ACCESS_COARSE_LOCATION",
-  "ACCESS_BACKGROUND_LOCATION",
-  "FOREGROUND_SERVICE",
-  "FOREGROUND_SERVICE_LOCATION"
-],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ],
       "foregroundService": {
         "notificationTitle": "Rekory Attendance Tracking",
         "notificationBody": "Your location is being recorded in the background",
@@ -63,4 +66,3 @@
     }
   }
 }
-

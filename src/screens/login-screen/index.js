@@ -60,6 +60,10 @@ const handleLogin = async () => {
 
   } catch (error) {
     console.log("API Error:", error.message);
+      console.log("ERROR FULL:", error);
+  console.log("ERROR RESPONSE:", error.response);
+  console.log("ERROR REQUEST:", error.request);
+
     Alert.alert(
       "Login Failed",
       error.response ? "Invalid username or password." : "Network Error"

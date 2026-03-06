@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
-
+import { startIOSLocationTracking, stopIOSLocationTracking } from "../../services/iosLocationService";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -237,45 +237,44 @@ const handlePunch = async () => {
 
     await fetchTodayAttendance();
 
-    /**
-     * =========================
-     * ✅ PUNCH IN
-     * =========================
-     */
-    if (res.data?.action === "punch_in" && res.data?.session_id) {
+   
+ if (res.data?.action === "punch_in" && res.data?.session_id) {
 
-      const employeeId = employee.id.toString();
-      const sessionId = res.data.session_id.toString();
-      const token = await AsyncStorage.getItem("accessToken");
+  const employeeId = employee.id.toString();
+  const sessionId = res.data.session_id.toString();
 
-      await AsyncStorage.multiSet([
-        ["employeeId", employeeId],
-        ["sessionId", sessionId],
-        ["punchedIn", "true"],
-      ]);
+  await AsyncStorage.multiSet([
+    ["employeeId", employeeId],
+    ["sessionId", sessionId],
+    ["punchedIn", "true"],
+  ]);
 
-      setPunchedIn(true);
+  setPunchedIn(true);
 
-      // Ask battery optimization permission
-      maybeAskBatteryPermission();
+  maybeAskBatteryPermission();
 
-      // ✅ START BACKGROUND TRACKING ONLY HERE
+  if (Platform.OS === "android") {
+
     await startBackgroundTracking({
-  employeeId: employee.id,
-  sessionId: res.data.session_id,
-  intervalMinutes: 20,
-});
-    }
+      employeeId: employee.id,
+      sessionId: res.data.session_id,
+      intervalMinutes: 20,
+    });
 
-    /**
-     * =========================
-     * ✅ PUNCH OUT
-     * =========================
-     */
+  } else {
+
+    startIOSLocationTracking();
+
+  }
+}
+
     if (res.data?.action === "punch_out") {
 
-      await stopBackgroundTracking();
-
+if (Platform.OS === "android") {
+  await stopBackgroundTracking();
+} else {
+  stopIOSLocationTracking();
+}
       await AsyncStorage.multiRemove([
         "employeeId",
         "sessionId",
