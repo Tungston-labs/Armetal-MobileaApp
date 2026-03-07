@@ -46,31 +46,16 @@
 <dict>
   <key>NSAllowsArbitraryLoads</key>
   <false/>
-  <key>NSAllowsLocalNetworking</key>
-  <true/>
-
-  <key>NSExceptionDomains</key>
-  <dict>
-    <key>178.248.112.16</key>
-    <dict>
-      <key>NSIncludesSubdomains</key>
-      <true/>
-      <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-      <true/>
-      <key>NSTemporaryExceptionMinimumTLSVersion</key>
-      <string>TLSv1.1</string>
-    </dict>
-  </dict>
 </dict>
 
 <key>NSCameraUsageDescription</key>
 <string>Allow $(PRODUCT_NAME) to access your camera</string>
 
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>This app tracks employee location for attendance purposes.</string>
+<string>Location is used to verify work location and automatically record attendance during active work sessions.</string>
 
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>This app needs background location access to track attendance even when the app is closed.</string>
+<string>Location access is required to verify work location and record attendance for employees working remotely or in the field during active work hours.</string>
 
 <key>NSLocationAlwaysUsageDescription</key>
 <string>Allow $(PRODUCT_NAME) to access your location</string>
