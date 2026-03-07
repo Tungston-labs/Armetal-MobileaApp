@@ -2,19 +2,25 @@ import { registerRootComponent } from 'expo';
 import App from './App';
 import BackgroundFetch from "react-native-background-fetch"; 
 import { uploadLocation } from "./src/services/locationService"; 
-
 const BackgroundFetchHeadlessTask = async (event) => {
-  console.log("🔥 Headless background fetch triggered:", event.taskId);
-  
+  const { taskId, timeout } = event;
+
+  if (timeout) {
+    console.log("Headless fetch timeout:", taskId);
+    BackgroundFetch.finish(taskId);
+    return;
+  }
+
+  console.log("🔥 Headless background fetch triggered:", taskId);
+
   try {
     await uploadLocation();
   } catch (error) {
-    console.log("❌ Headless fetch error:", error);
+    console.log(" Headless fetch error:", error);
   }
 
-  BackgroundFetch.finish(event.taskId);
+  BackgroundFetch.finish(taskId);
 };
-
 BackgroundFetch.registerHeadlessTask(BackgroundFetchHeadlessTask);
 
 registerRootComponent(App);

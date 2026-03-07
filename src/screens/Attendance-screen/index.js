@@ -123,7 +123,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
       </View>
     );
   }
-
+  
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
