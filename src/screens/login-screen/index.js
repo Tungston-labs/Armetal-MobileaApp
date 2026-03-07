@@ -29,7 +29,7 @@ const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
-const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
       const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const dispatch=useDispatch();
@@ -60,9 +60,7 @@ const handleLogin = async () => {
 
   } catch (error) {
     console.log("API Error:", error.message);
-      console.log("ERROR FULL:", error);
-  console.log("ERROR RESPONSE:", error.response);
-  console.log("ERROR REQUEST:", error.request);
+
 
     Alert.alert(
       "Login Failed",

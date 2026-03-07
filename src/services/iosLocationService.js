@@ -6,8 +6,8 @@ let watchId = null;
 let uploading = false;
 let lastUploadTime = 0;
 
-const API_URL = "http://178.248.112.16:8001/api/background-location/";
-const REFRESH_URL = "http://178.248.112.16:8001/api/token/refresh/";
+const API_URL = "https://api.rekory.com/api/background-location/";
+const REFRESH_URL = "https://api.rekory.com/api/token/refresh/";
 
 // 20 minutes interval
 const LOCATION_INTERVAL = 20 * 60 * 1000; 

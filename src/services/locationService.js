@@ -3,7 +3,7 @@ import Geolocation from "react-native-geolocation-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PermissionsAndroid, Platform } from "react-native";
 
-const API_URL = "http://178.248.112.16:8001/api/background-location/";
+const API_URL = "https://api.rekory.com/api/background-location/";
 const DEFAULT_INTERVAL_MINUTES = 20;
 
 let _intervalId = null;
@@ -34,7 +34,7 @@ const refreshAccessToken = async () => {
   const refreshToken = await AsyncStorage.getItem("refreshToken");
   if (!refreshToken) return null;
   try {
-    const res = await fetch("http://178.248.112.16:8001/api/token/refresh/", {
+    const res = await fetch("https://api.rekory.com/api/token/refresh/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh: refreshToken }),
