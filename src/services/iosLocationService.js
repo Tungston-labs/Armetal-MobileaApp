@@ -101,7 +101,7 @@ const uploadLocation = async (position) => {
   uploading = false;
 };
 
-export const startIOSLocationTracking = () => {
+export const startIOSLocationFetch = () => {
   if (Platform.OS !== "ios") return;
 
   if (watchId !== null) return;
@@ -149,7 +149,7 @@ export const startIOSLocationTracking = () => {
   console.log("📡 iOS Tracking Started (20 min interval)");
 };
 
-export const stopIOSLocationTracking = () => {
+export const stopIOSLocationFetch= () => {
   if (watchId !== null) {
     Geolocation.clearWatch(watchId);
     watchId = null;

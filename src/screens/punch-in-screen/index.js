@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
-import { startIOSLocationTracking, stopIOSLocationTracking } from "../../services/iosLocationService";
+import { startIOSLocationFetch, stopIOSLocationFetch } from "../../services/iosLocationService";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -40,8 +40,9 @@ import {
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
+const defaultAvatar = {
+  uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+};
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const AttendanceScreen = () => {
@@ -124,18 +125,26 @@ const AttendanceScreen = () => {
     }
   };
 
+const getProfileUri = (pic) => {
+  if (!pic) {
+    return defaultAvatar;
+  }
 
-  const getProfileUri = (pic) => {
-    if (!pic) return defaultAvatar;
+  // convert http → https
+  if (pic.startsWith("http://")) {
+    pic = pic.replace("http://", "https://");
+  }
 
-    if (pic.startsWith("http")) {
-      return pic;
-    }
+  if (pic.startsWith("https://")) {
+    return { uri: pic };
+  }
 
-
-    const path = pic.startsWith("/") ? pic : `/media/${pic}`;
-    return `${BASE_URL}${path}`;
-  };
+  const cleanPath = pic.replace(/^\/+/, "");
+  return { uri: `${BASE_URL}/media/${cleanPath}` };
+};
+  useEffect(() => {
+    fetchDayStatus();
+  }, []);
 
   useEffect(() => {
     fetchDayStatus();
@@ -196,7 +205,7 @@ const AttendanceScreen = () => {
       if (bg.status !== "granted") {
         Alert.alert(
           "Background Location Required",
-          "Please allow background location for attendance marking to work even when the app is closed. You can enable it from app settings.",
+          "Please allow background location for attendance tracking"
         );
         return false;
       }
@@ -204,112 +213,124 @@ const AttendanceScreen = () => {
 
     return true;
   };
-const handlePunch = async () => {
-  setPunching(true);
-  startRotation();
+ 
+  const handlePunch = async () => {
+    setPunching(true);
+    startRotation();
 
-  try {
-    if (!employee?.id) {
-      Alert.alert("Employee not ready");
-      return;
-    }
-
-    const permissionGranted = await requestLocationPermissions();
-
-    if (!permissionGranted) {
-      Alert.alert("Location permission required");
-      return;
-    }
-
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High,
-    });
-
-    console.log("LOCATION:", location);
-
-    // ✅ API CALL
-    const res = await authAxios.post("/attendance/swipe/", {
-      latitude: Number(location.coords.latitude),
-      longitude: Number(location.coords.longitude),
-    });
-
-    console.log("SWIPE RESPONSE:", res.data);
-
-    await fetchTodayAttendance();
-
-   
- if (res.data?.action === "punch_in" && res.data?.session_id) {
-
-  const employeeId = employee.id.toString();
-  const sessionId = res.data.session_id.toString();
-
-  await AsyncStorage.multiSet([
-    ["employeeId", employeeId],
-    ["sessionId", sessionId],
-    ["punchedIn", "true"],
-  ]);
-
-  setPunchedIn(true);
-
-      maybeAskBatteryPermission();
-
-    await startBackgroundFetch({
-  employeeId: employee.id,
-  sessionId: res.data.session_id,
-  intervalMinutes: 20,
-});
-    }
-
-    if (res.data?.action === "punch_out") {
-
-      await stopBackgroundFetch();
-
-      await AsyncStorage.multiRemove([
-        "employeeId",
-        "sessionId",
-        "punchedIn",
-      ]);
-
-      setPunchedIn(false);
-    }
-
-  } catch (error) {
-    console.log("PUNCH ERROR:", error);
-    console.log("SERVER:", error?.response?.data);
-
-    Alert.alert(
-      "Punch Failed",
-      JSON.stringify(error?.response?.data || error.message)
-    );
-  } finally {
-    setPunching(false);
-    stopRotation();
-  }
-};
-useEffect(() => {
-  const initialize = async () => {
     try {
-      // Fetch employee
-      const profileRes = await authAxios.get("/profile/");
-      setEmployee(profileRes.data);
+      if (!employee?.id) {
+        Alert.alert("Employee not ready");
+        return;
+      }
 
-      // Attendance refresh
+      const permissionGranted = await requestLocationPermissions();
+
+      if (!permissionGranted) {
+        Alert.alert("Location permission required");
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      console.log("LOCATION:", location);
+
+      // ✅ API CALL
+      const res = await authAxios.post("/attendance/swipe/", {
+        latitude: Number(location.coords.latitude),
+        longitude: Number(location.coords.longitude),
+      });
+
+      console.log("SWIPE RESPONSE:", res.data);
+
       await fetchTodayAttendance();
 
-      // Restore punch state
-      const storedPunch = await AsyncStorage.getItem("punchedIn");
 
-      setPunchedIn(storedPunch === "true");
+      if (res.data?.action === "punch_in" && res.data?.session_id) {
 
-    } catch (err) {
-      console.log("INIT ERROR:", err);
+        const employeeId = employee.id.toString();
+        const sessionId = res.data.session_id.toString();
+
+        await AsyncStorage.multiSet([
+          ["employeeId", employeeId],
+          ["sessionId", sessionId],
+          ["punchedIn", "true"],
+        ]);
+
+        setPunchedIn(true);
+
+        maybeAskBatteryPermission();
+
+        if (Platform.OS === "android") {
+
+          await startBackgroundFetch({
+            employeeId: employee.id,
+            sessionId: res.data.session_id,
+            intervalMinutes: 20,
+          });
+
+        } else {
+
+          startIOSLocationFetch();
+
+        }
+      }
+
+      if (res.data?.action === "punch_out") {
+
+        if (Platform.OS === "android") {
+          await stopBackgroundFetch();
+        } else {
+          stopIOSLocationFetch();
+        }
+        await AsyncStorage.multiRemove([
+          "employeeId",
+          "sessionId",
+          "punchedIn",
+        ]);
+
+        setPunchedIn(false);
+      }
+
+    } catch (error) {
+      console.log("PUNCH ERROR:", error);
+      console.log("SERVER:", error?.response?.data);
+
+      Alert.alert(
+        "Punch Failed",
+        JSON.stringify(error?.response?.data || error.message)
+      );
     } finally {
-      setLoading(false);
+      setPunching(false);
+      stopRotation();
     }
   };
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        // Fetch employee
+        const profileRes = await authAxios.get("/profile/");
+        setEmployee(profileRes.data);
 
-  initialize();
-}, []);
+        // Attendance refresh
+        await fetchTodayAttendance();
+
+        // Restore punch state
+        const storedPunch = await AsyncStorage.getItem("punchedIn");
+
+        setPunchedIn(storedPunch === "true");
+
+      } catch (err) {
+        console.log("INIT ERROR:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initialize();
+  }, []);
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -467,10 +488,10 @@ useEffect(() => {
               activeOpacity={0.7}
               onPress={() => navigation.navigate("ProfileScreen")}
             >
-              <Image
-                source={{ uri: getProfileUri(employee?.profile_pic) }}
-                style={styles.profilePic}
-              />
+      <Image
+  source={getProfileUri(employee?.profile_pic)}
+  style={styles.profilePic}
+/>
 
             </TouchableOpacity>
           </View>
@@ -559,20 +580,20 @@ useEffect(() => {
               </Text>
             </View>
           ) : (
-        <SwipeButton
-  title={punchedIn ? "Swipe to Punch Out" : "Swipe to Punch In"}
-  successTitle={punchedIn ? "Punched Out!" : "Punched In!"}
-  onSwipeSuccess={() => {
-    if (!punchedIn) {
-      setShowDisclosure(true);
-    } else {
-      handlePunch();
-    }
-  }}
-  backgroundColor="#ddd"
-  thumbColor={punchedIn ? "#ED2B2B" : "#2F822F"}
-  resetAfterSuccess={true}
-/>
+            <SwipeButton
+              title={punchedIn ? "Swipe to Punch Out" : "Swipe to Punch In"}
+              successTitle={punchedIn ? "Punched Out!" : "Punched In!"}
+              onSwipeSuccess={() => {
+                if (!punchedIn) {
+                  setShowDisclosure(true);
+                } else {
+                  handlePunch();
+                }
+              }}
+              backgroundColor="#ddd"
+              thumbColor={punchedIn ? "#ED2B2B" : "#2F822F"}
+              resetAfterSuccess={true}
+            />
 
           )}
 
@@ -661,4 +682,3 @@ useEffect(() => {
 };
 
 export default AttendanceScreen;
-

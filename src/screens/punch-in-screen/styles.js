@@ -33,13 +33,13 @@ export default StyleSheet.create({
     fontFamily: 'Raleway_700Bold',
     textAlign: "left",
     marginTop: 8,
-  
   },
   profilePic: {
     width: 45,
     height: 45,
     borderRadius: 25,
-    marginBottom:35,
+    marginBottom:30,
+    marginRight:10,
   },
 
   // Circle
