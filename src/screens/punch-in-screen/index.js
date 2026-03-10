@@ -34,8 +34,8 @@ import { SvgUri } from "react-native-svg";
 import LocationDisclosure from "@/src/utils/LocationDisclosure"
 import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
-  startBackgroundTracking,
-  stopBackgroundTracking,
+  startBackgroundFetch,
+  stopBackgroundFetch,
 } from "../../services/locationService.js";
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
@@ -196,7 +196,7 @@ const AttendanceScreen = () => {
       if (bg.status !== "granted") {
         Alert.alert(
           "Background Location Required",
-          "Please allow background location for attendance tracking"
+          "Please allow background location for attendance marking to work even when the app is closed. You can enable it from app settings.",
         );
         return false;
       }
@@ -251,30 +251,19 @@ const handlePunch = async () => {
 
   setPunchedIn(true);
 
-  maybeAskBatteryPermission();
+      maybeAskBatteryPermission();
 
-  if (Platform.OS === "android") {
-
-    await startBackgroundTracking({
-      employeeId: employee.id,
-      sessionId: res.data.session_id,
-      intervalMinutes: 20,
-    });
-
-  } else {
-
-    startIOSLocationTracking();
-
-  }
-}
+    await startBackgroundFetch({
+  employeeId: employee.id,
+  sessionId: res.data.session_id,
+  intervalMinutes: 20,
+});
+    }
 
     if (res.data?.action === "punch_out") {
 
-if (Platform.OS === "android") {
-  await stopBackgroundTracking();
-} else {
-  stopIOSLocationTracking();
-}
+      await stopBackgroundFetch();
+
       await AsyncStorage.multiRemove([
         "employeeId",
         "sessionId",

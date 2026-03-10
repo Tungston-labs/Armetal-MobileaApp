@@ -53,9 +53,8 @@ const InitAuth = ({ children }) => {
       const sessionId = await AsyncStorage.getItem("sessionId");
 
       if (punchedIn === "true" && employeeId && sessionId) {
-        console.log("🔄 Restoring background tracking after restart…");
-        const ok = await startBackgroundTracking();
-        if (!ok) console.warn("⚠ Background tracking failed to start");
+        const ok = await startBackgroundFetch();
+        if (!ok) console.warn("⚠ Background location failed to start");
       }
     };
 

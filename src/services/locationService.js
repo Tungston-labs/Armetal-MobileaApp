@@ -2,49 +2,63 @@ import BackgroundFetch from "react-native-background-fetch";
 import Geolocation from "react-native-geolocation-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PermissionsAndroid, Platform } from "react-native";
+let ReactNativeForegroundService = null;
 
-const API_URL = "https://api.rekory.com/api/background-location/";
+try {
+  if (Platform.OS === "android") {
+    ReactNativeForegroundService =
+      require("@supersami/rn-foreground-service").default;
+  }
+} catch (e) {
+  console.log("Foreground service not available on this platform");
+}
+const API_URL = "http://178.248.112.16:8001/api/background-location/";
+const REFRESH_URL = "http://178.248.112.16:8001/api/token/refresh/";
+
 const DEFAULT_INTERVAL_MINUTES = 20;
 
-let _intervalId = null;
 let _isServiceRunning = false;
-const ReactNativeForegroundService =
-  Platform.OS === "android"
-    ? require("@supersami/rn-foreground-service").default
-    : null;
-const requestPermissions = async () => {
- 
-  if (Platform.OS === "android") {
-    const granted = await PermissionsAndroid.requestMultiple([
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-      PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    ]);
+let lastUploadTime = 0;
 
-    return (
-      granted["android.permission.ACCESS_FINE_LOCATION"] === "granted" &&
-      granted["android.permission.ACCESS_COARSE_LOCATION"] === "granted" &&
-      granted["android.permission.ACCESS_BACKGROUND_LOCATION"] === "granted"
-    );
-  }
-};
+const MIN_UPLOAD_GAP = 60 * 1000;
+
+const requestPermissions = async () => {
+  if (Platform.OS !== "android") return true;
+
+  const granted = await PermissionsAndroid.requestMultiple([
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+  ]);
+
+  return (
+    granted["android.permission.ACCESS_FINE_LOCATION"] === "granted" &&
+    granted["android.permission.ACCESS_COARSE_LOCATION"] === "granted" &&
+    granted["android.permission.ACCESS_BACKGROUND_LOCATION"] === "granted"
+  );
+};  
 
 const refreshAccessToken = async () => {
   const refreshToken = await AsyncStorage.getItem("refreshToken");
   if (!refreshToken) return null;
+
   try {
-    const res = await fetch("https://api.rekory.com/api/token/refresh/", {
+    const res = await fetch(REFRESH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh: refreshToken }),
     });
+
     if (!res.ok) return null;
+
     const data = await res.json();
+
     if (data?.access) {
       await AsyncStorage.setItem("accessToken", data.access);
       return data.access;
     }
+
     return null;
   } catch (err) {
     console.log("refresh token err", err);
@@ -54,40 +68,50 @@ const refreshAccessToken = async () => {
 
 const getCurrentLocation = () =>
   new Promise((resolve, reject) => {
-    if (Platform.OS !== "android") {
-      reject("Not supported on iOS");
-      return;
-    }
-
     Geolocation.getCurrentPosition(
-      (pos) => resolve(pos),
-      (err) => reject(err),
+      resolve,
+      reject,
       {
         enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 10000,
+        timeout: 30000,
+        maximumAge: 60000,
         forceRequestLocation: true,
+        showLocationDialog: true,
       }
     );
   });
 
 export const uploadLocation = async () => {
+
+  const now = Date.now();
+
+  if (now - lastUploadTime < MIN_UPLOAD_GAP) {
+    console.log("Skipping duplicate upload");
+    return;
+  }
+
+  lastUploadTime = now;
+
   const employeeId = await AsyncStorage.getItem("employeeId");
   const sessionId = await AsyncStorage.getItem("sessionId");
+
   if (!employeeId || !sessionId) {
-    console.log("uploadLocation: missing employeeId/sessionId");
+    console.log("Missing employeeId/sessionId");
     return;
   }
 
   let token = await AsyncStorage.getItem("accessToken");
   if (!token) token = await refreshAccessToken();
+
   if (!token) {
-    console.log("uploadLocation: no token available, abort.");
+    console.log("No token available");
     return;
   }
 
   try {
+
     const pos = await getCurrentLocation();
+
     const body = {
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude,
@@ -102,14 +126,13 @@ export const uploadLocation = async () => {
       },
       body: JSON.stringify(body),
     });
-
+console.log("uploadLocation triggered");
     if (res.status === 401) {
-      console.log("uploadLocation: got 401, trying refresh token...");
+
       token = await refreshAccessToken();
-      if (!token) {
-        console.log("uploadLocation: refresh failed");
-        return;
-      }
+
+      if (!token) return;
+
       res = await fetch(`${API_URL}${employeeId}/`, {
         method: "POST",
         headers: {
@@ -118,56 +141,69 @@ export const uploadLocation = async () => {
         },
         body: JSON.stringify(body),
       });
+
     }
 
     if (!res.ok) {
-      const txt = await res.text();
-      console.log("uploadLocation: server error -", res.status, txt);
+      console.log("Upload failed", res.status);
     } else {
-      console.log("Location uploaded:", new Date().toISOString());
+      console.log("Location uploaded", new Date().toISOString());
     }
+
   } catch (err) {
     console.log("uploadLocation error:", err);
   }
 };
 
-
-const startForeground = async ({ title = "Rekory Attendance", message = "Tracking location..." }={}) => {
-  if (Platform.OS === "ios") return; // skip for iOS
+const startForeground = async ({
+  title = "Tracking active",
+  message = "Tracking location..."
+} = {}) => {
 
   if (_isServiceRunning) return;
 
   try {
-    await ReactNativeForegroundService?.start({
+
+    await ReactNativeForegroundService.start({
       id: 1001,
-      title: "Rekory Attendance",
-      message: "Location tracking active",
+      title,
+      message,
       icon: "ic_launcher",
-      serviceType: "location",
+      ServiceType: "location",
+      setPriority: "max",
     });
 
     _isServiceRunning = true;
+
+    console.log("Foreground service started");
+
   } catch (err) {
     console.log("startForeground error:", err);
   }
 };
 
 const stopForeground = async () => {
-  if (Platform.OS === "ios") return;
 
   try {
-    await ReactNativeForegroundService?.stop();
+    await ReactNativeForegroundService.stop();
   } catch (err) {
     console.log("stopForeground error:", err);
+  } finally {
+    _isServiceRunning = false;
   }
+
 };
 
+export const startBackgroundFetch = async ({
+  employeeId,
+  sessionId,
+  intervalMinutes = DEFAULT_INTERVAL_MINUTES
+} = {}) => {
 
-export const startBackgroundTracking = async ({ employeeId, sessionId, intervalMinutes = DEFAULT_INTERVAL_MINUTES } = {}) => {
-  if (Platform.OS === "ios") return;
   const ok = await requestPermissions();
+
   if (!ok) {
-    console.log("Permissions not granted - abort startBackgroundTracking");
+    console.log("Permissions not granted");
     return;
   }
 
@@ -177,79 +213,85 @@ export const startBackgroundTracking = async ({ employeeId, sessionId, intervalM
     ["punchedIn", "true"],
   ]);
 
-  await startForeground({ title: "Rekory Attendance", message: "Location tracking active for your shift" });
+  await startForeground({
+    title: "Rekory Attendance",
+    message: "Location tracking active for your shift",
+  });
 
   await uploadLocation();
 
-  if (_intervalId) clearInterval(_intervalId);
-  _intervalId = setInterval(() => {
-    uploadLocation().catch((e) => console.log("interval upload err", e));
-  }, Math.max(1, intervalMinutes) * 60 * 1000);
+ReactNativeForegroundService.add_task(
+  async () => {
+    console.log("Foreground task running:", new Date().toISOString());
+    await uploadLocation();
+  },
+  {
+    delay: intervalMinutes * 60 * 1000,
+    onLoop: true,
+    taskId: "locationTask",
+  }
+);
 
   try {
-    if (Platform.OS === "android" && ReactNativeForegroundService) {
-    ReactNativeForegroundService.register({
-      id: "rekory_location_tick",
-      task: async (taskData) => {
-        console.log("Native service tick -> uploadLocation");
-        await uploadLocation();
-      },
-    });
-  }
-  } catch (e) {
-    console.log("register native task failed (non-fatal):", e);
-  }
 
-  try {
     await BackgroundFetch.configure(
       {
-        minimumFetchInterval: Math.max(15, intervalMinutes), 
+        minimumFetchInterval: 20,
         stopOnTerminate: false,
         startOnBoot: true,
         enableHeadless: true,
         forceAlarmManager: true,
+        allowWhileIdle: true,
         requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
       },
+
       async (taskId) => {
+
         console.log("BackgroundFetch event:", taskId);
+
         await uploadLocation();
+
         BackgroundFetch.finish(taskId);
       },
+
       (error) => {
-        console.log("BackgroundFetch configure error:", error);
+        console.log("BackgroundFetch error:", error);
       }
     );
+
     await BackgroundFetch.start();
-  } catch (e) {
-    console.log("BackgroundFetch setup failed:", e);
+
+  } catch (err) {
+    console.log("BackgroundFetch setup failed:", err);
   }
 
-  console.log(" startBackgroundTracking done");
+  console.log("Background tracking started");
 };
 
-export const stopBackgroundTracking = async () => {
-  if (Platform.OS === "ios") return;
-  if (_intervalId) {
-    clearInterval(_intervalId);
-    _intervalId = null;
-  }
+export const stopBackgroundFetch = async () => {
 
   await stopForeground();
- _isServiceRunning = false;
+
   try {
     await BackgroundFetch.stop();
   } catch (e) {
-    console.log("BackgroundFetch.stop failed:", e);
+    console.log("BackgroundFetch stop error:", e);
   }
 
-  await AsyncStorage.multiRemove(["employeeId", "sessionId", "punchedIn"]);
-  console.log("stopBackgroundTracking done");
-};
+  await AsyncStorage.multiRemove([
+    "employeeId",
+    "sessionId",
+    "punchedIn"
+  ]);
 
+  console.log("Background tracking stopped");
+};
 
 export const backgroundFetchHeadless = async (taskId) => {
+
   console.log("Headless background fetch:", taskId);
+
   await uploadLocation();
+
   BackgroundFetch.finish(taskId);
 };
-
