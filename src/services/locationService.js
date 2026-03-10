@@ -12,8 +12,8 @@ try {
 } catch (e) {
   console.log("Foreground service not available on this platform");
 }
-const API_URL = "http://178.248.112.16:8001/api/background-location/";
-const REFRESH_URL = "http://178.248.112.16:8001/api/token/refresh/";
+const API_URL = "https://api.rekory.com/api/background-location/";
+const REFRESH_URL = "https://api.rekory.com/api/token/refresh/";
 
 const DEFAULT_INTERVAL_MINUTES = 20;
 
