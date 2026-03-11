@@ -54,10 +54,10 @@
     <key>NSCameraUsageDescription</key>
     <string>Allow Rekory to access your camera</string>
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Your location is used to record work attendance during your shift.</string>
+<string>Rekory uses your location to verify your presence when marking attendance.</string>
+
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Your location is used to record work attendance even when the app is in the background or closed. This data is only used for attendance and not shared.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
+<string>Rekory may access your location in the background during work hours to verify attendance at the workplace.</string>
     <string>Allow Rekory to access your location</string>
    
     <key>NSMicrophoneUsageDescription</key>

@@ -8,15 +8,17 @@
     "scheme": "Rekory",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Rekory",
-     "infoPlist": {
+      "infoPlist": {
         "UIBackgroundModes": ["location"],
-        "NSLocationWhenInUseUsageDescription": "This app tracks employee location for attendance purposes.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs background location access to track attendance even when the app is closed."
+        "NSLocationWhenInUseUsageDescription": "Rekory uses your location to verify your presence for attendance when the app is open.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Rekory uses your location to verify attendance even when the app is running in the background."
       }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
@@ -25,37 +27,45 @@
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.Rekory",
       "usesCleartextTraffic": true,
-     "permissions": [
-  "ACCESS_FINE_LOCATION",
-  "ACCESS_COARSE_LOCATION",
-  "ACCESS_BACKGROUND_LOCATION",
-  "FOREGROUND_SERVICE",
-  "FOREGROUND_SERVICE_LOCATION"
-],
+
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ],
+
       "foregroundService": {
-        "notificationTitle": "Rekory Attendance Tracking",
-        "notificationBody": "Your location is being recorded in the background",
+        "notificationTitle": "Rekory Attendance Service",
+        "notificationBody": "Location is being used to verify attendance in the background",
         "notificationColor": "#FF0000"
       },
+
       "splash": {
         "image": "./assets/images/adaptive-iconn.png",
         "resizeMode": "contain",
         "backgroundColor": "#151D34"
       }
     },
+
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
     },
+
     "experiments": {
       "typedRoutes": true
     },
+
     "owner": "ansalmazeez",
+
     "extra": {
       "eas": {
         "projectId": "51276e4a-a789-4827-a76f-c28159bfc02b"
       }
     },
+
     "splash": {
       "image": "./assets/images/adaptive-iconn.png",
       "resizeMode": "contain",
@@ -63,4 +73,3 @@
     }
   }
 }
-

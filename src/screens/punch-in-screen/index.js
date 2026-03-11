@@ -37,6 +37,7 @@ import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
   startBackgroundTracking,
   stopBackgroundTracking,
+  uploadLocation,
 } from "../../services/locationService.js";
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
@@ -210,6 +211,7 @@ const handlePunch = async () => {
   startRotation();
 
   try {
+
     if (!employee?.id) {
       Alert.alert("Employee not ready");
       return;
@@ -228,7 +230,6 @@ const handlePunch = async () => {
 
     console.log("LOCATION:", location);
 
-    // ✅ API CALL
     const res = await authAxios.post("/attendance/swipe/", {
       latitude: Number(location.coords.latitude),
       longitude: Number(location.coords.longitude),
@@ -238,55 +239,45 @@ const handlePunch = async () => {
 
     await fetchTodayAttendance();
 
-    /**
-     * =========================
-     * ✅ PUNCH IN
-     * =========================
-     */
+
+    /* =========================
+       PUNCH IN
+    ========================= */
+
     if (res.data?.action === "punch_in" && res.data?.session_id) {
 
-      const employeeId = employee.id.toString();
-      const sessionId = res.data.session_id.toString();
-      const token = await AsyncStorage.getItem("accessToken");
-
-      await AsyncStorage.multiSet([
-        ["employeeId", employeeId],
-        ["sessionId", sessionId],
-        ["punchedIn", "true"],
-      ]);
+      const employeeId = employee.id;
+      const sessionId = res.data.session_id;
 
       setPunchedIn(true);
 
-      // Ask battery optimization permission
+      // Start background tracking
+      await startBackgroundTracking({
+        employeeId,
+        sessionId,
+        intervalMinutes: 20,
+      });
+await uploadLocation();
+      // Ask battery permission AFTER starting tracking
       maybeAskBatteryPermission();
 
-      // ✅ START BACKGROUND TRACKING ONLY HERE
-    await startBackgroundTracking({
-  employeeId: employee.id,
-  sessionId: res.data.session_id,
-  intervalMinutes: 20,
-});
     }
 
-    /**
-     * =========================
-     * ✅ PUNCH OUT
-     * =========================
-     */
+
+    /* =========================
+       PUNCH OUT
+    ========================= */
+
     if (res.data?.action === "punch_out") {
 
       await stopBackgroundTracking();
 
-      await AsyncStorage.multiRemove([
-        "employeeId",
-        "sessionId",
-        "punchedIn",
-      ]);
-
       setPunchedIn(false);
+
     }
 
   } catch (error) {
+
     console.log("PUNCH ERROR:", error);
     console.log("SERVER:", error?.response?.data);
 
@@ -294,9 +285,12 @@ const handlePunch = async () => {
       "Punch Failed",
       JSON.stringify(error?.response?.data || error.message)
     );
+
   } finally {
+
     setPunching(false);
     stopRotation();
+
   }
 };
 useEffect(() => {
