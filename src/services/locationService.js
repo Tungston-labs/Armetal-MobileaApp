@@ -9,7 +9,7 @@ const DEFAULT_INTERVAL_MINUTES = 20;
 
 let _isServiceRunning = false;
 
-
+let _intervalId = null;
 const requestPermissions = async () => {
 
   if (Platform.OS !== "android") return true;
@@ -117,19 +117,19 @@ export const uploadLocation = async () => {
     console.log("uploadLocation: missing employeeId/sessionId");
     return;
   }
-let token = await AsyncStorage.getItem("accessToken");
+  let token = await AsyncStorage.getItem("accessToken");
 
-if (!token) {
-  console.log("🟡 ACCESS TOKEN missing. Trying refresh...");
-  token = await refreshAccessToken();
-}
+  if (!token) {
+    console.log("🟡 ACCESS TOKEN missing. Trying refresh...");
+    token = await refreshAccessToken();
+  }
 
-if (!token) {
-  console.log("🔴 Cannot upload location. No valid token.");
-  return;
-}
-
+  if (!token) {
+    console.log("🔴 Cannot upload location. No valid token.");
+    return;
+  }
   try {
+    console.log("📍 Fetching GPS location...");
 
     const pos = await getCurrentLocation();
 
@@ -149,16 +149,16 @@ if (!token) {
     });
 
     if (res.status === 401) {
-  console.log("🟡 ACCESS TOKEN expired. Refreshing...");
+      console.log("🟡 ACCESS TOKEN expired. Refreshing...");
 
       token = await refreshAccessToken();
 
       if (!token) {
-    console.log("🔴 Refresh failed. User must login again.");
-    return;
-  }
+        console.log("🔴 Refresh failed. User must login again.");
+        return;
+      }
 
-  console.log("🟢 Retrying location upload with new token...");
+      console.log("🟢 Retrying location upload with new token...");
 
       res = await fetch(`${API_URL}${employeeId}/`, {
         method: "POST",
@@ -170,8 +170,10 @@ if (!token) {
       });
 
     }
-
+    console.log("📍 GPS:", pos.coords.latitude, pos.coords.longitude);
     console.log("Location uploaded:", new Date().toISOString());
+    const data = await res.json();
+    console.log("🛰 SERVER RESPONSE:", data);
 
   } catch (err) {
 
@@ -185,10 +187,11 @@ if (!token) {
 
 const startForeground = async ({
   title = "Tracking active",
-  message = "Tracking location...",
-  isBackground = false
+  message = "Tracking location..."
 } = {}) => {
-  if (_isServiceRunning || isBackground) return; 
+
+  if (_isServiceRunning) return;
+
   try {
     await ReactNativeForegroundService.start({
       id: 1001,
@@ -197,7 +200,9 @@ const startForeground = async ({
       icon: "ic_launcher",
       serviceType: "location",
     });
+
     _isServiceRunning = true;
+
   } catch (err) {
     console.log("startForeground error:", err);
   }
@@ -230,14 +235,14 @@ export const startBackgroundTracking = async ({
   sessionId,
   intervalMinutes = DEFAULT_INTERVAL_MINUTES
 } = {}) => {
-if (_intervalId) clearInterval(_intervalId);
-_intervalId = setInterval(() => {
-  uploadLocation().catch(console.log);
-}, Math.max(1, intervalMinutes) * 60 * 1000);
+
   const ok = await requestPermissions();
 
   if (!ok) return;
-
+  if (_intervalId) clearInterval(_intervalId);
+  _intervalId = setInterval(() => {
+    uploadLocation().catch(console.log);
+  }, Math.max(1, intervalMinutes) * 60 * 1000);
   await AsyncStorage.multiSet([
     ["employeeId", String(employeeId)],
     ["sessionId", String(sessionId)],
@@ -252,7 +257,7 @@ _intervalId = setInterval(() => {
         stopOnTerminate: false,
         startOnBoot: true,
         enableHeadless: true,
-        
+
         forceAlarmManager: true,
         requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
       },
@@ -263,7 +268,6 @@ _intervalId = setInterval(() => {
 
         try {
 
-await startForeground({ isBackground: true }); 
           await uploadLocation();
 
         } catch (e) {
@@ -279,7 +283,7 @@ await startForeground({ isBackground: true });
       },
 
       (error) => {
-        console.log("BackgroundFetch configure error:", error);
+        console.log("BackgroundFetch status:", status);
       }
     );
 
@@ -295,9 +299,13 @@ await startForeground({ isBackground: true });
 };
 
 
-/* ---------------- STOP TRACKING ---------------- */
 
 export const stopBackgroundTracking = async () => {
+  if (_intervalId) {
+    clearInterval(_intervalId);
+    _intervalId = null;
+    console.log("🛑 Interval stopped");
+  }
 
   await stopForeground();
 
