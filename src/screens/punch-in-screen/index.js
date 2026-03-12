@@ -37,6 +37,7 @@ import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
   startBackgroundTracking,
   stopBackgroundTracking,
+  uploadLocation,
 } from "../../services/locationService.js";
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
@@ -256,8 +257,6 @@ const handlePunch = async () => {
         sessionId,
         intervalMinutes: 20,
       });
-await uploadLocation();
-      // Ask battery permission AFTER starting tracking
       maybeAskBatteryPermission();
 
     }
