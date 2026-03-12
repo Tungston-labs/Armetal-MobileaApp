@@ -2,21 +2,16 @@ import BackgroundFetch from "react-native-background-fetch";
 import Geolocation from "react-native-geolocation-service";
 import ReactNativeForegroundService from "@supersami/rn-foreground-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PermissionsAndroid, Platform, Linking } from "react-native";
+import { PermissionsAndroid, Platform } from "react-native";
 
 const API_URL = "http://178.248.112.16:8001/api/background-location/";
 const DEFAULT_INTERVAL_MINUTES = 20;
 
-let _watchId = null;
-let _lastUploadTime = 0;
-let _foregroundRunning = false;
-let _trackingStarted = false;
+let _isServiceRunning = false;
 
-/* --------------------------------------------------
-   PERMISSIONS
--------------------------------------------------- */
-
+let _intervalId = null;
 const requestPermissions = async () => {
+
   if (Platform.OS !== "android") return true;
 
   const granted = await PermissionsAndroid.requestMultiple([
@@ -33,58 +28,70 @@ const requestPermissions = async () => {
   );
 };
 
-/* --------------------------------------------------
-   BATTERY OPTIMIZATION
--------------------------------------------------- */
 
-export const openBatterySettings = async () => {
-  try {
-    await Linking.openSettings();
-  } catch (e) {
-    console.log("Failed to open settings", e);
-  }
-};
-
-/* --------------------------------------------------
-   TOKEN REFRESH
--------------------------------------------------- */
+/* ---------------- TOKEN REFRESH ---------------- */
 
 const refreshAccessToken = async () => {
+
   const refreshToken = await AsyncStorage.getItem("refreshToken");
-  if (!refreshToken) return null;
+
+  if (!refreshToken) {
+    console.log("🔴 REFRESH TOKEN: Not found in storage");
+    return null;
+  }
+
+  console.log("🟡 REFRESH TOKEN: Attempting refresh...");
 
   try {
-    const res = await fetch(
-      "http://178.248.112.16:8001/api/token/refresh/",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh: refreshToken }),
-      }
-    );
 
-    if (!res.ok) return null;
+    const res = await fetch("http://178.248.112.16:8001/api/token/refresh/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    console.log("🟡 REFRESH TOKEN: Response status:", res.status);
+
+    if (res.status === 401) {
+      console.log("🔴 REFRESH TOKEN EXPIRED or INVALID");
+      return null;
+    }
+
+    if (!res.ok) {
+      console.log("🔴 REFRESH TOKEN FAILED: server error");
+      return null;
+    }
 
     const data = await res.json();
 
     if (data?.access) {
+
       await AsyncStorage.setItem("accessToken", data.access);
+
+      console.log("🟢 ACCESS TOKEN REFRESHED SUCCESSFULLY");
+
       return data.access;
     }
 
+    console.log("🔴 REFRESH TOKEN FAILED: No access token in response");
+
     return null;
-  } catch (e) {
-    console.log("refresh token error", e);
+
+  } catch (err) {
+
+    console.log("🔴 REFRESH TOKEN NETWORK ERROR:", err);
+
     return null;
+
   }
 };
 
-/* --------------------------------------------------
-   GET LOCATION
--------------------------------------------------- */
+
+/* ---------------- LOCATION ---------------- */
 
 const getCurrentLocation = () =>
   new Promise((resolve, reject) => {
+
     Geolocation.getCurrentPosition(
       resolve,
       reject,
@@ -93,78 +100,43 @@ const getCurrentLocation = () =>
         timeout: 20000,
         maximumAge: 10000,
         forceRequestLocation: true,
-        showLocationDialog: true,
       }
     );
+
   });
 
-/* --------------------------------------------------
-   FOREGROUND SERVICE
--------------------------------------------------- */
 
-const startForeground = async () => {
-  if (_foregroundRunning) return;
-
-  try {
-  await ReactNativeForegroundService.start({
-  id: 1001,
-  title: "Rekory Attendance",
-  message: "Verifying attendance location",
-  icon: "ic_launcher",
-  importance: "high",
-});
-
-    _foregroundRunning = true;
-    console.log("Foreground service started");
-  } catch (e) {
-    console.log("Foreground start error", e);
-  }
-};
-
-const stopForeground = async () => {
-  if (!_foregroundRunning) return;
-
-  try {
-    await ReactNativeForegroundService.stop();
-    console.log("Foreground service stopped");
-  } catch (e) {
-    console.log("Foreground stop error", e);
-  }
-
-  _foregroundRunning = false;
-};
-
-/* --------------------------------------------------
-   UPLOAD LOCATION
--------------------------------------------------- */
+/* ---------------- UPLOAD LOCATION ---------------- */
 
 export const uploadLocation = async () => {
-  const now = Date.now();
-
-  if (now - _lastUploadTime < 60000) return;
-  _lastUploadTime = now;
 
   const employeeId = await AsyncStorage.getItem("employeeId");
   const sessionId = await AsyncStorage.getItem("sessionId");
 
   if (!employeeId || !sessionId) {
-    console.log("Missing session info");
+    console.log("uploadLocation: missing employeeId/sessionId");
     return;
   }
+let token = await AsyncStorage.getItem("accessToken");
 
-  let token = await AsyncStorage.getItem("accessToken");
+if (!token) {
+  console.log("🟡 ACCESS TOKEN missing. Trying refresh...");
+  token = await refreshAccessToken();
+}
 
-  if (!token) token = await refreshAccessToken();
-  if (!token) return;
+if (!token) {
+  console.log("🔴 Cannot upload location. No valid token.");
+  return;
+}
 
   try {
+
     const pos = await getCurrentLocation();
 
     const body = {
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude,
       session_id: sessionId,
-      timestamp: new Date().toISOString(),
     };
 
     let res = await fetch(`${API_URL}${employeeId}/`, {
@@ -177,8 +149,16 @@ export const uploadLocation = async () => {
     });
 
     if (res.status === 401) {
+  console.log("🟡 ACCESS TOKEN expired. Refreshing...");
+
       token = await refreshAccessToken();
-      if (!token) return;
+
+      if (!token) {
+    console.log("🔴 Refresh failed. User must login again.");
+    return;
+  }
+
+  console.log("🟢 Retrying location upload with new token...");
 
       res = await fetch(`${API_URL}${employeeId}/`, {
         method: "POST",
@@ -188,102 +168,77 @@ export const uploadLocation = async () => {
         },
         body: JSON.stringify(body),
       });
+
     }
 
-    if (res.ok) {
-      console.log("Location uploaded", new Date().toISOString());
-    } else {
-      console.log("Server error", res.status);
-    }
-  } catch (e) {
-    console.log("uploadLocation error", e);
+    console.log("Location uploaded:", new Date().toISOString());
+
+  } catch (err) {
+
+    console.log("uploadLocation error:", err);
+
   }
 };
 
-/* --------------------------------------------------
-   WATCH POSITION
--------------------------------------------------- */
 
-const startLocationWatcher = (intervalMinutes) => {
+/* ---------------- FOREGROUND SERVICE ---------------- */
 
-  if (_watchId !== null) {
-    Geolocation.clearWatch(_watchId);
-  }
+const startForeground = async ({
+  title = "Tracking active",
+  message = "Tracking location..."
+} = {}) => {
 
-  _watchId = Geolocation.watchPosition(
-    async () => {
-      console.log("Location watcher triggered");
-
-      await uploadLocation();
-    },
-    (error) => console.log("watchPosition error", error),
-    {
-      enableHighAccuracy: true,
-      distanceFilter: 0,
-      interval: intervalMinutes * 60 * 1000,
-      fastestInterval: 15 * 60 * 1000,
-      forceRequestLocation: true,
-    }
-  );
-};
-
-/* --------------------------------------------------
-   BACKGROUND FETCH
--------------------------------------------------- */
-
-const startBackgroundFetch = async (intervalMinutes) => {
+  if (_isServiceRunning) return;
 
   try {
-    await BackgroundFetch.configure(
-      {
-        minimumFetchInterval: Math.max(15, intervalMinutes),
+    await ReactNativeForegroundService.start({
+      id: 1001,
+      title,
+      message,
+      icon: "ic_launcher",
+      serviceType: "location",
+    });
 
-        stopOnTerminate: false,
-        startOnBoot: true,
-        enableHeadless: true,
+    _isServiceRunning = true;
 
-        forceAlarmManager: true,
-
-        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
-      },
-
-      async (taskId) => {
-        console.log("BackgroundFetch triggered");
-
-        await startForeground();
-        await uploadLocation();
-        await stopForeground();
-
-        BackgroundFetch.finish(taskId);
-      },
-
-      (error) => {
-        console.log("BackgroundFetch error", error);
-      }
-    );
-
-    await BackgroundFetch.start();
-  } catch (e) {
-    console.log("BackgroundFetch setup failed", e);
+  } catch (err) {
+    console.log("startForeground error:", err);
   }
 };
 
-/* --------------------------------------------------
-   START TRACKING
--------------------------------------------------- */
+
+const stopForeground = async () => {
+
+  try {
+
+    await ReactNativeForegroundService.stop();
+
+  } catch (err) {
+
+    console.log("stopForeground error:", err);
+
+  } finally {
+
+    _isServiceRunning = false;
+
+  }
+
+};
+
+
+/* ---------------- START TRACKING ---------------- */
 
 export const startBackgroundTracking = async ({
   employeeId,
   sessionId,
-  intervalMinutes = DEFAULT_INTERVAL_MINUTES,
-}) => {
-
-  if (_trackingStarted) {
-    console.log("Tracking already running");
-    return;
-  }
-
+  intervalMinutes = DEFAULT_INTERVAL_MINUTES
+} = {}) => {
+if (_intervalId) clearInterval(_intervalId);
+_intervalId = setInterval(() => {
+  uploadLocation().catch(console.log);
+}, Math.max(1, intervalMinutes) * 60 * 1000);
   const ok = await requestPermissions();
+
   if (!ok) return;
 
   await AsyncStorage.multiSet([
@@ -292,51 +247,84 @@ export const startBackgroundTracking = async ({
     ["punchedIn", "true"],
   ]);
 
-  await startForeground();
-  await uploadLocation();
-  await stopForeground();
+  try {
 
-  startLocationWatcher(intervalMinutes);
-  await startBackgroundFetch(intervalMinutes);
+    await BackgroundFetch.configure(
+      {
+        minimumFetchInterval: Math.max(15, intervalMinutes),
+        stopOnTerminate: false,
+        startOnBoot: true,
+        enableHeadless: true,
+        
+        forceAlarmManager: true,
+        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
+      },
 
-  _trackingStarted = true;
+      async (taskId) => {
 
-  console.log("Background tracking started");
+        console.log("BackgroundFetch event:", taskId);
+
+        try {
+
+await startForeground({ isBackground: true }); 
+          await uploadLocation();
+
+        } catch (e) {
+
+          console.log("Background task error", e);
+
+        }
+
+        await stopForeground();
+
+        BackgroundFetch.finish(taskId);
+
+      },
+
+      (error) => {
+        console.log("BackgroundFetch configure error:", error);
+      }
+    );
+
+    await BackgroundFetch.start();
+
+  } catch (e) {
+
+    console.log("BackgroundFetch setup failed:", e);
+
+  }
+
+  console.log("startBackgroundTracking done");
 };
 
-/* --------------------------------------------------
-   STOP TRACKING
--------------------------------------------------- */
+
 
 export const stopBackgroundTracking = async () => {
-
-  if (_watchId !== null) {
-    Geolocation.clearWatch(_watchId);
-    _watchId = null;
-  }
 
   await stopForeground();
 
   try {
+
     await BackgroundFetch.stop();
+
   } catch (e) {
-    console.log("BackgroundFetch stop error", e);
+
+    console.log("BackgroundFetch.stop failed:", e);
+
   }
 
   await AsyncStorage.multiRemove([
     "employeeId",
     "sessionId",
-    "punchedIn",
+    "punchedIn"
   ]);
 
-  _trackingStarted = false;
+  console.log("stopBackgroundTracking done");
 
-  console.log("Tracking stopped");
 };
 
-/* --------------------------------------------------
-   HEADLESS TASK
--------------------------------------------------- */
+
+/* ---------------- HEADLESS TASK ---------------- */
 
 export const backgroundFetchHeadless = async (event) => {
 
@@ -347,19 +335,29 @@ export const backgroundFetchHeadless = async (event) => {
     return;
   }
 
-  console.log("Headless fetch triggered");
+  console.log("Headless background fetch:", taskId);
 
   try {
 
-    await startForeground();
     await uploadLocation();
-    await stopForeground();
 
-  } catch (e) {
-    console.log("Headless error", e);
+  } catch (err) {
+
+    console.log("Headless upload error", err);
+
   }
 
   BackgroundFetch.finish(taskId);
+
 };
 
-BackgroundFetch.registerHeadlessTask(backgroundFetchHeadless);
+
+try {
+
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadless);
+
+} catch (e) {
+
+  console.log("registerHeadlessTask err:", e);
+
+}
