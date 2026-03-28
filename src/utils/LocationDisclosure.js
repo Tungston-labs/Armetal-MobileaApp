@@ -15,7 +15,7 @@ export default function LocationDisclosure({
           </Text>
 
           <Text style={styles.text}>
-            Location will be tracked every 30 minutes during
+            Location will be tracked about every 15 minutes during
             active work sessions for attendance verification.
           </Text>
 

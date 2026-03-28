@@ -12,6 +12,7 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <queries>
     <intent>
@@ -24,6 +25,18 @@
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="false"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
+    <meta-data
+      android:name="com.supersami.foregroundservice.notification_channel_name"
+      android:value="Rekory Attendance"
+    />
+    <meta-data
+      android:name="com.supersami.foregroundservice.notification_channel_description"
+      android:value="Background attendance tracking"
+    />
+    <meta-data
+      android:name="com.supersami.foregroundservice.notification_color"
+      android:resource="@color/rekory_notification_blue"
+    />
     <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen" android:exported="true" android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -37,10 +50,15 @@
         <data android:scheme="exp+rekory"/>
       </intent-filter>
     </activity>
-   <service
-    android:name="com.supersami.foregroundservice.ForegroundService"
-    android:exported="false"
-    android:permission="android.permission.FOREGROUND_SERVICE"
-    android:foregroundServiceType="location" />
+    <service
+      android:name="com.supersami.foregroundservice.ForegroundService"
+      android:exported="false"
+      android:permission="android.permission.FOREGROUND_SERVICE"
+      android:foregroundServiceType="location" />
+    <service
+      android:name="com.supersami.foregroundservice.ForegroundServiceTask"
+      android:exported="false"
+      android:permission="android.permission.FOREGROUND_SERVICE"
+      android:foregroundServiceType="location" />
   </application>
 </manifest>

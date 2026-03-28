@@ -9,12 +9,7 @@ import {
   Image,
   Animated,
   Easing,
-  Platform,
 } from "react-native";
-import * as Location from "expo-location";
-import * as IntentLauncher from "expo-intent-launcher";
-
-import { NativeEventEmitter, } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -35,7 +30,9 @@ import { SvgUri } from "react-native-svg";
 import LocationDisclosure from "@/src/utils/LocationDisclosure"
 import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
+  getCurrentLocation,
   startBackgroundTracking,
+  requestForegroundLocationPermission,
   stopBackgroundTracking,
 } from "../../services/locationService.js";
 
@@ -55,7 +52,6 @@ const AttendanceScreen = () => {
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
-  const [sessionId, setSessionId] = useState(null);
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
@@ -169,137 +165,89 @@ const AttendanceScreen = () => {
     return lastSession?.time_in && !lastSession?.time_out;
   };
 
-
-  const getCurrentLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access location was denied');
-      return null;
-    }
-
-    const location = await Location.getCurrentPositionAsync({});
-    return {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-  };
-
   const requestLocationPermissions = async () => {
-    const fg = await Location.requestForegroundPermissionsAsync();
-    if (fg.status !== "granted") {
+    const granted = await requestForegroundLocationPermission();
+
+    if (!granted) {
       Alert.alert("Permission required", "Location access is required");
       return false;
     }
 
-    if (Platform.OS === "android") {
-      const bg = await Location.requestBackgroundPermissionsAsync();
-
-      if (bg.status !== "granted") {
-        Alert.alert(
-          "Background Location Required",
-          "Please allow background location for attendance tracking"
-        );
-        return false;
-      }
-    }
-
     return true;
   };
-const handlePunch = async () => {
-  setPunching(true);
-  startRotation();
+  const handlePunch = async () => {
+    setPunching(true);
+    startRotation();
 
-  try {
-    if (!employee?.id) {
-      Alert.alert("Employee not ready");
-      return;
+    try {
+      if (!employee?.id) {
+        Alert.alert("Employee not ready");
+        return;
+      }
+
+      const permissionGranted = await requestLocationPermissions();
+
+      if (!permissionGranted) {
+        Alert.alert("Location permission required");
+        return;
+      }
+
+      const location = await getCurrentLocation();
+
+      const res = await authAxios.post("/attendance/swipe/", {
+        latitude: Number(location.coords.latitude),
+        longitude: Number(location.coords.longitude),
+      });
+
+      await fetchTodayAttendance();
+
+      if (res.data?.action === "punch_in" && res.data?.session_id) {
+        const employeeId = employee.id.toString();
+        const sessionId = res.data.session_id.toString();
+
+        await AsyncStorage.multiSet([
+          ["employeeId", employeeId],
+          ["sessionId", sessionId],
+          ["punchedIn", "true"],
+        ]);
+
+        setPunchedIn(true);
+
+        const trackingStarted = await startBackgroundTracking({
+          employeeId: employee.id,
+          sessionId: res.data.session_id,
+          intervalMinutes: 15,
+        });
+
+        if (trackingStarted) {
+          maybeAskBatteryPermission();
+        } else {
+          Alert.alert(
+            "Tracking Warning",
+            "Punch-in succeeded, but background location tracking could not be fully started. Please allow background location and disable battery restrictions for Rekory."
+          );
+        }
+      }
+
+      if (res.data?.action === "punch_out") {
+        await stopBackgroundTracking();
+        setPunchedIn(false);
+      }
+    } catch (error) {
+      console.log("PUNCH ERROR:", error);
+      console.log("SERVER:", error?.response?.data);
+
+      Alert.alert(
+        "Punch Failed",
+        JSON.stringify(error?.response?.data || error.message)
+      );
+    } finally {
+      setPunching(false);
+      stopRotation();
     }
+  };
 
-    const permissionGranted = await requestLocationPermissions();
-
-    if (!permissionGranted) {
-      Alert.alert("Location permission required");
-      return;
-    }
-
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High,
-    });
-
-    console.log("LOCATION:", location);
-
-    // ✅ API CALL
-    const res = await authAxios.post("/attendance/swipe/", {
-      latitude: Number(location.coords.latitude),
-      longitude: Number(location.coords.longitude),
-    });
-
-    console.log("SWIPE RESPONSE:", res.data);
-
-    await fetchTodayAttendance();
-
-    /**
-     * =========================
-     * ✅ PUNCH IN
-     * =========================
-     */
-    if (res.data?.action === "punch_in" && res.data?.session_id) {
-
-      const employeeId = employee.id.toString();
-      const sessionId = res.data.session_id.toString();
-      const token = await AsyncStorage.getItem("accessToken");
-
-      await AsyncStorage.multiSet([
-        ["employeeId", employeeId],
-        ["sessionId", sessionId],
-        ["punchedIn", "true"],
-      ]);
-
-      setPunchedIn(true);
-
-      // Ask battery optimization permission
-      maybeAskBatteryPermission();
-
-      // ✅ START BACKGROUND TRACKING ONLY HERE
-    await startBackgroundTracking({
-  employeeId: employee.id,
-  sessionId: res.data.session_id,
-  intervalMinutes: 20,
-});
-    }
-
-    /**
-     * =========================
-     * ✅ PUNCH OUT
-     * =========================
-     */
-    if (res.data?.action === "punch_out") {
-
-      await stopBackgroundTracking();
-
-      await AsyncStorage.multiRemove([
-        "employeeId",
-        "sessionId",
-        "punchedIn",
-      ]);
-
-      setPunchedIn(false);
-    }
-
-  } catch (error) {
-    console.log("PUNCH ERROR:", error);
-    console.log("SERVER:", error?.response?.data);
-
-    Alert.alert(
-      "Punch Failed",
-      JSON.stringify(error?.response?.data || error.message)
-    );
-  } finally {
-    setPunching(false);
-    stopRotation();
-  }
-};
-useEffect(() => {
+  useEffect(() => {
   const initialize = async () => {
     try {
       // Fetch employee
@@ -322,7 +270,7 @@ useEffect(() => {
   };
 
   initialize();
-}, []);
+  }, []);
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -362,20 +310,6 @@ useEffect(() => {
         {segmentContent}
       </View>
     );
-  };
-
-  const onDisclosureAgree = async () => {
-    setShowDisclosure(false);
-
-    if (pendingPunch) {
-      await handlePunch();
-      setPendingPunch(false);
-    }
-  };
-
-  const onDisclosureCancel = () => {
-    setShowDisclosure(false);
-    setPendingPunch(false);
   };
 
   const renderRadialCircle = () => (
@@ -674,4 +608,3 @@ useEffect(() => {
 };
 
 export default AttendanceScreen;
-

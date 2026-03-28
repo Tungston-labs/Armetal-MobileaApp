@@ -3,4 +3,5 @@
   <color name="iconBackground">#ffffff</color>
   <color name="colorPrimary">#023c69</color>
   <color name="colorPrimaryDark">#151D34</color>
+  <color name="rekory_notification_blue">#3352BA</color>
 </resources>

@@ -12,6 +12,7 @@ import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter, DevSettings, Platform } from "react-native";
+import { startBackgroundTracking } from "./src/services/locationService";
 
 
 
@@ -54,7 +55,7 @@ const InitAuth = ({ children }) => {
 
       if (punchedIn === "true" && employeeId && sessionId) {
         console.log("🔄 Restoring background tracking after restart…");
-        const ok = await startBackgroundTracking();
+        const ok = await startBackgroundTracking({ employeeId, sessionId });
         if (!ok) console.warn("⚠ Background tracking failed to start");
       }
     };
