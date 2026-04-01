@@ -5,7 +5,6 @@ import ReactNativeForegroundService from "@supersami/rn-foreground-service";
 import { PermissionsAndroid, Platform } from "react-native";
 
 const API_URL = "https://api.rekory.com/api/background-location/";
-const TOKEN_REFRESH_URL = "https://api.rekory.com/api/token/refresh/";
 const DEFAULT_INTERVAL_MINUTES = 15;
 const MINIMUM_FETCH_INTERVAL_MINUTES = 15;
 const LAST_UPLOAD_AT_KEY = "lastLocationUploadAt";
@@ -17,7 +16,6 @@ const ANDROID_FOREGROUND_TASK_ID = "attendance-location-tracking";
 let foregroundServiceRegistered = false;
 let foregroundUploadInFlight = false;
 let backgroundFetchConfigured = false;
-let tokenRefreshPromise = null;
 
 const normalizeIntervalMinutes = (intervalMinutes) => {
   const parsed = Number(intervalMinutes);
@@ -79,65 +77,7 @@ const ensureForegroundServiceRegistered = () => {
   return true;
 };
 
-const refreshAccessToken = async () => {
-  console.log("[Auth] Attempting token refresh...");
-  const refreshToken = await AsyncStorage.getItem("refreshToken");
-
-  if (!refreshToken) {
-    console.log("[Auth] No refresh token found");
-    return null;
-  }
-
-  try {
-    const res = await fetch(TOKEN_REFRESH_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh: refreshToken }),
-    });
-
-    if (!res.ok) {
-      const txt = await res.text();
-      console.log("[Auth] Refresh failed:", res.status, txt);
-      return null;
-    }
-
-    const data = await res.json();
-
-    if (!data?.access) {
-      console.log("[Auth] Refresh response missing access token");
-      return null;
-    }
-
-    await AsyncStorage.setItem("accessToken", data.access);
-    await AsyncStorage.setItem("refreshToken", data.refresh || refreshToken);
-    console.log("[Auth] Token refreshed successfully");
-    return data.access;
-  } catch (err) {
-    console.log("[Auth] Refresh request error:", err?.message || err);
-    return null;
-  }
-};
-
-const getValidAccessToken = async ({ source = "manual" } = {}) => {
-  const existingAccessToken = await AsyncStorage.getItem("accessToken");
-  const shouldRefreshBeforeUpload =
-    source === "background-fetch" ||
-    source === "headless-background-fetch" ||
-    source === "android-foreground-service";
-
-  if (existingAccessToken && !shouldRefreshBeforeUpload) {
-    return existingAccessToken;
-  }
-
-  if (!tokenRefreshPromise) {
-    tokenRefreshPromise = refreshAccessToken().finally(() => {
-      tokenRefreshPromise = null;
-    });
-  }
-
-  const refreshedAccessToken = await tokenRefreshPromise;
-  return refreshedAccessToken || existingAccessToken;
-};
+const getValidAccessToken = async () => AsyncStorage.getItem("accessToken");
 
 export const getCurrentLocation = () =>
   new Promise((resolve, reject) => {
@@ -263,7 +203,7 @@ export const uploadLocation = async ({
     }
   }
 
-  let token = await getValidAccessToken({ source });
+  const token = await getValidAccessToken();
 
   if (!token) {
     console.log("[LocationService] No valid access token");
@@ -271,28 +211,12 @@ export const uploadLocation = async ({
   }
 
   try {
-    let res = await sendLocationRequest({
+    const res = await sendLocationRequest({
       employeeId,
       sessionId,
       coords,
       token,
     });
-
-    if (res.status === 401) {
-      console.log("[LocationService] 401 while uploading, retrying with refreshed token");
-      token = await refreshAccessToken();
-
-      if (!token) {
-        return false;
-      }
-
-      res = await sendLocationRequest({
-        employeeId,
-        sessionId,
-        coords,
-        token,
-      });
-    }
 
     if (!res.ok) {
       const txt = await res.text();

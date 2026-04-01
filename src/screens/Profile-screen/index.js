@@ -36,17 +36,15 @@ const ProfileScreen = () => {
     fetchProfile();
   }, []);
 
-  const getProfileUri = (pic) => {
-    if (!pic) return defaultAvatar;
+const getProfileUri = (pic) => {
+  if (!pic) return defaultAvatar;
 
-    if (pic.startsWith("http")) {
-      // Already a full URL
-      return pic;
-    }
+  if (pic.startsWith("http")) {
+    return pic;
+  }
 
-    // Ensure slash between BASE and path
-    return `${BASE_URL}}${pic.startsWith("/") ? "" : "/"}${pic}`;
-  };
+  return `${BASE_URL}${pic.startsWith("/") ? "" : "/"}${pic}`;
+};
 
   const profileImage = { uri: getProfileUri(employee?.profile_pic) };
 
