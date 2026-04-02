@@ -39,9 +39,9 @@ const ProfileScreen = () => {
 const getProfileUri = (pic) => {
   if (!pic) return defaultAvatar;
 
-  if (pic.startsWith("http")) {
-    return pic;
-  }
+ if (pic.startsWith("http://")) {
+  return pic.replace("http://", "https://");
+}
 
   return `${BASE_URL}${pic.startsWith("/") ? "" : "/"}${pic}`;
 };

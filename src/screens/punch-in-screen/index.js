@@ -121,14 +121,17 @@ const AttendanceScreen = () => {
     }
   };
 
-
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
 
-    if (pic.startsWith("http")) {
-      return pic;
+    // ✅ Convert HTTP → HTTPS (CRITICAL FIX)
+    if (pic.startsWith("http://")) {
+      return pic.replace("http://", "https://");
     }
 
+    if (pic.startsWith("https://")) {
+      return pic;
+    }
 
     const path = pic.startsWith("/") ? pic : `/media/${pic}`;
     return `${BASE_URL}${path}`;
@@ -248,28 +251,28 @@ const AttendanceScreen = () => {
   };
 
   useEffect(() => {
-  const initialize = async () => {
-    try {
-      // Fetch employee
-      const profileRes = await authAxios.get("/profile/");
-      setEmployee(profileRes.data);
+    const initialize = async () => {
+      try {
+        // Fetch employee
+        const profileRes = await authAxios.get("/profile/");
+        setEmployee(profileRes.data);
 
-      // Attendance refresh
-      await fetchTodayAttendance();
+        // Attendance refresh
+        await fetchTodayAttendance();
 
-      // Restore punch state
-      const storedPunch = await AsyncStorage.getItem("punchedIn");
+        // Restore punch state
+        const storedPunch = await AsyncStorage.getItem("punchedIn");
 
-      setPunchedIn(storedPunch === "true");
+        setPunchedIn(storedPunch === "true");
 
-    } catch (err) {
-      console.log("INIT ERROR:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } catch (err) {
+        console.log("INIT ERROR:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  initialize();
+    initialize();
   }, []);
 
   const today = new Date();
@@ -400,7 +403,7 @@ const AttendanceScreen = () => {
                 />
               ) : (
                 <Image
-                  source={{ uri: employee?.company_logo }}
+                  source={{ uri: getProfileUri(employee?.company_logo) }}
                   style={styles.logo}
                 />
               )}
@@ -506,20 +509,20 @@ const AttendanceScreen = () => {
               </Text>
             </View>
           ) : (
-        <SwipeButton
-  title={punchedIn ? "Swipe to Punch Out" : "Swipe to Punch In"}
-  successTitle={punchedIn ? "Punched Out!" : "Punched In!"}
-  onSwipeSuccess={() => {
-    if (!punchedIn) {
-      setShowDisclosure(true);
-    } else {
-      handlePunch();
-    }
-  }}
-  backgroundColor="#ddd"
-  thumbColor={punchedIn ? "#ED2B2B" : "#2F822F"}
-  resetAfterSuccess={true}
-/>
+            <SwipeButton
+              title={punchedIn ? "Swipe to Punch Out" : "Swipe to Punch In"}
+              successTitle={punchedIn ? "Punched Out!" : "Punched In!"}
+              onSwipeSuccess={() => {
+                if (!punchedIn) {
+                  setShowDisclosure(true);
+                } else {
+                  handlePunch();
+                }
+              }}
+              backgroundColor="#ddd"
+              thumbColor={punchedIn ? "#ED2B2B" : "#2F822F"}
+              resetAfterSuccess={true}
+            />
 
           )}
 
@@ -591,16 +594,6 @@ const AttendanceScreen = () => {
         }}
         onCancel={() => setShowDisclosure(false)}
       />
-
-      <LocationDisclosure
-        visible={showDisclosure}
-        onAgree={() => {
-          setShowDisclosure(false);
-          handlePunch();
-        }}
-        onCancel={() => setShowDisclosure(false)}
-      />
-
 
 
     </SafeAreaView>
