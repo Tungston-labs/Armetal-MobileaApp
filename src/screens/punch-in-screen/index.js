@@ -26,7 +26,6 @@ import DocumentsIcon from "../../../assets/documents.svg";
 import TeamIcon from "../../../assets/team.svg";
 import ReminderIcon from "../../../assets/reminder.svg";
 import SwipeLoader from "../../components/SwipeLoader"
-import { SvgUri } from "react-native-svg";
 import LocationDisclosure from "@/src/utils/LocationDisclosure"
 import { maybeAskBatteryPermission } from "@/src/utils/Batteryoptimization";
 import {
@@ -35,12 +34,14 @@ import {
   requestForegroundLocationPermission,
   stopBackgroundTracking,
 } from "../../services/locationService.js";
+import {
+  buildAuthenticatedImageSource,
+  normalizeMediaUri,
+} from "../../utils/mediaSource";
 
-import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
+import Svg, { Defs, RadialGradient, Stop, Circle, SvgXml } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
@@ -55,6 +56,10 @@ const AttendanceScreen = () => {
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
+  const [mediaToken, setMediaToken] = useState(null);
+  const [companyLogoUri, setCompanyLogoUri] = useState(null);
+  const [companyLogoSvgXml, setCompanyLogoSvgXml] = useState(null);
+  const [profileImageFailed, setProfileImageFailed] = useState(false);
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -119,22 +124,6 @@ const AttendanceScreen = () => {
       console.log("Failed to fetch day status:", error);
       setDayStatus([]);
     }
-  };
-
-  const getProfileUri = (pic) => {
-    if (!pic) return defaultAvatar;
-
-    // ✅ Convert HTTP → HTTPS (CRITICAL FIX)
-    if (pic.startsWith("http://")) {
-      return pic.replace("http://", "https://");
-    }
-
-    if (pic.startsWith("https://")) {
-      return pic;
-    }
-
-    const path = pic.startsWith("/") ? pic : `/media/${pic}`;
-    return `${BASE_URL}${path}`;
   };
 
   useEffect(() => {
@@ -254,8 +243,15 @@ const AttendanceScreen = () => {
     const initialize = async () => {
       try {
         // Fetch employee
-        const profileRes = await authAxios.get("/profile/");
+        const [profileRes, accessToken] = await Promise.all([
+          authAxios.get("/profile/"),
+          AsyncStorage.getItem("accessToken"),
+        ]);
+
         setEmployee(profileRes.data);
+        setMediaToken(accessToken);
+        setCompanyLogoUri(normalizeMediaUri(profileRes.data?.company_logo));
+        setProfileImageFailed(false);
 
         // Attendance refresh
         await fetchTodayAttendance();
@@ -274,6 +270,27 @@ const AttendanceScreen = () => {
 
     initialize();
   }, []);
+console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
+  useEffect(() => {
+    const loadCompanyLogoSvg = async () => {
+      if (!companyLogoUri?.toLowerCase().endsWith(".svg")) {
+        setCompanyLogoSvgXml(null);
+        return;
+      }
+
+      try {
+        const response = await authAxios.get(companyLogoUri, {
+          responseType: "text",
+        });
+        setCompanyLogoSvgXml(response.data);
+      } catch (error) {
+        console.log("Company logo SVG load failed", error?.message || error);
+        setCompanyLogoSvgXml(null);
+      }
+    };
+
+    loadCompanyLogoSvg();
+  }, [companyLogoUri]);
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -395,18 +412,22 @@ const AttendanceScreen = () => {
           <View style={styles.header}>
 
             <View style={styles.logoRow}>
-              {employee?.company_logo?.endsWith(".svg") ? (
-                <SvgUri
-                  uri={employee.company_logo}
+              {companyLogoSvgXml ? (
+                <SvgXml
+                  xml={companyLogoSvgXml}
                   width={70}
                   height={40}
                 />
-              ) : (
+              ) : companyLogoUri ? (
                 <Image
-                  source={{ uri: getProfileUri(employee?.company_logo) }}
+                  source={buildAuthenticatedImageSource({
+                    path: employee?.company_logo,
+                    token: mediaToken,
+                  })}
                   style={styles.logo}
+                  onError={() => setCompanyLogoUri(null)}
                 />
-              )}
+              ) : null}
 
               <Text style={styles.helloText}>
                 Hello {employee?.name || "User"}
@@ -418,8 +439,13 @@ const AttendanceScreen = () => {
               onPress={() => navigation.navigate("ProfileScreen")}
             >
               <Image
-                source={{ uri: getProfileUri(employee?.profile_pic) }}
+                source={buildAuthenticatedImageSource({
+                  path: profileImageFailed ? null : employee?.profile_pic,
+                  token: mediaToken,
+                  fallbackUri: defaultAvatar,
+                })}
                 style={styles.profilePic}
+                onError={() => setProfileImageFailed(true)}
               />
 
             </TouchableOpacity>

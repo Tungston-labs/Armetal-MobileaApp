@@ -14,19 +14,28 @@ import authAxios from "../../utils/authAxios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { logout } from "@/src/redux/features/authSlice";
+import { buildAuthenticatedImageSource } from "../../utils/mediaSource";
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [employee, setEmployee] = useState(null);
+  const [mediaToken, setMediaToken] = useState(null);
+  const [profileImageFailed, setProfileImageFailed] = useState(false);
   const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await authAxios.get("/profile/");
+        const [response, accessToken] = await Promise.all([
+          authAxios.get("/profile/"),
+          AsyncStorage.getItem("accessToken"),
+        ]);
+
         setEmployee(response.data);
+        setMediaToken(accessToken);
+        setProfileImageFailed(false);
       } catch (error) {
         console.error("Error fetching profile:", error.message);
         Alert.alert("Error", "Failed to load profile");
@@ -36,17 +45,11 @@ const ProfileScreen = () => {
     fetchProfile();
   }, []);
 
-const getProfileUri = (pic) => {
-  if (!pic) return defaultAvatar;
-
- if (pic.startsWith("http://")) {
-  return pic.replace("http://", "https://");
-}
-
-  return `${BASE_URL}${pic.startsWith("/") ? "" : "/"}${pic}`;
-};
-
-  const profileImage = { uri: getProfileUri(employee?.profile_pic) };
+  const profileImage = buildAuthenticatedImageSource({
+    path: profileImageFailed ? null : employee?.profile_pic,
+    token: mediaToken,
+    fallbackUri: defaultAvatar,
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,7 +68,11 @@ const getProfileUri = (pic) => {
       <View style={styles.content}>
         {/* Profile Image */}
         <View style={styles.profileSection}>
-          <Image source={profileImage} style={styles.profileImage} />
+          <Image
+            source={profileImage}
+            style={styles.profileImage}
+            onError={() => setProfileImageFailed(true)}
+          />
         </View>
 
         {/* Options */}
