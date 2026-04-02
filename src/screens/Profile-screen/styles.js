@@ -42,11 +42,9 @@ export default StyleSheet.create({
     marginBottom: 90,
   },
   profileImage: {
-    width: width * 0.3,
-    height: width * 0.3,
-    borderRadius: width * 0.15,
+    width: width * 0.7,
+    height: width * 0.7,
     marginTop:20,
-    marginBottom: -40,
   },
   optionCard: {
     flexDirection: 'row',

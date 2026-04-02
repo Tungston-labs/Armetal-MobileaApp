@@ -10,7 +10,6 @@ import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter, DevSettings, Platform } from "react-native";
 
 
@@ -47,19 +46,6 @@ const InitAuth = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       await dispatch(restoreSession());
-
-      const punchedIn = await AsyncStorage.getItem("punchedIn");
-      const employeeId = await AsyncStorage.getItem("employeeId");
-      const sessionId = await AsyncStorage.getItem("sessionId");
-
-   if (punchedIn === "true" && employeeId && sessionId) {
-  console.log("🔄 Restoring background tracking after restart…");
-
-  await startBackgroundTracking({
-    employeeId,
-    sessionId,
-  });
-}
     };
 
     init();

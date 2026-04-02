@@ -36,17 +36,22 @@ const ProfileScreen = () => {
     fetchProfile();
   }, []);
 
-  const getProfileUri = (pic) => {
-    if (!pic) return defaultAvatar;
+ const getProfileUri = (path) => {
+  if (!path) return defaultAvatar;
 
-    if (pic.startsWith("http")) {
-      // Already a full URL
-      return pic;
-    }
+  // Fix HTTP → HTTPS (iOS ATS issue)
+  if (path.startsWith("http://")) {
+    return path.replace("http://", "https://");
+  }
 
-    // Ensure slash between BASE and path
-    return `${BASE_URL}}${pic.startsWith("/") ? "" : "/"}${pic}`;
-  };
+  if (path.startsWith("https://")) return path;
+
+  const normalizedPath = path.startsWith("/")
+    ? path
+    : `/media/${path}`;
+
+  return `${BASE_URL}${normalizedPath}`;
+};
 
   const profileImage = { uri: getProfileUri(employee?.profile_pic) };
 

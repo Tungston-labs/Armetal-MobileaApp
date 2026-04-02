@@ -11,12 +11,13 @@ export default function LocationDisclosure({
       <View style={styles.overlay}>
         <View style={styles.card}>
           <Text style={styles.title}>
-            Background Location Access
+            Location Access
           </Text>
 
           <Text style={styles.text}>
-            Attendance will be verified every 30 minutes during
-            active work sessions for attendance verification.
+            Rekory uses your location only when you punch in or punch out to
+            verify attendance. It does not track your location in the
+            background.
           </Text>
 
           <TouchableOpacity style={styles.allowBtn} onPress={onAgree}>

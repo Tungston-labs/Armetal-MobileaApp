@@ -38,6 +38,7 @@ export default StyleSheet.create({
   profilePic: {
     width: 45,
     height: 45,
+    marginRight:20,
     borderRadius: 25,
     marginBottom:35,
   },
