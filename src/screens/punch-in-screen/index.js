@@ -10,9 +10,10 @@ import {
   Animated,
   Easing,
   Platform,
+  PermissionsAndroid,
 } from "react-native";
-import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
+import Geolocation from "react-native-geolocation-service";
 import { startIOSLocationFetch, stopIOSLocationFetch } from "../../services/iosLocationService";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -40,8 +41,26 @@ import {
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const DEFAULT_AVATAR_URI = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 const defaultAvatar = {
-  uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+  uri: DEFAULT_AVATAR_URI,
+};
+
+
+const buildImageUri = (path) => {
+  if (!path) return null;
+
+  if (path.startsWith("http://")) {
+    return path.replace("http://", "https://"); // auto-fix
+  }
+
+  if (path.startsWith("https://")) return path;
+
+  const normalizedPath = path.startsWith("/")
+    ? path
+    : `/media/${path}`;
+
+  return `${BASE_URL}${normalizedPath}`;
 };
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -56,6 +75,8 @@ const AttendanceScreen = () => {
   const [punching, setPunching] = useState(false);
   const [pendingLeaves, setPendingLeaves] = useState();
   const [sessionId, setSessionId] = useState(null);
+  const [profileImageUri, setProfileImageUri] = useState(DEFAULT_AVATAR_URI);
+  const [profileImageToken, setProfileImageToken] = useState(null);
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
@@ -179,36 +200,67 @@ const getProfileUri = (pic) => {
 
 
   const getCurrentLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access location was denied');
-      return null;
-    }
-
-    const location = await Location.getCurrentPositionAsync({});
-    return {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
+    return new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        (position) => resolve(position),
+        (error) => reject(error),
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0,
+          distanceFilter: 0,
+          forceRequestLocation: true,
+          showLocationDialog: true,
+        }
+      );
+    });
   };
 
   const requestLocationPermissions = async () => {
-    const fg = await Location.requestForegroundPermissionsAsync();
-    if (fg.status !== "granted") {
-      Alert.alert("Permission required", "Location access is required");
-      return false;
-    }
+    if (Platform.OS === "ios") {
+      const authorization = await Geolocation.requestAuthorization("always");
 
-    if (Platform.OS === "android") {
-      const bg = await Location.requestBackgroundPermissionsAsync();
-
-      if (bg.status !== "granted") {
+      if (authorization !== "granted") {
         Alert.alert(
-          "Background Location Required",
-          "Please allow background location for attendance tracking"
+          "Permission required",
+          "Location permission is required for attendance tracking"
         );
         return false;
       }
+
+      return true;
+    }
+
+    const finePermission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
+    const coarsePermission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
+    const backgroundPermission =
+      PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION;
+    const notificationsPermission =
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS;
+
+    const permissionResults = await PermissionsAndroid.requestMultiple(
+      [
+        finePermission,
+        coarsePermission,
+        backgroundPermission,
+        notificationsPermission,
+      ].filter(Boolean)
+    );
+
+    const fineGranted =
+      permissionResults[finePermission] === PermissionsAndroid.RESULTS.GRANTED;
+    const coarseGranted =
+      permissionResults[coarsePermission] === PermissionsAndroid.RESULTS.GRANTED;
+    const backgroundGranted =
+      Platform.Version < 29 ||
+      permissionResults[backgroundPermission] === PermissionsAndroid.RESULTS.GRANTED;
+
+    if (!fineGranted || !coarseGranted || !backgroundGranted) {
+      Alert.alert(
+        "Background Location Required",
+        "Please allow location access for attendance tracking"
+      );
+      return false;
     }
 
     return true;
@@ -231,9 +283,7 @@ const getProfileUri = (pic) => {
         return;
       }
 
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
+      const location = await getCurrentLocation();
 
       console.log("LOCATION:", location);
 
@@ -307,30 +357,31 @@ const getProfileUri = (pic) => {
       stopRotation();
     }
   };
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        // Fetch employee
-        const profileRes = await authAxios.get("/profile/");
-        setEmployee(profileRes.data);
+ useEffect(() => {
+  const initialize = async () => {
+    try {
+      // Fetch employee
+      const [profileRes, accessToken] = await Promise.all([
+        authAxios.get("/profile/"),
+        AsyncStorage.getItem("accessToken"),
+      ]);
 
-        // Attendance refresh
-        await fetchTodayAttendance();
+      setEmployee(profileRes.data);
+setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR_URI);   
+ setProfileImageToken(accessToken);
 
-        // Restore punch state
-        const storedPunch = await AsyncStorage.getItem("punchedIn");
+      // Attendance refresh
+      await fetchTodayAttendance();
 
-        setPunchedIn(storedPunch === "true");
+    } catch (err) {
+      console.log("INIT ERROR:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      } catch (err) {
-        console.log("INIT ERROR:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initialize();
-  }, []);
+  initialize();
+}, []);
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -448,6 +499,11 @@ const getProfileUri = (pic) => {
     );
   }
 
+  const companyLogoUri = buildImageUri(employee?.company_logo);
+  const isCompanyLogoSvg =
+    typeof companyLogoUri === "string" &&
+    companyLogoUri.toLowerCase().includes(".svg");
+
   return (
     <SafeAreaView style={styles.container}>
       <RefreshWrapper
@@ -466,18 +522,21 @@ const getProfileUri = (pic) => {
           <View style={styles.header}>
 
             <View style={styles.logoRow}>
-              {employee?.company_logo?.endsWith(".svg") ? (
+              {isCompanyLogoSvg ? (
                 <SvgUri
-                  uri={employee.company_logo}
+                  uri={companyLogoUri}
                   width={70}
                   height={40}
                 />
-              ) : (
+              ) : companyLogoUri ? (
                 <Image
-                  source={{ uri: employee?.company_logo }}
+                  source={{ uri: companyLogoUri }}
                   style={styles.logo}
+                  onError={(e) => {
+                    console.log("LOGO ERROR:", e.nativeEvent);
+                  }}
                 />
-              )}
+              ) : null}
 
               <Text style={styles.helloText}>
                 Hello {employee?.name || "User"}
@@ -488,9 +547,13 @@ const getProfileUri = (pic) => {
               activeOpacity={0.7}
               onPress={() => navigation.navigate("ProfileScreen")}
             >
-      <Image
-  source={getProfileUri(employee?.profile_pic)}
+            <Image
+  source={{ uri: profileImageUri }}
   style={styles.profilePic}
+  onError={(e) => {
+    console.log("IMAGE ERROR:", e.nativeEvent);
+    setProfileImageUri(DEFAULT_AVATAR_URI);
+  }}
 />
 
             </TouchableOpacity>
@@ -657,15 +720,6 @@ const getProfileUri = (pic) => {
           <BottomNavbar navigation={navigation} route={route} />
         </View>
       )}
-      <LocationDisclosure
-        visible={showDisclosure}
-        onAgree={() => {
-          setShowDisclosure(false);
-          handlePunch();
-        }}
-        onCancel={() => setShowDisclosure(false)}
-      />
-
       <LocationDisclosure
         visible={showDisclosure}
         onAgree={() => {

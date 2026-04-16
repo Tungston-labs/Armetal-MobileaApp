@@ -28,7 +28,7 @@
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.0.1</string>
 
     <key>CFBundleSignature</key>
     <string>????</string>
@@ -51,7 +51,7 @@
     </array>
 
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>2</string>
 
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
@@ -69,15 +69,11 @@
 
     <key>NSCameraUsageDescription</key>
     <string>Allow Rekory to access your camera</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Rekory uses your location to mark attendance and confirm your presence at the workplace when you are checked in.</string>
 
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Rekory uses your location to verify your presence when marking attendance.</string>
-
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Rekory may access your location in the background during work hours to verify attendance at the workplace.</string>
-
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Allow Rekory to access your location for attendance verification.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Rekory collects your location in the background only while you are checked in (Swipe In) to ensure your safety while working in high-risk locations. Tracking stops when you Swipe Out.</string>
 
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
