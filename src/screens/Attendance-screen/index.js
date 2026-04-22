@@ -4,7 +4,6 @@ import {
   Text,
   SafeAreaView,
   FlatList,
-  Image,
   TouchableOpacity,
   RefreshControl,
   Platform,
@@ -17,15 +16,20 @@ import authAxios from "../../utils/authAxios";
 import BottomNavbar from "../BottomNavbar";
 import SwipeLoader from "../../components/SwipeLoader";
 
+const formatApiDate = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
 
 const AttendanceScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const [sessions, setSessions] = useState([]);
   const [totalHours, setTotalHours] = useState("00:00 Hrs");
-  const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -38,13 +42,13 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
   const fetchAttendanceData = async () => {
     try {
       setLoading(true);
-      const formattedDate = selectedDate.toLocaleDateString("en-CA");
-      const res = await authAxios.get(`/attendance/today`, {
+      const formattedDate = formatApiDate(selectedDate);
+      const res = await authAxios.get(`/attendance/today/`, {
         params: { date: formattedDate },
       });
       const data = res.data;
 
-      setSessions(data.sessions || []);
+      setSessions(Array.isArray(data.sessions) ? data.sessions : []);
 
       const hours = parseFloat(data.total_hours || 0);
       const h = Math.floor(hours);
@@ -52,18 +56,13 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
       setTotalHours(
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
-
-      const profileRes = await authAxios.get("/profile/");
-      const imageUrl = profileRes.data?.profile_pic
-        ? `${BASE_URL}${profileRes.data.profile_pic}`
-        : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-      setProfilePic(imageUrl);
     } catch (error) {
+      console.log(
+        "ATTENDANCE FETCH ERROR:",
+        error?.response?.data || error.message
+      );
       setSessions([]);
       setTotalHours("00:00 Hrs");
-      setProfilePic(
-        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-      );
     } finally {
       setLoading(false);
     }
