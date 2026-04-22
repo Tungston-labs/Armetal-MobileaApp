@@ -177,6 +177,84 @@ textContainer: {
     fontWeight: "500",
     marginLeft: 4,
   },
+  trackingCard: {
+    marginTop: 10,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.12)",
+    gap: 10,
+  },
+  trackingHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  trackingTitleBlock: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  trackingTitle: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  trackingSubtitle: {
+    color: "#95A2D3",
+    fontSize: 12,
+    marginTop: 4,
+  },
+  trackingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  trackingBadgeOn: {
+    backgroundColor: "rgba(47,130,47,0.18)",
+  },
+  trackingBadgeOff: {
+    backgroundColor: "rgba(237,43,43,0.18)",
+  },
+  trackingBadgeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  trackingBadgeDotOn: {
+    backgroundColor: "#42D77D",
+  },
+  trackingBadgeDotOff: {
+    backgroundColor: "#FF7C7C",
+  },
+  trackingBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  trackingRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  trackingLabel: {
+    color: "#95A2D3",
+    fontSize: 12.5,
+  },
+  trackingValue: {
+    color: "#FFFFFF",
+    fontSize: 12.5,
+    fontWeight: "500",
+    textAlign: "right",
+    flex: 1,
+    marginLeft: 18,
+  },
+  trackingNote: {
+    color: "#B5C0EA",
+    fontSize: 11.5,
+    lineHeight: 16,
+  },
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
@@ -225,4 +303,3 @@ textContainer: {
     position: "absolute",
   }, 
 });
-

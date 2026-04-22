@@ -45,6 +45,106 @@ const DEFAULT_AVATAR_URI = "https://cdn-icons-png.flaticon.com/512/149/149071.pn
 const defaultAvatar = {
   uri: DEFAULT_AVATAR_URI,
 };
+const TRACKING_REFRESH_INTERVAL = 60 * 1000;
+
+const formatApiDate = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+const getTrackingEntries = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.results)) return payload.results;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.locations)) return payload.locations;
+  if (Array.isArray(payload?.records)) return payload.records;
+  return [];
+};
+
+const getTrackingTimestamp = (entry) =>
+  entry?.logged_at ||
+  entry?.created_at ||
+  entry?.updated_at ||
+  entry?.timestamp ||
+  entry?.tracked_at ||
+  entry?.recorded_at ||
+  entry?.date_time ||
+  null;
+
+const getLatestTrackingEntry = (entries) => {
+  if (!entries.length) return null;
+
+  return entries.reduce((latestEntry, currentEntry) => {
+    const latestTime = new Date(getTrackingTimestamp(latestEntry) || 0).getTime();
+    const currentTime = new Date(getTrackingTimestamp(currentEntry) || 0).getTime();
+
+    if (Number.isNaN(latestTime) && Number.isNaN(currentTime)) {
+      return currentEntry;
+    }
+
+    if (Number.isNaN(latestTime)) {
+      return currentEntry;
+    }
+
+    if (Number.isNaN(currentTime)) {
+      return latestEntry;
+    }
+
+    return currentTime >= latestTime ? currentEntry : latestEntry;
+  });
+};
+
+const getTrackingLatitude = (entry) =>
+  Number(entry?.latitude ?? entry?.lat ?? entry?.coords?.latitude);
+
+const getTrackingLongitude = (entry) =>
+  Number(entry?.longitude ?? entry?.lng ?? entry?.lon ?? entry?.coords?.longitude);
+
+const formatCoordinate = (value) =>
+  Number.isFinite(value) ? value.toFixed(5) : "--";
+
+const formatTrackingLocation = (entry) => {
+  if (!entry) return "Waiting for first update";
+
+  const locationName =
+    entry?.location_name ||
+    entry?.location ||
+    entry?.address ||
+    entry?.display_name ||
+    null;
+
+  if (locationName) {
+    return locationName;
+  }
+
+  const latitude = getTrackingLatitude(entry);
+  const longitude = getTrackingLongitude(entry);
+
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return "Location unavailable";
+  }
+
+  return `${formatCoordinate(latitude)}, ${formatCoordinate(longitude)}`;
+};
+
+const formatTrackingUpdatedAt = (timestamp) => {
+  if (!timestamp) return "--";
+
+  const parsedDate = new Date(timestamp);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "--";
+  }
+
+  return parsedDate.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 
 
 const buildImageUri = (path) => {
@@ -80,6 +180,11 @@ const AttendanceScreen = () => {
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
+  const [trackingStatus, setTrackingStatus] = useState({
+    loading: false,
+    latestEntry: null,
+    error: null,
+  });
   const rotateValue = useRef(new Animated.Value(0)).current;
   const spin = rotateValue.interpolate({
     inputRange: [0, 1],
@@ -167,15 +272,15 @@ const getProfileUri = (pic) => {
     fetchDayStatus();
   }, []);
 
-  useEffect(() => {
-    fetchDayStatus();
-  }, []);
-
   const fetchTodayAttendance = async () => {
     try {
       const res = await authAxios.get(`/attendance/today/`);
       const data = res.data;
-      setSessions(data.sessions || []);
+      const attendanceSessions = data.sessions || [];
+      setSessions(attendanceSessions);
+
+      const latestSession = attendanceSessions[attendanceSessions.length - 1];
+      setPunchedIn(Boolean(latestSession?.time_in && !latestSession?.time_out));
 
       const hours = parseFloat(data.total_hours || 0);
       const h = Math.floor(hours);
@@ -184,6 +289,43 @@ const getProfileUri = (pic) => {
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
     } catch (err) {
+    }
+  };
+
+  const fetchTrackingStatus = async ({ silent = false } = {}) => {
+    if (Platform.OS !== "ios" || !employee?.id) {
+      return;
+    }
+
+    if (!silent) {
+      setTrackingStatus((prevState) => ({
+        ...prevState,
+        loading: true,
+        error: null,
+      }));
+    }
+
+    try {
+      const response = await authAxios.get(`/background-location/${employee.id}/`, {
+        params: {
+          date: formatApiDate(),
+        },
+      });
+
+      const latestEntry = getLatestTrackingEntry(getTrackingEntries(response.data));
+
+      setTrackingStatus({
+        loading: false,
+        latestEntry,
+        error: null,
+      });
+    } catch (error) {
+      setTrackingStatus((prevState) => ({
+        loading: false,
+        latestEntry: prevState.latestEntry,
+        error,
+      }));
+      console.log("TRACKING STATUS ERROR:", error?.response?.data || error?.message);
     }
   };
 
@@ -309,6 +451,7 @@ const getProfileUri = (pic) => {
           ["punchedIn", "true"],
         ]);
 
+        setSessionId(sessionId);
         setPunchedIn(true);
 
         maybeAskBatteryPermission();
@@ -341,7 +484,12 @@ const getProfileUri = (pic) => {
           "punchedIn",
         ]);
 
+        setSessionId(null);
         setPunchedIn(false);
+      }
+
+      if (Platform.OS === "ios") {
+        await fetchTrackingStatus();
       }
 
     } catch (error) {
@@ -360,17 +508,19 @@ const getProfileUri = (pic) => {
  useEffect(() => {
   const initialize = async () => {
     try {
-      // Fetch employee
-      const [profileRes, accessToken] = await Promise.all([
+      const [profileRes, accessToken, storedPunchedIn, storedSessionId] = await Promise.all([
         authAxios.get("/profile/"),
         AsyncStorage.getItem("accessToken"),
+        AsyncStorage.getItem("punchedIn"),
+        AsyncStorage.getItem("sessionId"),
       ]);
 
       setEmployee(profileRes.data);
-setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR_URI);   
- setProfileImageToken(accessToken);
+      setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR_URI);
+      setProfileImageToken(accessToken);
+      setPunchedIn(storedPunchedIn === "true");
+      setSessionId(storedSessionId);
 
-      // Attendance refresh
       await fetchTodayAttendance();
 
     } catch (err) {
@@ -382,6 +532,28 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
 
   initialize();
 }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== "ios" || !employee?.id) {
+      return;
+    }
+
+    fetchTrackingStatus();
+  }, [employee?.id]);
+
+  const trackingIsActive = punchedIn || isCurrentlyPunchedIn();
+
+  useEffect(() => {
+    if (Platform.OS !== "ios" || !employee?.id || !trackingIsActive) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      fetchTrackingStatus({ silent: true });
+    }, TRACKING_REFRESH_INTERVAL);
+
+    return () => clearInterval(intervalId);
+  }, [employee?.id, trackingIsActive]);
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
@@ -421,20 +593,6 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
         {segmentContent}
       </View>
     );
-  };
-
-  const onDisclosureAgree = async () => {
-    setShowDisclosure(false);
-
-    if (pendingPunch) {
-      await handlePunch();
-      setPendingPunch(false);
-    }
-  };
-
-  const onDisclosureCancel = () => {
-    setShowDisclosure(false);
-    setPendingPunch(false);
   };
 
   const renderRadialCircle = () => (
@@ -503,6 +661,21 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
   const isCompanyLogoSvg =
     typeof companyLogoUri === "string" &&
     companyLogoUri.toLowerCase().includes(".svg");
+  const latestTrackingTimestamp = getTrackingTimestamp(trackingStatus.latestEntry);
+  const trackingLocationText = trackingStatus.loading
+    ? "Fetching current location..."
+    : trackingStatus.error && !trackingStatus.latestEntry
+      ? "Unable to load current location"
+      : trackingIsActive
+        ? formatTrackingLocation(trackingStatus.latestEntry)
+        : "Tracking starts after Swipe In";
+  const trackingUpdatedText = trackingStatus.loading
+    ? "Refreshing..."
+    : latestTrackingTimestamp
+      ? formatTrackingUpdatedAt(latestTrackingTimestamp)
+      : trackingIsActive
+        ? "Waiting for scheduled update"
+        : "--";
 
   return (
     <SafeAreaView style={styles.container}>
@@ -510,8 +683,11 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
         onRefresh={async () => {
-          await fetchDayStatus();
-          await fetchTodayAttendance();
+          await Promise.all([
+            fetchDayStatus(),
+            fetchTodayAttendance(),
+            fetchTrackingStatus(),
+          ]);
         }}
       >
         <ScrollView
@@ -707,7 +883,51 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
               </Text>
             </View>
 
-            <View style={styles.line} />
+            {Platform.OS === "ios" && (
+              <View style={styles.trackingCard}>
+                <View style={styles.trackingHeaderRow}>
+                  <View style={styles.trackingTitleBlock}>
+                    <Text style={styles.trackingTitle}>Tracking Active</Text>
+                    <Text style={styles.trackingSubtitle}>
+                      Visible only while you are checked in
+                    </Text>
+                  </View>
+
+                  <View
+                    style={[
+                      styles.trackingBadge,
+                      trackingIsActive ? styles.trackingBadgeOn : styles.trackingBadgeOff,
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.trackingBadgeDot,
+                        trackingIsActive
+                          ? styles.trackingBadgeDotOn
+                          : styles.trackingBadgeDotOff,
+                      ]}
+                    />
+                    <Text style={styles.trackingBadgeText}>
+                      {trackingIsActive ? "ON" : "OFF"}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.trackingRow}>
+                  <Text style={styles.trackingLabel}>Current location</Text>
+                  <Text style={styles.trackingValue}>{trackingLocationText}</Text>
+                </View>
+
+                <View style={styles.trackingRow}>
+                  <Text style={styles.trackingLabel}>Last updated</Text>
+                  <Text style={styles.trackingValue}>{trackingUpdatedText}</Text>
+                </View>
+
+                <Text style={styles.trackingNote}>
+                  Location tracking starts after Swipe In and stops right after Swipe Out.
+                </Text>
+              </View>
+            )}
           </Pressable>
 
         </ScrollView>
@@ -722,9 +942,9 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
       )}
       <LocationDisclosure
         visible={showDisclosure}
-        onAgree={() => {
+        onAgree={async () => {
           setShowDisclosure(false);
-          handlePunch();
+          await handlePunch();
         }}
         onCancel={() => setShowDisclosure(false)}
       />
