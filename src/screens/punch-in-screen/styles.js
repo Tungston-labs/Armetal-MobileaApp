@@ -5,8 +5,8 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#151D34",
     paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 60,
+    paddingTop: 20,
+    // paddingBottom: 40,
   },
   scrollView: { paddingBottom: 0 },
 
@@ -15,13 +15,15 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: -9,
+    marginBottom: -3,
   },
   logo: {
     width: 90,
     height: 50,
     resizeMode: "contain",
-    paddingBottom: 10,
+    paddingBottom: -10,
+    marginLeft:23,
+    // paddingHorizontal:20,
   },
   logoRow: {
     flexDirection: "column",
@@ -32,14 +34,16 @@ export default StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Raleway_700Bold',
     textAlign: "left",
-    marginTop: 8,
+    marginTop: 25,
+    marginLeft:20,
+  
   },
   profilePic: {
     width: 45,
     height: 45,
     borderRadius: 25,
-    marginBottom:30,
-    marginRight:10,
+    marginBottom:35,
+    marginRight:20,
   },
 
   // Circle
@@ -57,7 +61,7 @@ circle: {
   width: 140,
   height: 140,
   borderRadius: 80,   
-  overflow: "hidden", 
+  overflow: "hidden",
   justifyContent: "center",
   alignItems: "center",
 },
@@ -92,7 +96,8 @@ textContainer: {
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
-    paddingVertical: 19,
+    paddingVertical: 15,
+    paddingHorizontal:25,
   },
   legendItem: {
     flexDirection: "row",
@@ -114,7 +119,8 @@ textContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginTop: 1,
+    marginTop: 10,
+    paddingHorizontal:28,
   },
   menuBox: {
     width: "22%", // 4 columns
@@ -139,8 +145,11 @@ textContainer: {
   attendanceBox: {
     backgroundColor: "#172555",
     padding: 18,
-    marginTop: 40,
+    // marginBottom:20,
+    marginTop: 30,
     borderRadius: 15,
+    paddingHorizontal:20,
+    marginHorizontal:25,
   },
   
   // New header row (date + hours)
@@ -180,9 +189,9 @@ textContainer: {
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
-    bottom: 2,
-    left: 3,
-    right: 2,
+    bottom: 8,
+    left: 5,
+    right: 5,
   },
   loaderOverlay: {
     position: "absolute",
@@ -225,4 +234,3 @@ textContainer: {
     position: "absolute",
   }, 
 });
-

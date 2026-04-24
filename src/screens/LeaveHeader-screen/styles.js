@@ -6,7 +6,7 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 38,
+    paddingTop: 8,
     paddingBottom: 8,
     backgroundColor: '#262D40',
   },
@@ -15,6 +15,15 @@ export default StyleSheet.create({
     fontSize: 25,
     fontFamily: 'Raleway_700Bold',
     marginTop: 20,
+    marginLeft:43
+  },
+    backButton: {
+    position: 'absolute',
+    left: 16,
+    top: '30%',
+    transform: [{ translateY: -12 }],
+    zIndex: 1,
+      marginTop:20,
   },
   counters: {
     flexDirection: 'row',

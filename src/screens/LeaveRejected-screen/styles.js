@@ -122,16 +122,17 @@ export default StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Montserrat_700Bold',
   },
-   fab: {
-  position: "absolute",
-  right: 20,
-  backgroundColor: "#7490F3",
-  width: 50,
-  height: 50,
-  borderRadius: 28,
-  alignItems: "center",
-  justifyContent: "center",
-  elevation: 5,
-},
+ fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 120,
+    backgroundColor: '#7490F3',
+    width: 50,
+    height: 50,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+  },
 
 });

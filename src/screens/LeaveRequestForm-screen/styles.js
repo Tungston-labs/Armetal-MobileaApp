@@ -8,14 +8,24 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
+    height: 70,
     flexDirection: 'row',
-    alignItems: 'flex-end',     
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#262D40',
-    paddingHorizontal: 20,
-    paddingBottom: 18,          
-    height: 100,                
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0.2,
     borderBottomColor: "#FFFFFF",
+  },
+
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: 'Raleway_700Bold',
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 19,
   },
   pickerWrapper: {
     backgroundColor: '#172554',  
@@ -28,35 +38,26 @@ export default StyleSheet.create({
     paddingVertical: 14,
     justifyContent: 'center',
   },
-
   picker: {
     height: 45,
-    color: '#FFFFFF',            
+    color: '#FFFFFF',           
     fontSize: 15,
     fontFamily: 'Montserrat_400Regular',
     width: '100%',
   },
-
-  headerTitle: {
-    marginLeft: 20,
-    fontSize: 22,
-    color: '#FFFFFF',
-    fontFamily: 'Raleway_700Bold',
-  },
-
   separator: {
     height: 1,
-    // backgroundColor: '#FFFFFF',
   },
   content: {
     paddingHorizontal: 16,
     paddingVertical: 20,
-    paddingBottom: 100, // space for bottom bar
+    paddingBottom: 100, 
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 10,
+    marginTop: 10,
   },
   statBox: {
     flex: 1,
@@ -86,102 +87,100 @@ export default StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     marginVertical: 20,
-    marginBottom: 40,
-
+    marginBottom: 25,
   },
 
   section: {
-  marginBottom: 20,
-},
+    marginBottom: 20,
+  },
 
-dateRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-},
+  dateRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
 
-dateInput: {
-  flex: 1,
-  marginHorizontal: 4,
-},
+  dateInput: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
 
-inputLabel: {
-  color: '#FFFFFF',
-  fontSize: 13,
-  fontFamily: 'Montserrat_400Regular',
-  marginBottom: 6,
-},
+  inputLabel: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontFamily: 'Montserrat_400Regular',
+    marginBottom: 6,
+  },
 
-dateField: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor: '#172554',
-  borderRadius: 10,
-  paddingVertical: 13,
-  paddingHorizontal: 12,
-  justifyContent: 'space-between',
-  borderWidth: 0.2,
-  borderColor: '#FFFFFF',
-},
+  dateField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#172554',
+    borderRadius: 10,
+    paddingVertical: 13,
+    paddingHorizontal: 12,
+    justifyContent: 'space-between',
+    borderWidth: 0.2,
+    borderColor: '#FFFFFF',
+  },
 
-leaveTypeBox: {
-  backgroundColor: '#172554',
-  borderRadius: 10,
-  borderWidth: 0.2,
-  borderColor: '#FFFFFF',
-  height: 48,
-  justifyContent: 'center',
-  paddingHorizontal: 10,
-  marginTop: 5,
-},
+  leaveTypeBox: {
+    backgroundColor: '#172554',
+    borderRadius: 10,
+    borderWidth: 0.2,
+    borderColor: '#FFFFFF',
+    height: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    marginTop: 5,
+  },
 
 pickerWrapper: {
-  backgroundColor: '#172554',
-  borderRadius: 8,
+  backgroundColor: '#172554',   // FIXED
+  borderRadius: 10,
   borderWidth: 0.5,
   borderColor: '#768F9C',
-  justifyContent: 'center',
   height: 50,
+  justifyContent: 'center',
   paddingHorizontal: 10,
+  marginTop: 10,
 },
 
 picker: {
-  color: '#7D8EB5',
+  color: '#FFFFFF',
   fontSize: 15,
   fontFamily: 'Montserrat_400Regular',
   width: '100%',
   height: '100%',
 },
 
-dateText: {
-  color: '#7D8EB5',
-  fontSize: 15,
-  fontFamily: 'Montserrat_400Regular',
-},
+  dateText: {
+    color: '#7D8EB5',
+    fontSize: 15,
+    fontFamily: 'Montserrat_400Regular',
+  },
 
-input: {
-  backgroundColor: '#172554',
-  paddingVertical: 14,
-  paddingHorizontal: 14,
-  borderRadius: 10,
-  color: '#FFFFFF',
-  borderWidth: 0.2,
-  borderColor: '#1d294a',
-  marginBottom: 20,
-},
+  input: {
+    backgroundColor: '#172554',
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    color: '#FFFFFF',
+    borderWidth: 0.2,
+    borderColor: '#1d294a',
+    marginBottom: 20,
+  },
 
-textArea: {
-  backgroundColor: '#172554',
-  padding: 12,
-  borderRadius: 10,
-  color: '#FFFF',
-  height: 120,
-  textAlignVertical: 'top',
-  borderWidth: 0.2,
-  borderColor: '#FFFFFF',
-  marginBottom: 20,
-},
-
-
+  textArea: {
+    backgroundColor: '#172554',
+    padding: 12,
+    borderRadius: 10,
+    color: '#FFFF',
+    height: 120,
+    textAlignVertical: 'top',
+    borderWidth: 0.2,
+    borderColor: '#FFFFFF',
+    marginBottom: 20,
+  },
   footer: {
     position: 'absolute',
     bottom: 16,
@@ -208,13 +207,12 @@ textArea: {
     marginLeft: 16,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 25,
+    marginBottom: 5,
   },
   applyButtonText: {
     color: '#fff',
     fontSize: 18,
     fontFamily: 'Montserrat_700Bold',
-
   },
   pickerWrapper: {
     backgroundColor: '#green',
@@ -227,8 +225,34 @@ textArea: {
   },
   picker: {
     height: 50,
-    color: '#ccc', // matches input text color
+    color: '#ccc', 
     width: '100%',
   },
+pickerPreview: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingHorizontal: 12,
+  paddingVertical: 10,
+  borderRadius: 8,
+  backgroundColor: 'transparent', // or your field bg
+  borderWidth: 1,
+  borderColor: '#2d3346',
+},
+pickerPreviewText: {
+  fontSize: 14,
+  color: '#fff',
+},
+modalOverlay: {
+  flex: 1,
+  justifyContent: 'flex-end',
+  backgroundColor: 'rgba(0,0,0,0.35)',
+},
+modalContent: {
+  backgroundColor: '#fff',
+  paddingTop: 8,
+  borderTopLeftRadius: 12,
+  borderTopRightRadius: 12,
+}
 
 });

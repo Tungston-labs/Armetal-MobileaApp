@@ -66,6 +66,7 @@
 
     "splash": {
       "image": "./assets/images/adaptive-iconn.png",
+      "imageWidth": 120,
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
     }

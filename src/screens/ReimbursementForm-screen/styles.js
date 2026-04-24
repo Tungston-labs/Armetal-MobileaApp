@@ -102,7 +102,7 @@ export default StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    color: "#FFFFFF",
+    color: "#FFF",
     fontSize: 14,
   },
   submitButton: {
