@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  AppState,
   View,
   Text,
   SafeAreaView,
@@ -12,7 +13,12 @@ import {
 } from "react-native";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import authAxios from "@/src/utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
@@ -46,6 +52,7 @@ const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 const AttendanceScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const isFocused = useIsFocused();
 
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -83,6 +90,49 @@ const AttendanceScreen = () => {
     rotateValue.stopAnimation();
     rotateValue.setValue(0);
   };
+
+  const stopLocalPunchState = useCallback(async () => {
+    await stopBackgroundTracking();
+    setPunchedIn(false);
+  }, []);
+
+  const syncPunchState = useCallback(
+    async (attendanceData, employeeIdOverride = null) => {
+      const resolvedEmployeeId = employeeIdOverride ?? employee?.id ?? null;
+      const sessionList = Array.isArray(attendanceData?.sessions)
+        ? attendanceData.sessions
+        : [];
+      const activeSession = [...sessionList]
+        .reverse()
+        .find((session) => session?.time_in && !session?.time_out);
+      const resolvedSessionId =
+        activeSession?.session_id ??
+        activeSession?.id ??
+        attendanceData?.session_id ??
+        attendanceData?.active_session_id ??
+        null;
+
+      setPunchedIn(Boolean(activeSession));
+
+      if (!activeSession) {
+        await stopLocalPunchState();
+        return;
+      }
+
+      const storageEntries = [["punchedIn", "true"]];
+
+      if (resolvedEmployeeId) {
+        storageEntries.push(["employeeId", String(resolvedEmployeeId)]);
+      }
+
+      if (resolvedSessionId) {
+        storageEntries.push(["sessionId", String(resolvedSessionId)]);
+      }
+
+      await AsyncStorage.multiSet(storageEntries);
+    },
+    [employee?.id, stopLocalPunchState]
+  );
 
   const fetchDayStatus = async () => {
     try {
@@ -130,7 +180,7 @@ const AttendanceScreen = () => {
     fetchDayStatus();
   }, []);
 
-  const fetchTodayAttendance = async () => {
+  const fetchTodayAttendance = useCallback(async (employeeIdOverride = null) => {
     try {
       const res = await authAxios.get(`/attendance/today/`);
       const data = res.data;
@@ -142,9 +192,12 @@ const AttendanceScreen = () => {
       setTotalHours(
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
+      await syncPunchState(data, employeeIdOverride);
+      return data;
     } catch (err) {
+      console.log("TODAY ATTENDANCE ERROR:", err?.message || err);
     }
-  };
+  }, [syncPunchState]);
 
 
   const getLatestSession = () => {
@@ -248,18 +301,14 @@ const AttendanceScreen = () => {
           AsyncStorage.getItem("accessToken"),
         ]);
 
-        setEmployee(profileRes.data);
+        const profile = profileRes.data;
+
+        setEmployee(profile);
         setMediaToken(accessToken);
-        setCompanyLogoUri(normalizeMediaUri(profileRes.data?.company_logo));
+        setCompanyLogoUri(normalizeMediaUri(profile?.company_logo));
         setProfileImageFailed(false);
 
-        // Attendance refresh
-        await fetchTodayAttendance();
-
-        // Restore punch state
-        const storedPunch = await AsyncStorage.getItem("punchedIn");
-
-        setPunchedIn(storedPunch === "true");
+        await fetchTodayAttendance(profile?.id);
 
       } catch (err) {
         console.log("INIT ERROR:", err);
@@ -269,8 +318,36 @@ const AttendanceScreen = () => {
     };
 
     initialize();
-  }, []);
+  }, [fetchTodayAttendance]);
 console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!employee?.id) {
+        return undefined;
+      }
+
+      void fetchTodayAttendance(employee.id);
+
+      const intervalId = setInterval(() => {
+        if (!punching) {
+          void fetchTodayAttendance(employee.id);
+        }
+      }, 15000);
+
+      return () => clearInterval(intervalId);
+    }, [employee?.id, fetchTodayAttendance, punching])
+  );
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active" && isFocused && employee?.id && !punching) {
+        void fetchTodayAttendance(employee.id);
+      }
+    });
+
+    return () => subscription.remove();
+  }, [employee?.id, fetchTodayAttendance, isFocused, punching]);
   useEffect(() => {
     const loadCompanyLogoSvg = async () => {
       if (!companyLogoUri?.toLowerCase().endsWith(".svg")) {

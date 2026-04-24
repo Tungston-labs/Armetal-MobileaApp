@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { NavigationContainer } from "@react-navigation/native";
+import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, View } from "react-native";
 
@@ -37,6 +37,17 @@ import ReimbursementForm from "../screens/ReimbursementForm-screen";
 import AuthLoadingScreen from "../screens/AuthLoadingScreen";
 
 const Stack = createNativeStackNavigator();
+const APP_BACKGROUND = "#151D34";
+const bottomNavScreenOptions = { animation: "none" };
+
+const navigationTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: APP_BACKGROUND,
+    card: APP_BACKGROUND,
+  },
+};
 
 export default function Navigation() {
   const { accessToken, loading } = useSelector((state) => state.auth);
@@ -49,7 +60,7 @@ export default function Navigation() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#fff",
+          backgroundColor: APP_BACKGROUND,
         }}
       >
         <ActivityIndicator size="large" />
@@ -58,20 +69,37 @@ export default function Navigation() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer theme={navigationTheme}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: APP_BACKGROUND },
+        }}
+      >
         {accessToken ? (
           // Authenticated screens
           <>
-            <Stack.Screen name="PunchinScreen" component={PunchinScreen} />
+            <Stack.Screen
+              name="PunchinScreen"
+              component={PunchinScreen}
+              options={bottomNavScreenOptions}
+            />
             <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} />
             <Stack.Screen
               name="PunchOutSuccessScreen"
               component={PunchOutSuccessScreen}
             />
             <Stack.Screen name="DepartmentScreen" component={DepartmentScreen} />
-            <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
-            <Stack.Screen name="LeaveAllScreen" component={LeaveAllScreen} />
+            <Stack.Screen
+              name="CalendarScreen"
+              component={CalendarScreen}
+              options={bottomNavScreenOptions}
+            />
+            <Stack.Screen
+              name="LeaveAllScreen"
+              component={LeaveAllScreen}
+              options={bottomNavScreenOptions}
+            />
             <Stack.Screen
               name="LeaveApproveScreen"
               component={LeaveApproveScreen}
@@ -95,7 +123,11 @@ export default function Navigation() {
             <Stack.Screen name="LeaveHeader" component={LeaveHeader} />
             <Stack.Screen name="RequestPending" component={RequestPending} />
             <Stack.Screen name="RequestRejected" component={RequestRejected} />
-            <Stack.Screen name="TaskUpdateScreen" component={TaskUpdateScreen} />
+            <Stack.Screen
+              name="TaskUpdateScreen"
+              component={TaskUpdateScreen}
+              options={bottomNavScreenOptions}
+            />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen name="SalarySlipScreen" component={SalarySlipScreen} />
             <Stack.Screen name="DocumentsScreen" component={DocumentsScreen} />
@@ -112,6 +144,7 @@ export default function Navigation() {
             <Stack.Screen
               name="ReimbursementlistScreen"
               component={ReimbursementlistScreen}
+              options={bottomNavScreenOptions}
             />
             <Stack.Screen
               name="ReimbursementForm"
