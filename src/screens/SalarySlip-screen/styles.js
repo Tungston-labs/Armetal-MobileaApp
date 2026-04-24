@@ -20,14 +20,14 @@ export default StyleSheet.create({
     left: 16,
     top: '50%',
     transform: [{ translateY: -12 }],
-     marginTop:25,
+     marginTop:10,
   },
   headerTitle: {
     fontSize: 20,
     color: '#FFFF',
     fontFamily: 'Raleway_700Bold', 
-    marginTop: 65,
-    marginLeft: 48,
+    marginTop: 53,
+    marginLeft: 58,
    
   },
   

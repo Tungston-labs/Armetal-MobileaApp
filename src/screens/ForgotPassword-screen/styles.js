@@ -44,12 +44,14 @@ export default StyleSheet.create({
     fontSize: 14,
     color: '#FFFFFF',
     marginBottom: 8,
+    marginLeft:35,
   },
 
   input: {
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
     paddingHorizontal: 15,
+    marginHorizontal:35,
     paddingVertical: Platform.OS === 'ios' ? 14 : 10,
     fontSize: 14,
     color: '#000',
@@ -59,6 +61,7 @@ export default StyleSheet.create({
   button: {
     backgroundColor: '#3352BA',
     borderRadius: 10,
+    marginHorizontal:35,
     paddingVertical: 15,
     alignItems: 'center',
   },

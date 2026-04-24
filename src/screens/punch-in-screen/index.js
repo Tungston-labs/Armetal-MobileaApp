@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import Geolocation from "react-native-geolocation-service";
 import { startIOSLocationFetch, stopIOSLocationFetch } from "../../services/iosLocationService";
 import RefreshWrapper from "../../components/RefreshWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import authAxios from "@/src/utils/authAxios";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
@@ -104,6 +104,53 @@ const AttendanceScreen = () => {
     rotateValue.setValue(0);
   };
 
+  const stopLocalTracking = async () => {
+    if (Platform.OS === "android") {
+      await stopBackgroundFetch();
+      return;
+    }
+
+    stopIOSLocationFetch();
+    await AsyncStorage.multiRemove(["employeeId", "sessionId", "punchedIn"]);
+  };
+
+  const syncPunchState = async (attendanceData, employeeIdOverride = null) => {
+    const resolvedEmployeeId =
+      employeeIdOverride ?? employee?.id ?? null;
+    const sessionList = Array.isArray(attendanceData?.sessions)
+      ? attendanceData.sessions
+      : [];
+    const activeSession = [...sessionList]
+      .reverse()
+      .find((session) => session?.time_in && !session?.time_out);
+    const resolvedSessionId =
+      activeSession?.session_id ??
+      activeSession?.id ??
+      attendanceData?.session_id ??
+      attendanceData?.active_session_id ??
+      null;
+
+    setPunchedIn(Boolean(activeSession));
+    setSessionId(resolvedSessionId ? String(resolvedSessionId) : null);
+
+    if (activeSession) {
+      const storageEntries = [["punchedIn", "true"]];
+
+      if (resolvedEmployeeId) {
+        storageEntries.push(["employeeId", String(resolvedEmployeeId)]);
+      }
+
+      if (resolvedSessionId) {
+        storageEntries.push(["sessionId", String(resolvedSessionId)]);
+      }
+
+      await AsyncStorage.multiSet(storageEntries);
+      return;
+    }
+
+    await stopLocalTracking();
+  };
+
   const fetchDayStatus = async () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
@@ -171,7 +218,7 @@ const getProfileUri = (pic) => {
     fetchDayStatus();
   }, []);
 
-  const fetchTodayAttendance = async () => {
+  const fetchTodayAttendance = async (employeeIdOverride = null) => {
     try {
       const res = await authAxios.get(`/attendance/today/`);
       const data = res.data;
@@ -183,7 +230,11 @@ const getProfileUri = (pic) => {
       setTotalHours(
         `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} Hrs`
       );
+
+      await syncPunchState(data, employeeIdOverride);
+      return data;
     } catch (err) {
+      console.log("TODAY ATTENDANCE ERROR:", err);
     }
   };
 
@@ -360,19 +411,19 @@ const getProfileUri = (pic) => {
  useEffect(() => {
   const initialize = async () => {
     try {
-      // Fetch employee
       const [profileRes, accessToken] = await Promise.all([
         authAxios.get("/profile/"),
         AsyncStorage.getItem("accessToken"),
       ]);
+      const profile = profileRes.data;
 
-      setEmployee(profileRes.data);
-setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR_URI);   
- setProfileImageToken(accessToken);
+      setEmployee(profile);
+      setProfileImageUri(
+        buildImageUri(profile?.profile_pic) || DEFAULT_AVATAR_URI
+      );
+      setProfileImageToken(accessToken);
 
-      // Attendance refresh
-      await fetchTodayAttendance();
-
+      await fetchTodayAttendance(profile?.id);
     } catch (err) {
       console.log("INIT ERROR:", err);
     } finally {
@@ -382,6 +433,18 @@ setProfileImageUri(buildImageUri(profileRes.data?.profile_pic) || DEFAULT_AVATAR
 
   initialize();
 }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!employee?.id) {
+        return undefined;
+      }
+
+      void fetchTodayAttendance(employee.id);
+
+      return undefined;
+    }, [employee?.id])
+  );
 
   const today = new Date();
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
