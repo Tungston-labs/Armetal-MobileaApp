@@ -7,6 +7,15 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#151D34',
   },
+  keyboardContainer: {
+    flex: 1,
+  },
+  body: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
   header: {
     height: 70,
     flexDirection: 'row',
@@ -51,7 +60,7 @@ export default StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingVertical: 20,
-    paddingBottom: 100, 
+    paddingBottom: 8,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -182,12 +191,12 @@ picker: {
     marginBottom: 20,
   },
   footer: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+    backgroundColor: '#151D34',
   },
   deleteButton: {
     width: 56,
@@ -198,7 +207,6 @@ picker: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2F1E2E',
-    marginBottom: 25,
   },
   applyButton: {
     flex: 1,
@@ -207,7 +215,6 @@ picker: {
     marginLeft: 16,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 5,
   },
   applyButtonText: {
     color: '#fff',

@@ -199,10 +199,11 @@ export default function LeaveRequestFormScreen() {
       <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
       <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
-        >          <View style={styles.header}>
+        >
+          <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginBottom: 16 }} />
             </TouchableOpacity>
@@ -211,10 +212,15 @@ export default function LeaveRequestFormScreen() {
 
           <View style={styles.separator} />
 
-          <KeyboardAwareScrollView contentContainerStyle={[
-            styles.content,
-            { paddingBottom: 120 } // 👈 gives space for footer
-          ]} enableOnAndroid={true} extraScrollHeight={80} keyboardShouldPersistTaps="handled">
+          <View style={styles.body}>
+          <KeyboardAwareScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.content}
+            enableOnAndroid={true}
+            extraScrollHeight={Platform.OS === 'ios' ? 24 : 12}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+          >
             {/* Stats */}
             <View style={styles.statsContainer}>
               <View style={styles.statBox}>
@@ -357,6 +363,7 @@ export default function LeaveRequestFormScreen() {
             <TouchableOpacity style={styles.applyButton} onPress={submitLeaveRequest} disabled={loading}>
               <Text style={styles.applyButtonText}>{loading ? 'Applying...' : 'Apply Leave'}</Text>
             </TouchableOpacity>
+          </View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

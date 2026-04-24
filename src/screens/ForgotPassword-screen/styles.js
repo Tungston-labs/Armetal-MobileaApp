@@ -15,6 +15,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
     paddingTop: Platform.OS === 'android' ? 20 : 15,
     paddingBottom: 10,
+    marginLeft:20,
+
   },
 
   content: {
