@@ -199,7 +199,7 @@ textArea: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2F1E2E',
-    marginBottom: 25,
+    marginBottom: 40,
   },
   applyButton: {
     flex: 1,
@@ -208,7 +208,7 @@ textArea: {
     marginLeft: 16,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 25,
+    marginBottom: 45,
   },
   applyButtonText: {
     color: '#fff',

@@ -8,15 +8,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#151D34',
-    
+
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-end',     
+    alignItems: 'flex-end',
     backgroundColor: '#262D40',
     paddingHorizontal: 20,
-    paddingBottom: 18,          
-    height: 100,                
+    paddingBottom: 18,
+    height: 100,
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
     marginBottom: 10,
@@ -30,26 +30,27 @@ const styles = StyleSheet.create({
   },
 
   teamCard: {
-    borderRadius: 12,
-    padding: wp('4%'),
-    margin: 10,
-    marginBottom: hp('2%'),
-    height: hp('18%'),
+    borderRadius: 16,
+    minHeight: hp('22%'),
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('5%'),
+    marginHorizontal: wp('3%'),
+    marginVertical: hp('1%'),
     justifyContent: 'space-between',
-    paddingTop: hp('1.0%'),  
   },
   teamTitle: {
-    color: 'white',
-    fontSize: wp('4.6%'),
-    fontFamily: 'Montserrat_400Regular',
-  },
-  teamLeadLabel: {
-    color: '#B0B9D4',
-    fontSize: wp('2.5%'),
-    marginBottom: hp('0.5%'),
-    fontFamily: 'Montserrat_400Regular',
+  color: 'white',
+  fontSize: wp('5%'), // slightly bigger
+  marginBottom: hp('0.5%'),
+  fontFamily: 'Montserrat_400Regular',
+},
 
-  },
+teamLeadLabel: {
+  color: '#B0B9D4',
+  fontSize: wp('3%'),
+  marginBottom: hp('0.8%'),
+  fontFamily: 'Montserrat_400Regular',
+},
   teamLeadInfo: {
     flexDirection: 'row',
     alignItems: 'center',
