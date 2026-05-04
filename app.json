@@ -8,6 +8,7 @@
     "scheme": "Rekory",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Rekory",
@@ -16,6 +17,7 @@
       },
       "appleTeamId": "8V477R5F9D"
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
@@ -34,21 +36,27 @@
         "backgroundColor": "#151D34"
       }
     },
+
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
     },
+
     "experiments": {
       "typedRoutes": true
     },
+
     "owner": "ansalmazeez",
+
     "extra": {
       "eas": {
         "projectId": "51276e4a-a789-4827-a76f-c28159bfc02b"
       }
     },
+
     "splash": {
       "image": "./assets/images/adaptive-iconn.png",
+      "imageWidth": 120,
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
     }

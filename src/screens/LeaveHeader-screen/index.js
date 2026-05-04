@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-na
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import authAxios from '../../utils/authAxios';
+import { Ionicons } from '@expo/vector-icons';
 
   const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -65,7 +66,14 @@ export default function LeaveHeader() {
     <View>
       {/* Header */}
       <View style={styles.header}>
+            <TouchableOpacity
+                   style={styles.backButton}
+                   onPress={() => navigation.goBack()}
+                 >
+                   <Ionicons name="arrow-back" size={24} color="#fff" />
+                 </TouchableOpacity>
         <View>
+          
           <Text style={styles.headerTitle}>Leave Request</Text>
           <View style={styles.counters}>
             <Text style={styles.counterText}>Pending leave    {summary?.total_leave || 0}</Text>

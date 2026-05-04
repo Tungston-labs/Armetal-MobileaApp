@@ -15,6 +15,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
     paddingTop: Platform.OS === 'android' ? 20 : 15,
     paddingBottom: 10,
+    marginTop:20,
   },
 
   content: {
@@ -42,6 +43,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 30,
+    paddingHorizontal:30,
   },
 
   otpInput: {
@@ -60,6 +62,7 @@ export default StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     marginBottom: 20,
+    marginHorizontal:30,
   },
 
   buttonText: {

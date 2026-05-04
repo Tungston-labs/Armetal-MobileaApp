@@ -8,9 +8,8 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 100,
+    height: 110,
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#262D40',
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
@@ -31,6 +30,9 @@ export default StyleSheet.create({
     color: '#FFFF',
     fontWeight: 'bold',
     marginTop:40,
+    marginLeft:58,
+
+    
    
   },
   content: {

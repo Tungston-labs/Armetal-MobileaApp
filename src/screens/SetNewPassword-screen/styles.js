@@ -9,7 +9,11 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
     paddingHorizontal: 20,
   },
-
+innerContainer: {
+  width: '100%',
+  maxWidth: 350,
+  paddingHorizontal: 10,
+},
 
   header: {
     height: 50,

@@ -107,7 +107,7 @@ const SalarySlipScreen = () => {
   };
   
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -195,7 +195,7 @@ const SalarySlipScreen = () => {
           )}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

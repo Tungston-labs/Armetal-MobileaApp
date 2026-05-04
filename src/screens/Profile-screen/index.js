@@ -56,7 +56,7 @@ const ProfileScreen = () => {
   const profileImage = { uri: getProfileUri(employee?.profile_pic) };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -134,7 +134,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

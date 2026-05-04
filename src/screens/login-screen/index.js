@@ -29,7 +29,7 @@ const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
-const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
       const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const dispatch=useDispatch();
@@ -60,6 +60,8 @@ const handleLogin = async () => {
 
   } catch (error) {
     console.log("API Error:", error.message);
+
+
     Alert.alert(
       "Login Failed",
       error.response ? "Invalid username or password." : "Network Error"

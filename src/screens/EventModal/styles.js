@@ -6,14 +6,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000aa",
     justifyContent: "flex-end",
   },
-  modalContent: {
-    backgroundColor: "#0C1124", 
-    padding: 20,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderTopWidth: 1,
-    borderColor: "#1F2A46",
-  },
+ modalContent: {
+  maxHeight: "80%",  
+  backgroundColor: "#0C1124",
+  padding: 20,
+  marginTop:20,
+  borderTopLeftRadius: 24,
+  borderTopRightRadius: 24,
+},
   header: {
     fontSize: 18,
     fontWeight: "600",

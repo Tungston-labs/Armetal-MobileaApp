@@ -30,6 +30,7 @@ export default StyleSheet.create({
   card: {
     backgroundColor: "#172554",
     borderRadius: 10,
+    maxHeight:600,
     padding: 15,
   },
   rowBetween: {
@@ -88,16 +89,16 @@ export default StyleSheet.create({
 
   // ✅ EXACT like "Cancel" button in screenshot
   cancelButton: {
-    marginTop: 20,
+    marginTop: 10,
     borderColor: "#FF2304",
     borderWidth: 1.5,
     borderRadius: 33,
     paddingVertical: 5,
-    paddingHorizontal: 50,  // ✅ controls width nicely
+    paddingHorizontal: 50, 
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#4B322E",
-    alignSelf: "center",    // ✅ centers the button
+    alignSelf: "center",   
   },
   
   cancelButtonText: {

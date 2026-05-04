@@ -15,14 +15,10 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
 import SwipeLoader from "../../components/SwipeLoader"
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-
 export default function LeaveAllScreen({ navigation, route }) {
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const insets = useSafeAreaInsets();
 
   const fetchLeaves = async () => {
     try {
@@ -43,7 +39,6 @@ export default function LeaveAllScreen({ navigation, route }) {
       hour12: true,
     });
   };
-
 
   useEffect(() => {
     fetchLeaves();
@@ -131,9 +126,10 @@ export default function LeaveAllScreen({ navigation, route }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LeaveHeader navigation={navigation} route={route} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#151D34" }}>
 
+      {/* Header - now inside the same background as notch */}
+      <LeaveHeader navigation={navigation} route={route} />
       <Text style={styles.dateHeader}>{formattedDate}</Text>
 
       {loading ? (
@@ -149,8 +145,8 @@ export default function LeaveAllScreen({ navigation, route }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]}
-              tintColor="#ffffff"
+              colors={["#ffffff", "#d3d3d3"]} // ✅ Android spinner colors
+              tintColor="#ffffff"             // ✅ iOS spinner color
               progressBackgroundColor={
                 Platform.OS === "android" ? "#2c2c2c" : "transparent"
               }
@@ -165,13 +161,15 @@ export default function LeaveAllScreen({ navigation, route }) {
       )}
 
       <TouchableOpacity
-        style={[styles.fab, { bottom: styles.fab.bottom + insets.bottom }]}
+        style={styles.fab}
         onPress={() => navigation.navigate("LeaveRequestFormScreen")}
       >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      <BottomNavbar navigation={navigation} route={route} />
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+        <BottomNavbar navigation={navigation} route={route} />
+      </View>
     </SafeAreaView>
   );
 }

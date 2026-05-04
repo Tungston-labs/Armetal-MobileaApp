@@ -9,15 +9,24 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#262D40",
-    height: 100,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#FFFF',
+    backgroundColor: '#262D40',
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#FFFFFF",
+  },
+
+  title: {
+    fontSize: 20,
+    fontFamily: 'Raleway_700Bold',
+    color: '#FFF',
+    flex: 1,
+    marginLeft: 12,
+    marginBottom: 9,
   },
   descriptionLabel: {
     marginTop: 6,
@@ -30,11 +39,11 @@ export default StyleSheet.create({
     fontSize: 14,
     marginTop: 12,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: 'Raleway_700Bold',
-    color: '#FFFFFF',
-  },
+  // title: {
+  //   fontSize: 24,
+  //   fontFamily: 'Raleway_700Bold',
+  //   color: '#FFFFFF',
+  // },
   avatarImage: {
     width: 44,
     height: 44,
@@ -185,18 +194,17 @@ export default StyleSheet.create({
     fontSize: 16,
   },
 
-   fab: {
-  position: "absolute",
-  right: 20,
-  bottom: 100, 
-  backgroundColor: "#7490F3",
-  width: 50,
-  height: 50,
-  borderRadius: 28,
-  alignItems: "center",
-  justifyContent: "center",
-  elevation: 5,
-},
-
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 120,
+    backgroundColor: '#7490F3',
+    width: 50,
+    height: 50,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+  },
 
 });
