@@ -44,9 +44,10 @@ export default StyleSheet.create({
     marginBottom: 90,
   },
   profileImage: {
-    width: width * 0.7,
-    height: width * 0.7,
+    width: width * 0.4,
+    height: width * 0.4,
     marginTop:20,
+    borderRadius:"50%"
   },
   optionCard: {
     flexDirection: 'row',
