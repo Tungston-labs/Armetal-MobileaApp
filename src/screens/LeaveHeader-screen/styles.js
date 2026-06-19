@@ -12,7 +12,7 @@ export default StyleSheet.create({
   },
   headerTitle: {
     color: '#FFFFFF',
-    fontSize: 25,
+   fontSize: 22,
     fontFamily: 'Raleway_700Bold',
     marginTop: 20,
   },

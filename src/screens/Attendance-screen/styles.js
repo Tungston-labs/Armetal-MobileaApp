@@ -145,7 +145,7 @@ export default StyleSheet.create({
   },
   bottomNavbarContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 80,
     left: 0,
     right: 0,
   },

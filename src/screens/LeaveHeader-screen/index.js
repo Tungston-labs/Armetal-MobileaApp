@@ -53,13 +53,13 @@ export default function LeaveHeader() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.header}>
-        <ActivityIndicator size="small" color="#fff" />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.header}>
+  //       <ActivityIndicator size="small" color="#fff" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View>

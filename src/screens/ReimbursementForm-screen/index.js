@@ -212,7 +212,7 @@ const ReimbursementForm = ({ navigation, route }) => {
           </View>
 
           <View style={styles.halfInputContainer}>
-            <Text style={styles.label}>Enter Amount (AED)</Text>
+            <Text style={styles.label}>Enter Amount</Text>
             <TextInput
               placeholder="0.00"
               placeholderTextColor="#8A8F9E"
@@ -237,11 +237,11 @@ const ReimbursementForm = ({ navigation, route }) => {
         </TouchableOpacity>
 
       </KeyboardAwareScrollView>
-      {!loading && (
+      {/* {!loading && (
   <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
     <BottomNavbar navigation={navigation} route={route} />
   </View>
-)}
+)} */}
 
     </View>
   );

@@ -62,6 +62,14 @@ export default function LeavePendingScreen() {
     setRefreshing(false);
   }, []);
 
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    return `${String(date.getDate()).padStart(2, "0")}/${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}/${date.getFullYear()}`;
+  };
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => navigation.navigate("RequestPending", { leaveId: item.id })}
@@ -77,14 +85,14 @@ export default function LeavePendingScreen() {
         <View style={styles.row}>
           <View>
             <Text style={styles.label}>From</Text>
-            <Text style={styles.value}>{item.from_date}</Text>
+            <Text style={styles.value}>{formatDate(item.from_date)}</Text>
             <Text style={styles.value}>{item.from_date_type}</Text>
 
           </View>
 
           <View>
             <Text style={styles.label}>To</Text>
-            <Text style={styles.value}>{item.to_date}</Text>
+            <Text style={styles.value}>{formatDate(item.to_date)}</Text>
             <Text style={styles.value}>{item.to_date_type}</Text>
 
           </View>
@@ -151,7 +159,7 @@ export default function LeavePendingScreen() {
         <Ionicons name="add" size={20} color="white" />
       </TouchableOpacity>
 
-      <BottomNavbar navigation={navigation} route={route} />
+      {/* <BottomNavbar navigation={navigation} route={route} /> */}
     </SafeAreaView>
   );
 }

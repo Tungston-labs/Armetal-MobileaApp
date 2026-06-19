@@ -12,7 +12,7 @@ export default StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     borderTopWidth: 1,
-    borderTopColor: '#2d3454',
+    borderTopColor: ' #2d3454',
   },
   tabIconActive: {
     backgroundColor: '#3352BA',

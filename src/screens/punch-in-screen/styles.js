@@ -170,7 +170,7 @@ textContainer: {
   totalHoursRow: {
     flexDirection: "row",
     alignItems: "center",
-  },
+  }, 
   hours: {
     color: "#5D6687",
     fontSize: 14,
@@ -180,7 +180,7 @@ textContainer: {
   // Bottom Navbar
   bottomNavbarContainer: {
     position: "absolute",
-    bottom: 2,
+    bottom: 0,
     left: 3,
     right: 2,
   },

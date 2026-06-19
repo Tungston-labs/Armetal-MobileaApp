@@ -84,9 +84,12 @@ export default function WorkingDaySummary() {
         for (let day = 1; day <= daysInMonth; day++) {
           allDates.push(`${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
         }
-        const orderedStatuses = allDates.map(date => statusMap[date] || "working");
-  
-        setDayStatus(orderedStatuses);
+       const orderedStatuses = allDates.map(date => ({
+  date,
+  status: statusMap[date] || "working",
+}));
+
+setDayStatus(orderedStatuses);
       } catch (error) {
         console.error("Failed to fetch day status:", error);
         setDayStatus([]);
@@ -97,10 +100,13 @@ export default function WorkingDaySummary() {
   }, []);
   
 
-  const getSegment = (status, index) => {
+const getSegment = (item, index) => {
+  const { date, status } = item;
+
     const total = dayStatus.length;
     const angle = (360 / total) * index;
-  
+    const todayStr = new Date().toISOString().split("T")[0];
+  const isToday = date === todayStr;
     if (status === "half") {
       return (
         <View
@@ -110,10 +116,18 @@ export default function WorkingDaySummary() {
             { transform: [{ rotate: `${angle}deg` }, { translateY: -85 }] },
           ]}
         >
-          <View style={styles.halfSegmentContainer}>
-            <View style={[styles.halfSegment, { backgroundColor: "#15B03E" }]} />
-            <View style={[styles.halfSegment, { backgroundColor: "#FF2304" }]} />
-          </View>
+         <View
+  style={[
+    styles.halfSegment,
+    { backgroundColor: isToday ? "#2196F3" : "#15B03E" },
+  ]}
+/>
+<View
+  style={[
+    styles.halfSegment,
+    { backgroundColor: isToday ? "#2196F3" : "#FF2304" },
+  ]}
+/>
         </View>
       );
     }
@@ -122,7 +136,9 @@ export default function WorkingDaySummary() {
     if (status === "present") color = "#00FF00";
     else if (status === "absent") color = "#FF0000";
     else if (status === "holiday") color = "gray";
-  
+  if (isToday) {
+  color = "#2196F3";
+}
     return (  
       <View
         key={index}
@@ -165,7 +181,7 @@ export default function WorkingDaySummary() {
               activeOpacity={0.8}
               onPress={() => navigation.navigate("WorkingDaySummary")}
             >
-              {dayStatus.map((status, index) => getSegment(status, index))}
+           {dayStatus.map((item, index) => getSegment(item, index))}
         
               {/* Gradient Circle */}
               <View style={styles.circle}>
@@ -283,13 +299,13 @@ export default function WorkingDaySummary() {
           </View>
         )}
       </ScrollView>
-      <View
+      {/* <View
         style={[
           styles.bottomNavbarContainer,
         ]}
       >
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </View>
   );
 }

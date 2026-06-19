@@ -35,7 +35,7 @@ import ReimbursementScreen from "../screens/Reimbursement-screen";
 import ReimbursementlistScreen from "../screens/reimbursements-list-screen";
 import ReimbursementForm from "../screens/ReimbursementForm-screen";
 import AuthLoadingScreen from "../screens/AuthLoadingScreen";
-
+import BottomTabs from "./BottomTabs";
 const Stack = createNativeStackNavigator();
 const APP_BACKGROUND = "#151D34";
 const bottomNavScreenOptions = { animation: "none" };
@@ -79,27 +79,31 @@ export default function Navigation() {
         {accessToken ? (
           // Authenticated screens
           <>
-            <Stack.Screen
+          <Stack.Screen
+  name="BottomTabs"
+  component={BottomTabs}
+/>
+            {/* <Stack.Screen
               name="PunchinScreen"
               component={PunchinScreen}
               options={bottomNavScreenOptions}
-            />
+            /> */}
             <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} />
             <Stack.Screen
               name="PunchOutSuccessScreen"
               component={PunchOutSuccessScreen}
             />
             <Stack.Screen name="DepartmentScreen" component={DepartmentScreen} />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="CalendarScreen"
               component={CalendarScreen}
               options={bottomNavScreenOptions}
-            />
-            <Stack.Screen
+            /> */}
+            {/* <Stack.Screen
               name="LeaveAllScreen"
               component={LeaveAllScreen}
               options={bottomNavScreenOptions}
-            />
+            /> */}
             <Stack.Screen
               name="LeaveApproveScreen"
               component={LeaveApproveScreen}
@@ -123,11 +127,11 @@ export default function Navigation() {
             <Stack.Screen name="LeaveHeader" component={LeaveHeader} />
             <Stack.Screen name="RequestPending" component={RequestPending} />
             <Stack.Screen name="RequestRejected" component={RequestRejected} />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="TaskUpdateScreen"
               component={TaskUpdateScreen}
               options={bottomNavScreenOptions}
-            />
+            /> */}
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen name="SalarySlipScreen" component={SalarySlipScreen} />
             <Stack.Screen name="DocumentsScreen" component={DocumentsScreen} />
@@ -141,11 +145,11 @@ export default function Navigation() {
               name="ReimbursementScreen"
               component={ReimbursementScreen}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="ReimbursementlistScreen"
               component={ReimbursementlistScreen}
               options={bottomNavScreenOptions}
-            />
+            /> */}
             <Stack.Screen
               name="ReimbursementForm"
               component={ReimbursementForm}

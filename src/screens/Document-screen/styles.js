@@ -37,8 +37,9 @@ export default StyleSheet.create({
     overflow: 'hidden',
   },
   cardImage: {
-    width: '120%',
+    width: '100%',
     height: 200,
+    
   },
   fieldContainer: {
     marginBottom: 20,

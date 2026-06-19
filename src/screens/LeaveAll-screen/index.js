@@ -72,6 +72,13 @@ export default function LeaveAllScreen({ navigation, route }) {
     year: "numeric",
   });
 
+  const formatDate = (dateString) => {
+  const date = new Date(dateString);
+
+  return `${String(date.getDate()).padStart(2, "0")}/${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}/${date.getFullYear()}`;
+};
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <TouchableOpacity
@@ -102,13 +109,13 @@ export default function LeaveAllScreen({ navigation, route }) {
         <View style={styles.row}>
           <View>
             <Text style={styles.label}>From</Text>
-            <Text style={styles.value}>{item.from_date}</Text>
+            <Text style={styles.value}>{formatDate(item.from_date)}</Text>
             <Text style={styles.value}>{item.from_date_type}</Text>
           </View>
 
           <View>
             <Text style={styles.label}>To</Text>
-            <Text style={styles.value}>{item.to_date}</Text>
+            <Text style={styles.value}>{formatDate(item.to_date)}</Text>
             <Text style={styles.value}>{item.to_date_type}</Text>
 
           </View>
@@ -171,7 +178,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      <BottomNavbar navigation={navigation} route={route} />
+      {/* <BottomNavbar navigation={navigation} route={route} /> */}
     </SafeAreaView>
   );
 }

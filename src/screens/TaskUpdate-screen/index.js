@@ -180,9 +180,9 @@ export default function TaskUpdateScreen() {
       <View style={styles.header}>
         {/* Back Arrow + Title in one row */}
         <View style={{ flexDirection: "row", alignItems: "center", marginTop: 40 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
+          {/* <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Text style={styles.title}>Daily task update</Text>
         </View>
 
@@ -284,9 +284,9 @@ export default function TaskUpdateScreen() {
       />
 
       {/* Bottom Nav */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+      {/* <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }

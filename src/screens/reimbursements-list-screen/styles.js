@@ -49,7 +49,7 @@ export default StyleSheet.create({
   },
 
   statusText: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Raleway_700',
 
   },

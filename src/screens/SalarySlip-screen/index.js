@@ -23,7 +23,7 @@ import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader";
 import Share from 'react-native-share';
 import handleGeneratePDF from './payslip_pdf'
-  
+
 import FileViewer from 'react-native-file-viewer';
 
 const allMonths = [
@@ -31,23 +31,27 @@ const allMonths = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const availableYears = ['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+const currentYear = new Date().getFullYear().toString();
+
+const availableYears = Array.from(
+  { length: 5 },
+  (_, index) => String(Number(currentYear) - index)
+);
 
 const SalarySlipScreen = () => {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
-  const [selectedYear, setSelectedYear] = useState('2025');
   const [salaryData, setSalaryData] = useState([]);
   const [yearDropdownVisible, setYearDropdownVisible] = useState(false);
-  const [loading, setLoading] = useState(false);  
-  const [downloading, setDownloading] = useState({}); 
-
+  const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState({});
+const [selectedYear, setSelectedYear] = useState(currentYear);
   const fetchSalaryRecords = async () => {
     try {
       setLoading(true);
       const response = await authAxios.get(`/employee/payslips/?year=${selectedYear}`);
-      
-      
+
+
       setSalaryData(response.data || []);
     } catch (error) {
       console.log("Salary API error:", error.response?.data || error.message);
@@ -60,32 +64,32 @@ const SalarySlipScreen = () => {
     fetchSalaryRecords();
   }, [selectedYear]);
 
-  
+
   const combinedList = salaryData
-  .filter(item => item.fully_verified)
-  .map((item) => {
-    
-    let monthIndex = parseInt(item.month, 10);
-    let monthName = allMonths[monthIndex - 1];
+    .filter(item => item.fully_verified)
+    .map((item) => {
 
-    // Fallback: if API already returns month name
-    if (!monthName && typeof item.month === 'string') {
-      monthName = item.month.charAt(0).toUpperCase() + item.month.slice(1);
-    }
+      let monthIndex = parseInt(item.month, 10);
+      let monthName = allMonths[monthIndex - 1];
 
-    return {
-      ...item,
-      month: monthName || 'Unknown',
-      monthNumber: monthIndex || null,
-      year: selectedYear,
-    };
-  });
+      // Fallback: if API already returns month name
+      if (!monthName && typeof item.month === 'string') {
+        monthName = item.month.charAt(0).toUpperCase() + item.month.slice(1);
+      }
+
+      return {
+        ...item,
+        month: monthName || 'Unknown',
+        monthNumber: monthIndex || null,
+        year: selectedYear,
+      };
+    });
 
 
-    const filtered = combinedList.filter((item) =>
-      (item.month || '').toString().toLowerCase().includes(searchText.toLowerCase())
-    );
-    
+  const filtered = combinedList.filter((item) =>
+    (item.month || '').toString().toLowerCase().includes(searchText.toLowerCase())
+  );
+
 
   const requestStoragePermission = async () => {
     if (Platform.OS === 'android' && Platform.Version < 33) {
@@ -105,7 +109,7 @@ const SalarySlipScreen = () => {
     }
     return true;
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -187,8 +191,8 @@ const SalarySlipScreen = () => {
               </View>
 
               <TouchableOpacity onPress={() => handleGeneratePDF(item)}>
-  <Text><MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" /></Text>
-</TouchableOpacity>
+                <Text><MaterialCommunityIcons name="tray-arrow-down" size={22} color="#fff" /></Text>
+              </TouchableOpacity>
 
 
             </View>

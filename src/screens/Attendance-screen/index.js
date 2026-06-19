@@ -205,7 +205,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
           <Text style={styles.totalHoursValue}>{totalHours}</Text>
         </View>
 
-        <BottomNavbar navigation={navigation} route={route} />
+        {/* <BottomNavbar navigation={navigation} route={route} /> */}
       </View>
     </SafeAreaView>
   );

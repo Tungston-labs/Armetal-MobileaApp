@@ -186,9 +186,9 @@ const ReimbursementScreen = ({ navigation, route }) => {
       </Modal>
 
       {/* Bottom Navbar */}
-      <View style={styles.bottomNavbarContainer}>
+      {/* <View style={styles.bottomNavbarContainer}>
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </View>
   );
 };

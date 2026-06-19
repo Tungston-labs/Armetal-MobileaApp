@@ -104,6 +104,7 @@ export default function LeaveRequestFormScreen() {
 
   const onFromChange = (event, selectedDate) => {
     setShowFromPicker(false);
+
     if (selectedDate) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -115,6 +116,7 @@ export default function LeaveRequestFormScreen() {
         });
         return;
       }
+      
       setFromDate(selectedDate);
     }
   };
@@ -145,6 +147,14 @@ export default function LeaveRequestFormScreen() {
   };
 
   const submitLeaveRequest = async () => {
+    if (fromDate > toDate) {
+  Toast.show({
+    type: 'error',
+    text1: 'Invalid Date Range',
+    text2: 'From date cannot be later than To date.',
+  });
+  return;
+}
     if (!reason || !toEmail) {
       Toast.show({
         type: 'error',
@@ -185,13 +195,25 @@ export default function LeaveRequestFormScreen() {
         cc_email: ccEmail,
       });
 
-      Toast.show({
-        type: 'success',
-        text1: 'Leave Request Submitted',
-        text2: 'Your request has been sent successfully!',
-      });
+ Toast.show({
+  type: 'success',
+  text1: 'Leave Request Submitted',
+  text2: response.data.message,
+});
 
-      navigation.navigate('LeavePendingScreen');
+// Show LOP warning if backend sends it
+if (response.data.warning) {
+  setTimeout(() => {
+    Toast.show({
+      type: 'info', // or 'error'
+   text1: 'No Leave Balance',
+text2: 'This leave will be marked as Loss of Pay.',
+      visibilityTime: 5000,
+    });
+  }, 500);
+}
+
+navigation.navigate('LeavePendingScreen');
     } catch (error) {
       if (error.response) {
         Toast.show({
@@ -246,7 +268,7 @@ export default function LeaveRequestFormScreen() {
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statLabel}>Loss of Pay Taken</Text>
-              <Text style={styles.statValue}>₹ {lopAmount} - {lopDays}</Text>
+              <Text style={styles.statValue}> {lopAmount} - {lopDays}</Text>
             </View>
           </View>
 

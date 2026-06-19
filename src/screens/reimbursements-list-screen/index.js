@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback ,useEffect} from "react";
 import {
   View,
   Text,
@@ -55,12 +55,9 @@ export default function ReimbursementlistScreen({ navigation, route }) {
     }
   };
 
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchReimbursements();
-    }, [])
-  );
+useEffect(() => {
+  fetchReimbursements();
+}, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -118,7 +115,7 @@ export default function ReimbursementlistScreen({ navigation, route }) {
             <Text style={styles.label}>Expense Category</Text>
             <Text style={styles.category}>{item.expense_category}</Text>
           </View>
-          <Text style={styles.amount}>AED {item.amount}</Text>
+          <Text style={styles.amount}>Amount :{item.amount}</Text>
         </View>
 
         <View style={styles.noteBox}>
@@ -193,9 +190,9 @@ export default function ReimbursementlistScreen({ navigation, route }) {
       </TouchableOpacity>
 
       {/* Fixed Bottom Navbar */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+      {/* <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </View>
   );
 }

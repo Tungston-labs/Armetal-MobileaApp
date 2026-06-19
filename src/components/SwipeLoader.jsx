@@ -54,10 +54,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     width,
     height,
-    backgroundColor: "rgba(0,0,0,0.6)", // optional dim background
+backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 999,               // ensure above everything
+    zIndex: 999,            
   },
   
   logoWrapper: {
@@ -67,14 +67,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logoImage: {
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
     position: "absolute",
     zIndex: 2,
   },
   rotatingCircle: {
-    width: 100,
-    height: 100,
+    width: 60,
+    height: 60,
     borderWidth: 3,
     borderRadius: 60,
     borderLeftColor: "#fff",

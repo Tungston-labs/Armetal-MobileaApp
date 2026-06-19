@@ -117,7 +117,11 @@ const AttendanceScreen = () => {
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
 
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
+      const todayStr = new Date().toISOString().split("T")[0];
 
+      if (statusMap[todayStr] === "absent") {
+        statusMap[todayStr] = "active";
+      }
       const orderedStatuses = allDates.map((date) => statusMap[date]);
       setDayStatus(orderedStatuses);
     } catch (error) {
@@ -270,7 +274,7 @@ const AttendanceScreen = () => {
 
     initialize();
   }, []);
-console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
+  console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
   useEffect(() => {
     const loadCompanyLogoSvg = async () => {
       if (!companyLogoUri?.toLowerCase().endsWith(".svg")) {
@@ -311,6 +315,11 @@ console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
       );
     } else if (status === "present") {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#00B140" }} />;
+    } else if (status === "active") {
+      // Today's active day
+      segmentContent = (
+        <View style={{ flex: 1, backgroundColor: "#3B82F6" }} />
+      );
     } else if (status === "absent") {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#FF3B30" }} />;
     } else if (status === "holiday") {
@@ -470,6 +479,12 @@ console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
               <View style={[styles.legendDot, { backgroundColor: "#4C4C4C" }]} />
               <Text style={styles.legendText}>Holiday</Text>
             </View>
+            {/* <View style={styles.legendItem}>
+              <View
+                style={[styles.legendDot, { backgroundColor: "#3B82F6" }]}
+              />
+              <Text style={styles.legendText}>Today</Text>
+            </View> */}
           </View>
 
           <View style={styles.menuGrid}>
@@ -604,14 +619,14 @@ console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
 
         </ScrollView>
       </RefreshWrapper>
-      {!punching && (
+      {/* {!punching && (
 
 
         <View style={styles.bottomNavbarContainer}>
 
           <BottomNavbar navigation={navigation} route={route} />
         </View>
-      )}
+      )} */}
       <LocationDisclosure
         visible={showDisclosure}
         onAgree={() => {

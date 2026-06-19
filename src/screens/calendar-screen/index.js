@@ -32,9 +32,9 @@ const CalendarScreen = () => {
       <View style={styles.container}>
         {/* Header */}
       <View style={styles.header}>
-  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+  {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
     <Ionicons name="arrow-back" size={24} color="#fff" />
-  </TouchableOpacity>
+  </TouchableOpacity> */}
   <Text style={styles.headerTitle}>Calendar</Text>
   <View style={{ width: 24 }} />
 </View>
@@ -74,9 +74,9 @@ const CalendarScreen = () => {
         )}
       </View>
 
-      <View style={styles.bottomNavbarContainer}>
+      {/* <View style={styles.bottomNavbarContainer}>
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </>
   );
 };

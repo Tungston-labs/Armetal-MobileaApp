@@ -203,7 +203,7 @@ export default function RequestPending({ navigation, route }) {
         )}
       </ScrollView>
 
-      <BottomNavbar navigation={navigation} route={route} />
+      {/* <BottomNavbar navigation={navigation} route={route} /> */}
     </SafeAreaView>
   );
 }
