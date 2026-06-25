@@ -36,7 +36,7 @@ export default StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingBottom: 80,
+    // paddingBottom: 80,
   },
   card: {
     backgroundColor: '#172554',

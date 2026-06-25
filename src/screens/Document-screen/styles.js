@@ -8,8 +8,7 @@ export default StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 110,
-    paddingHorizontal: 16,
+    height: 100,
     backgroundColor: '#262D40',
     borderBottomWidth: 0.5,
     borderBottomColor: '#FFFF',
@@ -22,7 +21,6 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '600',
-    marginLeft: 14,
     marginTop: 30,
     fontFamily: 'Raleway_700Bold',
 

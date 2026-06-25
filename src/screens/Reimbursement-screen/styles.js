@@ -18,9 +18,9 @@ export default StyleSheet.create({
   },
   headerTitle: {
     color: '#fff',
-    fontSize: 20,
+      fontSize: 22,
     fontFamily: 'Raleway_700Bold',
-    marginLeft: 12,             // space between arrow and text
+    // marginLeft: 12,             // space between arrow and text
     flex: 1,                     // makes title take remaining space
   },
   scrollContent: {

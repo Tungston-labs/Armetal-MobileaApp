@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";

@@ -36,6 +36,7 @@ import ReimbursementlistScreen from "../screens/reimbursements-list-screen";
 import ReimbursementForm from "../screens/ReimbursementForm-screen";
 import AuthLoadingScreen from "../screens/AuthLoadingScreen";
 import BottomTabs from "./BottomTabs";
+import LeaveStack from "./LeaveStack"; 
 const Stack = createNativeStackNavigator();
 const APP_BACKGROUND = "#151D34";
 const bottomNavScreenOptions = { animation: "none" };
@@ -79,81 +80,27 @@ export default function Navigation() {
         {accessToken ? (
           // Authenticated screens
           <>
-          <Stack.Screen
-  name="BottomTabs"
-  component={BottomTabs}
-/>
-            {/* <Stack.Screen
-              name="PunchinScreen"
-              component={PunchinScreen}
-              options={bottomNavScreenOptions}
-            /> */}
+            <Stack.Screen
+              name="BottomTabs"
+              component={BottomTabs}
+            />
+
             <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} />
             <Stack.Screen
               name="PunchOutSuccessScreen"
               component={PunchOutSuccessScreen}
             />
+             <Stack.Screen
+        name="LeaveRequestFormScreen"
+        component={LeaveRequestFormScreen}
+      />
+            <Stack.Screen name="LeaveStack" component={LeaveStack} /> 
             <Stack.Screen name="DepartmentScreen" component={DepartmentScreen} />
-            {/* <Stack.Screen
-              name="CalendarScreen"
-              component={CalendarScreen}
-              options={bottomNavScreenOptions}
-            /> */}
-            {/* <Stack.Screen
-              name="LeaveAllScreen"
-              component={LeaveAllScreen}
-              options={bottomNavScreenOptions}
-            /> */}
-            <Stack.Screen
-              name="LeaveApproveScreen"
-              component={LeaveApproveScreen}
-            />
-            <Stack.Screen
-              name="LeaveRejectedScreen"
-              component={LeaveRejectedScreen}
-            />
-            <Stack.Screen
-              name="LeavePendingScreen"
-              component={LeavePendingScreen}
-            />
-            <Stack.Screen
-              name="LeaveRequestFormScreen"
-              component={LeaveRequestFormScreen}
-            />
-            <Stack.Screen
-              name="RequestApprovedScreen"
-              component={RequestApprovedScreen}
-            />
-            <Stack.Screen name="LeaveHeader" component={LeaveHeader} />
-            <Stack.Screen name="RequestPending" component={RequestPending} />
-            <Stack.Screen name="RequestRejected" component={RequestRejected} />
-            {/* <Stack.Screen
-              name="TaskUpdateScreen"
-              component={TaskUpdateScreen}
-              options={bottomNavScreenOptions}
-            /> */}
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen name="SalarySlipScreen" component={SalarySlipScreen} />
             <Stack.Screen name="DocumentsScreen" component={DocumentsScreen} />
             <Stack.Screen name="TaskModal" component={TaskModal} />
             <Stack.Screen name="FullImageViewer" component={FullImageViewer} />
-            <Stack.Screen
-              name="WorkingDaySummary"
-              component={WorkingDaySummary}
-            />
-            <Stack.Screen
-              name="ReimbursementScreen"
-              component={ReimbursementScreen}
-            />
-            {/* <Stack.Screen
-              name="ReimbursementlistScreen"
-              component={ReimbursementlistScreen}
-              options={bottomNavScreenOptions}
-            /> */}
-            <Stack.Screen
-              name="ReimbursementForm"
-              component={ReimbursementForm}
-            />
             <Stack.Screen
               name="CreateNewPasswordScreen"
               component={CreateNewPasswordScreen}
@@ -172,7 +119,7 @@ export default function Navigation() {
               name="SetNewPasswordScreen"
               component={SetNewPasswordScreen}
             />
-            
+
           </>
         )}
       </Stack.Navigator>

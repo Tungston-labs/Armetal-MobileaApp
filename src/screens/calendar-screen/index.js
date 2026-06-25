@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import HolidayTab from "./holiday-list-screen";
 import ReminderTab from "./schedule-reminder-screen.js";
 import SwipeLoader from "../../components/SwipeLoader"
-import { Ionicons, AntDesign } from '@expo/vector-icons';
 const CalendarScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -32,9 +30,6 @@ const CalendarScreen = () => {
       <View style={styles.container}>
         {/* Header */}
       <View style={styles.header}>
-  {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-    <Ionicons name="arrow-back" size={24} color="#fff" />
-  </TouchableOpacity> */}
   <Text style={styles.headerTitle}>Calendar</Text>
   <View style={{ width: 24 }} />
 </View>

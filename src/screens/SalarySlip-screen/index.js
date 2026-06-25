@@ -112,7 +112,6 @@ const [selectedYear, setSelectedYear] = useState(currentYear);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -120,7 +119,6 @@ const [selectedYear, setSelectedYear] = useState(currentYear);
         <Text style={styles.headerTitle}>Salary Slip</Text>
       </View>
 
-      {/* Search & Year Filter */}
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
           <Ionicons name="search" size={25} color="#ccc" />
@@ -142,7 +140,6 @@ const [selectedYear, setSelectedYear] = useState(currentYear);
         </TouchableOpacity>
       </View>
 
-      {/* Year Modal */}
       <Modal visible={yearDropdownVisible} transparent animationType="fade">
         <TouchableOpacity
           style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}
@@ -166,7 +163,6 @@ const [selectedYear, setSelectedYear] = useState(currentYear);
         </TouchableOpacity>
       </Modal>
 
-      {/* Loader / Empty / List */}
       {loading ? (
         <SwipeLoader text="Loading salary data..." />
       ) : filtered.length === 0 ? (

@@ -213,7 +213,7 @@ text2: 'This leave will be marked as Loss of Pay.',
   }, 500);
 }
 
-navigation.navigate('LeavePendingScreen');
+navigation.navigate("LeaveStack", {screen: "LeavePendingScreen"})
     } catch (error) {
       if (error.response) {
         Toast.show({
@@ -246,7 +246,7 @@ navigation.navigate('LeavePendingScreen');
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.goBack()}> 
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Leave Request</Text>

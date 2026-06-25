@@ -14,10 +14,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const defaultAvatar = require('../../assets/avatar.png');
 
 const DepartmentScreen = () => {
   const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
   const [members, setMembers] = useState([]);
   const [departmentName, setDepartmentName] = useState('');
   const [departmentHead, setDepartmentHead] = useState(null);
@@ -68,7 +70,7 @@ const DepartmentScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+     <SafeAreaView style={styles.container} edges={["bottom"]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>

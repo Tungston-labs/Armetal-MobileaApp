@@ -4,30 +4,52 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import authAxios from '../../utils/authAxios';
 
-  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-export default function LeaveHeader() {
+export default function LeaveHeader({
+  activeTab,
+  setActiveTab,
+}) {
   const navigation = useNavigation();
   const route = useRoute();
   const [summary, setSummary] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const tabs = [
-    { label: 'All', screen: 'LeaveAllScreen' },
-    { label: 'Approved', screen: 'LeaveApproveScreen' },
-    { label: 'Rejected', screen: 'LeaveRejectedScreen' },
-    { label: 'Pending', screen: 'LeavePendingScreen' },
+  const leaveTabs = [
+    { label: "All" },
+    { label: "Approved" },
+    { label: "Rejected" },
+    { label: "Pending" },
+  ];
+
+  const regularisationTabs = [
+    { label: "All" },
+    { label: "Approved" },
+    { label: "Rejected" },
+    { label: "Pending" },
   ];
 
   const tabMap = {
-    LeaveAllScreen: 'All',
-    LeaveApproveScreen: 'Approved',
-    LeaveRejectedScreen: 'Rejected',
-    LeavePendingScreen: 'Pending',
+    LeaveAllScreen: "All",
+    LeaveApproveScreen: "Approved",
+    LeaveRejectedScreen: "Rejected",
+    LeavePendingScreen: "Pending",
+
+    RegularisationListScreen: "All",
+    RegularisationApproveScreen: "Approved",
+    RegularisationRejectedScreen: "Rejected",
+    RegularisationPendingScreen: "Pending",
   };
-  const activeTab = tabMap[route.name] || 'All';
+
+
+  const isRegularisation = route.name.includes("Regularisation");
+
+  const tabs = isRegularisation
+    ? regularisationTabs
+    : leaveTabs;
+
+  // const activeTab = tabMap[route.name] || "All";
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
@@ -62,7 +84,7 @@ export default function LeaveHeader() {
   // }
 
   return (
-    <View>
+       <View>
       {/* Header */}
       <View style={styles.header}>
         <View>
@@ -75,15 +97,23 @@ export default function LeaveHeader() {
         
       </View>
 
+    
+
       {/* Tabs */}
       <View style={styles.tabs}>
         {tabs.map((tab) => (
           <TouchableOpacity
             key={tab.label}
-            onPress={() => navigation.navigate(tab.screen)}
+            onPress={() => setActiveTab?.(tab.label)}
             style={styles.tabButton}
           >
-            <Text style={activeTab === tab.label ? styles.tabSelected : styles.tab}>
+            <Text
+              style={
+                activeTab === tab.label
+                  ? styles.tabSelected
+                  : styles.tab
+              }
+            >
               {tab.label}
             </Text>
           </TouchableOpacity>

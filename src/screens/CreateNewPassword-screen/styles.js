@@ -1,6 +1,4 @@
-import { StyleSheet, Platform, Dimensions } from 'react-native';
-
-const { height } = Dimensions.get('window');
+import { StyleSheet, Platform } from 'react-native';
 
 export default StyleSheet.create({
   container: {
@@ -10,76 +8,98 @@ export default StyleSheet.create({
   },
 
  header: {
-  height: 50, // fixed from 0 so arrow is visible
-  justifyContent: 'center',
-  paddingTop: Platform.OS === 'android' ? 10 : 0,
-  marginTop: 50,
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingTop: 8,
+  paddingBottom: 12,
 },
 
-
-
+backButton: {
+  width: 38,
+  height: 38,
+  borderRadius: 19,
+  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginLeft: -4,
+  marginTop:30,
+},
   content: {
-    paddingTop: height * 0.15,
-    paddingBottom: 30,
-    marginTop:-20,
-  
+    flexGrow: 1,
+    justifyContent: 'center',
+    // paddingTop: 24,
+    paddingBottom: 80,
   },
 
   title: {
-    fontSize: 23,
-    color: '#FFFF',
+    fontSize: 24,
+    color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 6,
-    fontFamily: 'Raleway_700Bold', // <-- add this
-
-    
+    marginBottom: 8,
+    fontFamily: 'Raleway_700Bold',
+    letterSpacing: 0.2,
   },
 
   subtitle: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: '#B8BDD1',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 32,
     lineHeight: 20,
-    fontFamily: 'Raleway_700', // <-- add this
-
-    
+    fontFamily: 'Raleway_500Medium',
+    paddingHorizontal: 12,
   },
 
   label: {
-    fontSize: 14,
-    color: '#FFFFFF',
+    fontSize: 13,
+    color: '#B8BDD1',
     marginBottom: 8,
+    fontFamily: 'Raleway_500Medium',
   },
 
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
-    marginBottom: 25,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: Platform.OS === 'ios' ? 14 : 10,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   input: {
     flex: 1,
-    fontSize: 14,
-    color: 'black',
+    fontSize: 15,
+    color: '#151D34',
+    fontFamily: 'Raleway_500Medium',
+  },
+
+  eyeIcon: {
+    padding: 2,
   },
 
   button: {
     backgroundColor: '#3352BA',
-    borderRadius: 10,
-    paddingVertical: 15,
+    borderRadius: 12,
+    paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 16,
+    shadowColor: '#3352BA',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontFamily: 'Raleway_700Bold', // <-- add this
-
+    fontFamily: 'Raleway_700Bold',
+    letterSpacing: 0.2,
   },
 });

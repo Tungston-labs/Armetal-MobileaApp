@@ -237,11 +237,7 @@ const ReimbursementForm = ({ navigation, route }) => {
         </TouchableOpacity>
 
       </KeyboardAwareScrollView>
-      {/* {!loading && (
-  <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-    <BottomNavbar navigation={navigation} route={route} />
-  </View>
-)} */}
+
 
     </View>
   );

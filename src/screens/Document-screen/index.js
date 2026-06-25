@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import SwipeLoader from "../../components/SwipeLoader"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import DownloadIcon from "../../../assets/download.svg";
 
 import styles from "./styles";
@@ -117,7 +117,7 @@ setData({
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["bottom"]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -244,6 +244,6 @@ setData({
   />
 </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

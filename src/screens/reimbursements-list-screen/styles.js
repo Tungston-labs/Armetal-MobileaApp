@@ -19,7 +19,7 @@ export default StyleSheet.create({
   },
   headerText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: 'Raleway_700Bold', // <-- add this
   },
 

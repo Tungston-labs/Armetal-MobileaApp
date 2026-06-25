@@ -125,7 +125,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+     <SafeAreaView style={styles.container} edges={["bottom"]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>

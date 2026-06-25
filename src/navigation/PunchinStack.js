@@ -16,10 +16,7 @@ export default function PunchinStack() {
         name="PunchinScreen"
         component={PunchinScreen}
       />
-      {/* <Stack.Screen
-        name="AttendanceScreen"
-        component={AttendanceScreen}
-      /> */}
+     
       <Stack.Screen
         name="WorkingDaySummary"
         component={WorkingDaySummary}
@@ -28,10 +25,7 @@ export default function PunchinStack() {
         name="PunchOutSuccessScreen"
         component={PunchOutSuccessScreen}
       />
-      {/* <Stack.Screen
-        name="DepartmentScreen"
-        component={DepartmentScreen}
-      /> */}
+     
     </Stack.Navigator>
   );
 }

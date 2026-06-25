@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
   Image,
   RefreshControl,
   ActivityIndicator,
@@ -19,7 +18,7 @@ import moment from 'moment';
 import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { SafeAreaView } from "react-native-safe-area-context";
   const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export default function TaskUpdateScreen() {
@@ -62,7 +61,7 @@ export default function TaskUpdateScreen() {
         id: item.id,
         project: item.project,
         task: item.task,
-        description: item.description, // ✅ include description
+        description: item.description, 
         time: `${parseFloat(item.time_taken).toFixed(2)} Hrs`,
         submittedAt: moment(item.updated_at).format('hh:mm A'),
       }));
@@ -175,7 +174,7 @@ export default function TaskUpdateScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+       <SafeAreaView style={styles.container} edges={["bottom"]}>
       {/* Header */}
       <View style={styles.header}>
         {/* Back Arrow + Title in one row */}
@@ -283,10 +282,7 @@ export default function TaskUpdateScreen() {
         onSubmit={handleSubmit}
       />
 
-      {/* Bottom Nav */}
-      {/* <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View> */}
+    
     </SafeAreaView>
   );
 }

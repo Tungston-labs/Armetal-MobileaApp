@@ -9,15 +9,13 @@ import {
   RefreshControl,
   Platform,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const STATUS_LABELS = {
@@ -127,7 +125,7 @@ useEffect(() => {
   };
 
   return (
-    <View style={styles.container}>
+     <SafeAreaView style={styles.container} edges={["bottom"]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Reimbursement</Text>
@@ -189,10 +187,6 @@ useEffect(() => {
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
 
-      {/* Fixed Bottom Navbar */}
-      {/* <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-        <BottomNavbar navigation={navigation} route={route} />
-      </View> */}
-    </View>
+    </SafeAreaView>
   );
 }

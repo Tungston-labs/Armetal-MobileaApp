@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  header: {
+header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -12,13 +12,20 @@ export default StyleSheet.create({
   },
   headerTitle: {
     color: '#FFFFFF',
-   fontSize: 22,
+    fontSize: 25,
     fontFamily: 'Raleway_700Bold',
     marginTop: 20,
   },
+
+headerTitle: {
+  color: '#FFFFFF',
+  fontSize: 22,
+  fontFamily: 'Raleway_700Bold',
+
+},
   counters: {
     flexDirection: 'row',
-    marginTop: 5,
+      backgroundColor: '#262D40',
   },
   counterText: {
     color: '#8F8F8F',

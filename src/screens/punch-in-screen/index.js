@@ -499,11 +499,14 @@ const AttendanceScreen = () => {
               </TouchableOpacity>
             ))}
 
-            <TouchableOpacity
-              style={styles.menuBox}
-              onPress={() => navigation.navigate("LeaveAllScreen")}
-            >
-
+       <TouchableOpacity
+  style={styles.menuBox}
+  onPress={() =>
+    navigation.navigate("LeaveStack", {
+      screen: "LeaveAllScreen",
+    })
+  }
+>
               <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />
 
               <Text style={{
@@ -521,7 +524,7 @@ const AttendanceScreen = () => {
 
             <TouchableOpacity
               style={[styles.menuBox, styles.applyLeaveBox]}
-              onPress={() => navigation.navigate("LeaveRequestFormScreen")}
+              onPress={() => navigation.navigate ("LeaveStack",{screen:"LeaveRequestFormScreen",})}
             >
               <Text style={styles.menuText}>Apply leave</Text>
               <Text style={{ color: "#fff", fontSize: 22, marginTop: 4 }}>+</Text>

@@ -2,8 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, ActivityIndicator, RefreshControl, Platform } from "react-native";
 import authAxios from "../../../utils/authAxios";
 import styles from "./styles";
-
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 const HolidayTab = () => {
+     const insets = useSafeAreaInsets();
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,7 +62,13 @@ const HolidayTab = () => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0F1A35" }}>
+<SafeAreaView
+    style={{
+      flex: 1,
+      backgroundColor: "#0F1A35",
+      paddingBottom: insets.bottom,
+    }}
+  >
       <Text style={styles.sectionTitle}>Public Holiday List</Text>
 
       {loading ? (
@@ -71,23 +78,29 @@ const HolidayTab = () => {
           <Text style={{ color: "red", fontSize: 16 }}>{error}</Text>
         </View>
       ) : (
-        <FlatList
-          data={holidays}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={["#ffffff", "#d3d3d3"]}
-              tintColor="#ffffff"
-              progressBackgroundColor={Platform.OS === "android" ? "#2c2c2c" : "transparent"}
-            />
-          }
-        />
+       <FlatList
+  style={{ flex: 1 }}
+  data={holidays}
+  renderItem={renderItem}
+  keyExtractor={(item) => item.id}
+  contentContainerStyle={{
+    paddingHorizontal: 16,
+        paddingBottom: 20,
+  }}
+  refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      colors={["#ffffff", "#d3d3d3"]}
+      tintColor="#ffffff"
+      progressBackgroundColor={
+        Platform.OS === "android" ? "#2c2c2c" : "transparent"
+      }
+    />
+  }
+/>
       )}
-    </View>
+  </SafeAreaView>
   );
 };
 

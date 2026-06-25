@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
@@ -12,18 +11,17 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import authAxios from "../../utils/authAxios";
 import styles from "./styles";
-import BottomNavbar from "../BottomNavbar";
 import LeaveHeader from "../LeaveHeader-screen";
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LeaveAllScreen({ navigation, route }) {
   const [leaveData, setLeaveData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const insets = useSafeAreaInsets();
-
+  const [activeTab, setActiveTab] = useState("All");
   const fetchLeaves = async () => {
     try {
       const response = await authAxios.get("/leave/");
@@ -55,15 +53,15 @@ export default function LeaveAllScreen({ navigation, route }) {
     setRefreshing(false);
   }, []);
 
-  const handleStatusNavigation = (status) => {
-    if (status === "approved") {
-      navigation.navigate("RequestApprovedScreen");
-    } else if (status === "rejected") {
-      navigation.navigate("RequestRejected");
-    } else if (status === "pending") {
-      navigation.navigate("RequestPending");
-    }
-  };
+  const filteredLeaveData =
+    activeTab === "All"
+      ? leaveData
+      : leaveData.filter(
+        (item) =>
+          item.status?.toLowerCase() ===
+          activeTab.toLowerCase()
+      );
+
 
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-GB", {
@@ -73,35 +71,50 @@ export default function LeaveAllScreen({ navigation, route }) {
   });
 
   const formatDate = (dateString) => {
-  const date = new Date(dateString);
+    const date = new Date(dateString);
 
-  return `${String(date.getDate()).padStart(2, "0")}/${String(
-    date.getMonth() + 1
-  ).padStart(2, "0")}/${date.getFullYear()}`;
-};
+    return `${String(date.getDate()).padStart(2, "0")}/${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}/${date.getFullYear()}`;
+  };
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      <TouchableOpacity
-        style={[
-          styles.statusBadge,
-          styles[
-          `status${item.status?.charAt(0).toUpperCase() + item.status?.slice(1)
-          }`
-          ],
-        ]}
-      >
-        <Text
-          style={[
-            styles.statusText,
-            item.status === "approved"
-              ? { color: "#00d47f" }
-              : item.status === "rejected"
-                ? { color: "#f44336" }
-                : { color: "#ff9800" },
-          ]}
-        >
-          {item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}
-        </Text>
+     <TouchableOpacity
+  activeOpacity={0.8}
+ onPress={() => {
+  if (item.status?.toLowerCase() === "approved") {
+    navigation.navigate("RequestApprovedScreen", {
+      leaveId: item.id,
+    });
+  } else if (item.status?.toLowerCase() === "pending") {
+    navigation.navigate("RequestPending", {
+      leaveId: item.id,
+    });
+  } else {
+    navigation.navigate("RequestRejected", {
+      leaveId: item.id,
+    });
+  }
+}}
+  style={[
+    styles.statusBadge,
+    styles[
+      `status${item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}`
+    ],
+  ]}
+>
+      <Text
+  style={[
+    styles.statusText,
+    item.status === "approved"
+      ? { color: "#00d47f" }
+      : item.status === "rejected"
+      ? { color: "#f44336" }
+      : { color: "#ff9800" },
+  ]}
+>
+  {item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}
+</Text>
       </TouchableOpacity>
 
       <View style={styles.cardContent}>
@@ -138,8 +151,12 @@ export default function LeaveAllScreen({ navigation, route }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LeaveHeader navigation={navigation} route={route} />
+
+    <SafeAreaView style={styles.container} edges={["bottom"]}>
+      <LeaveHeader
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
       <Text style={styles.dateHeader}>{formattedDate}</Text>
 
@@ -147,7 +164,7 @@ export default function LeaveAllScreen({ navigation, route }) {
         <SwipeLoader size="large" color="#fff" style={{ marginTop: 20 }} />
       ) : (
         <FlatList
-          data={leaveData}
+          data={filteredLeaveData}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.listContent}
@@ -177,8 +194,6 @@ export default function LeaveAllScreen({ navigation, route }) {
       >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
-
-      {/* <BottomNavbar navigation={navigation} route={route} /> */}
     </SafeAreaView>
   );
 }

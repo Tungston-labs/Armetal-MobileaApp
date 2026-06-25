@@ -96,9 +96,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
+        
         <Text style={styles.headerTitle}>Reimbursement</Text>
       </View>
 
@@ -131,8 +129,8 @@ const ReimbursementScreen = ({ navigation, route }) => {
 
           {/* Amount */}
           <View style={styles.section}>
-            <Text style={styles.label}>Amount in AED</Text>
-            <Text style={styles.value}>AED {reimbursement.amount}</Text>
+            <Text style={styles.label}>Amount </Text>
+            <Text style={styles.value}> {reimbursement.amount}</Text>
           </View>
 
           {/* Bills */}

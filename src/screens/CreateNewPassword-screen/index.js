@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   TextInput,
@@ -10,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context'; // 👈 fix
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -38,7 +38,8 @@ export default function CreateNewPasswordScreen() {
       text2Style: { fontSize: 15, fontFamily: 'Raleway_500Medium' },
     });
   };
-const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+
+  const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   const handleSetPassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -91,13 +92,18 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="light-content" backgroundColor="#151D34" />
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+       <TouchableOpacity
+  onPress={() => navigation.goBack()}
+  style={styles.backButton}
+  activeOpacity={0.6}
+  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+>
+  <Ionicons name="chevron-back" size={20} color="#fff" />
+</TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView
@@ -105,7 +111,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={[styles.content, { flexGrow: 1 }]}
+          contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
           <Text style={styles.title}>Create a New Password</Text>
@@ -119,17 +125,20 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
             <TextInput
               style={styles.input}
               placeholder="******"
-              placeholderTextColor="#aaa"
+              placeholderTextColor="#9AA0B4"
               secureTextEntry={!showCurrent}
               value={currentPassword}
               onChangeText={setCurrentPassword}
             />
-
-            <TouchableOpacity onPress={() => setShowCurrent(!showCurrent)}>
+            <TouchableOpacity
+              onPress={() => setShowCurrent(!showCurrent)}
+              style={styles.eyeIcon}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Ionicons
                 name={showCurrent ? 'eye-off' : 'eye'}
-                size={22}
-                color="#aaa"
+                size={20}
+                color="#9AA0B4"
               />
             </TouchableOpacity>
           </View>
@@ -140,16 +149,20 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
             <TextInput
               style={styles.input}
               placeholder="******"
-              placeholderTextColor="#aaa"
+              placeholderTextColor="#9AA0B4"
               secureTextEntry={!showNew}
               value={newPassword}
               onChangeText={setNewPassword}
             />
-            <TouchableOpacity onPress={() => setShowNew(!showNew)}>
+            <TouchableOpacity
+              onPress={() => setShowNew(!showNew)}
+              style={styles.eyeIcon}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Ionicons
                 name={showNew ? 'eye-off' : 'eye'}
-                size={22}
-                color="#aaa"
+                size={20}
+                color="#9AA0B4"
               />
             </TouchableOpacity>
           </View>
@@ -160,22 +173,29 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
             <TextInput
               style={styles.input}
               placeholder="******"
-              placeholderTextColor="#aaa"
+              placeholderTextColor="#9AA0B4"
               secureTextEntry={!showConfirm}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
-
-            <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+            <TouchableOpacity
+              onPress={() => setShowConfirm(!showConfirm)}
+              style={styles.eyeIcon}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Ionicons
                 name={showConfirm ? 'eye-off' : 'eye'}
-                size={22}
-                color="#aaa"
+                size={20}
+                color="#9AA0B4"
               />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleSetPassword}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSetPassword}
+            activeOpacity={0.85}
+          >
             <Text style={styles.buttonText}>Set new password</Text>
           </TouchableOpacity>
         </ScrollView>
