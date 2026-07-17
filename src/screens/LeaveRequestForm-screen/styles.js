@@ -28,7 +28,6 @@ export default StyleSheet.create({
     paddingVertical: 14,
     justifyContent: 'center',
   },
-
   picker: {
     height: 45,
     color: '#FFFFFF',            
@@ -36,14 +35,12 @@ export default StyleSheet.create({
     fontFamily: 'Montserrat_400Regular',
     width: '100%',
   },
-
   headerTitle: {
     marginLeft: 20,
     fontSize: 22,
     color: '#FFFFFF',
     fontFamily: 'Raleway_700Bold',
   },
-
   separator: {
     height: 1,
     // backgroundColor: '#FFFFFF',
@@ -70,7 +67,6 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontFamily: 'Montserrat_400Regular',
-
   },
   statValue: {
     color: '#FFFFFF',
@@ -78,7 +74,6 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 6,
   },
-
   divider: {
     height: 1,
     backgroundColor: '#fff',
@@ -87,30 +82,24 @@ export default StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 20,
     marginBottom: 40,
-
   },
-
   section: {
   marginBottom: 20,
 },
-
 dateRow: {
   flexDirection: 'row',
   justifyContent: 'space-between',
 },
-
 dateInput: {
   flex: 1,
   marginHorizontal: 4,
 },
-
 inputLabel: {
   color: '#FFFFFF',
   fontSize: 13,
   fontFamily: 'Montserrat_400Regular',
   marginBottom: 6,
 },
-
 dateField: {
   flexDirection: 'row',
   alignItems: 'center',
@@ -122,7 +111,6 @@ dateField: {
   borderWidth: 0.2,
   borderColor: '#FFFFFF',
 },
-
 leaveTypeBox: {
   backgroundColor: '#172554',
   borderRadius: 10,
@@ -133,7 +121,6 @@ leaveTypeBox: {
   paddingHorizontal: 10,
   marginTop: 5,
 },
-
 pickerWrapper: {
   backgroundColor: '#172554',
   borderRadius: 8,
@@ -143,7 +130,6 @@ pickerWrapper: {
   height: 50,
   paddingHorizontal: 10,
 },
-
 picker: {
   color: '#7D8EB5',
   fontSize: 15,
@@ -151,13 +137,11 @@ picker: {
   width: '100%',
   height: '100%',
 },
-
 dateText: {
   color: '#7D8EB5',
   fontSize: 15,
   fontFamily: 'Montserrat_400Regular',
 },
-
 input: {
   backgroundColor: '#172554',
   paddingVertical: 14,
@@ -168,7 +152,6 @@ input: {
   borderColor: '#1d294a',
   marginBottom: 20,
 },
-
 textArea: {
   backgroundColor: '#172554',
   padding: 12,
@@ -180,8 +163,6 @@ textArea: {
   borderColor: '#FFFFFF',
   marginBottom: 20,
 },
-
-
   footer: {
     position: 'absolute',
     bottom: 16,
@@ -214,7 +195,6 @@ textArea: {
     color: '#fff',
     fontSize: 18,
     fontFamily: 'Montserrat_700Bold',
-
   },
   pickerWrapper: {
     backgroundColor: '#green',
@@ -230,5 +210,5 @@ textArea: {
     color: '#ccc', // matches input text color
     width: '100%',
   },
-
 });
+

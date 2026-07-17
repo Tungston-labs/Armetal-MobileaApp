@@ -6,6 +6,7 @@ import { ActivityIndicator, View } from "react-native";
 
 // Import screens
 import LoginScreen from "../screens/login-screen";
+import CountrySelection from "../screens/CountrySelection";
 import PunchinScreen from "../screens/punch-in-screen";
 import AttendanceScreen from "../screens/Attendance-screen";
 import PunchOutSuccessScreen from "../screens/punchOut-success-screen";
@@ -158,6 +159,10 @@ export default function Navigation() {
         ) : (
           // Unauthenticated screens
           <>
+            <Stack.Screen
+              name="CountrySelection"
+              component={CountrySelection}
+            />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
             <Stack.Screen
               name="ForgotPasswordScreen"
@@ -168,7 +173,7 @@ export default function Navigation() {
               name="SetNewPasswordScreen"
               component={SetNewPasswordScreen}
             />
-            
+
           </>
         )}
       </Stack.Navigator>
