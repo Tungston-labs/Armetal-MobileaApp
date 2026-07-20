@@ -12,5 +12,16 @@ export const API_URLS = {
 };
 
 export const getBaseUrl = (countryCode) => {
-  return API_URLS[countryCode];
+  switch (countryCode) {
+    case "AE":
+      return API_URLS.AE;
+
+    case "US":
+      return API_URLS.US;
+
+    case "IN":
+    default:
+
+      return API_URLS.IN;
+  }
 };

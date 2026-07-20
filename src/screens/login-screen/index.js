@@ -179,6 +179,7 @@ import { setTokens } from '@/src/redux/features/authSlice';
 import { useDispatch } from 'react-redux';
 
 const LoginScreen = () => {
+
   const [rememberMe, setRememberMe] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -203,6 +204,9 @@ const LoginScreen = () => {
     }
 
     try {
+      console.log("Country:", countryCode);
+      console.log("Base URL:", baseUrl);
+      console.log("Login URL:", `${baseUrl}/api/token/`);
       const response = await axios.post(
         `${baseUrl}/api/token/`,
         {
@@ -238,7 +242,10 @@ const LoginScreen = () => {
         error.response?.data?.detail || "Invalid username or password."
       );
     }
+
   };
+
+
 
   const handleForgotPassword = () => {
     navigation.navigate('ForgotPasswordScreen');
