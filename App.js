@@ -12,7 +12,7 @@ import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter, DevSettings, Platform } from "react-native";
-import { startBackgroundTracking } from "./src/services/locationService";
+import { startBackgroundTracking, ensureOfflineSyncListener } from "./src/services/locationService";
 
 
 
@@ -48,6 +48,8 @@ const InitAuth = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       await dispatch(restoreSession());
+
+      ensureOfflineSyncListener();
 
       const punchedIn = await AsyncStorage.getItem("punchedIn");
       const employeeId = await AsyncStorage.getItem("employeeId");

@@ -34,6 +34,7 @@ import {
   requestForegroundLocationPermission,
   stopBackgroundTracking,
 } from "../../services/locationService.js";
+
 import {
   buildAuthenticatedImageSource,
   normalizeMediaUri,

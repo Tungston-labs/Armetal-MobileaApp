@@ -12,7 +12,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Rekory",
       "infoPlist": {
-        "UIBackgroundModes": ["location", "fetch"],
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ],
         "NSLocationWhenInUseUsageDescription": "This app tracks employee location for attendance purposes.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs background location access to track attendance even when the app is closed."
       }
@@ -58,6 +61,9 @@
       "image": "./assets/images/adaptive-iconn.png",
       "resizeMode": "contain",
       "backgroundColor": "#151D34"
-    }
+    },
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }
