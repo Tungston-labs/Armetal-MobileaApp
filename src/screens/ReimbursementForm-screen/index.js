@@ -141,7 +141,7 @@ const handleDateChange = (selectedDate) => {
                 backgroundColor: "#172554",
                 paddingRight: 40, // space for + icon
               }}
-              dropdownIconColor="transparent" // hides default arrow
+              dropdownIconColor="transparent"
             >
               <Picker.Item label="Select category" value="" />
               {EXPENSE_CATEGORIES.map((cat) => (
@@ -150,8 +150,7 @@ const handleDateChange = (selectedDate) => {
               ))}
             </Picker>
 
-            {/* + icon positioned on the right */}
-            <Ionicons
+             <Ionicons
               name="add"
               size={22}
               color="#fff"

@@ -85,7 +85,7 @@ export default function RequestRejected({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.topHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -96,7 +96,7 @@ export default function RequestRejected({ navigation, route }) {
           <Image
             source={{
               uri: profile?.profile_pic
-                ? `${API_BASE_URL}${profile.profile_pic}`
+                ? `${BASE_URL}${profile.profile_pic}`
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
             }}
             style={styles.avatar}
@@ -146,6 +146,6 @@ export default function RequestRejected({ navigation, route }) {
       </ScrollView>
 
       <BottomNavbar navigation={navigation} route={route} />
-    </SafeAreaView>
+    </View>
   );
 }

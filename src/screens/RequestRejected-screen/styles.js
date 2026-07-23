@@ -12,9 +12,9 @@ export default StyleSheet.create({
   topHeader: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 15,
     backgroundColor: "#262D40",
     height: 100,
     borderBottomWidth: 0.5,
@@ -22,7 +22,7 @@ export default StyleSheet.create({
   },
   backButton: {
     padding: 4,
-    marginTop: 25,
+    marginTop: 35,
 
   },
   headerLeft: {
@@ -34,8 +34,8 @@ export default StyleSheet.create({
     fontSize: 18,
     color: "#FFFF",
     fontWeight: "bold",
-    marginRight: 130,
-    marginTop: 25,
+    // marginRight: 150,
+    marginTop: 35,
   },
 
   avatar: {

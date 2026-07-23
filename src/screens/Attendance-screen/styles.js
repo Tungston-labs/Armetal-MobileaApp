@@ -77,7 +77,7 @@ export default StyleSheet.create({
     color: '#FFF',
     flex: 1,
     marginLeft: 12,
-    marginTop: 6,
+    marginTop: 10,
   },
 
   profileImage: {
@@ -160,9 +160,10 @@ export default StyleSheet.create({
   },
 
   selectDateText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#FFFFFF',
     fontFamily: 'Montserrat_400Regular',
+    marginBottom:5
   },
 
   selectedDate: {
@@ -289,7 +290,7 @@ export default StyleSheet.create({
     backgroundColor: '#172554',
     margin: 12,
     borderRadius: 10,
-    paddingVertical: 14,
+    paddingVertical: 18,
     paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -193,9 +193,9 @@ export default function ReimbursementlistScreen({ navigation, route }) {
       </TouchableOpacity>
 
       {/* Fixed Bottom Navbar */}
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+      {/* <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </View>
   );
 }

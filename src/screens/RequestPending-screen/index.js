@@ -121,7 +121,7 @@ export default function RequestPending({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.topHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -204,6 +204,6 @@ export default function RequestPending({ navigation, route }) {
       </ScrollView>
 
       <BottomNavbar navigation={navigation} route={route} />
-    </SafeAreaView>
+    </View>
   );
 }

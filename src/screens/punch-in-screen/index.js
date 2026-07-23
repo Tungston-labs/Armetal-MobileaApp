@@ -184,7 +184,8 @@ const AttendanceScreen = () => {
       data.holidays_dates.forEach((date) => (statusMap[date] = "holiday"));
 
       data.half_days_dates.forEach((date) => (statusMap[date] = "half"));
-
+const todayStr = new Date().toISOString().split("T")[0];
+statusMap[todayStr] = "active";
       const orderedStatuses = allDates.map((date) => statusMap[date]);
       setDayStatus(orderedStatuses);
     } catch (error) {
@@ -463,8 +464,11 @@ const getProfileUri = (pic) => {
           <View style={{ flex: 1, backgroundColor: "#00B140" }} />
         </View>
       );
+      
     } else if (status === "present") {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#00B140" }} />;
+    }else if (status === "active") {
+    segmentContent =  <View style={{ flex: 1, backgroundColor: "#3B82F6" }} />;
     } else if (status === "absent") {
       segmentContent = <View style={{ flex: 1, backgroundColor: "#FF3B30" }} />;
     } else if (status === "holiday") {
@@ -672,7 +676,7 @@ const getProfileUri = (pic) => {
                 {pendingLeaves}
               </Text>
 
-              <Text style={[styles.menuText, { marginTop: 2 }]}>Leave Status</Text>
+              <Text style={styles.menuText}>Leave Status</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -775,14 +779,14 @@ const getProfileUri = (pic) => {
 
         </ScrollView>
       </RefreshWrapper>
-      {!punching && (
+      {/* {!punching && (
 
 
         <View style={styles.bottomNavbarContainer}>
 
           <BottomNavbar navigation={navigation} route={route} />
         </View>
-      )}
+      )} */}
       <LocationDisclosure
         visible={showDisclosure}
         onAgree={() => {

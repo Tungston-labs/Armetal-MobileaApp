@@ -90,7 +90,7 @@ export default function RequestApprovedScreen() {
           <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
             {profile?.profile_pic ? (
               <Image
-                source={{ uri: `${API_BASE_URL}${profile.profile_pic}` }}
+                source={{ uri: `${BASE_URL}${profile.profile_pic}` }}
                 style={styles.avatar}
               />
             ) : (

@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0F1A35",
   },
 header: {
-  height: 100,  
+  height: 120,  
   borderBottomWidth: 0.5,
   borderBottomColor: '#FFFF',
   backgroundColor: '#262D40',
@@ -14,7 +14,7 @@ header: {
   alignItems: 'center',         
   justifyContent: 'flex-start',
   paddingHorizontal: 16,
-  paddingTop: 40,              
+  paddingTop: 60,              
 },
 
 backButton: {

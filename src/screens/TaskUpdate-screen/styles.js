@@ -9,24 +9,22 @@ export default StyleSheet.create({
     backgroundColor: '#151D34',
   },
   header: {
-    height: 70,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 10,
-    paddingHorizontal: 16,
+ height: 80,
+    flexDirection: 'row',       // ensures children are in one line
+    alignItems: 'center',       // vertical alignment
+    paddingTop:20,
+    paddingBottom: 18,
+    paddingHorizontal: 16,      // use standard padding, not too wide
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#FFFF',
     backgroundColor: '#262D40',
-    borderBottomWidth: 0.2,
-    borderBottomColor: "#FFFFFF",
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: 'Raleway_700Bold',
     color: '#FFF',
     flex: 1,
-    marginLeft: 12,
-    marginBottom: 9,
   },
   descriptionLabel: {
     marginTop: 6,

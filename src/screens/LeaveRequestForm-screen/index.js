@@ -201,8 +201,8 @@ export default function LeaveRequestFormScreen() {
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
-        >          <View style={styles.header}>
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}>       
+           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Ionicons name="arrow-back" size={24} color="#fff" style={{ marginBottom: 16 }} />
             </TouchableOpacity>

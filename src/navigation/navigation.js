@@ -35,7 +35,8 @@ import ReimbursementScreen from "../screens/Reimbursement-screen";
 import ReimbursementlistScreen from "../screens/reimbursements-list-screen";
 import ReimbursementForm from "../screens/ReimbursementForm-screen";
 import AuthLoadingScreen from "../screens/AuthLoadingScreen";
-
+import BottomTabs from "./BottomTabs"
+import LeaveStack from "./LeaveStack";
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
@@ -63,38 +64,20 @@ export default function Navigation() {
         {accessToken ? (
           // Authenticated screens
           <>
-            <Stack.Screen name="PunchinScreen" component={PunchinScreen} />
-            <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} />
+            <Stack.Screen
+      name="MainTabs"
+      component={BottomTabs}
+    />
             <Stack.Screen
               name="PunchOutSuccessScreen"
               component={PunchOutSuccessScreen}
             />
             <Stack.Screen name="DepartmentScreen" component={DepartmentScreen} />
-            <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
-            <Stack.Screen name="LeaveAllScreen" component={LeaveAllScreen} />
-            <Stack.Screen
-              name="LeaveApproveScreen"
-              component={LeaveApproveScreen}
-            />
-            <Stack.Screen
-              name="LeaveRejectedScreen"
-              component={LeaveRejectedScreen}
-            />
-            <Stack.Screen
-              name="LeavePendingScreen"
-              component={LeavePendingScreen}
-            />
             <Stack.Screen
               name="LeaveRequestFormScreen"
               component={LeaveRequestFormScreen}
             />
-            <Stack.Screen
-              name="RequestApprovedScreen"
-              component={RequestApprovedScreen}
-            />
-            <Stack.Screen name="LeaveHeader" component={LeaveHeader} />
-            <Stack.Screen name="RequestPending" component={RequestPending} />
-            <Stack.Screen name="RequestRejected" component={RequestRejected} />
+           <Stack.Screen name="LeaveStack" component={LeaveStack} />
             <Stack.Screen name="TaskUpdateScreen" component={TaskUpdateScreen} />
             <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <Stack.Screen name="SalarySlipScreen" component={SalarySlipScreen} />

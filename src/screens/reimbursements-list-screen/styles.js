@@ -7,10 +7,10 @@ export default StyleSheet.create({
   },
 
   header: {
-    height: 100,
+    height: 120,
     flexDirection: 'row',       // ensures children are in one line
     alignItems: 'center',       // vertical alignment
-    paddingTop: 50,
+    paddingTop: 80,
     paddingBottom: 18,
     paddingHorizontal: 16,      // use standard padding, not too wide
     borderBottomWidth: 0.5,
@@ -19,7 +19,7 @@ export default StyleSheet.create({
   },
   headerText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: 'Raleway_700Bold', // <-- add this
   },
 

@@ -31,10 +31,10 @@ const styles = StyleSheet.create({
 
   teamCard: {
     borderRadius: 12,
-    padding: wp('4%'),
+    padding: wp('2%'),
     margin: 10,
     marginBottom: hp('2%'),
-    height: hp('18%'),
+    height: hp('22%'),
     justifyContent: 'space-between',
     paddingTop: hp('1.0%'),  
   },
@@ -75,17 +75,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: hp('1%'),
+    marginBottom:32,
   },
   memberCount: {
     color: 'white',
     fontSize: wp('4.1%'),
     fontFamily: 'Montserrat_400Regular',
+    
 
   },
   count: {
     color: 'white',
     fontSize: wp('5%'),
     fontWeight: '600',
+    marginRight:30,
+    
     fontFamily: 'Montserrat_700Bold',
 
   },

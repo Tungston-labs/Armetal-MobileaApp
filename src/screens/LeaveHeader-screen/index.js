@@ -8,27 +8,39 @@ import { Ionicons } from '@expo/vector-icons';
   const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-export default function LeaveHeader() {
-  const navigation = useNavigation();
-  const route = useRoute();
+export default function LeaveHeader({ activeTab, setActiveTab }) {
+  //   const navigation = useNavigation();
+  // const route = useRoute();
   const [summary, setSummary] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const tabs = [
-    { label: 'All', screen: 'LeaveAllScreen' },
-    { label: 'Approved', screen: 'LeaveApproveScreen' },
-    { label: 'Rejected', screen: 'LeaveRejectedScreen' },
-    { label: 'Pending', screen: 'LeavePendingScreen' },
-  ];
+ const tabs = [
+  { label: "All", screen: "LeaveAllScreen" },
+  {
+    label: "Approved",
+    screen: "LeaveApproveScreen",
+    status: "approved",
+  },
+  {
+    label: "Rejected",
+    screen: "LeaveRejectedScreen",
+    status: "rejected",
+  },
+  {
+    label: "Pending",
+    screen: "LeavePendingScreen",
+    status: "pending",
+  },
+];
 
-  const tabMap = {
-    LeaveAllScreen: 'All',
-    LeaveApproveScreen: 'Approved',
-    LeaveRejectedScreen: 'Rejected',
-    LeavePendingScreen: 'Pending',
-  };
-  const activeTab = tabMap[route.name] || 'All';
+  // const tabMap = {
+  //   LeaveAllScreen: 'All',
+  //   LeaveApproveScreen: 'Approved',
+  //   LeaveRejectedScreen: 'Rejected',
+  //   LeavePendingScreen: 'Pending',
+  // };
+  // const activeTab = tabMap[route.name] || 'All';
 
   const getProfileUri = (pic) => {
     if (!pic) return defaultAvatar;
@@ -54,24 +66,24 @@ export default function LeaveHeader() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.header}>
-        <ActivityIndicator size="small" color="#fff" />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.header}>
+  //       <ActivityIndicator size="small" color="#fff" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View>
       {/* Header */}
       <View style={styles.header}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                    style={styles.backButton}
                    onPress={() => navigation.goBack()}
                  >
                    <Ionicons name="arrow-back" size={24} color="#fff" />
-                 </TouchableOpacity>
+                 </TouchableOpacity> */}
         <View>
           
           <Text style={styles.headerTitle}>Leave Request</Text>
@@ -86,15 +98,21 @@ export default function LeaveHeader() {
       {/* Tabs */}
       <View style={styles.tabs}>
         {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab.label}
-            onPress={() => navigation.navigate(tab.screen)}
-            style={styles.tabButton}
-          >
-            <Text style={activeTab === tab.label ? styles.tabSelected : styles.tab}>
-              {tab.label}
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+  key={tab.label}
+  onPress={() => setActiveTab(tab.label)}
+  style={styles.tabButton}
+>
+  <Text
+    style={
+      activeTab === tab.label
+        ? styles.tabSelected
+        : styles.tab
+    }
+  >
+    {tab.label}
+  </Text>
+</TouchableOpacity>
         ))}
       </View>
     </View>

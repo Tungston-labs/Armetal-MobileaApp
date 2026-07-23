@@ -6,16 +6,16 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 40,
     paddingBottom: 8,
     backgroundColor: '#262D40',
   },
   headerTitle: {
     color: '#FFFFFF',
-    fontSize: 25,
+    fontSize: 22,
     fontFamily: 'Raleway_700Bold',
     marginTop: 20,
-    marginLeft:43
+    // marginLeft:43
   },
     backButton: {
     position: 'absolute',

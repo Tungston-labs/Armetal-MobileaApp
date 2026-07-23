@@ -173,7 +173,7 @@ export default function TaskUpdateScreen() {
   return (
     <>
       {/* Background behind notch */}
-      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top']} />
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#262D40' }} edges={['top','bottom']} />
 
       {/* Main container (below the notch) */}
       <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
@@ -181,14 +181,14 @@ export default function TaskUpdateScreen() {
         <View style={styles.header}>
           {/* Back Arrow + Title in one row */}
           <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            {/* <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons
                       name="arrow-back"
                       size={24}
                       color="#fff"
                       style={{ marginBottom: 8 }}
                     />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
             <Text style={styles.title}>Daily task update</Text>
           </View>
 
@@ -282,9 +282,9 @@ export default function TaskUpdateScreen() {
         />
 
         {/* Bottom Nav */}
-        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
+        {/* <View style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
           <BottomNavbar navigation={navigation} route={route} />
-        </View>
+        </View> */}
       </SafeAreaView>
 
     </>

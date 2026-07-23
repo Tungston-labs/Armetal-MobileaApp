@@ -283,13 +283,13 @@ export default function WorkingDaySummary() {
           </View>
         )}
       </ScrollView>
-      <View
+      {/* <View
         style={[
           styles.bottomNavbarContainer,
         ]}
       >
         <BottomNavbar navigation={navigation} route={route} />
-      </View>
+      </View> */}
     </View>
   );
 }

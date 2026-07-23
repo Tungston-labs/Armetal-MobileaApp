@@ -237,7 +237,7 @@ pickerPreview: {
   borderRadius: 8,
   backgroundColor: 'transparent', // or your field bg
   borderWidth: 1,
-  borderColor: '#2d3346',
+  borderColor: '#172554',
 },
 pickerPreviewText: {
   fontSize: 14,
