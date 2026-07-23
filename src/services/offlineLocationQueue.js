@@ -6,7 +6,6 @@ const UPLOAD_STATUS = {
   PENDING: "pending",
   UPLOADING: "uploading",
 };
-const DUPLICATE_WINDOW_MS = 60 * 1000;
 
 let syncInProgress = false;
 let netInfoUnsubscribe = null;
@@ -39,19 +38,19 @@ const writeQueue = async (queue) => {
   await AsyncStorage.setItem(OFFLINE_LOCATION_QUEUE, JSON.stringify(queue));
 };
 
-const isDuplicateCapture = (queue, capturedAt) => {
-  const capturedMs = new Date(capturedAt).getTime();
+const toTimestampMs = (value) => {
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : null;
+};
 
-  if (!Number.isFinite(capturedMs)) {
-    return false;
-  }
+const isDuplicateCapture = (queue, timestampMs, intervalMs) => {
+  const windowMs = Math.max(intervalMs * 0.8, 60 * 1000);
 
   return queue.some((item) => {
-    const itemMs = new Date(item.timestamp).getTime();
+    const itemMs = toTimestampMs(item.timestamp);
 
     return (
-      Number.isFinite(itemMs) &&
-      Math.abs(itemMs - capturedMs) < DUPLICATE_WINDOW_MS
+      Number.isFinite(itemMs) && Math.abs(itemMs - timestampMs) < windowMs
     );
   });
 };
@@ -62,11 +61,19 @@ const isDuplicateCapture = (queue, capturedAt) => {
 export const isInternetAvailable = async () => {
   const state = await NetInfo.fetch();
 
-  return Boolean(state.isConnected) && state.isInternetReachable !== false;
+  if (!state.isConnected) {
+    return false;
+  }
+
+  if (state.isInternetReachable === false) {
+    return false;
+  }
+
+  return true;
 };
 
 /**
- * Save a captured location when upload is not possible.
+ * Save a captured location to the local queue.
  */
 export const saveOfflineLocation = async ({
   employeeId,
@@ -79,14 +86,20 @@ export const saveOfflineLocation = async ({
   altitude = null,
   provider = null,
   capturedAt,
+  intervalMs = null,
 }) => {
   try {
     const queue = await readQueue();
     const timestamp = capturedAt || new Date().toISOString();
+    const timestampMs = toTimestampMs(timestamp);
 
-    if (isDuplicateCapture(queue, timestamp)) {
+    if (!Number.isFinite(timestampMs)) {
+      return false;
+    }
+
+    if (isDuplicateCapture(queue, timestampMs, intervalMs || 15 * 60 * 1000)) {
       console.log("[OfflineQueue] Skipping duplicate capture", timestamp);
-      return true;
+      return false;
     }
 
     queue.push({
@@ -105,7 +118,7 @@ export const saveOfflineLocation = async ({
     });
 
     queue.sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      (a, b) => toTimestampMs(a.timestamp) - toTimestampMs(b.timestamp),
     );
 
     await writeQueue(queue);
@@ -119,6 +132,56 @@ export const saveOfflineLocation = async ({
   }
 };
 
+/**
+ * Fill missed 15-minute slots after offline period.
+ * Uses the provided coords for each missed slot with scheduled timestamps.
+ */
+export const backfillMissedCaptureSlots = async ({
+  employeeId,
+  sessionId,
+  coords,
+  lastCaptureAtMs,
+  intervalMs,
+}) => {
+  if (!Number.isFinite(lastCaptureAtMs) || !intervalMs || intervalMs <= 0) {
+    return 0;
+  }
+
+  const now = Date.now();
+  let nextSlotMs = lastCaptureAtMs + intervalMs;
+  let filledCount = 0;
+  let lastFilledSlotMs = lastCaptureAtMs;
+
+  while (nextSlotMs <= now) {
+    const saved = await saveOfflineLocation({
+      employeeId,
+      sessionId,
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      accuracy: coords.accuracy ?? null,
+      speed: coords.speed ?? null,
+      heading: coords.heading ?? null,
+      altitude: coords.altitude ?? null,
+      provider: coords.provider ?? null,
+      capturedAt: new Date(nextSlotMs).toISOString(),
+      intervalMs,
+    });
+
+    if (saved) {
+      filledCount += 1;
+      lastFilledSlotMs = nextSlotMs;
+    }
+
+    nextSlotMs += intervalMs;
+  }
+
+  if (filledCount > 0) {
+    console.log(`[OfflineQueue] Backfilled ${filledCount} missed slot(s)`);
+  }
+
+  return { filledCount, lastFilledSlotMs };
+};
+
 const buildCoordsFromQueueItem = (item) => ({
   latitude: item.latitude,
   longitude: item.longitude,
@@ -130,7 +193,6 @@ const buildCoordsFromQueueItem = (item) => ({
 
 /**
  * Upload queued locations oldest-first, one at a time.
- * Stops on the first failure and leaves remaining items in the queue.
  */
 export const syncOfflineLocations = async ({
   sendLocationFn,
@@ -252,23 +314,23 @@ export const startOfflineSyncListener = ({
     }
 
     wasOffline = false;
-    console.log("[OfflineQueue] Internet restored. Syncing queued locations.");
-
-    await syncOfflineLocations({
-      sendLocationFn,
-      getToken,
-    });
+    console.log("[OfflineQueue] Internet restored. Running reconnect handler.");
 
     if (typeof onReconnect === "function") {
       try {
         await onReconnect();
       } catch (err) {
         console.log(
-          "[OfflineQueue] Post-sync reconnect callback failed:",
+          "[OfflineQueue] Reconnect handler failed:",
           err?.message || err,
         );
       }
     }
+
+    await syncOfflineLocations({
+      sendLocationFn,
+      getToken,
+    });
   });
 
   return netInfoUnsubscribe;
@@ -283,17 +345,11 @@ export const stopOfflineSyncListener = () => {
   wasOffline = false;
 };
 
-/**
- * Get queue count.
- */
 export const getOfflineQueueCount = async () => {
   const queue = await readQueue();
   return queue.length;
 };
 
-/**
- * Clear queue manually.
- */
 export const clearOfflineQueue = async () => {
   await AsyncStorage.removeItem(OFFLINE_LOCATION_QUEUE);
 };

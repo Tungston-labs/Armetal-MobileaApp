@@ -8,25 +8,9 @@ import {
   syncOfflineLocations,
   isInternetAvailable,
   startOfflineSyncListener,
+  backfillMissedCaptureSlots,
 } from "./offlineLocationQueue";
 
-const buildOfflineLocationPayload = ({
-  employeeId,
-  sessionId,
-  coords,
-  capturedAt,
-}) => ({
-  employeeId,
-  sessionId,
-  latitude: coords.latitude,
-  longitude: coords.longitude,
-  accuracy: coords.accuracy ?? null,
-  speed: coords.speed ?? null,
-  heading: coords.heading ?? null,
-  altitude: coords.altitude ?? null,
-  provider: coords.provider ?? null,
-  capturedAt: capturedAt || new Date().toISOString(),
-});
 const API_URL = "https://api.rekory.com/api/background-location/";
 const DEFAULT_INTERVAL_MINUTES = 15;
 const MINIMUM_FETCH_INTERVAL_MINUTES = 15;
@@ -108,18 +92,76 @@ const ensureForegroundServiceRegistered = () => {
 
 const getValidAccessToken = async () => AsyncStorage.getItem("accessToken");
 
-const runScheduledCaptureIfDue = async (source = "reconnect-capture") => {
-  const intervalMinutes = await getStoredIntervalMinutes();
-  const delayUntilNextUpload = await getDelayUntilNextUpload(intervalMinutes);
+const trySyncQueue = async () => {
+  const connected = await isInternetAvailable();
 
-  if (delayUntilNextUpload > 0) {
+  if (!connected) {
     return false;
   }
 
-  return uploadLocation({
-    intervalMinutes,
-    source,
+  const token = await getValidAccessToken();
+
+  if (!token) {
+    return false;
+  }
+
+  return syncOfflineLocations({
+    sendLocationFn: sendLocationRequest,
+    getToken: getValidAccessToken,
   });
+};
+
+const handleOfflineReconnect = async () => {
+  const employeeId = await AsyncStorage.getItem("employeeId");
+  const sessionId = await AsyncStorage.getItem("sessionId");
+  const punchedIn = await AsyncStorage.getItem("punchedIn");
+
+  if (!employeeId || !sessionId || punchedIn !== "true") {
+    return false;
+  }
+
+  const intervalMinutes = await getStoredIntervalMinutes();
+  const intervalMs = getIntervalMs(intervalMinutes);
+  const lastCaptureAt = await getLastUploadAt();
+
+  if (!lastCaptureAt) {
+    return false;
+  }
+
+  const delayUntilNext = await getDelayUntilNextUpload(intervalMinutes);
+
+  if (delayUntilNext > 0) {
+    console.log(
+      "[LocationService] Reconnect: no missed slots yet. Next capture in",
+      Math.ceil(delayUntilNext / 1000),
+      "seconds",
+    );
+    return false;
+  }
+
+  try {
+    const position = await getCurrentLocation({ background: true });
+    const coords = position.coords;
+    const { filledCount, lastFilledSlotMs } = await backfillMissedCaptureSlots({
+      employeeId,
+      sessionId,
+      coords,
+      lastCaptureAtMs: lastCaptureAt,
+      intervalMs,
+    });
+
+    if (filledCount > 0) {
+      await markUploadComplete(lastFilledSlotMs);
+    }
+
+    return filledCount > 0;
+  } catch (err) {
+    console.log(
+      "[LocationService] Reconnect backfill failed:",
+      err?.message || err,
+    );
+    return false;
+  }
 };
 
 export const ensureOfflineSyncListener = () => {
@@ -130,37 +172,32 @@ export const ensureOfflineSyncListener = () => {
   startOfflineSyncListener({
     sendLocationFn: sendLocationRequest,
     getToken: getValidAccessToken,
-    onReconnect: async () => {
-      await runScheduledCaptureIfDue("post-sync-scheduled-capture");
-    },
+    onReconnect: handleOfflineReconnect,
   });
   offlineSyncListenerStarted = true;
   console.log("[LocationService] Offline sync listener started");
 
-  syncOfflineLocations({
-    sendLocationFn: sendLocationRequest,
-    getToken: getValidAccessToken,
-  })
-    .then(() => runScheduledCaptureIfDue("initial-sync-capture"))
+  handleOfflineReconnect()
+    .then(() => trySyncQueue())
     .catch((err) => {
       console.log(
-        "[LocationService] Initial offline sync failed:",
+        "[LocationService] Initial reconnect sync failed:",
         err?.message || err,
       );
     });
 };
 
-export const getCurrentLocation = () =>
+export const getCurrentLocation = ({ background = false } = {}) =>
   new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
       (position) => resolve(position),
       (error) => reject(error),
       {
         enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 10000,
-        forceRequestLocation: true,
-        showLocationDialog: true,
+        timeout: background ? 30000 : 20000,
+        maximumAge: background ? 120000 : 10000,
+        forceRequestLocation: !background,
+        showLocationDialog: false,
       },
     );
   });
@@ -236,17 +273,21 @@ export const uploadLocation = async ({
   force = false,
   intervalMinutes,
   source = "manual",
+  background = false,
 } = {}) => {
   const effectiveIntervalMinutes = normalizeIntervalMinutes(
     intervalMinutes ?? (await getStoredIntervalMinutes())
   );
+  const intervalMs = getIntervalMs(effectiveIntervalMinutes);
 
   console.log(
     "[LocationService] uploadLocation source:",
     source,
     "| interval:",
     effectiveIntervalMinutes,
-    "min"
+    "min",
+    "| background:",
+    background,
   );
 
   const employeeId = await AsyncStorage.getItem("employeeId");
@@ -265,7 +306,7 @@ export const uploadLocation = async ({
 
     if (delayUntilNextUpload > 0) {
       console.log(
-        "[LocationService] Skipping upload. Next upload due in",
+        "[LocationService] Skipping capture. Next capture due in",
         Math.ceil(delayUntilNextUpload / 1000),
         "seconds"
       );
@@ -273,12 +314,11 @@ export const uploadLocation = async ({
     }
   }
 
-  // Get GPS first
   let coords = preloadedCoords;
 
   if (!coords) {
     try {
-      const position = await getCurrentLocation();
+      const position = await getCurrentLocation({ background });
       coords = position.coords;
     } catch (gpsErr) {
       console.log("[LocationService] GPS error:", gpsErr?.message || gpsErr);
@@ -286,78 +326,52 @@ export const uploadLocation = async ({
     }
   }
 
-  // Check internet AFTER GPS
-  const connected = await isInternetAvailable();
-
   const capturedAtMs = Date.now();
   const capturedAt = new Date(capturedAtMs).toISOString();
-  const offlinePayload = buildOfflineLocationPayload({
+
+  const saved = await saveOfflineLocation({
     employeeId,
     sessionId,
-    coords,
+    latitude: coords.latitude,
+    longitude: coords.longitude,
+    accuracy: coords.accuracy ?? null,
+    speed: coords.speed ?? null,
+    heading: coords.heading ?? null,
+    altitude: coords.altitude ?? null,
+    provider: coords.provider ?? null,
     capturedAt,
+    intervalMs,
   });
 
-  if (!connected) {
-    console.log("[LocationService] Offline. Saving location locally.");
-
-    await saveOfflineLocation(offlinePayload);
-    await markUploadComplete(capturedAtMs);
-
-    return true;
-  }
-
-  const token = await getValidAccessToken();
-
-  if (!token) {
-    console.log("[LocationService] No access token. Saving locally.");
-
-    await saveOfflineLocation(offlinePayload);
-    await markUploadComplete(capturedAtMs);
-
-    return true;
-  }
-
-  try {
-    const res = await sendLocationRequest({
-      employeeId,
-      sessionId,
-      coords,
-      token,
-      capturedAt,
-    });
-
-    if (!res.ok) {
-      console.log("[LocationService] Upload failed. Saving locally.");
-
-      await saveOfflineLocation(offlinePayload);
-      await markUploadComplete(capturedAtMs);
-
-      return false;
-    }
-
-    await markUploadComplete(capturedAtMs);
-
-    await syncOfflineLocations({
-      sendLocationFn: sendLocationRequest,
-      getToken: getValidAccessToken,
-    });
-
-    console.log(
-      "[LocationService] Uploaded:",
-      coords.latitude,
-      coords.longitude,
-    );
-
-    return true;
-  } catch (err) {
-    console.log("[LocationService] Network error. Saving locally.");
-
-    await saveOfflineLocation(offlinePayload);
-    await markUploadComplete(capturedAtMs);
-
+  if (!saved) {
+    console.log("[LocationService] Capture skipped (duplicate slot)");
     return false;
   }
+
+  await markUploadComplete(capturedAtMs);
+
+  const connected = await isInternetAvailable();
+
+  if (connected) {
+    await trySyncQueue();
+    console.log(
+      "[LocationService] Captured and synced:",
+      coords.latitude,
+      coords.longitude,
+      "| at:",
+      capturedAt,
+    );
+  } else {
+    console.log(
+      "[LocationService] Captured offline:",
+      coords.latitude,
+      coords.longitude,
+      "| at:",
+      capturedAt,
+    );
+  }
+
+  return true;
 };
 
 const syncForegroundTask = (intervalMinutes) => {
@@ -391,6 +405,7 @@ const syncForegroundTask = (intervalMinutes) => {
         await uploadLocation({
           intervalMinutes: effectiveInterval,
           source: "android-foreground-service",
+          background: true,
         });
       } catch (error) {
         console.log(
@@ -512,6 +527,7 @@ const configureBackgroundFetch = async (intervalMinutes) => {
             await uploadLocation({
               intervalMinutes: storedInterval,
               source: "background-fetch",
+              background: true,
             });
           } catch (err) {
             console.log("[BackgroundFetch] Upload error:", err?.message || err);
@@ -654,6 +670,7 @@ export const backgroundFetchHeadless = async (event) => {
     await uploadLocation({
       intervalMinutes,
       source: "headless-background-fetch",
+      background: true,
     });
   } catch (error) {
     console.log("[Headless] Upload error:", error?.message || error);
