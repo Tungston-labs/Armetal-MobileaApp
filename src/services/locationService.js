@@ -116,6 +116,7 @@ export const uploadLocation = async () => {
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude,
       session_id: sessionId,
+      captured_at: new Date(pos.timestamp || Date.now()).toISOString(),
     };
 
     let res = await fetch(`${API_URL}${employeeId}/`, {

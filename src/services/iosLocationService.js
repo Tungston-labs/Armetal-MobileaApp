@@ -1,6 +1,14 @@
 import Geolocation from "react-native-geolocation-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
+import {
+  createQueuedLocationItem,
+  enqueueLocationItem,
+  getQueuedLocationCount,
+  isNetworkAvailable,
+  isValidLocationPosition,
+  syncQueuedLocations,
+} from "./offlineLocationQueue";
 
 let watchId = null;
 let uploading = false;
@@ -8,6 +16,7 @@ let lastUploadTime = 0;
 
 const API_URL = "https://api.rekory.com/api/background-location/";
 const REFRESH_URL = "https://api.rekory.com/api/token/refresh/";
+const UPLOAD_TIMEOUT_MS = 30000;
 
 // 20 minutes interval
 const LOCATION_INTERVAL = 20 * 60 * 1000; 
@@ -42,63 +51,141 @@ const refreshAccessToken = async () => {
   }
 };
 
-const uploadLocation = async (position) => {
-  if (uploading) return;
-
-  uploading = true;
+const fetchWithTimeout = async (url, options = {}) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
 
   try {
-    const employeeId = await AsyncStorage.getItem("employeeId");
-    const sessionId = await AsyncStorage.getItem("sessionId");
-    let token = await AsyncStorage.getItem("accessToken");
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
 
-    if (!employeeId || !sessionId || !token) {
-      uploading = false;
+const getLocationUploadContext = async () => {
+  const [employeeId, sessionId] = await AsyncStorage.multiGet([
+    "employeeId",
+    "sessionId",
+  ]);
+
+  return {
+    employeeId: employeeId?.[1] ?? null,
+    sessionId: sessionId?.[1] ?? null,
+  };
+};
+
+const uploadLocationItemToServer = async (locationItem) => {
+  const employeeId = locationItem.employeeId;
+  const sessionId = locationItem.sessionId;
+  let token = await AsyncStorage.getItem("accessToken");
+
+  if (!employeeId || !sessionId) {
+    throw new Error("Missing employeeId/sessionId");
+  }
+
+  if (!token) {
+    token = await refreshAccessToken();
+  }
+
+  if (!token) {
+    throw new Error("No token available");
+  }
+
+  const body = {
+    latitude: locationItem.latitude,
+    longitude: locationItem.longitude,
+    session_id: sessionId,
+    captured_at: locationItem.timestamp,
+  };
+
+  let res = await fetchWithTimeout(`${API_URL}${employeeId}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  // refresh token if expired
+  if (res.status === 401) {
+    const newToken = await refreshAccessToken();
+
+    if (newToken) {
+      res = await fetchWithTimeout(`${API_URL}${employeeId}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${newToken}`,
+        },
+        body: JSON.stringify(body),
+      });
+    }
+  }
+
+  if (!res.ok) {
+    throw new Error(`Upload failed: ${res.status}`);
+  }
+
+  console.log("📍 iOS location uploaded");
+};
+
+export const uploadQueuedIOSLocation = async (locationItem) => {
+  await uploadLocationItemToServer(locationItem);
+};
+
+const uploadLocation = async (position) => {
+  if (!isValidLocationPosition(position)) {
+    console.log("Invalid iOS location skipped");
+    return;
+  }
+
+  try {
+    const { employeeId, sessionId } = await getLocationUploadContext();
+    const locationItem = createQueuedLocationItem(position, {
+      employeeId,
+      sessionId,
+    });
+
+    if (!locationItem) return;
+
+    if (!employeeId || !sessionId) {
+      console.log("Missing employeeId/sessionId");
       return;
     }
 
-    const body = {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-      session_id: sessionId,
-    };
+    const queueCount = await getQueuedLocationCount();
+    const online = await isNetworkAvailable();
 
-    let res = await fetch(`${API_URL}${employeeId}/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
+    if (!online || uploading || queueCount > 0) {
+      await enqueueLocationItem(locationItem);
+      console.log("📍 iOS location queued");
 
-    // refresh token if expired
-    if (res.status === 401) {
-      const newToken = await refreshAccessToken();
-
-      if (newToken) {
-        res = await fetch(`${API_URL}${employeeId}/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${newToken}`,
-          },
-          body: JSON.stringify(body),
-        });
+      if (online) {
+        await syncQueuedLocations(uploadQueuedIOSLocation);
       }
+
+      return;
     }
 
-    if (res.ok) {
-      console.log("📍 iOS location uploaded");
-    } else {
-      console.log("Upload failed:", res.status);
-    }
+    uploading = true;
 
+    try {
+      await uploadLocationItemToServer(locationItem);
+      await syncQueuedLocations(uploadQueuedIOSLocation);
+    } catch (err) {
+      console.log("iOS upload error", err);
+      await enqueueLocationItem(locationItem);
+      console.log("📍 iOS location queued");
+    } finally {
+      uploading = false;
+    }
   } catch (err) {
-    console.log("iOS upload error", err);
+    console.log("iOS location handling error", err);
   }
-
-  uploading = false;
 };
 
 export const startIOSLocationFetch = () => {

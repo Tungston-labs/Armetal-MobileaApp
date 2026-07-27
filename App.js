@@ -8,6 +8,12 @@ import Toast from "react-native-toast-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
+import { startBackgroundFetch } from "./src/services/locationService";
+import {
+  startIOSLocationFetch,
+  uploadQueuedIOSLocation,
+} from "./src/services/iosLocationService";
+import { initOfflineLocationQueue } from "./src/services/offlineLocationQueue";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -53,8 +59,14 @@ const InitAuth = ({ children }) => {
       const sessionId = await AsyncStorage.getItem("sessionId");
 
       if (punchedIn === "true" && employeeId && sessionId) {
-        const ok = await startBackgroundFetch();
-        if (!ok) console.warn("⚠ Background location failed to start");
+        if (Platform.OS === "ios") {
+          startIOSLocationFetch();
+        } else {
+          await startBackgroundFetch({
+            employeeId,
+            sessionId,
+          });
+        }
       }
     };
 
@@ -77,6 +89,14 @@ const App = () => {
     Montserrat_700Bold,
     Montserrat_800ExtraBold,
   });
+  useEffect(() => {
+    if (Platform.OS !== "ios") return undefined;
+
+    return initOfflineLocationQueue({
+      uploadQueuedLocation: uploadQueuedIOSLocation,
+    });
+  }, []);
+
 useEffect(() => {
   if (Platform.OS !== "android") return;
 
