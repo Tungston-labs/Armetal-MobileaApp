@@ -29,7 +29,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@supersami/rn-foreground-service": "^2.2.5",
     "axios": "^1.10.0",
-    "expo": "^53.0.23",
+    "expo": "^54.0.36",
     "expo-app-loading": "^2.1.1",
     "expo-asset": "~11.1.7",
     "expo-blur": "14.1.5",
