@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon.png",
-    "scheme": "Rekory",
+"scheme": ["rekory"],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -27,7 +27,6 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.Rekory",
-      "usesCleartextTraffic": true,
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -63,7 +62,8 @@
       "backgroundColor": "#151D34"
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      "@react-native-community/datetimepicker"
     ]
   }
 }
