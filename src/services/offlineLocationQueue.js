@@ -123,7 +123,6 @@ export const saveOfflineLocation = async ({
 
     await writeQueue(queue);
 
-    console.log(`[OfflineQueue] Saved location. Queue size: ${queue.length}`);
 
     return true;
   } catch (err) {

@@ -4,7 +4,7 @@ import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
 
 const handleGeneratePDF = async (payslip) => {
-  console.log("📄 Payslip data:", payslip);
+  console.log(" Payslip data:", payslip);
 
   try {
     const pdfDoc = await PDFDocument.create();
@@ -29,7 +29,7 @@ const handleGeneratePDF = async (payslip) => {
         const logoImage = await pdfDoc.embedPng(logoBytes);
         page.drawImage(logoImage, { x: logoX, y: logoY, width: logoSize, height: logoSize });
       } catch (err) {
-        console.warn("⚠️ Could not load company logo:", err);
+        console.warn(" Could not load company logo:", err);
       }
     }
 
@@ -57,7 +57,6 @@ const handleGeneratePDF = async (payslip) => {
 
     y = Math.min(logoY, textY) - 25;
 
-    // Divider line
     page.drawLine({ start: { x: 45, y }, end: { x: width - 45, y }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
     y -= 20;
 

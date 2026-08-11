@@ -12,7 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import authAxios from "../../utils/authAxios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/src/redux/features/authSlice";
 import { buildAuthenticatedImageSource } from "../../utils/mediaSource";
 
@@ -21,20 +21,16 @@ const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [employee, setEmployee] = useState(null);
-  const [mediaToken, setMediaToken] = useState(null);
+  const mediaToken = useSelector((state) => state.auth.accessToken);
   const [profileImageFailed, setProfileImageFailed] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const [response, accessToken] = await Promise.all([
-          authAxios.get("/profile/"),
-          AsyncStorage.getItem("accessToken"),
-        ]);
+        const response = await authAxios.get("/profile/");
 
         setEmployee(response.data);
-        setMediaToken(accessToken);
         setProfileImageFailed(false);
       } catch (error) {
         console.error("Error fetching profile:", error.message);

@@ -94,13 +94,10 @@ export default function LeaveRequestFormScreen() {
     fetchDepartmentHeadEmail();
   }, []);
 
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
-    if (!emailRegex.test(email)) return false;
-    const domain = email.split('@')[1];
-    return allowedDomains.includes(domain);
-  };
+ const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
   const onFromChange = (event, selectedDate) => {
     setShowFromPicker(false);
