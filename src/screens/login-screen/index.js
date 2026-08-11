@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Alert,
   KeyboardAvoidingView,
   ScrollView,
   TouchableWithoutFeedback,
@@ -37,7 +36,11 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     if (!username || !password) {
 
-      Alert.alert("Validation Error", "Please enter both username and password.");
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please enter both username and password.",
+      });
       return;
     }
 
@@ -60,10 +63,11 @@ const LoginScreen = () => {
 
     } catch (error) {
       console.log("API Error:", error.message);
-      Alert.alert(
-        "Login Failed",
-        error.response ? "Invalid username or password." : "Network Error"
-      );
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2: error.response ? "Invalid username or password." : "Network Error",
+      });
     }
   };
   const handleForgotPassword = () => {

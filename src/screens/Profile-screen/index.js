@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -15,6 +14,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/src/redux/features/authSlice";
 import { buildAuthenticatedImageSource } from "../../utils/mediaSource";
+import Toast from "react-native-toast-message";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -23,29 +25,43 @@ const ProfileScreen = () => {
   const [employee, setEmployee] = useState(null);
   const mediaToken = useSelector((state) => state.auth.accessToken);
   const [profileImageFailed, setProfileImageFailed] = useState(false);
+  const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
   const dispatch = useDispatch();
 
+  const fetchProfile = async () => {
+    try {
+      const response = await authAxios.get("/profile/");
+
+      setEmployee(response.data);
+      setProfileImageFailed(false);
+    } catch (error) {
+      console.error("Error fetching profile:", error.message);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to load profile",
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await authAxios.get("/profile/");
-
-        setEmployee(response.data);
-        setProfileImageFailed(false);
-      } catch (error) {
-        console.error("Error fetching profile:", error.message);
-        Alert.alert("Error", "Failed to load profile");
-      }
-    };
-
     fetchProfile();
   }, []);
+
+  useRefreshOnReconnect(fetchProfile);
 
   const profileImage = buildAuthenticatedImageSource({
     path: profileImageFailed ? null : employee?.profile_pic,
     token: mediaToken,
     fallbackUri: defaultAvatar,
   });
+
+  const confirmLogout = async () => {
+    setLogoutConfirmVisible(false);
+    await AsyncStorage.removeItem("accessToken");
+    await AsyncStorage.removeItem("refreshToken");
+    dispatch(logout());
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,33 +119,24 @@ const ProfileScreen = () => {
 
         <TouchableOpacity
           style={styles.optionCard}
-          onPress={() => {
-            Alert.alert(
-              "Confirm Logout",
-              "Are you sure you want to log out?",
-              [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "Yes",
-                  onPress: async () => {
-                    await AsyncStorage.removeItem("accessToken");
-                    await AsyncStorage.removeItem("refreshToken");
-                    dispatch(logout());
-                  },
-                },
-              ],
-              { cancelable: true }
-            );
-          }}
+          onPress={() => setLogoutConfirmVisible(true)}
         >
           <Ionicons name="log-out-outline" size={22} color="#ccc" />
           <Text style={styles.optionText}>Log out</Text>
         </TouchableOpacity>
 
       </View>
+
+      <ConfirmationModal
+        visible={logoutConfirmVisible}
+        title="Confirm Logout"
+        message="Are you sure you want to log out?"
+        confirmText="Yes"
+        cancelText="Cancel"
+        iconName="log-out-outline"
+        onConfirm={confirmLogout}
+        onCancel={() => setLogoutConfirmVisible(false)}
+      />
     </SafeAreaView>
   );
 };

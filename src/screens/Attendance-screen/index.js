@@ -16,6 +16,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import authAxios from "../../utils/authAxios";
 import BottomNavbar from "../BottomNavbar";
 import SwipeLoader from "../../components/SwipeLoader";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 
 const AttendanceScreen = () => {
@@ -72,6 +73,8 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
   useEffect(() => {
     fetchAttendanceData();
   }, [selectedDate]);
+
+  useRefreshOnReconnect(fetchAttendanceData);
 
   const handleRefresh = async () => {
     setRefreshing(true);

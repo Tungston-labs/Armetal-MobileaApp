@@ -1,6 +1,7 @@
-import { Alert, Platform } from "react-native";
+import { Platform } from "react-native";
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Application from "expo-application";
+import Toast from "react-native-toast-message";
 
 export const maybeAskBatteryPermission = async () => {
   if (Platform.OS !== "android") return;
@@ -13,10 +14,12 @@ export const maybeAskBatteryPermission = async () => {
       { data: `package:${packageName}` }
     );
   } catch (error) {
-    Alert.alert(
-      "Allow Background Activity",
-      "To track attendance reliably, set Rekory battery usage to UNRESTRICTED.\n\nSteps:\n1. Go to Settings → Apps → Rekory\n2. Tap Battery\n3. Select Unrestricted",
-      [{ text: "OK", style: "default" }]
-    );
+    Toast.show({
+      type: "info",
+      text1: "Allow Background Activity",
+      text2:
+        "Set Rekory battery usage to Unrestricted for reliable attendance tracking.",
+      visibilityTime: 6000,
+    });
   }
 };

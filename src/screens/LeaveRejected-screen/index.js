@@ -17,6 +17,7 @@ import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 export default function LeaveRejectedScreen() {
   const navigation = useNavigation();
@@ -51,6 +52,8 @@ export default function LeaveRejectedScreen() {
       fetchRejectedLeaves();
     }
   }, [isFocused]);
+
+  useRefreshOnReconnect(fetchRejectedLeaves);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

@@ -5,8 +5,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  ActivityIndicator,
-  Alert,
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,6 +12,9 @@ import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader";
+import Toast from "react-native-toast-message";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 const STATUS_COLORS = {
   Approved: "#2ecc71",
@@ -27,6 +28,7 @@ const ReimbursementScreen = ({ navigation, route }) => {
   const [reimbursement, setReimbursement] = useState(null);
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null); // For modal preview
+  const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
 
   const fetchReimbursement = async () => {
     setLoading(true);
@@ -44,41 +46,49 @@ const ReimbursementScreen = ({ navigation, route }) => {
       setReimbursement(data);
     } catch (err) {
       console.error("Failed to fetch reimbursement:", err);
-      Alert.alert("Error", "Failed to fetch reimbursement.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to fetch reimbursement.",
+      });
       navigation.goBack();
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteReimbursement = async () => {
-    Alert.alert(
-      "Confirm Delete",
-      "Are you sure you want to cancel this reimbursement?",
-      [
-        { text: "No" },
-        {
-          text: "Yes",
-          onPress: async () => {
-            try {
-              await authAxios.delete(
-                `/reimbursements/my-reimbursements/${reimbursementId}/`
-              );
-              Alert.alert("Deleted", "Reimbursement cancelled successfully.");
-              navigation.goBack();
-            } catch (err) {
-              console.error("Failed to delete reimbursement:", err);
-              Alert.alert("Error", "Failed to cancel reimbursement.");
-            }
-          },
-        },
-      ]
-    );
+  const deleteReimbursement = () => {
+    setConfirmDeleteVisible(true);
+  };
+
+  const confirmDeleteReimbursement = async () => {
+    setConfirmDeleteVisible(false);
+
+    try {
+      await authAxios.delete(
+        `/reimbursements/my-reimbursements/${reimbursementId}/`
+      );
+      Toast.show({
+        type: "success",
+        text1: "Deleted",
+        text2: "Reimbursement cancelled successfully.",
+      });
+      navigation.goBack();
+    } catch (err) {
+      console.error("Failed to delete reimbursement:", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to cancel reimbursement.",
+      });
+    }
   };
 
   useEffect(() => {
     fetchReimbursement();
   }, []);
+
+  useRefreshOnReconnect(fetchReimbursement);
 
   if (loading || !reimbursement) {
     return (
@@ -182,6 +192,16 @@ const ReimbursementScreen = ({ navigation, route }) => {
           />
         </View>
       </Modal>
+
+      <ConfirmationModal
+        visible={confirmDeleteVisible}
+        title="Confirm Delete"
+        message="Are you sure you want to cancel this reimbursement?"
+        confirmText="Yes"
+        cancelText="No"
+        onConfirm={confirmDeleteReimbursement}
+        onCancel={() => setConfirmDeleteVisible(false)}
+      />
 
       {/* Bottom Navbar */}
       {/* <View style={styles.bottomNavbarContainer}>

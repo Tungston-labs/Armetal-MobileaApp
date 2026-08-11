@@ -3,6 +3,7 @@ import { View, Text, FlatList, ActivityIndicator, RefreshControl, Platform } fro
 import authAxios from "../../../utils/authAxios";
 import styles from "./styles";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../../hooks/useRefreshOnReconnect";
 const HolidayTab = () => {
      const insets = useSafeAreaInsets();
   const [holidays, setHolidays] = useState([]);
@@ -41,6 +42,8 @@ const HolidayTab = () => {
   useEffect(() => {
     fetchHolidays();
   }, []);
+
+  useRefreshOnReconnect(fetchHolidays);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

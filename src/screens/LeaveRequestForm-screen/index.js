@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -17,6 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import styles from './styles';
 import Toast from 'react-native-toast-message';
 import authAxios from '../../utils/authAxios';
+import useRefreshOnReconnect from '../../hooks/useRefreshOnReconnect';
 
 export default function LeaveRequestFormScreen() {
   const navigation = useNavigation();
@@ -63,36 +63,45 @@ export default function LeaveRequestFormScreen() {
     setReason('');
   };
 
-  useEffect(() => {
-    const fetchLeaveSummary = async () => {
-      try {
-        const response = await authAxios.get('/leave/summary/');
-        if (response.status === 200) {
-          const summary = response.data;
-          setPendingLeaveCount(summary.total_leave || 0);
-          setLopDays(summary.lop_days || 0);
-          setLopAmount(summary.lop_amount || 0);
-        }
-      } catch (err) {
-        console.error('❌ Error fetching summary:', err);
+  const fetchLeaveSummary = async () => {
+    try {
+      const response = await authAxios.get('/leave/summary/');
+      if (response.status === 200) {
+        const summary = response.data;
+        setPendingLeaveCount(summary.total_leave || 0);
+        setLopDays(summary.lop_days || 0);
+        setLopAmount(summary.lop_amount || 0);
       }
-    };
+    } catch (err) {
+      console.error('❌ Error fetching summary:', err);
+    }
+  };
+
+  useEffect(() => {
     fetchLeaveSummary();
   }, []);
 
-  useEffect(() => {
-    const fetchDepartmentHeadEmail = async () => {
-      try {
-        const response = await authAxios.get('/my-department-head/');
-        if (response.status === 200) {
-          setToEmail(response.data.email);
-        }
-      } catch (err) {
-        console.error('❌ Error fetching department head email:', err);
+  const fetchDepartmentHeadEmail = async () => {
+    try {
+      const response = await authAxios.get('/my-department-head/');
+      if (response.status === 200) {
+        setToEmail(response.data.email);
       }
-    };
+    } catch (err) {
+      console.error('❌ Error fetching department head email:', err);
+    }
+  };
+
+  useEffect(() => {
     fetchDepartmentHeadEmail();
   }, []);
+
+  useRefreshOnReconnect(async () => {
+    await Promise.all([
+      fetchLeaveSummary(),
+      fetchDepartmentHeadEmail(),
+    ]);
+  });
 
  const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

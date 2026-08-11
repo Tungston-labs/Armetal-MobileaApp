@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import {
   View,
@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Alert,
   Image,
   Animated,
   Easing,
@@ -43,6 +42,10 @@ import {
 
 import Svg, { Defs, RadialGradient, Stop, Circle, SvgXml } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import useRefreshOnReconnect, {
+  isNetworkAvailable,
+} from "../../hooks/useRefreshOnReconnect";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const AttendanceScreen = () => {
@@ -86,7 +89,7 @@ const AttendanceScreen = () => {
     rotateValue.setValue(0);
   };
 
-  const fetchDayStatus = async () => {
+  const fetchDayStatus = useCallback(async () => {
     try {
       const response = await authAxios.get("/employee-monthly-summary/");
       const data = response.data;
@@ -130,13 +133,9 @@ const AttendanceScreen = () => {
       console.log("Failed to fetch day status:", error);
       setDayStatus([]);
     }
-  };
-
-  useEffect(() => {
-    fetchDayStatus();
   }, []);
 
-  const fetchTodayAttendance = async () => {
+  const fetchTodayAttendance = useCallback(async () => {
     try {
       const res = await authAxios.get(`/attendance/today/`);
       const data = res.data;
@@ -150,7 +149,19 @@ const AttendanceScreen = () => {
       );
     } catch (err) {
     }
-  };
+  }, []);
+
+  const fetchEmployeeProfile = useCallback(async () => {
+    const profileRes = await authAxios.get("/profile/");
+    const profile = profileRes.data;
+
+    setEmployee(profile);
+    setCompanyLogoUri(normalizeMediaUri(profile?.company_logo));
+    setCompanyLogoSvgXml(null);
+    setProfileImageFailed(false);
+
+    return profile;
+  }, []);
 
 
   const getLatestSession = () => {
@@ -167,7 +178,11 @@ const AttendanceScreen = () => {
     const granted = await requestForegroundLocationPermission();
 
     if (!granted) {
-      Alert.alert("Permission required", "Location access is required");
+      Toast.show({
+        type: "error",
+        text1: "Permission required",
+        text2: "Location access is required",
+      });
       return false;
     }
 
@@ -178,15 +193,47 @@ const AttendanceScreen = () => {
     startRotation();
 
     try {
-      if (!employee?.id) {
-        Alert.alert("Employee not ready");
+      let activeEmployee = employee;
+
+      if (!activeEmployee?.id) {
+        const online = await isNetworkAvailable();
+
+        if (!online) {
+          Toast.show({
+            type: "error",
+            text1: "Please check your network connection",
+            text2: "Reconnect and refresh before punching in.",
+            visibilityTime: 5000,
+          });
+          return;
+        }
+
+        try {
+          activeEmployee = await fetchEmployeeProfile();
+        } catch (error) {
+          Toast.show({
+            type: "error",
+            text1: "Please check your network connection",
+            text2: "Employee details could not be loaded.",
+            visibilityTime: 5000,
+          });
+          return;
+        }
+      }
+
+      if (!activeEmployee?.id) {
+        Toast.show({
+          type: "error",
+          text1: "Please check your network connection",
+          text2: "Employee details are not available yet.",
+          visibilityTime: 5000,
+        });
         return;
       }
 
       const permissionGranted = await requestLocationPermissions();
 
       if (!permissionGranted) {
-        Alert.alert("Location permission required");
         return;
       }
 
@@ -200,7 +247,7 @@ const AttendanceScreen = () => {
       await fetchTodayAttendance();
 
       if (res.data?.action === "punch_in" && res.data?.session_id) {
-        const employeeId = employee.id.toString();
+        const employeeId = activeEmployee.id.toString();
         const sessionId = res.data.session_id.toString();
 
         await AsyncStorage.multiSet([
@@ -212,7 +259,7 @@ const AttendanceScreen = () => {
         setPunchedIn(true);
 
         const trackingStarted = await startBackgroundTracking({
-          employeeId: employee.id,
+          employeeId: activeEmployee.id,
           sessionId: res.data.session_id,
           intervalMinutes: 15,
         });
@@ -220,10 +267,13 @@ const AttendanceScreen = () => {
         if (trackingStarted) {
           maybeAskBatteryPermission();
         } else {
-          Alert.alert(
-            "Tracking Warning",
-            "Punch-in succeeded, but background location tracking could not be fully started. Please allow background location and disable battery restrictions for Rekory."
-          );
+          Toast.show({
+            type: "info",
+            text1: "Tracking Warning",
+            text2:
+              "Punch-in succeeded, but background location tracking could not be fully started.",
+            visibilityTime: 6000,
+          });
         }
       }
 
@@ -235,43 +285,45 @@ const AttendanceScreen = () => {
       console.log("PUNCH ERROR:", error);
       console.log("SERVER:", error?.response?.data);
 
-      Alert.alert(
-        "Punch Failed",
-        JSON.stringify(error?.response?.data || error.message)
-      );
+      Toast.show({
+        type: "error",
+        text1: "Punch Failed",
+        text2: JSON.stringify(error?.response?.data || error.message),
+        visibilityTime: 6000,
+      });
     } finally {
       setPunching(false);
       stopRotation();
     }
   };
 
-  useEffect(() => {
-    const initialize = async () => {
+  const initializeHomeData = useCallback(
+    async ({ showLoader = false } = {}) => {
+      if (showLoader) setLoading(true);
+
       try {
-        // Fetch employee
-        const profileRes = await authAxios.get("/profile/");
+        await Promise.allSettled([
+          fetchEmployeeProfile(),
+          fetchTodayAttendance(),
+          fetchDayStatus(),
+        ]);
 
-        setEmployee(profileRes.data);
-        setCompanyLogoUri(normalizeMediaUri(profileRes.data?.company_logo));
-        setProfileImageFailed(false);
-
-        // Attendance refresh
-        await fetchTodayAttendance();
-
-        // Restore punch state
         const storedPunch = await AsyncStorage.getItem("punchedIn");
-
         setPunchedIn(storedPunch === "true");
-
       } catch (err) {
         console.log("INIT ERROR:", err);
       } finally {
         setLoading(false);
       }
-    };
+    },
+    [fetchDayStatus, fetchEmployeeProfile, fetchTodayAttendance]
+  );
 
-    initialize();
-  }, []);
+  useEffect(() => {
+    initializeHomeData({ showLoader: true });
+  }, [initializeHomeData]);
+
+  useRefreshOnReconnect(() => initializeHomeData({ showLoader: false }));
   useEffect(() => {
     const loadCompanyLogoSvg = async () => {
       if (!companyLogoUri?.toLowerCase().endsWith(".svg")) {
@@ -406,8 +458,7 @@ const AttendanceScreen = () => {
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
         onRefresh={async () => {
-          await fetchDayStatus();
-          await fetchTodayAttendance();
+          await initializeHomeData({ showLoader: false });
         }}
       >
         <ScrollView

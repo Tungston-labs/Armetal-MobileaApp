@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-na
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import authAxios from '../../utils/authAxios';
+import useRefreshOnReconnect from '../../hooks/useRefreshOnReconnect';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -58,22 +59,25 @@ export default function LeaveHeader({
     return `${BASE_URL}${path}`;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const summaryRes = await authAxios.get("/leave/summary/");
-        setSummary(summaryRes.data);
+  const fetchData = async () => {
+    try {
+      const summaryRes = await authAxios.get("/leave/summary/");
+      setSummary(summaryRes.data);
 
-        const profileRes = await authAxios.get("/profile/");
-        setProfilePic(getProfileUri(profileRes.data?.profile_pic));
-      } catch (error) {
-        //console.error("Error fetching data:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const profileRes = await authAxios.get("/profile/");
+      setProfilePic(getProfileUri(profileRes.data?.profile_pic));
+    } catch (error) {
+      //console.error("Error fetching data:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
+
+  useRefreshOnReconnect(fetchData);
 
   // if (loading) {
   //   return (

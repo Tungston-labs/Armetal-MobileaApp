@@ -19,6 +19,7 @@ import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
   const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export default function TaskUpdateScreen() {
@@ -105,9 +106,19 @@ export default function TaskUpdateScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchTasks(selectedDate);
+    await Promise.all([
+      fetchTasks(selectedDate),
+      fetchProfilePicture(),
+    ]);
     setRefreshing(false);
   }, [selectedDate]);
+
+  useRefreshOnReconnect(async () => {
+    await Promise.all([
+      fetchTasks(selectedDate),
+      fetchProfilePicture(),
+    ]);
+  });
 
   const handleSubmit = () => {
     setModalVisible(false);

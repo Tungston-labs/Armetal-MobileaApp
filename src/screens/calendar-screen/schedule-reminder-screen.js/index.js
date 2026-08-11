@@ -14,6 +14,7 @@ import styles from "./styles";
 import AddEventModal from "../../../screens/EventModal";
 import authAxios from "../../../utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../../hooks/useRefreshOnReconnect";
 
 
 const ReminderTab = () => {
@@ -66,6 +67,8 @@ const ReminderTab = () => {
       setLoading(false);
     }
   };
+
+  useRefreshOnReconnect(() => fetchReminders());
 
   const handleDateSelect = (day) => {
     const localDate = new Date(day.timestamp);

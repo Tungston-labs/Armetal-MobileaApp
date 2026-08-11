@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
@@ -14,6 +13,7 @@ import BottomNavbar from '../BottomNavbar';
 import Toast from 'react-native-toast-message';
 import authAxios from '../../utils/authAxios';
 import { useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import useRefreshOnReconnect from '../../hooks/useRefreshOnReconnect';
 export default function RequestRejected({ navigation, route }) {
   const { leaveId } = route.params; 
   const [leave, setLeave] = useState(null);
@@ -31,41 +31,41 @@ export default function RequestRejected({ navigation, route }) {
     });
   };
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await authAxios.get(`${BASE_URL}/api/profile/`);
-        setProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Could not fetch profile.',
-        });
-      }
-    };
+  const fetchProfile = async () => {
+    try {
+      const response = await authAxios.get(`${BASE_URL}/api/profile/`);
+      setProfile(response.data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Could not fetch profile.',
+      });
+    }
+  };
 
+  useEffect(() => {
     fetchProfile();
   }, []);
 
-  useEffect(() => {
-    const fetchLeaveDetail = async () => {
-      try {
-        const response = await authAxios.get(`${BASE_URL}/api/leave/emp/${leaveId}/`);
-        setLeave(response.data);
-      } catch (error) {
-        console.error('Failed to fetch rejected leave details:', error);
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Could not load rejected leave details.',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchLeaveDetail = async () => {
+    try {
+      const response = await authAxios.get(`${BASE_URL}/api/leave/emp/${leaveId}/`);
+      setLeave(response.data);
+    } catch (error) {
+      console.error('Failed to fetch rejected leave details:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Could not load rejected leave details.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchLeaveDetail();
   }, [leaveId]);
 
@@ -73,6 +73,13 @@ export default function RequestRejected({ navigation, route }) {
     Montserrat_400Regular,
     Montserrat_500Medium,
     Montserrat_700Bold,
+  });
+
+  useRefreshOnReconnect(async () => {
+    await Promise.all([
+      fetchProfile(),
+      fetchLeaveDetail(),
+    ]);
   });
   if (loading || !leave) {
     return (

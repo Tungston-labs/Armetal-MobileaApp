@@ -7,6 +7,7 @@ import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 function formatHours(decimalHours) {
   const h = Math.floor(decimalHours);           
@@ -37,67 +38,69 @@ export default function WorkingDaySummary() {
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
   const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });
 
-  useEffect(() => {
-    const fetchDayStatus = async () => {
-      try {
-        const response = await authAxios.get("/employee-monthly-summary/");
-        const data = response.data;
-        setSummary(data); 
+  const fetchDayStatus = async () => {
+    try {
+      const response = await authAxios.get("/employee-monthly-summary/");
+      const data = response.data;
+      setSummary(data);
   
         
-        const statusMap = {};
-        data.total_working_days_dates.forEach((date) => {
-          statusMap[date] = "working";
-        });
+      const statusMap = {};
+      data.total_working_days_dates.forEach((date) => {
+        statusMap[date] = "working";
+      });
   
         
-        data.present_days_dates.forEach((date) => {
-          if (!statusMap[date]?.includes("half")) statusMap[date] = "present";
-        });
-        data.absent_days_dates.forEach((date) => {
-          if (!statusMap[date]?.includes("half")) statusMap[date] = "absent";
-        });
-        data.holidays_dates.forEach((date) => {
-          if (!statusMap[date]?.includes("half")) statusMap[date] = "holiday";
-        });
+      data.present_days_dates.forEach((date) => {
+        if (!statusMap[date]?.includes("half")) statusMap[date] = "present";
+      });
+      data.absent_days_dates.forEach((date) => {
+        if (!statusMap[date]?.includes("half")) statusMap[date] = "absent";
+      });
+      data.holidays_dates.forEach((date) => {
+        if (!statusMap[date]?.includes("half")) statusMap[date] = "holiday";
+      });
   
         
-        data.half_days_dates.forEach((date) => {
-          statusMap[date] = "half";
-        });
+      data.half_days_dates.forEach((date) => {
+        statusMap[date] = "half";
+      });
   
-        const month = data.total_working_days_dates[0].slice(0, 7); 
-        const year = parseInt(month.split("-")[0], 10);
-        const monthIndex = parseInt(month.split("-")[1], 10) - 1;
-        const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+      const month = data.total_working_days_dates[0].slice(0, 7);
+      const year = parseInt(month.split("-")[0], 10);
+      const monthIndex = parseInt(month.split("-")[1], 10) - 1;
+      const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   
-        for (let day = 1; day <= daysInMonth; day++) {
-          const dateStr = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-          const dayOfWeek = new Date(year, monthIndex, day).getDay();
-          if (dayOfWeek === 0 && !statusMap[dateStr]) { 
-            statusMap[dateStr] = "holiday";
-          }
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const dayOfWeek = new Date(year, monthIndex, day).getDay();
+        if (dayOfWeek === 0 && !statusMap[dateStr]) {
+          statusMap[dateStr] = "holiday";
         }
+      }
   
-        // Convert to ordered array
-        const allDates = [];
-        for (let day = 1; day <= daysInMonth; day++) {
-          allDates.push(`${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
-        }
+      // Convert to ordered array
+      const allDates = [];
+      for (let day = 1; day <= daysInMonth; day++) {
+        allDates.push(`${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+      }
        const orderedStatuses = allDates.map(date => ({
   date,
   status: statusMap[date] || "working",
 }));
 
 setDayStatus(orderedStatuses);
-      } catch (error) {
-        console.error("Failed to fetch day status:", error);
-        setDayStatus([]);
-      }
-    };
+    } catch (error) {
+      console.error("Failed to fetch day status:", error);
+      setDayStatus([]);
+    }
+  };
   
+  useEffect(() => {
     fetchDayStatus();
   }, []);
+
+  useRefreshOnReconnect(fetchDayStatus);
   
 
 const getSegment = (item, index) => {

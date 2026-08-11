@@ -5,8 +5,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Alert,
-  ActivityIndicator,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -15,6 +13,8 @@ import BottomNavbar from "../BottomNavbar";
 
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
+import Toast from "react-native-toast-message";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 export default function RequestApprovedScreen() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -35,37 +35,52 @@ export default function RequestApprovedScreen() {
   };
 
 
-  useEffect(() => {
-    const fetchLeaveDetail = async () => {
-      try {
-        const response = await authAxios.get(`/leave/emp/${leaveId}/`);
-        setLeave(response.data);
-      } catch (error) {
-        console.error("Error fetching leave detail:", error);
-        Alert.alert("Error", "Could not fetch leave details.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchLeaveDetail = async () => {
+    try {
+      const response = await authAxios.get(`/leave/emp/${leaveId}/`);
+      setLeave(response.data);
+    } catch (error) {
+      console.error("Error fetching leave detail:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Could not fetch leave details.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchLeaveDetail();
   }, [leaveId]);
 
 
  
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await authAxios.get('/profile/');
-        setProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        Alert.alert("Error", "Could not fetch profile.");
-      }
-    };
+  const fetchProfile = async () => {
+    try {
+      const response = await authAxios.get('/profile/');
+      setProfile(response.data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Could not fetch profile.",
+      });
+    }
+  };
 
+  useEffect(() => {
     fetchProfile();
   }, []);
+
+  useRefreshOnReconnect(async () => {
+    await Promise.all([
+      fetchLeaveDetail(),
+      fetchProfile(),
+    ]);
+  });
 
   if (loading || !leave) {
     return (
@@ -152,4 +167,3 @@ export default function RequestApprovedScreen() {
     </View>
   );
 }
-

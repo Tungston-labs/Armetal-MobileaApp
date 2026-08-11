@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
   ScrollView,
@@ -16,6 +15,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import styles from './styles';
+import Toast from 'react-native-toast-message';
 
 const ForgotPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -24,7 +24,11 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
   const handleResetPassword = async () => {
     if (!email) {
-      Alert.alert('Validation Error', 'Please enter your email address.');
+      Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please enter your email address.',
+      });
       return;
     }
 
@@ -39,7 +43,11 @@ const ForgotPasswordScreen = ({ navigation }) => {
       setLoading(false);
 
       if (response.status === 200) {
-        Alert.alert('Success', 'OTP sent to your email.');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'OTP sent to your email.',
+        });
         // Navigate to Verification screen with email
         navigation.navigate('VerificationScreen', { email });
       }
@@ -47,9 +55,17 @@ const ForgotPasswordScreen = ({ navigation }) => {
       setLoading(false);
 
       if (error.response) {
-        Alert.alert('Error', error.response.data.detail || 'Failed to send OTP.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: error.response.data.detail || 'Failed to send OTP.',
+        });
       } else {
-        Alert.alert('Error', 'Something went wrong. Try again later.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Something went wrong. Try again later.',
+        });
       }
     }
   };

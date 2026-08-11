@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Alert,
   FlatList,
   RefreshControl,
   Platform,
@@ -16,6 +15,8 @@ import SwipeLoader from "../../components/SwipeLoader";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 
 const STATUS_LABELS = {
@@ -46,7 +47,11 @@ export default function ReimbursementlistScreen({ navigation, route }) {
       setReimbursements(res.data.results || res.data);
     } catch (err) {
       // console.error("Failed to fetch reimbursements:", err);
-      Alert.alert("Error", "Failed to fetch reimbursements.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to fetch reimbursements.",
+      });
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -57,6 +62,8 @@ useEffect(() => {
   fetchReimbursements();
 }, []);
 
+useRefreshOnReconnect(fetchReimbursements);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchReimbursements();
@@ -66,7 +73,11 @@ useEffect(() => {
   const pickImage = async () => {
     try {
       if (bill) {
-        Alert.alert("Limit Reached", "You can only upload one bill.");
+        Toast.show({
+          type: "info",
+          text1: "Limit Reached",
+          text2: "You can only upload one bill.",
+        });
         return;
       }
 
@@ -81,7 +92,11 @@ useEffect(() => {
       }
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "Failed to pick image.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to pick image.",
+      });
     }
   };
 
