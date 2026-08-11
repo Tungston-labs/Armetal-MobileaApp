@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Platform,
   ActivityIndicator,
   Modal,
+  RefreshControl,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
@@ -25,8 +26,10 @@ const ReminderTab = () => {
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
-   const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
 
   const monthNames = [
     "January",
@@ -43,32 +46,50 @@ const ReminderTab = () => {
     "December",
   ];
 
-  useEffect(() => {
-    fetchReminders(); // initial load
+  const toApiDate = useCallback((date) => {
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);
+
+    return new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split("T")[0];
   }, []);
 
-  const fetchReminders = async (date = null) => {
-    try {
-      setLoading(true);
-      setReminders([]); // clear old data
+  const fetchReminders = useCallback(async (date = null, { showLoader = false } = {}) => {
+    if (showLoader) setLoading(true);
 
+    try {
       const endpoint = date ? `/reminders?date=${date}` : `/reminders/`;
       const response = await authAxios.get(endpoint);
 
       const data = response.data?.results ?? response.data ?? [];
       setReminders(data);
+      setError(null);
     } catch (error) {
       console.error(
         "Error fetching reminders:",
         error?.response?.data || error.message || error
       );
-      setReminders([]); 
+      setReminders([]);
+      setError("Failed to fetch reminders. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useRefreshOnReconnect(() => fetchReminders());
+  useEffect(() => {
+    fetchReminders(null, { showLoader: true }); // initial load
+  }, [fetchReminders]);
+
+  useRefreshOnReconnect(() => fetchReminders(toApiDate(selectedDate)));
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchReminders(toApiDate(selectedDate));
+    setRefreshing(false);
+  }, [fetchReminders, selectedDate, toApiDate]);
 
   const handleDateSelect = (day) => {
     const localDate = new Date(day.timestamp);
@@ -77,13 +98,7 @@ const ReminderTab = () => {
     setSelectedDate(localDate);
     setShowCalendar(false);
 
-    const utcDate = new Date(
-      localDate.getTime() - localDate.getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .split("T")[0];
-
-    fetchReminders(utcDate);
+    fetchReminders(toApiDate(localDate), { showLoader: true });
   };
 
   const onChangeDate = (event, date) => {
@@ -271,7 +286,7 @@ const ReminderTab = () => {
       )}
 
       {/* Reminders */}
-      {loading ? (
+      {loading && reminders.length === 0 ? (
         <ActivityIndicator
           size="large"
           color="#000"
@@ -279,16 +294,27 @@ const ReminderTab = () => {
         />
       ) : (
         <FlatList
-          data={reminders}
+          data={error ? [] : reminders}
           keyExtractor={(item, index) =>
             item?.id != null ? item.id.toString() : index.toString()
           }
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#ffffff", "#d3d3d3"]}
+              tintColor="#ffffff"
+              progressBackgroundColor={
+                Platform.OS === "android" ? "#2c2c2c" : "transparent"
+              }
+            />
+          }
           ListEmptyComponent={
             <Text
               style={{ textAlign: "center", color: "white", marginTop: 20 }}
             >
-              No reminders found
+              {error || "No reminders found"}
             </Text>
           }
           renderItem={({ item }) => {

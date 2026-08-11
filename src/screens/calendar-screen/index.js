@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import HolidayTab from "./holiday-list-screen";
 import ReminderTab from "./schedule-reminder-screen.js";
-import SwipeLoader from "../../components/SwipeLoader"
 const CalendarScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
 
   const [activeTab, setActiveTab] = useState(route.params?.openTab || "holiday");
-  const [loading, setLoading] = useState(false); 
 
   React.useEffect(() => {
     if (route.params?.openTab) {
@@ -19,10 +17,7 @@ const CalendarScreen = () => {
   }, [route.params?.openTab]);
 
   const handleTabChange = (tab) => {
-    setLoading(true);
     setActiveTab(tab);
-    // simulate async fetch
-    setTimeout(() => setLoading(false), 500);
   };
 
   return (
@@ -58,11 +53,7 @@ const CalendarScreen = () => {
         </View>
 
         {/* Tab Content */}
-        {loading ? (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <SwipeLoader size="large" color="#3352BA" />
-          </View>
-        ) : activeTab === "holiday" ? (
+        {activeTab === "holiday" ? (
           <HolidayTab />
         ) : (
           <ReminderTab />

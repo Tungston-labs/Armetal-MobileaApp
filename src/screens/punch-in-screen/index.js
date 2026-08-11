@@ -288,7 +288,7 @@ const AttendanceScreen = () => {
       Toast.show({
         type: "error",
         text1: "Punch Failed",
-        text2: JSON.stringify(error?.response?.data || error.message),
+        text2: "Please check your network connection and try again.",
         visibilityTime: 6000,
       });
     } finally {
