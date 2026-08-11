@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -57,7 +58,7 @@ const AttendanceScreen = () => {
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
-  const [mediaToken, setMediaToken] = useState(null);
+  const mediaToken = useSelector((state) => state.auth.accessToken);
   const [companyLogoUri, setCompanyLogoUri] = useState(null);
   const [companyLogoSvgXml, setCompanyLogoSvgXml] = useState(null);
   const [profileImageFailed, setProfileImageFailed] = useState(false);
@@ -248,13 +249,9 @@ const AttendanceScreen = () => {
     const initialize = async () => {
       try {
         // Fetch employee
-        const [profileRes, accessToken] = await Promise.all([
-          authAxios.get("/profile/"),
-          AsyncStorage.getItem("accessToken"),
-        ]);
+        const profileRes = await authAxios.get("/profile/");
 
         setEmployee(profileRes.data);
-        setMediaToken(accessToken);
         setCompanyLogoUri(normalizeMediaUri(profileRes.data?.company_logo));
         setProfileImageFailed(false);
 
@@ -275,7 +272,6 @@ const AttendanceScreen = () => {
 
     initialize();
   }, []);
-  console.log("IMAGE URL:", normalizeMediaUri(employee?.profile_pic));
   useEffect(() => {
     const loadCompanyLogoSvg = async () => {
       if (!companyLogoUri?.toLowerCase().endsWith(".svg")) {
