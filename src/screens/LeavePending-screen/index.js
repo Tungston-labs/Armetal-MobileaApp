@@ -17,6 +17,7 @@ import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 
 export default function LeavePendingScreen() {
@@ -54,7 +55,9 @@ export default function LeavePendingScreen() {
     if (isFocused) {
       fetchPendingLeaves();
     }
-  }, [isFocused]);
+  }, [isFocused, route.params?.refreshAt]);
+
+  useRefreshOnReconnect(fetchPendingLeaves);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

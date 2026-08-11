@@ -15,6 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import authAxios from "../../utils/authAxios";
 import BottomNavbar from "../BottomNavbar";
 import SwipeLoader from "../../components/SwipeLoader";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 const formatApiDate = (date = new Date()) => {
   const year = date.getFullYear();
@@ -71,6 +72,8 @@ const AttendanceScreen = () => {
   useEffect(() => {
     fetchAttendanceData();
   }, [selectedDate]);
+
+  useRefreshOnReconnect(fetchAttendanceData);
 
   const handleRefresh = async () => {
     setRefreshing(true);

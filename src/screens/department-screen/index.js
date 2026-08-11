@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 const defaultAvatar = require('../../assets/avatar.png');
 
 const DepartmentScreen = () => {
@@ -43,6 +44,8 @@ const DepartmentScreen = () => {
   useEffect(() => {
     fetchDepartmentMembers();
   }, []);
+
+  useRefreshOnReconnect(fetchDepartmentMembers);
 
   const getFullImageUrl = (url) => {
     if (!url) return null;

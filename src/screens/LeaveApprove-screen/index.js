@@ -16,6 +16,7 @@ import LeaveHeader from "../LeaveHeader-screen";
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 export default function LeaveApproveScreen() {
   const navigation = useNavigation();
@@ -40,6 +41,8 @@ export default function LeaveApproveScreen() {
   useEffect(() => {
     fetchApprovedLeaves();
   }, []);
+
+  useRefreshOnReconnect(fetchApprovedLeaves);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

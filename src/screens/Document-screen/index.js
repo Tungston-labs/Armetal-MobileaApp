@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
   ActivityIndicator,StyleSheet
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -19,6 +18,8 @@ import DownloadIcon from "../../../assets/download.svg";
 import styles from "./styles";
 import authAxios from "../../utils/authAxios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 
 export default function DocumentsScreen() {
@@ -55,23 +56,22 @@ export default function DocumentsScreen() {
     return `${BASE_URL}/media/${url}`;
   };
 
-  useEffect(() => {
-    const fetchDocumentData = async () => {
-      try {
-        setLoading(true); // start loader
-        const storedCountry = await AsyncStorage.getItem("country");
-        console.log("country is:",storedCountry);
-        
-        setCountry(storedCountry);
-        const summaryResponse = await authAxios.get("/employee/document-summary/");
-        const summary = summaryResponse.data;
-        setEmployeeId(summary.employee_id);
+  const fetchDocumentData = async () => {
+    try {
+      setLoading(true); // start loader
+      const storedCountry = await AsyncStorage.getItem("country");
+      console.log("country is:",storedCountry);
+      
+      setCountry(storedCountry);
+      const summaryResponse = await authAxios.get("/employee/document-summary/");
+      const summary = summaryResponse.data;
+      setEmployeeId(summary.employee_id);
 
-        const detailResponse = await authAxios.get(
-          `/employees/${summary.employee_id}/documents/`
-        );
-        const detail = detailResponse.data;
-        console.log("📄 Summary response:", summary);
+      const detailResponse = await authAxios.get(
+        `/employees/${summary.employee_id}/documents/`
+      );
+      const detail = detailResponse.data;
+      console.log("📄 Summary response:", summary);
 console.log("📄 Detail response:", detail);
 
 
@@ -88,23 +88,34 @@ setData({
   contractExpiry: summary.contract_expiry_date || "",
 });
 
-        
-      } catch (error) {
-        console.error("❌ Failed to fetch documents:", error);
-        Alert.alert("Error", "Could not load document data");
-      } finally {
-        setLoading(false); // stop loader
-      }
-    };
+      
+    } catch (error) {
+      console.error("❌ Failed to fetch documents:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Could not load document data",
+      });
+    } finally {
+      setLoading(false); // stop loader
+    }
+  };
 
+  useEffect(() => {
     fetchDocumentData();
   }, []);
+
+  useRefreshOnReconnect(fetchDocumentData);
 
   const handleImagePreview = (urls) => {
     if (urls && urls.length > 0) {
       navigation.navigate("FullImageViewer", { imageUrl: urls[0] });
     } else {
-      Alert.alert("No Image", "No image available to preview.");
+      Toast.show({
+        type: "info",
+        text1: "No Image",
+        text2: "No image available to preview.",
+      });
     }
   };
 

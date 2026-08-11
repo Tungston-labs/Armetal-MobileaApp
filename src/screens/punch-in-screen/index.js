@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Alert,
   Image,
   Animated,
   Easing,
@@ -41,6 +40,10 @@ import {
 
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import useRefreshOnReconnect, {
+  isNetworkAvailable,
+} from "../../hooks/useRefreshOnReconnect";
 const DEFAULT_AVATAR_URI = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 const defaultAvatar = {
   uri: DEFAULT_AVATAR_URI,
@@ -78,6 +81,7 @@ const AttendanceScreen = () => {
   const [profileImageUri, setProfileImageUri] = useState(DEFAULT_AVATAR_URI);
   const [profileImageToken, setProfileImageToken] = useState(null);
   const [showDisclosure, setShowDisclosure] = useState(false);
+  const [pendingPunch, setPendingPunch] = useState(false);
   const [punchedIn, setPunchedIn] = useState(false);
   const [dayStatus, setDayStatus] = useState([]);
   const rotateValue = useRef(new Animated.Value(0)).current;
@@ -211,14 +215,6 @@ const getProfileUri = (pic) => {
   const cleanPath = pic.replace(/^\/+/, "");
   return { uri: `${BASE_URL}/media/${cleanPath}` };
 };
-  useEffect(() => {
-    fetchDayStatus();
-  }, []);
-
-  useEffect(() => {
-    fetchDayStatus();
-  }, []);
-
   const fetchTodayAttendance = async (employeeIdOverride = null) => {
     try {
       const res = await authAxios.get(`/attendance/today/`);
@@ -237,6 +233,22 @@ const getProfileUri = (pic) => {
     } catch (err) {
       console.log("TODAY ATTENDANCE ERROR:", err);
     }
+  };
+
+  const fetchEmployeeProfile = async () => {
+    const [profileRes, accessToken] = await Promise.all([
+      authAxios.get("/profile/"),
+      AsyncStorage.getItem("accessToken"),
+    ]);
+    const profile = profileRes.data;
+
+    setEmployee(profile);
+    setProfileImageUri(
+      buildImageUri(profile?.profile_pic) || DEFAULT_AVATAR_URI
+    );
+    setProfileImageToken(accessToken);
+
+    return profile;
   };
 
 
@@ -273,10 +285,11 @@ const getProfileUri = (pic) => {
       const authorization = await Geolocation.requestAuthorization("always");
 
       if (authorization !== "granted") {
-        Alert.alert(
-          "Permission required",
-          "Location permission is required for attendance tracking"
-        );
+        Toast.show({
+          type: "error",
+          text1: "Permission required",
+          text2: "Location permission is required for attendance tracking",
+        });
         return false;
       }
 
@@ -308,10 +321,11 @@ const getProfileUri = (pic) => {
       permissionResults[backgroundPermission] === PermissionsAndroid.RESULTS.GRANTED;
 
     if (!fineGranted || !coarseGranted || !backgroundGranted) {
-      Alert.alert(
-        "Background Location Required",
-        "Please allow location access for attendance tracking"
-      );
+      Toast.show({
+        type: "error",
+        text1: "Background Location Required",
+        text2: "Please allow location access for attendance tracking",
+      });
       return false;
     }
 
@@ -323,15 +337,47 @@ const getProfileUri = (pic) => {
     startRotation();
 
     try {
-      if (!employee?.id) {
-        Alert.alert("Employee not ready");
+      let activeEmployee = employee;
+
+      if (!activeEmployee?.id) {
+        const online = await isNetworkAvailable();
+
+        if (!online) {
+          Toast.show({
+            type: "error",
+            text1: "Please check your network connection",
+            text2: "Reconnect and refresh before punching in.",
+            visibilityTime: 5000,
+          });
+          return;
+        }
+
+        try {
+          activeEmployee = await fetchEmployeeProfile();
+        } catch (error) {
+          Toast.show({
+            type: "error",
+            text1: "Please check your network connection",
+            text2: "Employee details could not be loaded.",
+            visibilityTime: 5000,
+          });
+          return;
+        }
+      }
+
+      if (!activeEmployee?.id) {
+        Toast.show({
+          type: "error",
+          text1: "Please check your network connection",
+          text2: "Employee details are not available yet.",
+          visibilityTime: 5000,
+        });
         return;
       }
 
       const permissionGranted = await requestLocationPermissions();
 
       if (!permissionGranted) {
-        Alert.alert("Location permission required");
         return;
       }
 
@@ -347,12 +393,12 @@ const getProfileUri = (pic) => {
 
       console.log("SWIPE RESPONSE:", res.data);
 
-      await fetchTodayAttendance();
+      await fetchTodayAttendance(activeEmployee.id);
 
 
       if (res.data?.action === "punch_in" && res.data?.session_id) {
 
-        const employeeId = employee.id.toString();
+        const employeeId = activeEmployee.id.toString();
         const sessionId = res.data.session_id.toString();
 
         await AsyncStorage.multiSet([
@@ -368,7 +414,7 @@ const getProfileUri = (pic) => {
         if (Platform.OS === "android") {
 
           await startBackgroundFetch({
-            employeeId: employee.id,
+            employeeId: activeEmployee.id,
             sessionId: res.data.session_id,
             intervalMinutes: 20,
           });
@@ -400,31 +446,27 @@ const getProfileUri = (pic) => {
       console.log("PUNCH ERROR:", error);
       console.log("SERVER:", error?.response?.data);
 
-      Alert.alert(
-        "Punch Failed",
-        JSON.stringify(error?.response?.data || error.message)
-      );
+      Toast.show({
+        type: "error",
+        text1: "Punch Failed",
+        text2: JSON.stringify(error?.response?.data || error.message),
+        visibilityTime: 6000,
+      });
     } finally {
       setPunching(false);
       stopRotation();
     }
   };
- useEffect(() => {
-  const initialize = async () => {
+  const initializeHomeData = async ({ showLoader = false } = {}) => {
+    if (showLoader) setLoading(true);
+
     try {
-      const [profileRes, accessToken] = await Promise.all([
-        authAxios.get("/profile/"),
-        AsyncStorage.getItem("accessToken"),
+      const profile = await fetchEmployeeProfile();
+
+      await Promise.allSettled([
+        fetchTodayAttendance(profile?.id),
+        fetchDayStatus(),
       ]);
-      const profile = profileRes.data;
-
-      setEmployee(profile);
-      setProfileImageUri(
-        buildImageUri(profile?.profile_pic) || DEFAULT_AVATAR_URI
-      );
-      setProfileImageToken(accessToken);
-
-      await fetchTodayAttendance(profile?.id);
     } catch (err) {
       console.log("INIT ERROR:", err);
     } finally {
@@ -432,8 +474,11 @@ const getProfileUri = (pic) => {
     }
   };
 
-  initialize();
-}, []);
+  useEffect(() => {
+    initializeHomeData({ showLoader: true });
+  }, []);
+
+  useRefreshOnReconnect(() => initializeHomeData({ showLoader: false }));
 
   useFocusEffect(
     useCallback(() => {
@@ -577,8 +622,7 @@ const getProfileUri = (pic) => {
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
         onRefresh={async () => {
-          await fetchDayStatus();
-          await fetchTodayAttendance();
+          await initializeHomeData({ showLoader: false });
         }}
       >
         <ScrollView
@@ -661,7 +705,12 @@ const getProfileUri = (pic) => {
 
             <TouchableOpacity
               style={styles.menuBox}
-              onPress={() => navigation.navigate("LeaveAllScreen")}
+              onPress={() =>
+                navigation.navigate("LeaveStack", {
+                  screen: "LeaveAllScreen",
+                  params: { refreshAt: Date.now() },
+                })
+              }
             >
 
               <LeaveIcon width={28} height={28} style={{ marginTop: 6 }} />

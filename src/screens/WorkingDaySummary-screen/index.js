@@ -7,6 +7,7 @@ import BottomNavbar from "../BottomNavbar";
 import authAxios from "@/src/utils/authAxios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 function formatHours(decimalHours) {
   const h = Math.floor(decimalHours);           
@@ -37,12 +38,11 @@ export default function WorkingDaySummary() {
   const todayMonth = today.toLocaleString("en-US", { month: "long" });
   const todayWeekday = today.toLocaleString("en-US", { weekday: "long" });
 
-  useEffect(() => {
-    const fetchDayStatus = async () => {
-      try {
-        const response = await authAxios.get("/employee-monthly-summary/");
-        const data = response.data;
-        setSummary(data); 
+  const fetchDayStatus = async () => {
+    try {
+      const response = await authAxios.get("/employee-monthly-summary/");
+      const data = response.data;
+      setSummary(data); 
   
         
         const statusMap = {};
@@ -86,15 +86,18 @@ export default function WorkingDaySummary() {
         }
         const orderedStatuses = allDates.map(date => statusMap[date] || "working");
   
-        setDayStatus(orderedStatuses);
-      } catch (error) {
-        console.error("Failed to fetch day status:", error);
-        setDayStatus([]);
-      }
-    };
-  
+      setDayStatus(orderedStatuses);
+    } catch (error) {
+      console.error("Failed to fetch day status:", error);
+      setDayStatus([]);
+    }
+  };
+
+  useEffect(() => {
     fetchDayStatus();
   }, []);
+
+  useRefreshOnReconnect(fetchDayStatus);
   
 
   const getSegment = (status, index) => {

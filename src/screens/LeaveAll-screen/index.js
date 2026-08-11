@@ -15,6 +15,7 @@ import LeaveHeader from "../LeaveHeader-screen";
 import SwipeLoader from "../../components/SwipeLoader"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 
 export default function LeaveAllScreen({ navigation, route }) {
   const [leaveData, setLeaveData] = useState([]);
@@ -46,6 +47,8 @@ export default function LeaveAllScreen({ navigation, route }) {
   useEffect(() => {
     fetchLeaves();
   }, []);
+
+  useRefreshOnReconnect(fetchLeaves);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

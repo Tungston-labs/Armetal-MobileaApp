@@ -1,7 +1,7 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const handleGeneratePDF = async (payslip) => {
   console.log("📄 Payslip data:", payslip);
@@ -171,11 +171,19 @@ const handleGeneratePDF = async (payslip) => {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(fileUri);
     } else {
-      Alert.alert("PDF Generated", `File saved at: ${fileUri}`);
+      Toast.show({
+        type: "success",
+        text1: "PDF Generated",
+        text2: `File saved at: ${fileUri}`,
+      });
     }
   } catch (error) {
     console.error("❌ PDF Generation Error:", error);
-    Alert.alert("Error", "Could not generate payslip PDF");
+    Toast.show({
+      type: "error",
+      text1: "Error",
+      text2: "Could not generate payslip PDF",
+    });
   }
 };
 

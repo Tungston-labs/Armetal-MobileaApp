@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import BottomNavbar from "../BottomNavbar";
 import Toast from "react-native-toast-message";
 import authAxios from "../../utils/authAxios";
+import { showConfirmation } from "../../utils/toast";
 
 export default function RequestPending({ navigation, route }) {
   const { leaveId } = route.params;
@@ -73,44 +73,46 @@ export default function RequestPending({ navigation, route }) {
   }, [leaveId]);
 
 
-  const cancelLeave = async () => {
-    Alert.alert("Confirm", "Are you sure you want to cancel this leave?", [
-      { text: "No" },
-      {
-        text: "Yes",
-        onPress: async () => {
-          try {
-            setCanceling(true);
+  const cancelLeave = () => {
+    showConfirmation({
+      title: "Confirm",
+      message: "Are you sure you want to cancel this leave?",
+      confirmText: "Yes",
+      cancelText: "No",
+      onConfirm: confirmCancelLeave,
+    });
+  };
 
-            const response = await authAxios.delete(`/leave/${leaveId}/cancel/`);
+  const confirmCancelLeave = async () => {
+    try {
+      setCanceling(true);
 
-            if (response.status === 204) {
-              Toast.show({
-                type: 'success',
-                text1: 'Leave Cancelled',
-                text2: 'Leave request cancelled successfully.',
-              });
-              navigation.goBack();
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Could not cancel the leave request.',
-              });
-            }
-          } catch (error) {
-            console.error("Cancel failed:", error);
-            Toast.show({
-              type: 'error',
-              text1: 'Error',
-              text2: 'An error occurred while cancelling the request.',
-            });
-          } finally {
-            setCanceling(false);
-          }
-        },
-      },
-    ]);
+      const response = await authAxios.delete(`/leave/${leaveId}/cancel/`);
+
+      if (response.status === 204) {
+        Toast.show({
+          type: 'success',
+          text1: 'Leave Cancelled',
+          text2: 'Leave request cancelled successfully.',
+        });
+        navigation.goBack();
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Could not cancel the leave request.',
+        });
+      }
+    } catch (error) {
+      console.error("Cancel failed:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An error occurred while cancelling the request.',
+      });
+    } finally {
+      setCanceling(false);
+    }
   };
   if (loading || !leave) {
     return (

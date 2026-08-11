@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -15,6 +14,7 @@ import BottomNavbar from "../BottomNavbar";
 
 import authAxios from "../../utils/authAxios";
 import SwipeLoader from "../../components/SwipeLoader"
+import Toast from "react-native-toast-message";
 export default function RequestApprovedScreen() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -42,7 +42,11 @@ export default function RequestApprovedScreen() {
         setLeave(response.data);
       } catch (error) {
         console.error("Error fetching leave detail:", error);
-        Alert.alert("Error", "Could not fetch leave details.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Could not fetch leave details.",
+        });
       } finally {
         setLoading(false);
       }
@@ -60,7 +64,11 @@ export default function RequestApprovedScreen() {
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
-        Alert.alert("Error", "Could not fetch profile.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Could not fetch profile.",
+        });
       }
     };
 
@@ -152,4 +160,3 @@ export default function RequestApprovedScreen() {
     </View>
   );
 }
-

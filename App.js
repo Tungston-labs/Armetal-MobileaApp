@@ -4,7 +4,7 @@ import { Provider, useDispatch } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
 import { store } from "./src/redux/store";
-import Toast from "react-native-toast-message";
+import CustomToast from "./src/components/CustomToast";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Navigation from "./src/navigation/navigation";
 import { restoreSession } from "./src/redux/features/authSlice";
@@ -139,7 +139,7 @@ useEffect(() => {
         <SafeAreaProvider>
           <InitAuth>
             <Navigation />
-            <Toast />
+            <CustomToast />
           </InitAuth>
         </SafeAreaProvider>
       </GestureHandlerRootView>

@@ -18,6 +18,7 @@ import TaskModal from '../TaskModal';
 import moment from 'moment';
 import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader"
+import useRefreshOnReconnect from "../../hooks/useRefreshOnReconnect";
 const API_BASE_URL = 'http://178.248.112.16:8000';
 
 export default function TaskUpdateScreen() {
@@ -102,9 +103,19 @@ export default function TaskUpdateScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchTasks(selectedDate);
+    await Promise.all([
+      fetchTasks(selectedDate),
+      fetchProfilePicture(),
+    ]);
     setRefreshing(false);
   }, [selectedDate]);
+
+  useRefreshOnReconnect(async () => {
+    await Promise.all([
+      fetchTasks(selectedDate),
+      fetchProfilePicture(),
+    ]);
+  });
 
   const handleSubmit = () => {
     setModalVisible(false);

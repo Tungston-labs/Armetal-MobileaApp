@@ -288,6 +288,8 @@ export const stopBackgroundFetch = async () => {
   console.log("Background tracking stopped");
 };
 
+export const stopBackgroundTracking = stopBackgroundFetch;
+
 export const backgroundFetchHeadless = async (taskId) => {
 
   console.log("Headless background fetch:", taskId);

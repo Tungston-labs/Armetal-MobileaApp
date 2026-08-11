@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
-  Alert,
   Modal,
   Pressable,
   ActivityIndicator,
@@ -23,6 +22,7 @@ import authAxios from '../../utils/authAxios';
 import SwipeLoader from "../../components/SwipeLoader";
 import Share from 'react-native-share';
 import handleGeneratePDF from './payslip_pdf'
+import useRefreshOnReconnect from '../../hooks/useRefreshOnReconnect';
   
 import FileViewer from 'react-native-file-viewer';
 
@@ -59,6 +59,8 @@ const SalarySlipScreen = () => {
   useEffect(() => {
     fetchSalaryRecords();
   }, [selectedYear]);
+
+  useRefreshOnReconnect(fetchSalaryRecords);
 
   
   const combinedList = salaryData

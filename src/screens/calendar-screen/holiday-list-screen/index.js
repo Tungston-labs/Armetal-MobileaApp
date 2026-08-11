@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, ActivityIndicator, RefreshControl, Platform } from "react-native";
 import authAxios from "../../../utils/authAxios";
 import styles from "./styles";
+import useRefreshOnReconnect from "../../../hooks/useRefreshOnReconnect";
 
 const HolidayTab = () => {
   const [holidays, setHolidays] = useState([]);
@@ -40,6 +41,8 @@ const HolidayTab = () => {
   useEffect(() => {
     fetchHolidays();
   }, []);
+
+  useRefreshOnReconnect(fetchHolidays);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

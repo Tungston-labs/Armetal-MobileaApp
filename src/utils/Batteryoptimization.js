@@ -1,31 +1,29 @@
-import { Alert, Platform, Linking } from "react-native";
+import { Platform, Linking } from "react-native";
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Application from "expo-application";
+import Toast from "react-native-toast-message";
+
+const openBatterySettings = async () => {
+  try {
+    const packageName = Application.applicationId;
+
+    await IntentLauncher.startActivityAsync(
+      IntentLauncher.ActivityAction.APPLICATION_DETAILS_SETTINGS,
+      { data: `package:${packageName}` }
+    );
+  } catch (error) {
+    Linking.openSettings();
+  }
+};
 
 export const maybeAskBatteryPermission = () => {
   if (Platform.OS !== "android") return;
 
- Alert.alert(
-    "Allow Background Activity",
-    "To ensure attendance verification works reliably, please allow Rekory to run without battery restrictions.\n\nSteps:\n1. Open Battery settings\n2. Tap Background usage limits\n3. Remove Rekory from sleeping apps\n4. Set Battery → Unrestricted",
-    [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Open Settings",
-        onPress: async () => {
-          try {
-            const packageName = Application.applicationId;
-
-            // Open App Settings Page
-            await IntentLauncher.startActivityAsync(
-              IntentLauncher.ActivityAction.APPLICATION_DETAILS_SETTINGS,
-              { data: `package:${packageName}` }
-            );
-          } catch (error) {
-            Linking.openSettings();
-          }
-        },
-      },
-    ]
-  );
+  Toast.show({
+    type: "info",
+    text1: "Allow Background Activity",
+    text2: "Tap to open settings and set Rekory battery usage to Unrestricted.",
+    visibilityTime: 7000,
+    onPress: openBatterySettings,
+  });
 };
